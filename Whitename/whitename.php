@@ -1,0 +1,18 @@
+<?php
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: /whitename");
+exit();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8">
+    <meta property="og:video:url" content="/path/to/your/video.mp4" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<div>
+    <h1 class="text-4xl">≡</h1>
+</div>
+<body>
+      <h1 class="text-3xl font-bold underline" id="greeting1"></h1>
+</body>
+</html>
