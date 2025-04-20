@@ -182,23 +182,8 @@
   .w-full {
     width: 100%;
   }
-  .max-w-10 {
-    max-width: calc(var(--spacing) * 10);
-  }
   .max-w-20 {
     max-width: calc(var(--spacing) * 20);
-  }
-  .max-w-40 {
-    max-width: calc(var(--spacing) * 40);
-  }
-  .max-w-70 {
-    max-width: calc(var(--spacing) * 70);
-  }
-  .max-w-220 {
-    max-width: calc(var(--spacing) * 220);
-  }
-  .max-w-230 {
-    max-width: calc(var(--spacing) * 230);
   }
   .flex-row {
     flex-direction: row;
@@ -211,12 +196,6 @@
   }
   .rounded-full {
     border-radius: calc(infinity * 1px);
-  }
-  .bg-\[var\(--bacgkround-gra\)\] {
-    background-color: var(--bacgkround-gra);
-  }
-  .bg-\[var\(--backgroundcolor\)\] {
-    background-color: var(--backgroundcolor);
   }
   .bg-neutral-200 {
     background-color: var(--color-neutral-200);
@@ -231,16 +210,6 @@
   .bg-linear-\(--background-gra\) {
     --tw-gradient-position: var(--background-gra);
     background-image: linear-gradient(var(--tw-gradient-stops,var(--background-gra)));
-  }
-  .bg-linear-\[\(--background-gra\)\] {
-    --tw-gradient-position: (--background-gra);
-    background-image: linear-gradient(var(--tw-gradient-stops,(--background-gra)));
-  }
-  .bg-\[image\:var\(--bacgkround-gra\)\] {
-    background-image: var(--bacgkround-gra);
-  }
-  .bg-\[image\:var\(--background-gra\)\] {
-    background-image: var(--background-gra);
   }
   .from-purple-400 {
     --tw-gradient-from: var(--color-purple-400);
@@ -296,19 +265,6 @@
       }
     }
   }
-  .hover\:font-bold {
-    &:hover {
-      @media (hover: hover) {
-        --tw-font-weight: var(--font-weight-bold);
-        font-weight: var(--font-weight-bold);
-      }
-    }
-  }
-  .dark\:bg-\[var\(--bacgkround-gra\)\] {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--bacgkround-gra);
-    }
-  }
   .dark\:bg-black {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-black);
@@ -325,16 +281,6 @@
       background-image: linear-gradient(var(--tw-gradient-stops,var(--background-gra-dark)));
     }
   }
-  .dark\:bg-\[image\:var\(--bacgkround-gra\)\] {
-    @media (prefers-color-scheme: dark) {
-      background-image: var(--bacgkround-gra);
-    }
-  }
-  .dark\:bg-\[image\:var\(--background-gra-dark\)\] {
-    @media (prefers-color-scheme: dark) {
-      background-image: var(--background-gra-dark);
-    }
-  }
   .dark\:text-white {
     @media (prefers-color-scheme: dark) {
       color: var(--color-white);
@@ -348,39 +294,6 @@
         }
       }
     }
-  }
-}
-.animate-gradient {
-  background-size: 200%;
-  -webkit-animation: animatedgradient 3s ease-in-out infinite forwards;
-  -moz-animation: animatedgradient 3s ease-in-out infinite forwards;
-  animation: animatedgradient 3s ease-in-out infinite forwards;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-@keyframes animatedgradient {
-  0% {
-    background-position: 0% 0%;
-    text-shadow: 0px 0px 10px rgb(153, 50, 226),0px 0px 10px rgb(153, 50, 226);
-  }
-  50% {
-    background-position: 100% 0%;
-    text-shadow: 0px 0px 20px rgb(208, 143, 255),0px 0px 20px rgb(208, 143, 255);
-  }
-  100% {
-    background-position: 200% 0%;
-    text-shadow: 0px 0px 10px rgb(153, 50, 226),0px 0px 10px rgb(153, 50, 226);
-  }
-}
-@layer utilities {
-  .backgroundthing {
-    background-color: #ffffff;
-    background: repeating-linear-gradient( -45deg, rgba(220, 220, 220, 0.2), rgba(220, 220, 220, 0.2) 6.5px, #ffffff 6.5px, #ffffff 32.5px );
-  }
-  .backgroundthingdark {
-    background-color: #000000;
-    background: repeating-linear-gradient( -45deg, rgba(91, 91, 91, 0.2), rgba(91, 91, 91, 0.2) 6.5px, #000000 6.5px, #000000 32.5px );
   }
 }
 @property --tw-gradient-position {
