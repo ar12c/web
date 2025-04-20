@@ -9,7 +9,6 @@
       "Courier New", monospace;
     --color-purple-400: oklch(71.4% 0.203 305.504);
     --color-purple-700: oklch(49.6% 0.265 301.924);
-    --color-neutral-50: oklch(98.5% 0 0);
     --color-neutral-200: oklch(92.2% 0 0);
     --color-neutral-400: oklch(70.8% 0 0);
     --color-neutral-600: oklch(43.9% 0 0);
@@ -18,7 +17,6 @@
     --color-white: #fff;
     --spacing: 0.25rem;
     --font-weight-bold: 700;
-    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
   }
@@ -169,9 +167,6 @@
   }
 }
 @layer utilities {
-  .relative {
-    position: relative;
-  }
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
   }
@@ -181,26 +176,29 @@
   .flex {
     display: flex;
   }
-  .table {
-    display: table;
-  }
   .h-screen {
     height: 100vh;
-  }
-  .min-h-screen {
-    min-height: 100vh;
   }
   .w-full {
     width: 100%;
   }
-  .max-w-25 {
-    max-width: calc(var(--spacing) * 25);
+  .max-w-10 {
+    max-width: calc(var(--spacing) * 10);
   }
-  .border-collapse {
-    border-collapse: collapse;
+  .max-w-20 {
+    max-width: calc(var(--spacing) * 20);
   }
-  .resize {
-    resize: both;
+  .max-w-40 {
+    max-width: calc(var(--spacing) * 40);
+  }
+  .max-w-70 {
+    max-width: calc(var(--spacing) * 70);
+  }
+  .max-w-220 {
+    max-width: calc(var(--spacing) * 220);
+  }
+  .max-w-230 {
+    max-width: calc(var(--spacing) * 230);
   }
   .flex-row {
     flex-direction: row;
@@ -211,22 +209,38 @@
   .justify-between {
     justify-content: space-between;
   }
-  .overflow-x-hidden {
-    overflow-x: hidden;
-  }
   .rounded-full {
     border-radius: calc(infinity * 1px);
   }
-  .border {
-    border-style: var(--tw-border-style);
-    border-width: 1px;
+  .bg-\[var\(--bacgkround-gra\)\] {
+    background-color: var(--bacgkround-gra);
+  }
+  .bg-\[var\(--backgroundcolor\)\] {
+    background-color: var(--backgroundcolor);
   }
   .bg-neutral-200 {
     background-color: var(--color-neutral-200);
   }
+  .bg-white {
+    background-color: var(--color-white);
+  }
   .bg-gradient-to-r {
     --tw-gradient-position: to right in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
+  }
+  .bg-linear-\(--background-gra\) {
+    --tw-gradient-position: var(--background-gra);
+    background-image: linear-gradient(var(--tw-gradient-stops,var(--background-gra)));
+  }
+  .bg-linear-\[\(--background-gra\)\] {
+    --tw-gradient-position: (--background-gra);
+    background-image: linear-gradient(var(--tw-gradient-stops,(--background-gra)));
+  }
+  .bg-\[image\:var\(--bacgkround-gra\)\] {
+    background-image: var(--bacgkround-gra);
+  }
+  .bg-\[image\:var\(--background-gra\)\] {
+    background-image: var(--background-gra);
   }
   .from-purple-400 {
     --tw-gradient-from: var(--color-purple-400);
@@ -272,19 +286,8 @@
   .text-transparent {
     color: transparent;
   }
-  .underline {
-    text-decoration-line: underline;
-  }
   .bg-blend-soft-light {
     background-blend-mode: soft-light;
-  }
-  .outline {
-    outline-style: var(--tw-outline-style);
-    outline-width: 1px;
-  }
-  .ease-in-out {
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
   }
   .hover\:bg-neutral-400 {
     &:hover {
@@ -301,9 +304,35 @@
       }
     }
   }
+  .dark\:bg-\[var\(--bacgkround-gra\)\] {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--bacgkround-gra);
+    }
+  }
+  .dark\:bg-black {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--color-black);
+    }
+  }
   .dark\:bg-neutral-800 {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-neutral-800);
+    }
+  }
+  .dark\:bg-linear-\(--background-gra-dark\) {
+    @media (prefers-color-scheme: dark) {
+      --tw-gradient-position: var(--background-gra-dark);
+      background-image: linear-gradient(var(--tw-gradient-stops,var(--background-gra-dark)));
+    }
+  }
+  .dark\:bg-\[image\:var\(--bacgkround-gra\)\] {
+    @media (prefers-color-scheme: dark) {
+      background-image: var(--bacgkround-gra);
+    }
+  }
+  .dark\:bg-\[image\:var\(--background-gra-dark\)\] {
+    @media (prefers-color-scheme: dark) {
+      background-image: var(--background-gra-dark);
     }
   }
   .dark\:text-white {
@@ -321,10 +350,38 @@
     }
   }
 }
-@property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
+.animate-gradient {
+  background-size: 200%;
+  -webkit-animation: animatedgradient 3s ease-in-out infinite forwards;
+  -moz-animation: animatedgradient 3s ease-in-out infinite forwards;
+  animation: animatedgradient 3s ease-in-out infinite forwards;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+@keyframes animatedgradient {
+  0% {
+    background-position: 0% 0%;
+    text-shadow: 0px 0px 10px rgb(153, 50, 226),0px 0px 10px rgb(153, 50, 226);
+  }
+  50% {
+    background-position: 100% 0%;
+    text-shadow: 0px 0px 20px rgb(208, 143, 255),0px 0px 20px rgb(208, 143, 255);
+  }
+  100% {
+    background-position: 200% 0%;
+    text-shadow: 0px 0px 10px rgb(153, 50, 226),0px 0px 10px rgb(153, 50, 226);
+  }
+}
+@layer utilities {
+  .backgroundthing {
+    background-color: #ffffff;
+    background: repeating-linear-gradient( -45deg, rgba(220, 220, 220, 0.2), rgba(220, 220, 220, 0.2) 6.5px, #ffffff 6.5px, #ffffff 32.5px );
+  }
+  .backgroundthingdark {
+    background-color: #000000;
+    background: repeating-linear-gradient( -45deg, rgba(91, 91, 91, 0.2), rgba(91, 91, 91, 0.2) 6.5px, #000000 6.5px, #000000 32.5px );
+  }
 }
 @property --tw-gradient-position {
   syntax: "*";
@@ -372,19 +429,9 @@
   syntax: "*";
   inherits: false;
 }
-@property --tw-outline-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
-}
-@property --tw-ease {
-  syntax: "*";
-  inherits: false;
-}
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
-      --tw-border-style: solid;
       --tw-gradient-position: initial;
       --tw-gradient-from: #0000;
       --tw-gradient-via: #0000;
@@ -395,8 +442,6 @@
       --tw-gradient-via-position: 50%;
       --tw-gradient-to-position: 100%;
       --tw-font-weight: initial;
-      --tw-outline-style: solid;
-      --tw-ease: initial;
     }
   }
 }
