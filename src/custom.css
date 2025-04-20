@@ -23,3 +23,13 @@
       text-shadow: 0px 0px 10px rgb(153, 50, 226),0px 0px 10px rgb(153, 50, 226);
     }
   }
+
+.backgroundthing {
+  background-color: #ffffff;
+  background: repeating-linear-gradient( -45deg, rgba(220, 220, 220, 0.2), rgba(220, 220, 220, 0.2) 6.5px, #ffffff 6.5px, #ffffff 32.5px );
+}
+
+.backgroundthing {
+  background-color: #000000;
+  background: repeating-linear-gradient( -45deg, rgba(91, 91, 91, 0.2), rgba(91, 91, 91, 0.2) 6.5px, #ffffff 6.5px, #ffffff 32.5px );
+}
