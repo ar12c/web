@@ -34,3 +34,17 @@
 .changingtext:hover:after {
     content: attr(data-hover);
 }
+
+header {
+  transition: all 0.2s ease-out;
+  position: fixed;
+  padding-left: 3.75rem;
+  padding-right: 3.75rem;
+}
+
+header.sticky {
+  transition: all 0.2s ease-in-out;
+  background: rgba(125, 125, 125, 0.1);
+  backdrop-filter: blur(10px);
+  position: fixed;
+}
