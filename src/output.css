@@ -313,6 +313,18 @@
   .h-20 {
     height: calc(var(--spacing) * 20);
   }
+  .h-40 {
+    height: calc(var(--spacing) * 40);
+  }
+  .h-50 {
+    height: calc(var(--spacing) * 50);
+  }
+  .h-55 {
+    height: calc(var(--spacing) * 55);
+  }
+  .h-60 {
+    height: calc(var(--spacing) * 60);
+  }
   .h-80 {
     height: calc(var(--spacing) * 80);
   }
@@ -481,6 +493,15 @@
   .bg-\[url\(\/images\/car\.jpg\)\] {
     background-image: url(/images/car.jpg);
   }
+  .bg-\[url\(\/images\/material\.png\)\] {
+    background-image: url(/images/material.png);
+  }
+  .bg-\[url\(\/images\/materialyou\.png\)\] {
+    background-image: url(/images/materialyou.png);
+  }
+  .bg-\[url\(\/images\/transparent\.png\)\] {
+    background-image: url(/images/transparent.png);
+  }
   .from-black {
     --tw-gradient-from: var(--color-black);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
@@ -513,6 +534,41 @@
   .to-black {
     --tw-gradient-to: var(--color-black);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+  .mask-t-from-40\% {
+    mask-image: var(--tw-mask-linear), var(--tw-mask-radial), var(--tw-mask-conic);
+    mask-composite: intersect;
+    --tw-mask-linear: var(--tw-mask-left), var(--tw-mask-right), var(--tw-mask-bottom), var(--tw-mask-top);
+    --tw-mask-top: linear-gradient(to top, var(--tw-mask-top-from-color) var(--tw-mask-top-from-position), var(--tw-mask-top-to-color) var(--tw-mask-top-to-position));
+    --tw-mask-top-from-position: 40%;
+  }
+  .mask-t-from-50\% {
+    mask-image: var(--tw-mask-linear), var(--tw-mask-radial), var(--tw-mask-conic);
+    mask-composite: intersect;
+    --tw-mask-linear: var(--tw-mask-left), var(--tw-mask-right), var(--tw-mask-bottom), var(--tw-mask-top);
+    --tw-mask-top: linear-gradient(to top, var(--tw-mask-top-from-color) var(--tw-mask-top-from-position), var(--tw-mask-top-to-color) var(--tw-mask-top-to-position));
+    --tw-mask-top-from-position: 50%;
+  }
+  .mask-t-from-60\% {
+    mask-image: var(--tw-mask-linear), var(--tw-mask-radial), var(--tw-mask-conic);
+    mask-composite: intersect;
+    --tw-mask-linear: var(--tw-mask-left), var(--tw-mask-right), var(--tw-mask-bottom), var(--tw-mask-top);
+    --tw-mask-top: linear-gradient(to top, var(--tw-mask-top-from-color) var(--tw-mask-top-from-position), var(--tw-mask-top-to-color) var(--tw-mask-top-to-position));
+    --tw-mask-top-from-position: 60%;
+  }
+  .mask-t-from-70\% {
+    mask-image: var(--tw-mask-linear), var(--tw-mask-radial), var(--tw-mask-conic);
+    mask-composite: intersect;
+    --tw-mask-linear: var(--tw-mask-left), var(--tw-mask-right), var(--tw-mask-bottom), var(--tw-mask-top);
+    --tw-mask-top: linear-gradient(to top, var(--tw-mask-top-from-color) var(--tw-mask-top-from-position), var(--tw-mask-top-to-color) var(--tw-mask-top-to-position));
+    --tw-mask-top-from-position: 70%;
+  }
+  .mask-t-to-100\% {
+    mask-image: var(--tw-mask-linear), var(--tw-mask-radial), var(--tw-mask-conic);
+    mask-composite: intersect;
+    --tw-mask-linear: var(--tw-mask-left), var(--tw-mask-right), var(--tw-mask-bottom), var(--tw-mask-top);
+    --tw-mask-top: linear-gradient(to top, var(--tw-mask-top-from-color) var(--tw-mask-top-from-position), var(--tw-mask-top-to-color) var(--tw-mask-top-to-position));
+    --tw-mask-top-to-position: 100%;
   }
   .mask-b-from-10\% {
     mask-image: var(--tw-mask-linear), var(--tw-mask-radial), var(--tw-mask-conic);
@@ -605,6 +661,9 @@
   .p-5 {
     padding: calc(var(--spacing) * 5);
   }
+  .p-15 {
+    padding: calc(var(--spacing) * 15);
+  }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
   }
@@ -686,6 +745,9 @@
   }
   .text-\[10vw\] {
     font-size: 10vw;
+  }
+  .text-\[20vw\] {
+    font-size: 20vw;
   }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
@@ -934,6 +996,41 @@
       font-size: 10vw;
     }
   }
+  .md\:-top-\[4vw\] {
+    @media (width >= 48rem) {
+      top: calc(4vw * -1);
+    }
+  }
+  .md\:-top-\[5vw\] {
+    @media (width >= 48rem) {
+      top: calc(5vw * -1);
+    }
+  }
+  .md\:-top-\[10vw\] {
+    @media (width >= 48rem) {
+      top: calc(10vw * -1);
+    }
+  }
+  .md\:-top-\[20-vw\] {
+    @media (width >= 48rem) {
+      top: calc(20-vw * -1);
+    }
+  }
+  .md\:-top-\[20vw\] {
+    @media (width >= 48rem) {
+      top: calc(20vw * -1);
+    }
+  }
+  .md\:-top-\[30vw\] {
+    @media (width >= 48rem) {
+      top: calc(30vw * -1);
+    }
+  }
+  .md\:-top-\[50vw\] {
+    @media (width >= 48rem) {
+      top: calc(50vw * -1);
+    }
+  }
   .md\:grid-cols-2 {
     @media (width >= 48rem) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -942,6 +1039,16 @@
   .md\:grid-rows-2 {
     @media (width >= 48rem) {
       grid-template-rows: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .lg\:-top-\[90vw\] {
+    @media (width >= 64rem) {
+      top: calc(90vw * -1);
+    }
+  }
+  .lg\:-top-\[100vw\] {
+    @media (width >= 64rem) {
+      top: calc(100vw * -1);
     }
   }
   .lg\:grid-cols-4 {
@@ -1233,6 +1340,26 @@
   inherits: false;
   initial-value: linear-gradient(#fff, #fff);
 }
+@property --tw-mask-top-from-position {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --tw-mask-top-to-position {
+  syntax: "*";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-mask-top-from-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: black;
+}
+@property --tw-mask-top-to-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: transparent;
+}
 @property --tw-mask-bottom-from-position {
   syntax: "*";
   inherits: false;
@@ -1384,6 +1511,10 @@
       --tw-mask-right: linear-gradient(#fff, #fff);
       --tw-mask-bottom: linear-gradient(#fff, #fff);
       --tw-mask-top: linear-gradient(#fff, #fff);
+      --tw-mask-top-from-position: 0%;
+      --tw-mask-top-to-position: 100%;
+      --tw-mask-top-from-color: black;
+      --tw-mask-top-to-color: transparent;
       --tw-mask-bottom-from-position: 0%;
       --tw-mask-bottom-to-position: 100%;
       --tw-mask-bottom-from-color: black;
