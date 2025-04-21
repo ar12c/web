@@ -38,8 +38,6 @@
 header {
   transition: all 0.2s ease-out;
   position: fixed;
-  padding-left: 3.75rem;
-  padding-right: 3.75rem;
 }
 
 header.sticky {
