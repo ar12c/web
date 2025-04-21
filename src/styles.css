@@ -4,9 +4,9 @@
 
   .animate-gradient2 {
     background-size: 200%;
-    -webkit-animation: animatedgradient2 3s ease-in-out infinite forwards;
-    -moz-animation: animatedgradient2 3s ease-in-out infinite forwards;
-    animation: animatedgradient2 3s ease-in-out infinite forwards;
+    -webkit-animation: animatedgradient2 3s linear infinite forwards;
+    -moz-animation: animatedgradient2 3s linear infinite forwards;
+    animation: animatedgradient2 3s linear infinite forwards;
     color: transparent; /* Make the text itself transparent */
     -webkit-background-clip: text; /* Clip the background to the text */
     background-clip: text;
