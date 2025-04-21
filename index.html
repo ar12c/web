@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="./src/output.css" rel="stylesheet">
   <link href="./src/styles.css" rel="stylesheet"> 
+  <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
   <title>ar12c</title>
 <body class="bg-white dark:bg-black w-full h-screen font-sans">
   <header class="w-full z-10 fixed top-0 left-0">
@@ -24,11 +26,27 @@
       <h1 class="font-sans font-bold dark:text-white text-4xl text-shadow-lg">I'm Okemo<a class="bg-gradient-to-r from-black dark:from-white  via-purple-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-mono">Vail</a></h1>
       <h1 class="dark:text-white opacity-20 mr-auto ml-2 text-xl">ar12c</h1>
     </div> 
-      <h1 class="dark:text-white pt-2 text-shadow-lg"><a class="opacity-30">Shit Dev</a> from Hong Kong</h1>
+      <h1 class="dark:text-white pt-2 text-shadow-lg"><i class="fa-solid fa-location-dot"></i> Hong Kong <a class="opacity-30">Shit Dev</a> </h1>
+      <div id="hkt-time" class="text-lg dark:text-white"></div>
+<script>
+  function updateHKTTime() {
+    const now = new Date();
+    const options = {
+      timeZone: 'Asia/Hong_Kong',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    };
+    const hktTime = new Intl.DateTimeFormat('en-US', options).format(now);
+    document.getElementById('hkt-time').textContent = `${hktTime}`;
+  }
+  setInterval(updateHKTTime, 1000);
+  updateHKTTime();
+</script>
   </div>
   <h1 class="px-15 pt-10 dark:text-white font-bold text-4xl">Interests</h1>
   <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-5 mx-15 pb-15">
-    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col">
+    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col hover:scale-102 transition-transform duration-300">
       <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/car.jpg)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
       <h1 class="dark:text-white font-bold text-4xl px-5">Cats!</h1>
       <h1 class="pb-5 pt-2 px-5 dark:text-white font-semibold text-2xl">Cats are my favourite animal</h1>
@@ -38,30 +56,70 @@
           Get cat fact
         </button>
       </div>
-      </div>
-    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col">
+    </div>
+    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col hover:scale-102 transition-transform duration-300">
       <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/materialyou.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-55 bg-center bg-cover"></div>
       <h1 class="dark:text-white font-bold text-4xl px-5">Design Language</h1>
       <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Google Material You design language is one of the most unique design languages in my opinion.</h1>
       <div alt="car" class="pb-4s bg-[url(/images/transparent.png)] drop-shadow-md mask-t-from-60% mask-t-to-100% mask-b-from-60% mask-b-to-100% h-55 bg-center bg-cover"></div>
       <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Apple's new visionOS design style is also very unique, I personally like its transparent design</h1>
     </div>
-    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col">
+    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col hover:scale-102 transition-transform duration-300">
       <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/kiwi.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
       <h1 class="dark:text-white font-bold text-4xl px-5">3D Software</h1>
       <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Personally, I love to use Blender to model 3D models, it's quite fun to use.</h1>
       <div class="px-5 pb-6">
       <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-700/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://www.youtube.com/@WaterProduc">
-        Learn more
+        Learn more!
       </a>
       </div> 
     </div>
-    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col">
+    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col hover:scale-102 transition-transform duration-300">
       <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/sillyo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
       <h1 class="dark:text-white font-bold text-4xl px-5">Themeing</h1>
-      <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Something about themeing iOS / Android is fun for me.</h1>
+      <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Something about themeing 
+        <i class="devicon-apple-original"></i>
+      iOS /  
+        <i class="devicon-android-plain"></i>
+      Android is fun for me.</h1>
+      <div class="px-5 pb-6">
+      <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-700/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" onclick="myFunction()">
+        Learn more!
+      </a>
+      <script>
+        function myFunction() {
+          alert("Coming s0n!");
+        }
+      </script>
+      </div>  
     </div>
-</div>
+  </div>
+  <h1 class="pt-10 px-15 dark:text-white font-bold text-4xl">Skills</h1>
+  <div class=" py-2 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-5 mx-15 pb-15">
+    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col hover:scale-102 transition-transform duration-300">
+      <div alt="car" class="rounded-t-2xl pb-4s bg-[url(https://yt3.googleusercontent.com/SrR4yedn6iaf431Y8ciCu6m_NTu0xqPyAYTps0WV0QgQO9NA2JUZDdJMg4435wI-wR8peEW59A=s900-c-k-c0x00ffffff-no-rj)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
+      <h1 class="dark:text-white font-bold text-4xl px-5">Just kidding.</h1>
+      <h1 class="pb-5 pt-2 px-5 dark:text-white">I don't have any skills in coding, I just love taking shortcuts, thats it.</h1>
+      <h1 class="pb-5 pt-2 px-5 dark:text-white">
+        <i class="devicon-javascript-plain"></i>
+        <i class="devicon-python-plain"></i>
+        <i class="devicon-html5-plain"></i>
+        <i class="devicon-swift-plain"></i>
+        <i class="devicon-bash-plain"></i>
+        <i class="devicon-lua-plain"></i>
+        <i class="devicon-php-plain"></i>
+      </h1>
+    </div>
+    <div class="bg-neutral-200/30 dark:bg-neutral-500/10 backdrop-blur-xs h-max align-center mt-6 rounded-2xl flex flex-col hover:scale-102 transition-transform duration-300">
+      <div alt="car" class="rounded-t-2xl pb-4s bg-[url(https://docs-assets.developer.apple.com/published/712733b3cdd2bab5a2c326c50488aeb3/foundations-icons-intro~dark@2x.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
+      <h1 class="dark:text-white font-bold text-4xl px-5">Icon making</h1>
+      <h1 class="pb-5 pt-2 px-5 dark:text-white">I love controbuting the community.</h1>
+      <h1 class="pb-5 pt-2 px-5 dark:text-white">
+        <i class="devicon-illustrator-plain"></i>
+        <i class="devicon-photoshop-plain"></i>
+      </h1>
+    </div>
+  </div> 
 
   
   <!--BREAK-->
