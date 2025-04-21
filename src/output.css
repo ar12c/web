@@ -68,6 +68,7 @@
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --blur-xs: 4px;
     --blur-sm: 8px;
+    --blur-lg: 16px;
     --blur-xl: 24px;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -470,6 +471,12 @@
   .justify-between {
     justify-content: space-between;
   }
+  .justify-center {
+    justify-content: center;
+  }
+  .justify-start {
+    justify-content: flex-start;
+  }
   .gap-x-5 {
     column-gap: calc(var(--spacing) * 5);
   }
@@ -587,11 +594,20 @@
   .bg-\[url\(\/images\/materialyou\.png\)\] {
     background-image: url(/images/materialyou.png);
   }
+  .bg-\[url\(\/images\/previousversion\.png\)\] {
+    background-image: url(/images/previousversion.png);
+  }
   .bg-\[url\(\/images\/sillyo\.png\)\] {
     background-image: url(/images/sillyo.png);
   }
   .bg-\[url\(\/images\/transparent\.png\)\] {
     background-image: url(/images/transparent.png);
+  }
+  .bg-\[url\(https\:\/\/cdn\.discordapp\.com\/avatars\/413331641109446656\/26a7f04e610f4c3ad625eb9357965aca\?size\=1024\)\] {
+    background-image: url(https://cdn.discordapp.com/avatars/413331641109446656/26a7f04e610f4c3ad625eb9357965aca?size=1024);
+  }
+  .bg-\[url\(https\:\/\/cdn\.discordapp\.com\/avatars\/1304848177832267858\/86714567b507973e60399a7383c53972\?size\=1024\)\] {
+    background-image: url(https://cdn.discordapp.com/avatars/1304848177832267858/86714567b507973e60399a7383c53972?size=1024);
   }
   .bg-\[url\(https\:\/\/docs-assets\.developer\.apple\.com\/published\/712733b3cdd2bab5a2c326c50488aeb3\/foundations-icons-intro\~dark\@2x\.png\)\] {
     background-image: url(https://docs-assets.developer.apple.com/published/712733b3cdd2bab5a2c326c50488aeb3/foundations-icons-intro~dark@2x.png);
@@ -602,9 +618,17 @@
   .bg-\[url\(https\:\/\/yt3\.googleusercontent\.com\/SrR4yedn6iaf431Y8ciCu6m_NTu0xqPyAYTps0WV0QgQO9NA2JUZDdJMg4435wI-wR8peEW59A\=s900-c-k-c0x00ffffff-no-rj\)\] {
     background-image: url(https://yt3.googleusercontent.com/SrR4yedn6iaf431Y8ciCu6m_NTu0xqPyAYTps0WV0QgQO9NA2JUZDdJMg4435wI-wR8peEW59A=s900-c-k-c0x00ffffff-no-rj);
   }
+  .bg-\[url\(image\/previousversion\.png\)\] {
+    background-image: url(image/previousversion.png);
+  }
   .from-black {
     --tw-gradient-from: var(--color-black);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+  .via-blue-500 {
+    --tw-gradient-via: var(--color-blue-500);
+    --tw-gradient-via-stops: var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-via) var(--tw-gradient-via-position), var(--tw-gradient-to) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-via-stops);
   }
   .via-neutral-400 {
     --tw-gradient-via: var(--color-neutral-400);
@@ -794,6 +818,9 @@
   .pt-2 {
     padding-top: calc(var(--spacing) * 2);
   }
+  .pt-3 {
+    padding-top: calc(var(--spacing) * 3);
+  }
   .pt-5 {
     padding-top: calc(var(--spacing) * 5);
   }
@@ -955,6 +982,9 @@
   .opacity-30 {
     opacity: 30%;
   }
+  .opacity-50 {
+    opacity: 50%;
+  }
   .outline {
     outline-style: var(--tw-outline-style);
     outline-width: 1px;
@@ -986,6 +1016,11 @@
   }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+  }
+  .backdrop-blur-lg {
+    --tw-backdrop-blur: blur(var(--blur-lg));
+    -webkit-backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
+    backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
   }
   .backdrop-blur-sm {
     --tw-backdrop-blur: blur(var(--blur-sm));
@@ -1326,6 +1361,14 @@
       }
     }
   }
+  .dark\:bg-neutral-500\/30 {
+    @media (prefers-color-scheme: dark) {
+      background-color: color-mix(in srgb, oklch(55.6% 0 0) 30%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-neutral-500) 30%, transparent);
+      }
+    }
+  }
   .dark\:bg-neutral-600 {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-neutral-600);
@@ -1344,6 +1387,14 @@
       background-color: color-mix(in srgb, oklch(43.9% 0 0) 30%, transparent);
       @supports (color: color-mix(in lab, red, red)) {
         background-color: color-mix(in oklab, var(--color-neutral-600) 30%, transparent);
+      }
+    }
+  }
+  .dark\:bg-neutral-700\/30 {
+    @media (prefers-color-scheme: dark) {
+      background-color: color-mix(in srgb, oklch(37.1% 0 0) 30%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-neutral-700) 30%, transparent);
       }
     }
   }
