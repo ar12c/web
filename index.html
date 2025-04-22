@@ -49,13 +49,14 @@
   </div>
   <h1 class="px-10 sm:px-15 pt-10 dark:text-white font-bold text-4xl">Interests</h1>
   <div class="grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 mx-10 sm:mx-15 pb-15">
-    <div class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card">
-      <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/car.jpg)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
+  <div class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card transition-all transition-height">
+        <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/car.jpg)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
       <h1 class="dark:text-white font-bold text-4xl px-5">Cats!</h1>
       <h1 class="pb-5 pt-2 px-5 dark:text-white font-semibold text-2xl">Cats are my favourite animal</h1>
       <div class="px-5 pb-5">
-        <div id="fact-container" class="pb-5 dark:text-white"></div>
-        <button class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl cursor-pointer" id="fact-button" >
+        <div id="fact-container" class="pb-5 dark:text-white opacity-0 transform translate-y-[-10px] duration-300 ease-in-out transition-transform">
+          </div>
+        <button class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl cursor-pointer" id="fact-button">
           Get cat fact
         </button>
       </div>
