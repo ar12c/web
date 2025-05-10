@@ -9,18 +9,48 @@
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
   <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
   <meta content="OkemoVail · ar12c" property="og:title">
-  <meta property="og:video:url" content="/images/shutupwhitenamefinal-2.mp4" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <title>OkemoVail</title>
-<body class="bg-white dark:bg-black w-full h-screen font-sans">
+<body class="bg-white dark:bg-black h-screen w-screen font-sans" id="main-content">
+  <canvas id="confetti-canvas" class="fixed w-100% h-100%"></canvas>
   <header class="w-full z-10 fixed top-0 left-0 px-10 sm:px-15">
     <div class="w-full py-5 flex flex-row justify-between items-center">
-        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-10/100 max-w-25 drop-shadow-md rounded-full imagear12c" id="imgresize" alt="ar12c">
-      <div class="ml-auto mr-2 flex flex-col justify-between items-end-safe">
-          <h1 class="changingtext font-sans font-bold dark:text-white flex items-center text-shadow-lg" data-hover=" ឴឴ · ar12c ">OkemoVail </h1>
+      <i class="fa-solid fa-bars cursor-pointer" id="hamburger-menu"></i>
+      <div class="ml-auto flex flex-col justify-between items-end-safe">
+        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-40/100 max-w-25 drop-shadow-md rounded-full imagear12c" id="imgresize" alt="ar12c">
       </div>
-      <a href="https://github.com/ar12c" class="bg-neutral-200/30 hover:bg-neutral-400/40 dark:text-white dark:hover:bg-neutral-400/30 dark:bg-neutral-500/20 text-black font-sans font-bold rounded-full px-6 py-2 items-center backdrop-blur-sm drop-shadow-lg">hub</a>
     </div>
+    <style>
+      #main-content {
+        transition: transform 0.3s ease-in-out, scale 0.3s ease-in-out; /* Smooth transitions */
+        transform-origin: right center; /* Scale from the top-left corner */
+      }
+    
+      .scale-down {
+        scale: 0.8;
+      }
+    
+      .move-left {
+        transform: translateX(30%); /* Adjust the percentage as needed */
+      }
+      
+      
+    </style>
+    
+    <script>
+      const hamburgerMenu = document.getElementById('hamburger-menu');
+      const mainContent = document.getElementById('main-content');
+    
+      hamburgerMenu.addEventListener('click', () => {
+        mainContent.classList.toggle('scale-down');
+        mainContent.classList.toggle('move-left');
+      });
+    </script>
   </header>
+<div id="main-content">
 <div class="h-[20vw] max-h-40"></div>
 <div>
   <div class="px-10 sm:px-15 py-2" id="scrolling">
@@ -145,28 +175,45 @@
       <h1 class="dark:text-white pb-10 text-center">Inspiration and epic themer</h1>
     </div>
   </div> 
+  <div class="flex justify-center items-center pb-20">
+    <button
+      id="confetti-button"
+        popovertarget="my-popover"
+        id="confetti-button"
+        class="bg-neutral-300/30 hover:bg-neutral-400/50 dark:text-white font-bold py-3 px-6
+               transition duration-300 ease-in-out focus:ring-opacity-75
+               backdrop-blur-3xl rounded-full cursor-pointer"
+    >
+        Click Me
+    </button>
+    <div
+        popover
+        id="my-popover"
+        class="bg-white/70 border border-gray-200 shadow-lg p-4
+               min-w-[60%] max-w-[400px] top-1/2 left-1/2
+               -translate-x-1/2 -translate-y-1/2 rounded-2xl backdrop-blur-md"
+    >
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">It is 11/5/2025</h3>
+        <p class="text-gray-700">You know what time it is, <br/>HAPPY MOTHERS DAY!</p>
+        <button
+            popovertarget="my-popover"
+            popoveraction="hide"
+            class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600
+                   focus:outline-none focus:ring-2 focus:ring-blue-400
+                   transition-colors duration-200 cursor-pointer"
+        >
+            Close
+        </button>
+    </div>
+</div>
+
 
   <!--BREAK-->
+</div>
 
-  <div class="fixed -top-[0vw] -left-[57vw] flew flew-col -z-10 -rotate-45 text-[10vw] md:-top-[50vw] lg:-top-[90vw] transition-transform duration-300" >
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-  </div>
   <script src="./src/carfacts.js"></script>
   <script src="./src/sticky.js"></script>
   <script src="./src/Tiltcards.js"></script>
+  <script src="./src/confetti.js"></script>
 </body>
 </html>

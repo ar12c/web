@@ -61,3 +61,17 @@ header.sticky {
   opacity: 1;
   transform: translateY(0);
 }
+
+body {
+  font-family: 'Inter', sans-serif;
+  
+}
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* Allows clicks to pass through */
+  z-index: -1; /* Place behind other elements */
+}
