@@ -75,3 +75,58 @@ body {
   pointer-events: none; /* Allows clicks to pass through */
   z-index: -1; /* Place behind other elements */
 }
+
+/* Liquid Glass Effect */
+
+.liquid-glass {
+  position: relative;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px) saturate(1.2);
+  -webkit-backdrop-filter: blur(15px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  padding: 2rem;
+  max-width: 400px;
+  text-align: center;
+  color: white;
+  z-index: 0;
+}
+
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 200%;
+  animation: shine 5s linear infinite;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: screen;
+  opacity: 0.01;
+  z-index: 0;
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.liquid-glass:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.35);
+}

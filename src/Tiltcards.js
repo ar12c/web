@@ -43,6 +43,6 @@ cards.forEach((card) => {
     card.style.transition = "transform 0.2s ease-in, box-shadow 0.2s ease-in";
     card.style.transform = initialStyles.transform;
     card.style.boxShadow = initialStyles.boxShadow;
-    card.style = null;
+    card.style = null; // Resets all inline styles, be careful if other inline styles are applied.
   });
 });
