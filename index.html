@@ -14,70 +14,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <title>OkemoVail</title>
-  <style>
-    /* Styling for the WebGL canvas to be a background */
-    #webgl-canvas { /* Renamed ID to avoid conflict and be more descriptive */
-        position: fixed; /* Use fixed to cover the whole viewport */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1; /* Place it behind other content */
-        display: block; /* Ensure it behaves as a block element */
-    }
-    /* Ensure the main content is above the canvas */
-    #content-wrapper {
-        position: relative;
-        z-index: 1; /* Place content above the canvas */
-        /* Additional styles from your original HTML's body can be here or in Tailwind */
-    }
-
-    /* Your existing CSS for #icons and .app-icon */
-    #icons {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform-origin: center center;
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        justify-content: center;
-        pointer-events: none; /* Important so elements behind can be clicked */
-        z-index: 0; /* Place it slightly above the canvas but below main content */
-    }
-
-    .app-icon {
-        width: 48px;
-        height: 48px;
-    }
-  </style>
 </head>
-<body class="dark:bg-black min-h-screen w-screen font-sans" id="main-content">
-
-  <!-- WebGL Canvas for the liquid glass effect -->
-  <canvas id="webgl-canvas"></canvas>
-
-  <!-- This #icons div was part of your original HTML, kept as-is -->
-  <div id="icons" style="display: none;">
-    <img src="icons/icon1.png" class="app-icon" alt="App Icon 1" />
-    <img src="icons/icon2.png" class="app-icon" alt="App Icon 2" />
-    <img src="icons/icon3.png" class="app-icon" alt="App Icon 3" />
-  </div>
-
-  <!-- Main content wrapper to ensure it's above the WebGL canvas -->
+<body class="dark:bg-black min-h-screen font-sans sm:w-8/12 md:w-10/12 m-auto" id="main-content">
   <div id="content-wrapper">
-    <header class="w-full z-10 fixed top-0 left-0 px-10 sm:px-15">
-      <div class="w-full py-5 flex flex-row justify-between items-center">
-        <i class="fa-solid fa-bars cursor-pointer" id="hamburger-menu"></i>
-        <div class="ml-auto flex flex-col justify-between items-end-safe">
-          <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-40/100 max-w-25 drop-shadow-md rounded-full imagear12c" id="imgresize" alt="ar12c">
-        </div>
-      </div>
-    </header>
+<header id="dynamicHeader" class="w-17/20 md:w-9/12 mt-4 max-w-7xl z-10 py-2 fixed left-0 right-0 mx-auto pl-2 pr-3 sm:pl-2 transition-all rounded-full duration-300 bg-white/30** backdrop-blur-lg**">
+  <div class="flex flex-row justify-between items-center">
+    <div id="openModalBtn" class="bg-black/10 dark:bg-white/10 px-4 py-2 backdrop-blur-lg rounded-4xl cursor-pointer">
+      <h1 class="bg-gradient-to-r text-xl from-blue-400 via-fuchsia-400 to-blue-400 text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-semibold" id="More">
+        Okemo AI
+      </h1>
+    </div>
+    <div class="ml-auto flex flex-col justify-between items-end-safe">
+      <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-40/100 max-w-25 drop-shadow-md rounded-full imagear12c" id="imgresize" alt="ar12c">
+    </div>
+  </div>
+</header>
+
+<div id="test" class="fixed top-5/20 left-1/2 -translate-x-1/2 h-3/5 flex dark:bg-neutral-600/30 bg-neutral-300/30 rounded-2xl backdrop-blur-lg p-5 w-14/20 max-w-lg z-100">
+  <button id="Close" class="dark:text-white hover:text-neutral-400 font-bold rounded cursor-pointer">
+    <i class="fa-solid fa-circle-xmark"></i>
+  </button>
+  <div class="h-17/20 flex items-center justify-center">
+  <h1 class="text-center text-2xl">Something <a class="bg-gradient-to-r text-5xl from-blue-400 via-fuchsia-400 to-blue-400 text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-semibold">BIG</a> is coming</h1>
+  </div> 
+</div>
+
+
+
     <div id="main-content-actual">
       <div class="h-[20vw] max-h-40"></div>
       <div>
-        <div class="px-10 sm:px-15 py-2" id="scrolling">
+        <div class="px-10 sm:px-15 py-15 sm:py-2" id="scrolling">
           <h1 class="font-sans font-bold dark:text-white text-5xl pb-2 text-shadow-lg">Hello!</h1>
           <div class="flex flex-row justify-between items-end">
             <h1 class="font-sans font-bold dark:text-white text-4xl text-shadow-lg">I'm Okemo<a class="bg-gradient-to-r from-black dark:from-white  via-purple-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-mono">Vail</a></h1>
@@ -101,12 +68,15 @@
             updateHKTTime();
           </script>
         </div>
+
+
+
         <h1 class="px-10 sm:px-15 pt-10 dark:text-white font-bold text-4xl">Interests</h1>
         <div class="grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 mx-10 sm:mx-15 pb-15">
-          <div id="webgl-target-div-1" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card transition-all transition-height" style="position: relative; overflow: hidden;">
-            <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/car.jpg)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
+          <div id="interactive-card" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card transition-all transition-height" style="position: relative; overflow: hidden;">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/car.jpg)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
             <h1 class="dark:text-white font-bold text-4xl px-5">Cats!</h1>
-            <h1 class="pb-5 pt-2 px-5 dark:text-white font-semibold text-2xl">Cats are my favourite animal</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Cats are my favourite animal</h1>
             <div class="px-5 pb-5">
               <div id="fact-container" class="pb-5 dark:text-white opacity-0 transform translate-y-[-10px] duration-300 ease-in-out transition-transform">
               </div>
@@ -115,25 +85,28 @@
               </button>
             </div>
           </div>
-          <div id="webgl-target-div-2" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card">
-            <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/materialyou.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-55 bg-center bg-cover"></div>
+          <div id="webgl-target-div-2" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/materialyou.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-55 bg-center bg-cover"></div>
             <h1 class="dark:text-white font-bold text-4xl px-5">Design Language</h1>
             <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Google Material You design language is one of the most unique design languages in my opinion.</h1>
-            <div alt="car" class="pb-4s bg-[url(/images/transparent.png)] drop-shadow-md mask-t-from-60% mask-t-to-100% mask-b-from-60% mask-b-to-100% h-55 bg-center bg-cover"></div>
-            <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Apple's new visionOS design style is also very unique, I personally like its transparent design</h1>
+            <div class="px-5 pt-5 pb-6">
+              <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://m3.material.io/">
+                Material 3
+              </a>
+            </div>
           </div>
-          <div id="webgl-target-div-3" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card">
-            <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/kiwi.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
+          <div id="webgl-target-div-3" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/kiwi.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
             <h1 class="dark:text-white font-bold text-4xl px-5">3D Software</h1>
             <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Personally, I love to use Blender to model 3D models, it's quite fun to use.</h1>
             <div class="px-5 pb-6">
-              <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://www.youtube.com/@WaterProduc">
+              <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://www.youtube.com/@SochiVail">
                 Learn more!
               </a>
             </div>
           </div>
-          <div id="webgl-target-div-4" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card">
-            <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/sillyo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
+          <div id="webgl-target-div-4" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/sillyo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
             <h1 class="dark:text-white font-bold text-4xl px-5">Theming</h1>
             <h1 class="pb-5 pt-2 px-5 dark:text-white">Something about theming
               <i class="devicon-apple-original"></i>
@@ -149,8 +122,8 @@
         </div>
         <h1 class="pt-10 px-10 sm:px-15 dark:text-white font-bold text-4xl">Skills</h1>
         <div class="py-2 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 px-10 sm:px-15 pb-15">
-          <div id="webgl-target-div-5" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card">
-            <div alt="car" class="rounded-t-2xl pb-4s bg-[url(/images/importokemolight.png)] dark:bg-[url(/images/importokemo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-60 bg-center bg-cover"></div>
+          <div id="webgl-target-div-5" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/importokemolight.png)] dark:bg-[url(/images/importokemo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-60 bg-center bg-cover"></div>
             <h1 class="dark:text-white font-bold text-4xl px-5">Knownledge</h1>
             <h1 class="pb-5 pt-2 px-5 dark:text-white">I have a little bit of coding knownledge, just enough to make this website.</h1>
             <h1 class="pb-5 pt-2 px-5 dark:text-white text-3xl">
@@ -163,8 +136,8 @@
               <i class="devicon-php-plain"></i>
             </h1>
           </div>
-          <div id="webgl-target-div-6" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card">
-            <div alt="car" class="rounded-t-2xl pb-4s bg-[url(https://docs-assets.developer.apple.com/published/712733b3cdd2bab5a2c326c50488aeb3/foundations-icons-intro~dark@2x.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
+          <div id="webgl-target-div-6" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(https://docs-assets.developer.apple.com/published/712733b3cdd2bab5a2c326c50488aeb3/foundations-icons-intro~dark@2x.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
             <h1 class="dark:text-white font-bold text-4xl px-5">Icon making</h1>
             <h1 class="pb-5 pt-2 px-5 dark:text-white">I love controbuting to the community.</h1>
             <h1 class="pb-5 pt-2 px-5 dark:text-white text-3xl">
@@ -173,27 +146,16 @@
             </h1>
           </div>
         </div>
-        <h1 class="pt-10 px-10 sm:px-15 dark:text-white font-bold text-4xl">
-          Miscellaneous <span class="text-xl opacity-30">Update History</span>
-        </h1>
-        <div class="py-2 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 px-10 sm:px-15 pb-15">
-          <div id="webgl-target-div-5" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-2xl flex flex-col duration-300 interactive-card">
-            <div alt="car" class="rounded-[19px] pb-4 mt-4 mb-4 bg-[url(/images/previousversion.png)] drop-shadow-md h-100 w-100 bg-center bg-cover flex items-center justify-center mx-auto"></div>
-            <h2 class="dark:text-white font-bold text-4xl px-5">
-              Update <span class="text-xl opacity-50">2024.11.02</span>
-            </h2>
-            <p class="pb-5 pt-2 px-5 dark:text-white">General website, nothing special</p>
-          </div>
-        </div>
+      
         <h1 class="dark:text-white text-center opacity-30">
           <i class="fa-solid fa-code"></i> ឴឴  Okemo Code · 2025
         </h1>
         <h1 class="pt-10 px-10 sm:px-15 dark:text-white font-bold text-4xl">Special Thanks</h1>
-        <div class="px-15 py-10 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 pb-15 justify-center">
+        <div class="py-10 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 pb-15 justify-center">
           <div class="flex flex-col items-center justify-start">
             <div alt="KCD" class="rounded-full h-40 w-40 bg-cover bg-[url(/images/pfp-min.png)] drop-shadow-md"></div>
             <h1 class="pt-3 font-bold text-2xl bg-gradient-to-r from-black dark:from-white  via-blue-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0">ParasKCD</h1>
-            <h1 class="dark:text-white pb-10 text-center">Literally a CSS god, helped me through my entire journey.</h1>
+            <h1 class="dark:text-white pb-10 text-center">Literally a CSS god</h1>
           </div>
           <div class="flex flex-col items-center justify-start">
             <div alt="htrowii" class="rounded-full h-40 w-40 bg-cover bg-[url(https://cdn.discordapp.com/avatars/413331641109446656/26a7f04e610f4c3ad625eb9357965aca?size=1024)] drop-shadow-md"></div>
@@ -201,362 +163,32 @@
             <h1 class="dark:text-white pb-10 text-center">Inspiration and epic themer</h1>
           </div>
         </div>
-        <h1>
-          A random
-        </h1>
       </div>
     </div>
     <script src="./src/carfacts.js"></script>
     <script src="./src/sticky.js"></script>
-    <script src="./src/confetti.js"></script>
-    <div class="fixed -top-[0vw] -left-[57vw] flew flew-col -z-10 -rotate-45 text-[10vw] md:-top-[50vw] lg:-top-[90vw]">
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-    </div>
+    <script src="./src/Tiltcards.js"></script>
+    <script src="./src/openanimation.js"></script>
+  <div class="fixed -top-[0vw] -left-[57vw] flex flex-col -z-10 -rotate-45 text-[10vw] md:-top-[50vw] lg:-top-[90vw]">
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-600 -z-10 text-nowrap">す · 私はプロカーススが大好きです · 好きです</h1>
+    <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+  </div>
+
   </body>
-
-  <!-- WebGL Shaders and JavaScript -->
-  <script id="fragmentShader" type="x-shader/x-fragment">
-      precision mediump float;
-      uniform float u_dpr;
-      uniform sampler2D u_background;
-      uniform vec2 u_resolution;
-      uniform vec2 u_mouse;
-      uniform vec2 u_size;
-      varying vec2 v_uv;
-
-      // Returns CSS pixels per UV unit for consistent scaling
-      float cssPxUV() {
-          return u_dpr / min(u_resolution.x, u_resolution.y);
-      }
-
-      // Signed Distance Function for a rounded box
-      float roundedBox(vec2 uv, vec2 center, vec2 size, float radius) {
-          vec2 q = abs(uv - center) - size + radius;
-          return length(max(q, 0.0)) - radius;
-      }
-
-      // Gaussian blur for the background texture
-      vec3 blurBackground(vec2 uv, vec2 resolution) {
-          vec3 result = vec3(0.0);
-          float total = 0.0;
-          float radius = 3.0; // Blur radius
-          for (int x = -3; x <= 3; x++) {
-              for (int y = -3; y <= 3; y++) {
-                  vec2 offset = vec2(float(x), float(y)) * 2.0 / resolution;
-                  float weight = exp(-(float(x * x + y * y)) / (2.0 * radius * radius)); // Gaussian weight
-                  result += texture2D(u_background, uv + offset).rgb * weight;
-                  total += weight;
-              }
-          }
-          return result / total;
-      }
-
-      // Alternative SDF for rounded box, used in normal calculation
-      float roundedBoxSDF(vec2 p, vec2 b, float r) {
-          vec2 d = abs(p) - b + vec2(r);
-          return length(max(d, 0.0)) - r;
-      }
-
-      // Calculates the normal vector for the rounded box
-      vec2 getNormal(vec2 uv, vec2 center, vec2 size, float radius) {
-          vec2 eps = vec2(1.0) / u_resolution * 2.0; // Epsilon for numerical differentiation
-          vec2 p = uv - center;
-
-          // Calculate gradient using central difference
-          float dx = (roundedBoxSDF(p + vec2(eps.x, 0.0), size, radius) - roundedBoxSDF(p - vec2(eps.x, 0.0), size, radius)) * 0.5;
-          float dy = (roundedBoxSDF(p + vec2(0.0, eps.y), size, radius) - roundedBoxSDF(p - vec2(0.0, eps.y), size, radius)) * 0.5;
-
-          vec2 gradient = vec2(dx, dy);
-
-          // Blend with diagonal gradients for smoother corners
-          float dxy1 = roundedBoxSDF(p + eps, size, radius);
-          float dxy2 = roundedBoxSDF(p - eps, size, radius);
-          vec2 diag = vec2(dxy1 - dxy2);
-
-          gradient = mix(gradient, diag, 0.25); // Adjust blend factor
-
-          if (length(gradient) < 0.001) {
-              return vec2(0.0); // Avoid division by zero
-          }
-          return normalize(gradient);
-      }
-
-      void main() {
-          vec2 pixelUV = (v_uv * u_resolution) / u_dpr; // Convert UV to pixel coordinates
-          vec2 center = u_mouse;
-          vec2 size = u_size * 0.5; // Half size for SDF calculation
-
-          vec2 local = (pixelUV - center) / size; // Local coordinates within the box
-          local.y *= u_resolution.x / u_resolution.y; // Aspect ratio correction for local coordinates
-
-          float radius = 20.0; // Corner radius of the rounded box
-          float dist = roundedBox(pixelUV, center, size, radius); // Distance from the rounded box outline
-
-          // If outside the effect area, just render the background
-          if (dist > 1.0) {
-              gl_FragColor = texture2D(u_background, v_uv);
-              return;
-          }
-
-          // Radial curvature refraction (center-based distortion)
-          float r = clamp(length(local * 1.0), 0.0, 1.0); // Normalized radial distance from center
-          float curvature = pow(r, 1.0); // Linear curvature (can be adjusted for different lens effects)
-          vec2 domeNormal = normalize(local) * curvature; // Normal vector based on radial curvature
-          float eta = 1.0 / 1.5; // Index of refraction (glass-to-air: 1.0 / 1.5)
-          vec2 incident = -domeNormal; // Incident light direction
-          vec2 refractVec = refract(incident, domeNormal, eta); // Refracted vector
-          vec2 curvedRefractUV = v_uv + refractVec * 0.03; // Apply refraction to UV
-
-          // Edge contour refraction (distortion based on the shape's edge)
-          float contourFalloff = exp(-abs(dist) * 0.4); // Falloff for edge effect
-          vec2 normal = getNormal(pixelUV, center, size, radius); // Get normal at current pixel
-          vec2 domeNormalContour = normal * pow(contourFalloff, 1.5); // Apply falloff to normal
-          vec2 refractVecContour = refract(vec2(0.0), domeNormalContour, eta); // Refract using edge normal
-          vec2 uvContour = v_uv + refractVecContour * 0.35 * contourFalloff; // Apply edge refraction to UV
-
-          // Blend between radial and edge refraction based on proximity to edge and center
-          float edgeWeight = smoothstep(0.0, 1.0, abs(dist)); // Weight based on distance from edge
-          float radialWeight = smoothstep(0.5, 1.0, r); // Weight based on radial distance
-          float combinedWeight = clamp((edgeWeight * 1.0) + (-radialWeight * 0.5), 0.0, 1.0);
-          vec2 refractUV = mix(curvedRefractUV, uvContour, combinedWeight); // Final refracted UV
-
-          vec3 refracted = texture2D(u_background, refractUV).rgb; // Get color from refracted background
-          vec3 blurred = blurBackground(refractUV, u_resolution); // Get blurred color from refracted background
-          vec3 base = mix(refracted, blurred, 0.5); // Blend refracted and blurred
-
-          // Simple shadow effect at the top of the "glass"
-          float edgeFalloff = smoothstep(0.01, 0.0, dist);
-          float verticalBand = 1.0 - smoothstep(-1.5, -0.2, local.y);
-          float topShadow = edgeFalloff * verticalBand;
-          vec3 shadowColor = vec3(0.0);
-          base = mix(base, shadowColor, topShadow * 0.1); // Apply subtle shadow
-
-          // Edge glow effect
-          float edge = 1.0 - smoothstep(0.0, 0.03, dist * -2.0);
-          vec3 glow = vec3(0.7); // Light glow color
-          vec3 color = mix(base, glow, edge * 0.5); // Blend with glow at edges
-
-          float alpha = 0.75; // Overall transparency of the glass effect
-          gl_FragColor = vec4(color, alpha);
-      }
-  </script>
-
-  <script id="vertexShader" type="x-shader/x-vertex">
-      attribute vec2 a_position;
-      varying vec2 v_uv;
-      void main() {
-          v_uv = vec2(a_position.x, -a_position.y) * 0.5 + 0.5; // Convert clip space to UV space
-          gl_Position = vec4(a_position, 0.0, 1.0); // Output vertex position
-      }
-  </script>
-
-  <script>
-      const canvas = document.getElementById("webgl-canvas"); // Changed ID to match HTML
-      // Get WebGL context, prefer antialiasing
-      const gl = canvas.getContext("webgl", { antialias: true }) || canvas.getContext("experimental-webgl", { antialias: true });
-
-      if (!gl) {
-          console.error("WebGL not supported, please use a compatible browser.");
-          // Display a message to the user if WebGL is not supported
-          const body = document.body;
-          body.innerHTML = `
-              <div class="fixed inset-0 flex items-center justify-center bg-gray-900 text-white text-lg p-4 text-center">
-                  Your browser does not support WebGL. Please try a different browser (e.g., Chrome, Firefox, Edge).
-              </div>
-          `;
-          // Do not throw an error here to allow other parts of the page to potentially load
-          // For a full app, you might want to stop all JS execution.
-      }
-
-      // Function to handle canvas resizing and update WebGL viewport
-      function resize() {
-          if (!gl) return; // Prevent errors if WebGL is not supported
-          const dpr = window.devicePixelRatio || 1; // Get device pixel ratio
-          canvas.width = window.innerWidth * dpr;
-          canvas.height = window.innerHeight * dpr;
-          canvas.style.width = window.innerWidth + 'px';
-          canvas.style.height = window.innerHeight + 'px';
-          gl.viewport(0, 0, canvas.width, canvas.height); // Set WebGL viewport to canvas size
-      }
-
-      // Add event listener for window resize
-      window.addEventListener("resize", resize);
-      resize(); // Initial resize call
-
-      // Get shader source codes from script tags
-      const vertexShaderSrc = document.getElementById("vertexShader").textContent;
-      const fragmentShaderSrc = document.getElementById("fragmentShader").textContent;
-
-      // Function to compile a shader
-      function compileShader(type, source) {
-          if (!gl) return null;
-          const shader = gl.createShader(type);
-          gl.shaderSource(shader, source);
-          gl.compileShader(shader);
-          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-              console.error("Shader compile error:", gl.getShaderInfoLog(shader));
-              return null;
-          }
-          return shader;
-      }
-
-      // Compile vertex and fragment shaders
-      const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSrc);
-      const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSrc);
-
-      if (!gl || !vertexShader || !fragmentShader) {
-          console.error("Shader compilation or WebGL context failed. See console for details. Liquid glass effect will not run.");
-          return; // Stop execution if shaders fail to compile or context is missing
-      }
-
-      // Create and link WebGL program
-      const program = gl.createProgram();
-      gl.attachShader(program, vertexShader);
-      gl.attachShader(program, fragmentShader);
-      gl.linkProgram(program);
-      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-          console.error("Program link error:", gl.getProgramInfoLog(program));
-          return; // Stop execution if program fails to link
-      }
-      gl.useProgram(program); // Use the created program
-
-      // Create a buffer for a fullscreen quad
-      const positionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-          -1, -1, // Triangle 1
-          1, -1,
-          -1, 1,
-          -1, 1, // Triangle 2
-          1, -1,
-          1, 1
-      ]), gl.STATIC_DRAW);
-
-      // Get attribute location for position and enable it
-      const positionLocation = gl.getAttribLocation(program, "a_position");
-      gl.enableVertexAttribArray(positionLocation);
-      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-      // Get uniform locations
-      const u_resolution = gl.getUniformLocation(program, "u_resolution");
-      const u_mouse = gl.getUniformLocation(program, "u_mouse");
-      const u_size = gl.getUniformLocation(program, "u_size");
-      const u_dpr = gl.getUniformLocation(program, "u_dpr");
-      const u_background = gl.getUniformLocation(program, "u_background");
-
-
-      // Load background image for the WebGL effect
-      const backgroundTexture = gl.createTexture();
-      const image = new Image();
-      image.crossOrigin = "anonymous"; // Enable cross-origin loading if image is from a different domain
-      // Using a placeholder image for demonstration. You can replace this with a path to a high-res image
-      // if you have a specific background image you want the WebGL effect to refract.
-      image.src = "https://placehold.co/1920x1080/000000/ffffff?text=Background"; // Placeholder
-
-      image.onload = () => {
-          gl.bindTexture(gl.TEXTURE_2D, backgroundTexture);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-          gl.uniform1i(u_background, 0);
-          gl.uniform1f(u_dpr, window.devicePixelRatio || 1);
-
-          requestAnimationFrame(draw); // Start the animation loop
-      };
-
-      image.onerror = () => {
-          console.error("Failed to load WebGL background image. Using a solid color as fallback.");
-          gl.bindTexture(gl.TEXTURE_2D, backgroundTexture);
-          const fallbackColor = new Uint8Array([0, 0, 0, 255]); // Black color
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, fallbackColor);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-          gl.uniform1i(u_background, 0);
-          gl.uniform1f(u_dpr, window.devicePixelRatio || 1);
-          requestAnimationFrame(draw);
-      };
-
-      let targetMouse = [window.innerWidth / 2, window.innerHeight / 2];
-      let currentMouse = [...targetMouse];
-
-      // Removed iconWrapper related logic as it's not needed for the general page effect
-      // and the user's #icons div is display:none;
-
-      // Define default and enlarged sizes for the interactive glass area
-      // These values are somewhat arbitrary but define the "lens" size. Adjust as needed.
-      const effectBaseWidth = 200;
-      const effectBaseHeight = 70;
-      let enlargedSize = [effectBaseWidth * 1.5, effectBaseHeight * 1.5]; // Example: 50% larger on hover
-      const defaultSize = [effectBaseWidth, effectBaseHeight];
-      let targetSize = [...defaultSize];
-      let currentSize = [...targetSize];
-
-      // Mouse move event listener to update target mouse position
-      // This listener is now on the *document* to capture movement anywhere on the page
-      document.addEventListener("mousemove", e => {
-          targetMouse = [e.clientX, e.clientY];
-          // Optionally, expand the glass effect when the mouse moves
-          targetSize = enlargedSize;
-      });
-
-      // Add a mouse leave listener to shrink the glass effect when the mouse leaves the document
-      document.addEventListener("mouseleave", () => {
-          targetSize = defaultSize;
-      });
-
-      let lastTime = performance.now();
-
-      // Main animation loop
-      function draw(now) {
-          if (!gl) return; // Prevent errors if WebGL is not supported
-          const delta = (now - lastTime) / 1000;
-          lastTime = now;
-
-          const speed = 8.0; // Animation speed for mouse and size tweening
-
-          // Smoothly interpolate current mouse position towards target mouse position
-          currentMouse[0] += (targetMouse[0] - currentMouse[0]) * speed * delta;
-          currentMouse[1] += (targetMouse[1] - currentMouse[1]) * speed * delta;
-
-          // Smoothly interpolate current size towards target size
-          currentSize[0] += (targetSize[0] - currentSize[0]) * speed * delta;
-          currentSize[1] += (targetSize[1] - currentSize[1]) * speed * delta;
-
-          resize(); // Ensure canvas is resized if window changes
-
-          gl.clear(gl.COLOR_BUFFER_BIT); // Clear the canvas
-
-          // Pass uniforms to the shader
-          gl.uniform2f(u_resolution, canvas.width, canvas.height);
-          gl.uniform2f(u_mouse, currentMouse[0], currentMouse[1]);
-          gl.uniform2f(u_size, currentSize[0], currentSize[1]);
-          gl.activeTexture(gl.TEXTURE0); // Activate texture unit 0
-          gl.bindTexture(gl.TEXTURE_2D, backgroundTexture); // Bind background texture
-
-          gl.drawArrays(gl.TRIANGLES, 0, 6); // Draw the fullscreen quad (covers the whole canvas)
-
-          requestAnimationFrame(draw); // Request next frame
-      }
-  </script>
-</body>
 </html>
+
+
+<!--meow!-->
