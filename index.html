@@ -30,13 +30,43 @@
   </div>
 </header>
 
-<div id="test" class="fixed top-5/20 left-1/2 -translate-x-1/2 h-3/5 flex dark:bg-neutral-600/30 bg-neutral-300/30 rounded-2xl backdrop-blur-lg p-5 w-14/20 max-w-lg z-100">
-  <button id="Close" class="dark:text-white hover:text-neutral-400 font-bold rounded cursor-pointer">
+<div id="test" class="fixed top-5/20 left-1/2 -translate-x-1/2 h-3/5 flex rounded-3xl p-5 w-14/20 max-w-lg z-100 outline-2  outline-neutral-800 dark:online-neutral-200">
+  <button id="Close" class="absolute top-3 left-4 dark:text-white hover:text-neutral-400 font-bold rounded cursor-pointer z-20">
     <i class="fa-solid fa-circle-xmark"></i>
   </button>
-  <div class="h-17/20 flex items-center justify-center">
-  <h1 class="text-center text-2xl dark:text-white">Something <a class="bg-gradient-to-r text-5xl from-blue-400 via-fuchsia-400 to-blue-400 text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-semibold">BIG</a> is coming</h1>
-  </div> 
+  
+  <div class="absolute inset-0 flex items-center justify-center z-10">
+    <div>
+      <h1 class="text-center text-2xl dark:text-white">Something 
+        <a class="bg-gradient-to-r text-5xl from-blue-400 via-fuchsia-400 to-blue-400 text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-semibold">BIG</a> is coming
+      </h1>
+    </div>
+  </div>
+
+  <div class="liquidglass-effect absolute inset-0 z-0 rounded-3xl"></div>
+  
+  <svg class="absolute pointer-events-none z-0 dark:">
+    <filter id="glass-distortion">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.01 0.01"
+        numOctaves="1"
+        seed="1000"
+        result="turbulence"
+      />
+      <feGaussianBlur
+        in="turbulence"
+        stdDeviation="60"
+        result="softMap"
+      />
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="softMap"
+        scale="150"
+      />
+    </filter>
+  </svg>
+  
 </div>
 
 
@@ -146,7 +176,8 @@
             </h1>
           </div>
         </div>
-      
+
+
         <h1 class="dark:text-white text-center opacity-30">
           <i class="fa-solid fa-code"></i> ឴឴  Okemo Code · 2025
         </h1>
@@ -158,7 +189,7 @@
             <h1 class="dark:text-white pb-10 text-center">Literally a CSS god</h1>
           </div>
           <div class="flex flex-col items-center justify-start">
-            <div alt="htrowii" class="rounded-full h-40 w-40 bg-cover bg-[url(https://cdn.discordapp.com/avatars/413331641109446656/26a7f04e610f4c3ad625eb9357965aca?size=1024)] drop-shadow-md"></div>
+            <div alt="htrowii" class="rounded-full h-40 w-40 bg-cover bg-[url(https://cdn.discordapp.com/avatars/413331641109446656/2a50cd1fff701126bb3e256bb3d05e10.png?size=512)] drop-shadow-md"></div>
             <h1 class="pt-3 font-bold text-2xl bg-gradient-to-r from-black dark:from-white  via-purple-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0">sacrosanctuary</h1>
             <h1 class="dark:text-white pb-10 text-center">Inspiration and epic themer</h1>
           </div>
@@ -169,6 +200,7 @@
     <script src="./src/sticky.js"></script>
     <script src="./src/Tiltcards.js"></script>
     <script src="./src/openanimation.js"></script>
+    <script src="./src/liquidglass.js"></script>
   <div class="fixed -top-[0vw] -left-[57vw] flex flex-col -z-10 -rotate-45 text-[10vw] md:-top-[50vw] lg:-top-[90vw]">
     <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
     <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
