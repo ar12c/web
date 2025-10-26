@@ -1,6 +1,33 @@
 @import "tailwindcss";
 @import "tailwindcss/base";
 @tailwind utilities;
+/* Vertical scrolling gradient */
+.animate-gradient {
+  min-height: 200px;
+
+  /* Vertical gradient so colors stack top→bottom */
+  background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #ff6b6b);
+
+  /* Make the gradient taller to create room to scroll */
+  background-size: 100% 300%;
+
+  /* Animate background-position's Y axis */
+  animation: animatedgradientY 6s ease infinite;
+}
+
+@keyframes animatedgradientY {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 0% 150%;
+  }
+  100% {
+    background-position: 0% 300%;
+  }
+}
+
+
 
   .animate-gradient2 {
     background-size: 200%;
@@ -66,85 +93,30 @@ body {
   font-family: 'Inter', sans-serif;
   
 }
-#confetti-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none; /* Allows clicks to pass through */
-  z-index: -1; /* Place behind other elements */
+
+/* styles.css */
+/* Existing */
+.fade-in-once {
+  animation: fadeInOnce 500ms ease-out forwards;
 }
 
-/* Liquid Glass Effect */
-
-.liquid-glass {
-  position: relative;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px) saturate(1.2);
-  -webkit-backdrop-filter: blur(15px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
-  overflow: hidden;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  padding: 2rem;
-  max-width: 400px;
-  text-align: center;
-  color: white;
-  z-index: 0;
+@keyframes fadeInOnce {
+  0% { opacity: 0; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-.liquid-glass::before {
-  content: "";
-  position: absolute;
-  background: linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    transparent 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
-  background-size: 200% 200%;
-  animation: shine 5s linear infinite;
-  pointer-events: none;
-  border-radius: inherit;
-  mix-blend-mode: screen;
-  opacity: 0.01;
-  z-index: 0;
+/* New: Fade out */
+.fade-out-once {
+  animation: fadeOutOnce 400ms ease-in forwards;
 }
 
-@keyframes shine {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+@keyframes fadeOutOnce {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.98); }
 }
 
-.liquid-glass:hover {
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 12px 48px rgba(0, 0, 0, 0.2),
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.35);
-}
-
-/* Define the keyframes for the animation */
-@keyframes animate-gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
-.liquidglass-effect {
-  position: absolute;
-  inset:0;
-  backdrop-filter: blur(15px);
-  filter: url(#glass-distortion);
-  overflow: hidden;
+/* Optional: reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-once,
+  .fade-out-once { animation: none !important; }
 }

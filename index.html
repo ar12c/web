@@ -9,7 +9,6 @@
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
   <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
   <meta content="OkemoVail · ar12c" property="og:title">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,12 +16,14 @@
 </head>
 <body class="dark:bg-black min-h-screen font-sans sm:w-8/12 md:w-10/12 m-auto" id="main-content">
   <div id="content-wrapper">
-<header id="dynamicHeader" class="w-17/20 md:w-9/12 mt-4 max-w-7xl z-10 py-2 fixed left-0 right-0 mx-auto pl-2 pr-3 sm:pl-2 transition-all rounded-full duration-300 transparent backdrop-blur-lg**">
+<header id="dynamicHeader" class="w-20/23 md:w-9/12 mt-4 max-w-7xl z-10 py-2 fixed left-0 right-0 mx-auto pl-2 pr-3 sm:pl-2 transition-all rounded-full duration-300 transparent backdrop-blur-lg**">
   <div class="flex flex-row justify-between items-center">
     <div id="openModalBtn" class="bg-black/10 dark:bg-white/10 px-4 py-2 backdrop-blur-lg rounded-4xl cursor-pointer">
-      <h1 class="bg-gradient-to-r text-xl from-blue-400 via-fuchsia-400 to-blue-400 text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-semibold" id="More">
-        Vail AI
-      </h1>
+<h1 class="bg-gradient-to-r text-xl  font-semibold" id="More">
+  Auriga
+    <img src="./src/Vailailogo.svg" alt="Vailai logo" class="inline-block w-6 h-6 mb-0.5 align-middle" />
+</h1>
+
     </div>
     <div class="ml-auto flex flex-col justify-between items-end-safe">
       <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-40/100 max-w-25 drop-shadow-md rounded-full imagear12c" id="imgresize" alt="ar12c">
@@ -30,55 +31,24 @@
   </div>
 </header>
 
-<div id="test" class="fixed top-5/20 left-1/2 -translate-x-1/2 h-3/5 flex rounded-3xl p-5 w-14/20 max-w-lg z-100 outline-2  outline-neutral-800 dark:online-neutral-200">
-  <button id="Close" class="absolute top-3 left-4 dark:text-white hover:text-neutral-400 font-bold rounded cursor-pointer z-20">
+<div id="test" class="fixed inset-0 flex z-[100] w-screen h-screen backdrop-blur-3xl transition transition-filter duration-5000 fade-in-once">
+  <button id="Close" class="absolute top-3 left-4 z-20 rounded font-bold cursor-pointer dark:text-white hover:text-neutral-400">
     <i class="fa-solid fa-circle-xmark"></i>
   </button>
-  
-  <div class="absolute inset-0 flex items-center justify-center z-10">
-    <div>
-      <h1 class="text-center text-2xl dark:text-white">Something 
-        <a class="bg-gradient-to-r text-5xl from-blue-400 via-fuchsia-400 to-blue-400 text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-semibold">BIG</a> is coming
-      </h1>
-    </div>
+  <div class="flex justify-between h-screen w-screen">
+    <div class="h-full w-1/5 mask-r-from-0% animate-gradient mask-t-from-30%"></div>
+    <h1 class="flex justify-center items-center font-semibold w-screen h-screen text-3xl absolute z--10 ">Get ready to meet AI again</h1>
+    <div class="h-full w-1/5 mask-l-from-0% animate-gradient mask-t-from-30%"></div>
   </div>
-
-  <div class="liquidglass-effect absolute inset-0 z-0 rounded-3xl"></div>
-  
-  <svg class="absolute pointer-events-none z-0 dark:">
-    <filter id="glass-distortion">
-      <feTurbulence
-        type="fractalNoise"
-        baseFrequency="0.01 0.01"
-        numOctaves="1"
-        seed="1000"
-        result="turbulence"
-      />
-      <feGaussianBlur
-        in="turbulence"
-        stdDeviation="60"
-        result="softMap"
-      />
-      <feDisplacementMap
-        in="SourceGraphic"
-        in2="softMap"
-        scale="150"
-      />
-    </filter>
-  </svg>
-  
 </div>
-
-
 
     <div id="main-content-actual">
       <div class="h-[20vw] max-h-40"></div>
       <div>
         <div class="px-10 sm:px-15 py-15 sm:py-2" id="scrolling">
-          <h1 class="font-sans font-bold dark:text-white text-5xl pb-6 text-shadow-lg">Hej!</h1>
+          <h1 class="font-sans font-bold dark:text-white text-5xl pb-6 text-shadow-lg">Hey!</h1>
           <div class="flex flex-row justify-between items-end">
-            <h1 class="font-sans font-bold dark:text-white text-4xl text-shadow-lg">I'm Okemo<a class="bg-gradient-to-r from-black dark:from-white  via-purple-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-mono">Vail</a></h1>
-            <h1 class="dark:text-white opacity-20 mr-auto ml-2 text-xl">ar12c</h1>
+            <h1 class="font-sans font-bold dark:text-white text-4xl text-shadow-lg">I'm Okemo<a class="bg-gradient-to-r from-black dark:from-white via-rose-400 to-black dark:from-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-mono">Vail</a></h1>
           </div>
           <h1 class="dark:text-white pt-2 text-shadow-lg"><i class="fa-solid fa-location-dot"></i> Hong Kong</h1>
           <div id="hkt-time" class="text-lg dark:text-white"></div>
@@ -200,7 +170,7 @@
     <script src="./src/sticky.js"></script>
     <script src="./src/Tiltcards.js"></script>
     <script src="./src/openanimation.js"></script>
-    <script src="./src/liquidglass.js"></script>
+    <script src="./src/bleh.js"></script>
   <div class="fixed -top-[0vw] -left-[57vw] flex flex-col -z-10 -rotate-45 text-[10vw] md:-top-[50vw] lg:-top-[90vw]">
     <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
     <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
