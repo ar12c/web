@@ -1,6 +1,101 @@
-@import "tailwindcss";
-@import "tailwindcss/base";
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  /* Entrance: fade in from blur and slide up */
+  @keyframes fade-in-blur {
+    0% {
+      opacity: 0;
+      filter: blur(16px);
+      transform: translateY(12px);
+    }
+    60% {
+      opacity: 1;
+      filter: blur(4px);
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+  }
+
+  /* Color transition: gradient -> solid color */
+  @keyframes gradient-to-solid-light {
+    0% {
+      /* Start with a colorful gradient visible in text */
+      background: linear-gradient(180deg, #ff6b6b, #f06595, #845ef7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    100% {
+      /* End as solid black in light mode */
+      background: none;
+      color: #000000;
+    }
+  }
+
+  @keyframes gradient-to-solid-dark {
+    0% {
+      background: linear-gradient(180deg, #a5b4fc, #93c5fd, #5eead4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    100% {
+      background: none;
+      color: #ffffff;
+    }
+  }
+
+  /* Utility classes */
+  .animate-fade-in-blur {
+    animation: fade-in-blur 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: opacity, filter, transform;
+  }
+
+  .animate-gradient-to-solid-light {
+    animation: gradient-to-solid-light 900ms ease-out 200ms both;
+    will-change: color, background;
+  }
+
+  .dark .animate-gradient-to-solid-dark {
+    animation: gradient-to-solid-dark 900ms ease-out 200ms both;
+    will-change: color, background;
+  }
+}
+
+
+  .animate-fade-in-blur {
+    animation: fade-in-blur 1000ms linear both;
+    will-change: opacity, filter, transform;
+  }
+}
+
+
+  /* Vertical gradient sweep from bottom to top */
+  @keyframes gradient-sweep-y {
+    0% {
+      background-position: 50% 120%;
+    }
+    50% {
+      background-position: 50% 50%;
+    }
+    100% {
+      background-position: 50% -20%;
+    }
+  }
+
+  .animate-gradient-sweep-y {
+    background-size: 100% 300%;
+    animation: gradient-sweep-y 2.2s ease-out 200ms both;
+    will-change: background-position;
+  }
+
+
 /* Vertical scrolling gradient */
 .animate-gradient {
   min-height: 200px;
@@ -69,8 +164,7 @@ header {
 
 header.sticky {
   transition: all 0.2s ease-in-out;
-  background: rgba(125, 125, 125, 0.1);
-  backdrop-filter: blur(10px);
+  background: rgba(125, 125, 125, 0);
   position: fixed;
 }
 
@@ -103,20 +197,4 @@ body {
 @keyframes fadeInOnce {
   0% { opacity: 0; transform: scale(0.98); }
   100% { opacity: 1; transform: scale(1); }
-}
-
-/* New: Fade out */
-.fade-out-once {
-  animation: fadeOutOnce 400ms ease-in forwards;
-}
-
-@keyframes fadeOutOnce {
-  0% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.98); }
-}
-
-/* Optional: reduce motion */
-@media (prefers-reduced-motion: reduce) {
-  .fade-in-once,
-  .fade-out-once { animation: none !important; }
 }
