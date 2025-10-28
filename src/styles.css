@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
   /* Vertical gradient sweep from bottom to top */
   @keyframes gradient-sweep-y {
     0% {
@@ -29,7 +27,7 @@
   min-height: 200px;
 
   /* Vertical gradient so colors stack top→bottom */
-  background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #ff6b6b);
+  background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
 
   /* Make the gradient taller to create room to scroll */
   background-size: 100% 300%;
@@ -43,7 +41,32 @@
     background-position: 0% 0%;
   }
   50% {
-    background-position: 0% 150%;
+    background-position: 0% 110%;
+  }
+  100% {
+    background-position: 0% 300%;
+  }
+}
+
+.animate-gradient-alt {
+  min-height: 200px;
+
+  /* Vertical gradient so colors stack top→bottom */
+  background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
+
+  /* Make the gradient taller to create room to scroll */
+  background-size: 100% 300%;
+
+  /* Animate background-position's Y axis */
+  animation: animatedgradientY2 7s ease infinite;
+}
+
+@keyframes animatedgradientY2 {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 0% 110%;
   }
   100% {
     background-position: 0% 300%;
@@ -116,13 +139,51 @@ body {
   
 }
 
-/* styles.css */
-/* Existing */
-.fade-in-once {
-  animation: fadeInOnce 500ms ease-out forwards;
+
+
+.fade-in-blur {
+  animation: fadeInBlur 0.4s ease-out forwards;
 }
 
-@keyframes fadeInOnce {
-  0% { opacity: 0; transform: scale(0.98); }
-  100% { opacity: 1; transform: scale(1); }
+@keyframes fadeInBlur {
+  0% { 
+    opacity: 0; 
+    backdrop-filter: blur(0px); 
+    pointer-events: none; 
+  }
+  100% { 
+    opacity: 1; 
+    backdrop-filter: blur(51px); 
+    pointer-events: auto; 
+  }
+}
+
+/* Text fade + blur - This block applies to ALL modes */
+.fade-in-text {
+  background: linear-gradient(90deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #54a0ff, #a454ff,#ff6b6b);
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInText 2s ease-out forwards;
+}
+
+/* Keyframes must be defined globally, outside the .dark selector */
+@keyframes fadeInText {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+    filter: blur(10px);
+    background-position: 0% 0%;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    background-position: 200% 0%;
+  }
 }
