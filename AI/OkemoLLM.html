@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OkemoLLM</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="/src/output.css" rel="stylesheet">
-  <link href="/AI/thing.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
   <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
@@ -15,39 +13,33 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen relative overflow-hidden">
+<body class="bg-gray-100 min-h-screen relative overflow-hidden font-inter">
 
-<header class="w-screen py-3 px-2 z-10 fixed left-0 right-0 mx-auto transition-all duration-300">
-  <div class="flex flex-row justify-between items-center z-10">
-    <div id="openModalBtn" class="bg-black/5 dark:bg-white/10 px-4 z-10 py-2 rounded-4xl cursor-pointer">
-        <img src="/src/Vailailogo.svg" alt="Vailai logo" class="z-10 inline-block w-10 h-10 mb-0.5 align-middle" />
+  <header class="fixed left-0 right-0 top-0 w-screen py-3 px-3 z-10">
+    <div class="flex items-center justify-center">
+        <img src="/src/Vailailogo.svg" alt="Vailai logo" class="inline-block w-10 h-10 mb-0.5 align-middle rounded-full" />
+    </div>
+  </header>
+
+  <main class="fixed inset-0 z-0 grid place-items-center text-center">
+    <div class="px-6">
+      <h1 class="text-3xl font-bold mb-2 text-neutral-800">OkemoLLM is on the way! Deployment in progress...</h1>
+      <h2 class="text-lg text-gray-600">Please check back on a different date.</h2>
+    </div>
+  </main>
+
+  <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-5">
+    <div class="bg-white rounded-full shadow-xl p-3 flex items-center gap-2 border border-gray-200">
+      <input 
+        type="text" 
+        placeholder="bleh" 
+        class="flex-1 bg-gray-50 rounded-full px-5 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-neutral-500 text-gray-900 placeholder:text-gray-400"
+      />
+      <button class="rounded-full bg-neutral-800 hover:bg-neutral-700 text-white w-10 h-10 flex items-center justify-center cursor-not-allowed transition duration-150">
+        <i class="fa-solid fa-paper-plane text-sm"></i>
+      </button>
     </div>
   </div>
-</header>
-
-    <div class="h-full w-1/5 mask-l-from-0% animate-gradient-alt mask-t-from-10% mask-b-from-80%"></div>
-    <div class="h-full w-1/5 mask-l-from-0% animate-gradient-alt mask-t-from-10% mask-b-from-80%"></div>
-
-
-  <div class="flex flex-col justify-center items-center flex-1 text-center px-4 pb-24 relative z-10">
-    <h1 class="text-2xl font-semibold mb-2">OkemoLLM is currently work in progress</h1>
-    <h1 class="text">Come back on a different date</h1>
-  </div>
-
-<div class="fixed bottom-5 left-2/2 -translate-x-1/2 z-50 w-full max-w-2xl px-6">
-  <div class="bg-white rounded-full shadow-lg p-4 flex items-center space-x-2">
-    <input 
-      type="text" 
-      placeholder="Type your message..." 
-      class="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-500 text-gray-900"
-    />
-    <a class="rounded-full bg-neutral-800 hover:bg-neutral-300 text-white px-4 py-2 cursor-not-allowed">
-      <i class="fa-solid fa-paper-plane"></i>
-    </a>
-  </div>
-</div>
-
-
 
 </body>
 </html>
