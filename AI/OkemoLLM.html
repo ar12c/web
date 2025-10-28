@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OkemoLLM</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="./src/input.css" rel="stylesheet">
-  <link href="./src/output.css" rel="stylesheet">
-  <link href="/AI/styles.css" rel="stylesheet">
+  <link href="/src/output.css" rel="stylesheet">
+  <link href="/AI/thing.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
   <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
@@ -17,25 +16,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen relative overflow-hidden">
-  <!-- Center Content -->
+
+<header class="w-screen py-3 px-2 z-10 fixed left-0 right-0 mx-auto transition-all duration-300">
+  <div class="flex flex-row justify-between items-center z-10">
+    <div id="openModalBtn" class="bg-black/5 dark:bg-white/10 px-4 z-10 py-2 rounded-4xl cursor-pointer">
+        <img src="/src/Vailailogo.svg" alt="Vailai logo" class="z-10 inline-block w-10 h-10 mb-0.5 align-middle" />
+    </div>
+  </div>
+</header>
+
+    <div class="h-full w-1/5 mask-l-from-0% animate-gradient-alt mask-t-from-10% mask-b-from-80%"></div>
+    <div class="h-full w-1/5 mask-l-from-0% animate-gradient-alt mask-t-from-10% mask-b-from-80%"></div>
+
+
   <div class="flex flex-col justify-center items-center flex-1 text-center px-4 pb-24 relative z-10">
     <h1 class="text-2xl font-semibold mb-2">OkemoLLM is currently work in progress</h1>
     <h1 class="text">Come back on a different date</h1>
   </div>
 
-  <!-- Input Box at the Bottom -->
-  <div class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xl px-5">
-    <div class="bg-white rounded-full shadow-lg p-4 flex items-center space-x-2">
-      <input 
-        type="text" 
-        placeholder="Type your message..." 
-        class="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-500 text-gray-900"
-      />
-      <a class="rounded-full bg-neutral-800 hover:bg-neutral-300 text-white px-4 py-2 cursor-not-allowed">
-        <i class="fa-solid fa-paper-plane"></i>
-      </a>
-    </div>
+<div class="fixed bottom-5 left-2/2 -translate-x-1/2 z-50 w-full max-w-2xl px-6">
+  <div class="bg-white rounded-full shadow-lg p-4 flex items-center space-x-2">
+    <input 
+      type="text" 
+      placeholder="Type your message..." 
+      class="flex-1 bg-gray-100 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-neutral-500 text-gray-900"
+    />
+    <a class="rounded-full bg-neutral-800 hover:bg-neutral-300 text-white px-4 py-2 cursor-not-allowed">
+      <i class="fa-solid fa-paper-plane"></i>
+    </a>
   </div>
+</div>
+
+
 
 </body>
 </html>
