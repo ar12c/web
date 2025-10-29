@@ -242,6 +242,9 @@
   .inset-0 {
     inset: calc(var(--spacing) * 0);
   }
+  .inset-x-0 {
+    inset-inline: calc(var(--spacing) * 0);
+  }
   .inset-y-0 {
     inset-block: calc(var(--spacing) * 0);
   }
@@ -260,11 +263,17 @@
   .top-50 {
     top: calc(var(--spacing) * 50);
   }
+  .top-\[90vh\] {
+    top: 90vh;
+  }
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
   .bottom-1\/5 {
     bottom: calc(1/5 * 100%);
+  }
+  .bottom-\[10vh\] {
+    bottom: 10vh;
   }
   .-left-\[57vw\] {
     left: calc(57vw * -1);
@@ -277,6 +286,9 @@
   }
   .left-4 {
     left: calc(var(--spacing) * 4);
+  }
+  .left-50 {
+    left: calc(var(--spacing) * 50);
   }
   .-z-10 {
     z-index: calc(10 * -1);
@@ -395,6 +407,9 @@
   .inline-block {
     display: inline-block;
   }
+  .inline-flex {
+    display: inline-flex;
+  }
   .h-6 {
     height: calc(var(--spacing) * 6);
   }
@@ -500,6 +515,10 @@
   }
   .-translate-y-1 {
     --tw-translate-y: calc(var(--spacing) * -1);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .-translate-y-\[90vh\] {
+    --tw-translate-y: calc(90vh * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .translate-y-\[-10px\] {
