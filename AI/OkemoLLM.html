@@ -1,45 +1,135 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OkemoLLM</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+  <link rel="stylesheet" href="/src/output.css"/>
+  <link rel="stylesheet" href="/AI/thing.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"/>
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
   <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
   <meta content="OkemoVail" property="og:title">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Optional: subtle placeholder blink for the caret */
+    .placeholder-caret::placeholder {
+      animation: placeholderBlink 1s steps(2, start) infinite;
+    }
+    @keyframes placeholderBlink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0.7; }
+    }
+
+    /* Smooth scrolling for in-page anchors */
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen relative overflow-hidden font-inter">
+<body class="bg-gray-100 min-h-screen font-inter">
 
-  <header class="fixed left-0 right-0 top-0 w-screen py-3 px-3 z-10">
-    <div class="flex items-center justify-center">
-        <img src="/src/Vailailogo.svg" alt="Vailai logo" class="inline-block w-10 h-10 mb-0.5 align-middle rounded-full" />
-    </div>
-  </header>
+  <!-- Decorative gradient panels behind content -->
+  <div class="pointer-events-none fixed inset-y-0 left-0 w-1/5 mask-r-from-0% animate-gradient mask-t-from-10% mask-b-from-60%"></div>
+  <div class="pointer-events-none fixed inset-y-0 right-0 w-1/5 mask-l-from-0% animate-gradient mask-t-from-10% mask-b-from-60%"></div>
 
-  <main class="fixed inset-0 z-0 grid place-items-center text-center">
-    <div class="px-6">
-      <h1 class="text-3xl font-bold mb-2 text-neutral-800">OkemoLLM is on the way! Deployment in progress...</h1>
-      <h2 class="text-lg text-gray-600">Please check back on a different date.</h2>
+  <!-- Centered main content with input in the middle -->
+  <main class="min-h-screen flex flex-col items-center justify-center text-center px-6">
+    <header class="w-full flex items-center justify-center mb-4">
+      <img src="/src/Vailailogo.svg" alt="Vailai logo" class="w-12 h-12 rounded-full"/>
+    </header>
+
+    <h1 class="text-3xl font-bold text-neutral-800 mb-6">
+      Introducing OkemoLLM
+    </h1>
+
+    <!-- Centered input -->
+    <div class="w-full z-100">
+      <div class="mx-auto w-full max-w-sm bg-white rounded-full shadow-xl p-2 flex items-center gap-2 border border-gray-200">
+        <input
+          id="aiPromptInput"
+          type="text"
+          placeholder="Ask me anything..."
+          class="placeholder-caret flex-1 bg-gray-50 rounded-full px-5 py-2 text-base focus:outline-none focus:ring-2 focus:ring-neutral-500 text-gray-900 placeholder:text-gray-400"
+          aria-label="Ask OkemoLLM"
+        />
+        <a href="/AI/chat.html" class="cursor-pointer rounded-full bg-neutral-800 hover:bg-neutral-700 text-white w-10 h-10 flex items-center justify-center transition duration-150" aria-label="Send">
+          <i class="fa-solid fa-arrow-up"></i>
+        </a>
+      </div>
     </div>
+
+    <!-- Try button -->
+    <a href="/AI/chat.html" 
+       class="absolute top-17/20 transform -translate-y-1 text-md
+              py-2.5 px-5 font-medium text-gray-900 bg-white 
+              rounded-full border border-gray-200 hover:bg-gray-100 
+              focus:outline-none focus:ring-4 focus:ring-gray-100 cursor-pointer shadow-sm"
+       aria-label="Try OkemoLLM Chat">
+      Try <i class="fa-solid fa-arrow-up-right-from-square"></i>
+    </a>
+
+    <!-- Features button directly beneath the Try button -->
   </main>
 
-  <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-5">
-    <div class="bg-white rounded-full shadow-xl p-3 flex items-center gap-2 border border-gray-200">
-      <input 
-        type="text" 
-        placeholder="bleh" 
-        class="flex-1 bg-gray-50 rounded-full px-5 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-neutral-500 text-gray-900 placeholder:text-gray-400"
-      />
-      <button class="rounded-full bg-neutral-800 hover:bg-neutral-700 text-white w-10 h-10 flex items-center justify-center cursor-not-allowed transition duration-150">
-        <i class="fa-solid fa-paper-plane text-sm"></i>
-      </button>
+  <!-- Features section -->
+<!-- Centered features section -->
+<section id="features" class="relative min-h-screen w-full px-6 py-20 bg-white flex items-center justify-center">
+  <div class="mx-auto max-w-6xl w-full">
+    <div class="text-center mb-12">
+      <h2 class="text-2xl sm:text-3xl font-bold text-neutral-900">OkemoLLM Features</h2>
+      <p class="mt-3 text-neutral-600">Built for my fun</p>
+    </div>
+
+    <!-- Features grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+      <!-- Feature 1 -->
+      <div class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition w-full max-w-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-800 text-white">
+            <i class="fa-solid fa-rocket"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-neutral-900">Fast Inference</h3>
+        </div>
+        <p class="mt-3 text-neutral-600">
+          Okemo tech. Fast, but shitty
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition w-full max-w-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-800 text-white">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-neutral-900">Privacy</h3>
+        </div>
+        <p class="mt-3 text-neutral-600">
+          0 Privacy
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md transition w-full max-w-sm">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-800 text-white">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-neutral-900">Open source</h3>
+        </div>
+<a href="https://huggingface.co/spaces/ar12c/okemo2" class="block pt-3 text-neutral-600 hover:text-neutral-300">
+  <u>it's open source bro</u>
+</a>
+
+      </div>
     </div>
   </div>
 
-</body>
-</html>
+  <!-- External script for typing animation -->
+  <script src="/AI/typewriter.js" defer></script>
+</section>

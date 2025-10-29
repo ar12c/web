@@ -1,67 +1,12 @@
-    /* Vertical scrolling gradient */
-    .animate-gradient {
-      background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
-      background-size: 100% 300%;
-      animation: gradientScroll 6s ease infinite;
-    }
-
-    @keyframes gradientScroll {
-      0% { background-position: 0% 0%; }
-      50% { background-position: 0% 110%; }
-      100% { background-position: 0% 300%; }
-    }
-
-        /* Vertical scrolling gradient */
-    .animate-gradient-alt {
-      background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
-      background-size: 100% 300%;
-      animation: gradientScroll 7s ease infinite;
-    }
-
-    @keyframes gradientScroll {
-      0% { background-position: 0% 0%; }
-      50% { background-position: 0% 110%; }
-      100% { background-position: 0% 300%; }
-    }
-
-    .left-gradient {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 16.666%; /* 1/6 */
-  background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
-  background-size: 100% 300%;
-  animation: gradient-scroll 6s ease infinite;
-
-  /* Manual top/bottom + right mask */
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 90%), 
-                      linear-gradient(to right, rgba(0,0,0,1) 100%, rgba(0,0,0,0) 0%);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%, 100% 100%;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 90%), 
-              linear-gradient(to right, rgba(0,0,0,1) 100%, rgba(0,0,0,0) 0%);
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%, 100% 100%;
+@keyframes gradientScrollFast {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 0% 110%; }
+  100% { background-position: 0% 300%; }
 }
 
-.right-gradient {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 16.666%; /* 1/6 */
-  background: linear-gradient(180deg, #54a0ff, #a454ff, #ff6b6b, #f7d794, #54a0ff);
+/* Generic animated gradient utility */
+.animate-gradient {
+  background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
   background-size: 100% 300%;
-  animation: gradient-scroll 8s ease infinite reverse;
-
-  /* Manual top/bottom + left mask */
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 90%), 
-                      linear-gradient(to left, rgba(0,0,0,1) 100%, rgba(0,0,0,0) 0%);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 100%, 100% 100%;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 10%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 90%), 
-              linear-gradient(to left, rgba(0,0,0,1) 100%, rgba(0,0,0,0) 0%);
-  mask-repeat: no-repeat;
-  mask-size: 100% 100%, 100% 100%;
+  animation: gradientScrollFast 8s ease infinite;
 }

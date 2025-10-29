@@ -1,205 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="./src/output.css" rel="stylesheet">
-<link href="./src/styles.css" rel="stylesheet">
-<link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
-<script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
-<link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./src/output.css" rel="stylesheet">
+  <link href="./src/styles.css" rel="stylesheet">
+  <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+  <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
   <meta content="OkemoVail" property="og:title">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>OkemoVail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>OkemoVail</title>
 </head>
 <body class="dark:bg-black min-h-screen font-sans sm:w-8/12 md:w-10/12 m-auto" id="main-content">
-<div id="content-wrapper">
-<header class="w-screen py-6 px-9 z-10 fixed left-0 right-0 mx-auto transition-all duration-300">
-<div class="flex flex-row justify-between items-center z-10">
-<div id="openModalBtn" class="bg-black/5 dark:bg-white/10 px-4 z-10 py-2 rounded-4xl cursor-pointer backdrop-blur-sm shadow-lg">
-<h1 class="z-10 bg-gradient-to-r text-xl font-semibold dark:text-white" id="More">
-  OkemoLLM
-<img src="./src/Vailailogo.svg" alt="Vailai logo" class="z-10 inline-block w-6 h-6 mb-0.5 align-middle dark:invert dark:brightness-110 dark:contrast-100" />
-</h1>
-</div>
-<div class="ml-auto flex flex-col justify-between items-end-safe">
-<img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-40/100 max-w-25 drop-shadow-md rounded-full imagear12c" id="imgresize" alt="ar12c">
-</div>
-</div>
+  <div id="content-wrapper">
+
+<header class="w-screen py-6 px-10 pr-14 z-10 fixed left-0 right-0 mx-auto transition-all duration-300">
+  <div class="flex flex-row justify-between items-center z-10">
+    <div id="openModalBtn" class="bg-black/5 dark:bg-white/10 px-4 z-10 py-2 rounded-4xl cursor-pointer backdrop-blur-sm shadow-lg">
+      <h1 class="z-10 bg-gradient-to-r text-xl font-semibold dark:text-white" id="More">
+        OkemoLLM
+        <img src="./src/Vailailogo.svg" alt="Vailai logo" class="z-10 inline-block w-6 h-6 mb-0.5 align-middle dark:invert dark:brightness-110 dark:contrast-100" />
+      </h1>
+    </div>
+    <div class="ml-auto flex flex-col justify-between items-end-safe">
+      <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-40/100 max-w-25 drop-shadow-md rounded-full imagear12c" id="imgresize" alt="ar12c">
+    </div>
+  </div>
 </header>
 
-<div id="test" class="fixed inset-0 flex z-[100] w-screen h-screen fade-in-blur">
-<button id="Close" class="absolute top-3 left-4 z-20 rounded font-bold cursor-pointer dark:text-white hover:text-neutral-400">
-<i class="fa-solid fa-circle-xmark"></i>
-</button>
-<div class="flex justify-between h-screen w-screen">
-<div class="h-full w-1/5 mask-r-from-0% animate-gradient mask-t-from-10% mask-b-from-80%"></div>
-<h1 id="modal-text" class="fade-in-text inset-0 flex justify-center items-center text-center font-semibold text-3xl opacity-0">
-  Meet OkemoLLM
-</h1>
-    <div class="h-full w-1/5 mask-l-from-0% animate-gradient-alt mask-t-from-10% mask-b-from-80%"></div>
-<a href="/AI/OkemoLLM.html" 
-   class="fixed top-160 left-1/2 transform -translate-x-1/2 -translate-y-1
-          py-2.5 px-5 text-sm font-medium text-gray-900 bg-white 
-          rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 
-          focus:outline-none focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 
-          dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer">
-  Check it out <i class="fa-solid fa-arrow-up-right-from-square"></i>
-</a>
 
-</div>
-</div>
+    <div id="test" class="fixed inset-0 flex z-[100] w-screen h-screen fade-in-blur">
+      <button id="Close" class="absolute top-3 left-4 z-20 rounded font-bold cursor-pointer dark:text-white hover:text-neutral-400">
+        <i class="fa-solid fa-circle-xmark"></i>
+      </button>
+      <div class="flex justify-between h-screen w-screen">
+        <div class="h-full w-1/5 mask-r-from-0% animate-gradient mask-t-from-10% mask-b-from-80%"></div>
+        <h1 id="modal-text" class="dark:text-white fade-in-text inset-0 flex justify-center items-center text-center font-semibold text-3xl">
+          Meet OkemoLLM
+        </h1>
+        <div class="h-full w-1/5 mask-l-from-0% animate-gradient-alt mask-t-from-10% mask-b-from-80%"></div>
+        <a href="/AI/OkemoLLM.html" 
+           class="fixed bottom-1/5 left-1/2 transform -translate-x-1/2 -translate-y-1
+                  py-2.5 px-5 text-sm font-medium text-gray-900 bg-white 
+                  rounded-full border border-gray-200 hover:bg-gray-100 
+                  focus:outline-none focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 
+                  dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 cursor-pointer">
+          Check it out <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+    </div>
 
-<div id="main-content-actual">
-<div class="h-[20vw] max-h-40"></div>
-<div>
-<div class="px-10 sm:px-15 py-15 sm:py-2" id="scrolling">
-<h1 class="font-sans font-bold dark:text-white text-5xl pb-6 text-shadow-lg">Hey!</h1>
-<div class="flex flex-row justify-between items-end">
-<h1 class="font-sans font-bold dark:text-white text-4xl text-shadow-lg">I'm Okemo<a class="bg-gradient-to-r from-black dark:from-white via-rose-400 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-mono">Vail</a></h1>
-</div>
-<h1 class="dark:text-white pt-2 text-shadow-lg"><i class="fa-solid fa-location-dot"></i> Hong Kong</h1>
-<div id="hkt-time" class="text-lg dark:text-white"></div>
-<script>
-function updateHKTTime() {
-const now = new Date();
-const options = {
-timeZone: 'Asia/Hong_Kong',
-hour: 'numeric',
-minute: 'numeric',
-hour12: true
-};
-const hktTime = new Intl.DateTimeFormat('en-US', options).format(now);
-document.getElementById('hkt-time').textContent = `${hktTime}`;
-}
-setInterval(updateHKTTime, 1000);
-updateHKTTime();
-</script>
-</div>
+    <div id="main-content-actual">
+      <div class="h-[20vw] max-h-40"></div>
+      <div>
+        <div class="px-10 sm:px-15 py-15 sm:py-2" id="scrolling">
+          <h1 class="font-sans font-bold dark:text-white text-5xl pb-6 text-shadow-lg">Hey!</h1>
+          <div class="flex flex-row justify-between items-end">
+            <h1 class="font-sans font-bold dark:text-white text-4xl text-shadow-lg">I'm Okemo<a class="bg-gradient-to-r from-black dark:from-white via-rose-400 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0 font-mono">Vail</a></h1>
+          </div>
+          <h1 class="dark:text-white pt-2 text-shadow-lg"><i class="fa-solid fa-location-dot"></i> Hong Kong</h1>
+          <div id="hkt-time" class="text-lg dark:text-white"></div>
+          <script>
+            function updateHKTTime() {
+              const now = new Date();
+              const options = {
+                timeZone: 'Asia/Hong_Kong',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+              };
+              const hktTime = new Intl.DateTimeFormat('en-US', options).format(now);
+              document.getElementById('hkt-time').textContent = `${hktTime}`;
+            }
+            setInterval(updateHKTTime, 1000);
+            updateHKTTime();
+          </script>
+        </div>
 
+        <h1 class="px-10 sm:px-15 pt-10 dark:text-white font-bold text-4xl">Interests</h1>
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 mx-10 sm:mx-15 pb-15">
+          <div id="interactive-card" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card transition-all transition-height" style="position: relative; overflow: hidden;">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/car.jpg)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
+            <h1 class="dark:text-white font-bold text-4xl px-5">Cats!</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Cats are my favourite animal</h1>
+            <div class="px-5 pb-5">
+              <div id="fact-container" class="pb-5 dark:text-white opacity-0 transform translate-y-[-10px] duration-300 ease-in-out transition-transform">
+              </div>
+              <button class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl cursor-pointer" id="fact-button">
+                Get cat fact
+              </button>
+            </div>
+          </div>
+          <div id="webgl-target-div-2" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/materialyou.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-55 bg-center bg-cover"></div>
+            <h1 class="dark:text-white font-bold text-4xl px-5">Design Language</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Google Material You design language is one of the most unique design languages in my opinion.</h1>
+            <div class="px-5 pt-5 pb-6">
+              <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://m3.material.io/">
+                Material 3
+              </a>
+            </div>
+          </div>
+          <div id="webgl-target-div-3" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/kiwi.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
+            <h1 class="dark:text-white font-bold text-4xl px-5">3D Software</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Personally, I love to use Blender to model 3D models, it's quite fun to use.</h1>
+            <div class="px-5 pb-6">
+              <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://www.youtube.com/@SochiVail">
+                Learn more!
+              </a>
+            </div>
+          </div>
+          <div id="webgl-target-div-4" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/sillyo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
+            <h1 class="dark:text-white font-bold text-4xl px-5">Theming</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white">
+              Something about theming
+              <i class="devicon-apple-original"></i>
+              iOS /
+              <i class="devicon-android-plain"></i>
+              Android is fun for me.
+            </h1>
+            <div class="px-5 pb-6">
+              <a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="/Themes/Themes.html">
+                See Themes
+              </a>
+            </div>
+          </div>
+        </div>
+        <h1 class="pt-10 px-10 sm:px-15 dark:text-white font-bold text-4xl">Skills</h1>
+        <div class="py-2 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 px-10 sm:px-15 pb-15">
+          <div id="webgl-target-div-5" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/importokemolight.png)] dark:bg-[url(/images/importokemo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-60 bg-center bg-cover"></div>
+            <h1 class="dark:text-white font-bold text-4xl px-5">Knowledge</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white">I have a little bit of coding knowledge, just enough to make this website.</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white text-3xl">
+              <i class="devicon-javascript-plain"></i>
+              <i class="devicon-python-plain"></i>
+              <i class="devicon-html5-plain"></i>
+              <i class="devicon-swift-plain"></i>
+              <i class="devicon-bash-plain"></i>
+              <i class="devicon-lua-plain"></i>
+              <i class="devicon-php-plain"></i>
+            </h1>
+          </div>
+          <div id="webgl-target-div-6" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
+            <div alt="car" class="rounded-t-4xl pb-4s bg-[url(https://docs-assets.developer.apple.com/published/712733b3cdd2bab5a2c326c50488aeb3/foundations-icons-intro~dark@2x.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
+            <h1 class="dark:text-white font-bold text-4xl px-5">Icon making</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white">I love contributing to the community.</h1>
+            <h1 class="pb-5 pt-2 px-5 dark:text-white text-3xl">
+              <i class="devicon-illustrator-plain"></i>
+              <i class="devicon-photoshop-plain"></i>
+            </h1>
+          </div>
+        </div>
 
-
-<h1 class="px-10 sm:px-15 pt-10 dark:text-white font-bold text-4xl">Interests</h1>
-<div class="grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 mx-10 sm:mx-15 pb-15">
-<div id="interactive-card" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card transition-all transition-height" style="position: relative; overflow: hidden;">
-<div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/car.jpg)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
-<h1 class="dark:text-white font-bold text-4xl px-5">Cats!</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Cats are my favourite animal</h1>
-<div class="px-5 pb-5">
-<div id="fact-container" class="pb-5 dark:text-white opacity-0 transform translate-y-[-10px] duration-300 ease-in-out transition-transform">
-</div>
-<button class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl cursor-pointer" id="fact-button">
-Get cat fact
-</button>
-</div>
-</div>
-<div id="webgl-target-div-2" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
-<div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/materialyou.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-55 bg-center bg-cover"></div>
-<h1 class="dark:text-white font-bold text-4xl px-5">Design Language</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Google Material You design language is one of the most unique design languages in my opinion.</h1>
-<div class="px-5 pt-5 pb-6">
-<a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://m3.material.io/">
-Material 3
-</a>
-</div>
-</div>
-<div id="webgl-target-div-3" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
-<div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/kiwi.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-100 bg-center bg-cover"></div>
-<h1 class="dark:text-white font-bold text-4xl px-5">3D Software</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white text-md">Personally, I love to use Blender to model 3D models, it's quite fun to use.</h1>
-<div class="px-5 pb-6">
-<a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="https://www.youtube.com/@SochiVail">
-Learn more!
-</a>
-</div>
-</div>
-<div id="webgl-target-div-4" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
-<div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/sillyo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
-<h1 class="dark:text-white font-bold text-4xl px-5">Theming</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white">Something about theming
-<i class="devicon-apple-original"></i>
-iOS /
-<i class="devicon-android-plain"></i>
-Android is fun for me.</h1>
-<div class="px-5 pb-6">
-<a class="bg-neutral-300/40 hover:bg-neutral-400/40 text-black dark:bg-neutral-600/30 dark:hover:bg-neutral-400/40 dark:text-white font-bold py-2 px-4 rounded-3xl text-center w-40 cursor-pointer" href="/Themes/Themes.html">
-See Themes
-</a>
-</div>
-</div>
-</div>
-<h1 class="pt-10 px-10 sm:px-15 dark:text-white font-bold text-4xl">Skills</h1>
-<div class="py-2 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 px-10 sm:px-15 pb-15">
-<div id="webgl-target-div-5" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
-<div alt="car" class="rounded-t-4xl pb-4s bg-[url(/images/importokemolight.png)] dark:bg-[url(/images/importokemo.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-60 bg-center bg-cover"></div>
-<h1 class="dark:text-white font-bold text-4xl px-5">Knowledge</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white">I have a little bit of coding knowledge, just enough to make this website.</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white text-3xl">
-<i class="devicon-javascript-plain"></i>
-<i class="devicon-python-plain"></i>
-<i class="devicon-html5-plain"></i>
-<i class="devicon-swift-plain"></i>
-<i class="devicon-bash-plain"></i>
-<i class="devicon-lua-plain"></i>
-<i class="devicon-php-plain"></i>
-</h1>
-</div>
-<div id="webgl-target-div-6" class="bg-neutral-200/10 dark:bg-neutral-700/30 backdrop-blur-sm h-max align-center mt-6 rounded-4xl flex flex-col duration-300 interactive-card">
-<div alt="car" class="rounded-t-4xl pb-4s bg-[url(https://docs-assets.developer.apple.com/published/712733b3cdd2bab5a2c326c50488aeb3/foundations-icons-intro~dark@2x.png)] drop-shadow-md mask-b-from-60% mask-b-to-100% h-80 bg-center bg-cover"></div>
-<h1 class="dark:text-white font-bold text-4xl px-5">Icon making</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white">I love contributing to the community.</h1>
-<h1 class="pb-5 pt-2 px-5 dark:text-white text-3xl">
-<i class="devicon-illustrator-plain"></i>
-<i class="devicon-photoshop-plain"></i>
-</h1>
-</div>
-</div>
-
-
-<h1 class="dark:text-white text-center opacity-30">
-<i class="fa-solid fa-code"></i> ឴឴  Okemo Code · 2025
-</h1>
-<h1 class="pt-10 px-10 sm:px-15 dark:text-white font-bold text-4xl">Special Thanks</h1>
-<div class="py-10 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 pb-15 justify-center">
-<div class="flex flex-col items-center justify-start">
-<div alt="KCD" class="rounded-full h-40 w-40 bg-cover bg-[url(/images/pfp-min.png)] drop-shadow-md"></div>
-<h1 class="pt-3 font-bold text-2xl bg-gradient-to-r from-black dark:from-white  via-blue-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0">ParasKCD</h1>
-<h1 class="dark:text-white pb-10 text-center">Literally a CSS god</h1>
-</div>
-<div class="flex flex-col items-center justify-start">
-<div alt="htrowii" class="rounded-full h-40 w-40 bg-cover bg-[url(https://cdn.discordapp.com/avatars/413331641109446656/2a50cd1fff701126bb3e256bb3d05e10.png?size=512)] drop-shadow-md"></div>
-<h1 class="pt-3 font-bold text-2xl bg-gradient-to-r from-black dark:from-white  via-purple-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0">sacrosanctuary</h1>
-<h1 class="dark:text-white pb-10 text-center">Inspiration and epic themer</h1>
-</div>
-</div>
-</div>
-</div>
-<script src="./src/carfacts.js"></script>
-<script src="./src/sticky.js"></script>
-<script src="./src/Tiltcards.js"></script>
-<script src="./src/openanimation.js"></script>
-<script src="./src/bleh.js"></script>
+        <h1 class="dark:text-white text-center opacity-30">
+          <i class="fa-solid fa-code"></i> ឴឴  Okemo Code · 2025
+        </h1>
+        <h1 class="pt-10 px-10 sm:px-15 dark:text-white font-bold text-4xl">Special Thanks</h1>
+        <div class="py-10 grid sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-x-5 pb-15 justify-center">
+          <div class="flex flex-col items-center justify-start">
+            <div alt="KCD" class="rounded-full h-40 w-40 bg-cover bg-[url(/images/pfp-min.png)] drop-shadow-md"></div>
+            <h1 class="pt-3 font-bold text-2xl bg-gradient-to-r from-black dark:from-white  via-blue-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0">ParasKCD</h1>
+            <h1 class="dark:text-white pb-10 text-center">Literally a CSS god</h1>
+          </div>
+          <div class="flex flex-col items-center justify-start">
+            <div alt="htrowii" class="rounded-full h-40 w-40 bg-cover bg-[url(https://cdn.discordapp.com/avatars/413331641109446656/2a50cd1fff701126bb3e256bb3d05e10.png?size=512)] drop-shadow-md"></div>
+            <h1 class="pt-3 font-bold text-2xl bg-gradient-to-r from-black dark:from-white  via-purple-500 to-black dark:to-white text-transparent bg-clip-text animate-gradient2 bg-opacity-0">sacrosanctuary</h1>
+            <h1 class="dark:text-white pb-10 text-center">Inspiration and epic themer</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./src/carfacts.js"></script>
+    <script src="./src/sticky.js"></script>
+    <script src="./src/Tiltcards.js"></script>
+    <script src="./src/openanimation.js"></script>
+    <script src="./src/bleh.js"></script>
     <script src="./src/blur.js"></script>
 
-<div class="fixed -top-[0vw] -left-[57vw] flex flex-col -z-10 -rotate-45 text-[10vw] md:-top-[50vw] lg:-top-[90vw]">
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-600 -z-10 text-nowrap">す · 私はプロカーススが大好きです · 好きです</h1>
-<h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-<h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
-</div>
-
+    <div class="fixed -top-[0vw] -left-[57vw] flex flex-col -z-10 -rotate-45 text-[10vw] md:-top-[50vw] lg:-top-[90vw]">
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-600 -z-10 text-nowrap">す · 私はプロカーススが大好きです · 好きです</h1>
+      <h1 class="text-pink-100 text-center overflow-clip dark:text-pink-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-blue-100 text-center overflow-clip dark:text-blue-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+      <h1 class="text-neutral-100 text-center overflow-clip dark:text-neutral-950 -z-10 text-nowrap">Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a> · Okemo · <a class="font-mono">ar12c</a></h1>
+    </div>
+  </div>
 </body>
 </html>

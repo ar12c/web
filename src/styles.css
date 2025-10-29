@@ -157,18 +157,13 @@ font-family: 'Inter', sans-serif;
   }
   100% { 
     opacity: 1; 
-    backdrop-filter: blur(51px); 
+    backdrop-filter: blur(100px); 
     pointer-events: auto; 
   }
 }
 
 /* Text fade + blur - This block applies to ALL modes */
 .fade-in-text {
-  background: linear-gradient(90deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #54a0ff, #a454ff,#ff6b6b);
-  background-size: 400%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   animation: fadeInText 2s ease-out forwards;
 }
 
@@ -178,7 +173,6 @@ font-family: 'Inter', sans-serif;
     opacity: 0;
     transform: scale(0.98);
     filter: blur(10px);
-    background-position: 0% 0%;
   }
   50% {
     opacity: 1;
@@ -188,6 +182,6 @@ font-family: 'Inter', sans-serif;
   100% {
     opacity: 1;
     transform: scale(1);
-    background-position: 200% 0%;
+    -position: 200% 0%;
   }
 }

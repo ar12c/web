@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat OkemoLLM</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- External assets (Note: these would need to be locally available in a real setup) -->
+  <link rel="stylesheet" href="/src/output.css"/>
+  <link rel="stylesheet" href="/AI/thing.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"/>
+  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+  <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
+  <meta content="OkemoVail" property="og:title">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Small tweak to ensure the chat scroll area behaves nicely */
+    .chat-scroll { scroll-behavior: smooth; }
+
+    /* --- Loading Animation Styles --- */
+    @keyframes dot-animation {
+      0%, 80%, 100% { transform: scale(0); opacity: 0; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    .loading-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin: 0 1px;
+      background-color: #333;
+      border-radius: 50%;
+      /* Animation applied in JS using inline style for specific delays */
+      animation: dot-animation 1.4s infinite ease-in-out both;
+    }
+    .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+    .loading-dot:nth-child(3) { animation-delay: 0s; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-inter flex flex-col">
+  
+  <!-- --- DISCLAIMER MODAL --- -->
+  <!-- Visible by default. JS adds 'hidden' when accepted. -->
+  <div id="disclaimer-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300">
+    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
+      <h3 class="text-2xl font-bold mb-4 text-neutral-800">Okemo Disclaimer</h3>
+      <div class="text-gray-700 mb-6 text-sm space-y-3">
+        <p>
+          **OkemoLLM is currently in public beta.** All of its generated content may be inaccurate, incomplete, or biased.
+        </p>
+        <p class="font-semibold text-neutral-700">
+          By clicking **Agree**:
+        </p>
+        <ul class="list-disc list-inside ml-2 space-y-1">
+          <li>Your input may be logged and used to improve the model.</li>
+          <li>This service is extremely unsecure.</li>
+          <li>Your conversations may or may not be shared around the internet.</li>
+        </ul>
+        <p class="mt-4 text-base font-bold text-red-600">
+          <i class="fa-solid fa-triangle-exclamation mr-1"></i> PLEASE AVOID SHARING SENSITIVE INFORMATION.
+        </p>
+      </div>
+      <div class="flex gap-4">
+        <button 
+          id="disclaimer-agree" 
+          onclick="acceptDisclaimer()" 
+          class="w-full py-2 bg-neutral-800 text-white font-semibold rounded-lg hover:bg-neutral-700 transition duration-150"
+        >
+          Agree
+        </button>
+        <a href="/AI/OkemoLLM.html"
+   class="block w-full max-w-sm mx-auto py-2 border border-neutral-300 bg-white text-neutral-800 font-semibold rounded-lg hover:bg-gray-100 transition duration-150 text-center">
+  Disagree
+</a>
+
+      </div>
+    </div>
+  </div>
+  <!-- --- END DISCLAIMER MODAL --- -->
+  
+  <!-- Top header - Centered and constrained -->
+  <div class="pt-0 w-full mx-auto max-w-2xl px-8"> 
+    <header class="mt-6 mb-4 flex items-center gap-3">
+      <a href="/AI/OkemoLLM.html" class="text-2xl font-semibold">OkemoLLM</a>
+      <a href="/AI/OkemoLLM.html" class="text-sm rounded-full bg-neutral-300 p-0.5 px-3">
+        BETA <i class="fa-solid fa-flask"></i>
+      </a>
+    </header>
+  </div>
+
+  <!-- Chat container - Centered, constrained, and vertically flexible -->
+  <div class="w-full px-8 pb-4 flex-1 flex flex-col min-h-0 mx-auto max-w-2xl">
+    <!-- Chat box: Keeps flex-1 to fill the container height -->
+    <div id="okemo-chat" class="chat-scroll bg-white border rounded-2xl shadow-sm p-4 overflow-y-auto flex-1"></div>
+    <div id="okemo-status" class="min-h-5 text-sm text-gray-500"></div>
+  </div>
+
+  <!-- Bottom-fixed input - Centered and constrained -->
+  <div class="mt-auto w-full max-w-2xl px-8 pb-10 mx-auto">
+    <!-- Inner div simplified, relying on parent for centering/width constraint -->
+    <div class="w-full bg-white rounded-full shadow-xl p-2 flex items-center gap-2 border border-gray-200">
+      <input
+        id="okemo-input"
+        type="text"
+        placeholder="bleh... enter message here!!"
+        class="flex-1 bg-gray-50 rounded-full px-5 py-2 text-base focus:outline-none focus:ring-2 focus:ring-neutral-500 text-gray-900 placeholder:text-gray-400"
+      />
+      <button
+        id="okemo-send"
+        class="cursor-pointer rounded-full bg-neutral-800 hover:bg-neutral-700 text-white w-10 h-10 flex items-center justify-center transition duration-150"
+        aria-label="Send"
+        onclick="sendOkemoMessage()"
+      >
+        <i class="fa-solid fa-arrow-up"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- App script: calls Hugging Face Space via @gradio/client -->
+  <script type="module">
+    import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+    const SPACE_ID = "ar12c/okemo2"; // or "https://ar12c-okemo2.hf.space"
+    let client = null;
+    let history = []; // array of [user, assistant] turns
+    let loadingElement = null; // Reference to the dynamically created loading element
+
+    // Placeholder HTML for the loading animation, matching AI message structure (NO BUBBLE)
+    const LOADING_HTML_STRING = `
+      <div id="ai-loading-placeholder" class="mb-4 flex items-start gap-2">
+        <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full mt-1"/>
+        <div class="max-w-[85%] text-gray-900 flex items-center gap-1 pt-2"> 
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+        </div>
+      </div>
+    `;
+
+    /**
+     * Hides the disclaimer modal after the user clicks OK.
+     */
+    window.acceptDisclaimer = function() {
+      const modal = document.getElementById('disclaimer-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    };
+
+
+    /**
+     * Connects to the Hugging Face Gradio Space.
+     */
+    async function initOkemo() {
+      try {
+        client = await Client.connect(SPACE_ID);
+        showStatus("Connected!");
+        setTimeout(() => showStatus(""), 1500);
+      } catch (err) {
+        console.error("Failed to connect:", err);
+        showStatus("Failed to connect to OkemoLLM. Retrying…", true);
+        // Retry once after a short delay
+        setTimeout(() => initOkemo(), 2000);
+      }
+    }
+
+    /**
+     * Updates the status message at the bottom of the chat.
+     */
+    function showStatus(msg, isError = false) {
+      const el = document.getElementById("okemo-status");
+      if (!el) return;
+      el.textContent = msg;
+      el.className = `min-h-5 text-sm ${isError ? "text-red-600" : "text-gray-500"}`;
+    }
+
+    /**
+     * Escapes HTML to prevent injection in chat bubbles.
+     */
+    function escapeHTML(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /**
+     * Renders all chat bubbles from the current history.
+     * User messages are aligned to the right.
+     * Assistant messages include a logo and NO background bubble.
+     */
+    function renderChat() {
+      const box = document.getElementById("okemo-chat");
+      if (!box) return;
+      box.innerHTML = "";
+      for (const [u, a] of history) {
+        if (u) {
+          // User message: Aligned to the right using flex justify-end
+          box.innerHTML += `
+            <div class="mb-3 flex justify-end">
+              <div class="inline-block max-w-[85%] rounded-2xl px-4 py-2 bg-neutral-800 text-white">
+                ${escapeHTML(u)}
+              </div>
+            </div>`;
+        }
+        if (a) {
+          // Assistant message: Removed bubble/background styling
+          box.innerHTML += `
+            <div class="mb-4 flex items-start gap-2"> 
+              <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full mt-1"/> 
+              <div class="max-w-[85%] text-gray-900 pt-1"> 
+                ${escapeHTML(a)}
+              </div>
+            </div>`;
+        }
+      }
+      // Scroll to the latest message
+      box.scrollTop = box.scrollHeight;
+    }
+
+    /**
+     * Sends a message to the OkemoLLM API and updates chat history.
+     */
+    async function sendOkemoMessage() {
+      const inputEl = document.getElementById("okemo-input");
+      const btnEl = document.getElementById("okemo-send");
+      const chatBox = document.getElementById("okemo-chat");
+      if (!inputEl || !btnEl || !chatBox) return;
+
+      const userMsg = inputEl.value.trim();
+      if (!userMsg) return;
+
+      // Ensure client connection
+      if (!client) {
+        showStatus("Connecting… :3");
+        await initOkemo();
+        if (!client) {
+          showStatus("Not connected. Try again later. :/", true);
+          return;
+        }
+      }
+
+      // 1. Prepare history for server (does not include the current message)
+      const historyToSend = [...history]; // Copy of completed turns
+
+      // Prepare UI for sending: Clear input, disable button, show status
+      inputEl.value = "";
+      btnEl.disabled = true;
+      btnEl.classList.add("opacity-50", "cursor-not-allowed");
+      showStatus("Thinking...");
+      
+      // 2. Optimistic Update: Add user message locally and render (will show one instance of the user's message)
+      history.push([userMsg, null]); // Add the user message with a null/placeholder response
+      renderChat();
+
+      // --- Start of Loading Placeholder Logic ---
+      // Append the loading placeholder (as a temporary DOM element)
+      chatBox.insertAdjacentHTML('beforeend', LOADING_HTML_STRING);
+      loadingElement = document.getElementById('ai-loading-placeholder');
+      
+      // Scroll to show the placeholder and new message
+      chatBox.scrollTop = chatBox.scrollHeight;
+      // --- End of Loading Placeholder Logic ---
+
+
+      try {
+        // Call on_submit: Pass the current message and the OLD history state.
+        const result = await client.predict("/on_submit", [userMsg, historyToSend]); 
+
+        // Gradio returns [updated_history, cleared_msg]
+        const updatedHistoryFromServer = result?.data?.[0];
+
+        if (Array.isArray(updatedHistoryFromServer)) {
+          // Replace local history with the clean, complete history from the server.
+          history = updatedHistoryFromServer; 
+          showStatus("Received response.");
+        } else {
+          console.warn("Server response did not contain a valid history array. Retaining local optimistic message.");
+          // If server fails, the user's message remains in history but response is null
+          showStatus("Error: Invalid response from OkemoLLM.", true);
+        }
+        
+      } catch (err) {
+        console.error("Prediction error:", err);
+        showStatus("Error contacting OkemoLLM.", true);
+      } finally {
+        // --- Cleanup Loading Placeholder Logic ---
+        if (loadingElement && loadingElement.parentNode) {
+            loadingElement.parentNode.removeChild(loadingElement);
+            loadingElement = null; // Clear reference
+        }
+        // --- End Cleanup ---
+
+        // Render the chat only once with the final server-provided history
+        renderChat();
+
+        // Re-enable UI
+        btnEl.disabled = false;
+        btnEl.classList.remove("opacity-50", "cursor-not-allowed");
+        // Clear status after a moment
+        setTimeout(() => showStatus(""), 1500); 
+      }
+    }
+
+    /**
+     * Binds the Enter key to the send message function.
+     */
+    function bindInput() {
+      const inputEl = document.getElementById("okemo-input");
+      if (!inputEl) return;
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendOkemoMessage();
+        }
+      });
+    }
+
+    // Expose for button onclick
+    window.sendOkemoMessage = sendOkemoMessage;
+
+    // Application Bootstrap
+    window.addEventListener("DOMContentLoaded", async () => {
+      await initOkemo();
+      bindInput();
+    });
+  </script>
+</body>
+</html>
