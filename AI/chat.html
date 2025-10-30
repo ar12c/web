@@ -142,8 +142,6 @@
   background-size: 200%;
   animation: gradientScrollFast 8s ease infinite;
         }
-
-        
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen font-inter flex flex-col">
@@ -201,7 +199,7 @@
                     </a>
                     <button id="menu-toggle" class="ml-1 text-lg text-gray-700 hover:text-neutral-800 transition p-1 rounded-full">
                         <!-- ADDED ID for JS hook -->
-                        <i class="fa-solid fa-gear" style="color: #000000;"></i>
+                        <i class="fa-solid fa-caret-down transition duration-150 transform" id="menu-icon"></i>
                     </button>
                 </div>
                 <!-- BETA tag -->
@@ -235,12 +233,18 @@
         <!-- CHAT BOX: Scrollable history -->
         <!-- Added relative positioning for the regenerate button anchor -->
         <div id="okemo-chat" class="chat-scroll p-4 overflow-y-auto flex-1 relative"></div>
-        <div id="okemo-status" class="min-h-5 text-sm text-gray-500"></div>
+        <!-- Status message remains OUTSIDE the main chat container -->
     </div>
 
-    <!-- Bottom-fixed input - Stays at the bottom of the viewport (fixed position) --><div class="fixed bottom-0 left-0 right-0 z-20 pt-2 pb-8 bg-gray-100 shadow-lg">
-        <div class="w-full max-w-2xl mx-auto">
-            <!-- NEW: Loading Bar Container (Rounded) --><div id="okemo-loading-bar" class="z-1 h-1 w-full mt-2 overflow-hidden hidden rounded-full">
+    <!-- Bottom-fixed input - Stays at the bottom of the viewport (fixed position) -->
+    <!-- Restructured this entire fixed div for better spacing control -->
+    <div class="fixed bottom-0 left-0 right-0 z-20 bg-gray-100 shadow-lg pt-2 pb-8">
+        <div class="w-full max-w-2xl px-8 mx-auto">
+             <!-- STATUS MESSAGE MOVED HERE for visibility above the input box -->
+            <div id="okemo-status" class="min-h-5 text-sm text-gray-500 mb-2"></div>
+            
+            <!-- NEW: Loading Bar Container (Rounded) -->
+            <div id="okemo-loading-bar" class="h-0.5 w-full overflow-hidden hidden rounded-full mb-2">
                 <div class="loading-line-animation h-full bg-neutral-800"></div>
             </div>
             
@@ -252,16 +256,15 @@
                     id="okemo-input"
                     placeholder="Ask anything" 
                     rows="1" 
-                    class="rounded-3xl px-10 py-5 text-base focus:outline-none text-gray-900 placeholder:text-gray-400 resize-none h-auto min-h-[48px] max-h-40 overflow-hidden bg-gray-50 focus:ring-2 focus:ring-neutral-400"
+                    class="rounded-3xl px-5 py-2 text-base focus:outline-none text-gray-900 placeholder:text-gray-400 resize-none h-auto min-h-[48px] max-h-40 overflow-hidden bg-gray-50 focus:ring-2 focus:ring-neutral-400"
                 ></textarea>
                 
-                <!-- Right Icons Wrapper: Contains Plus Toggle and Send Button -->
+                <!-- Right Icons Wrapper: Contains Send Button -->
                 <div id="right-icons-wrapper">
-                    
                     <!-- Send Button (Far Right icon) -->
                     <button
                         id="okemo-send"
-                        class="mb-1 ml-2 cursor-pointer rounded-full bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-900 text-white w-10 h-10 flex items-center justify-center transition duration-150 transform hover:scale-105"
+                        class="mb-1 cursor-pointer rounded-full bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-900 text-white w-10 h-10 flex items-center justify-center transition duration-150 transform hover:scale-105"
                         aria-label="Send"
                     >
                         <i class="fa-solid fa-arrow-up"></i>
