@@ -10,3 +10,64 @@
   background-size: 100% 300%;
   animation: gradientScrollFast 8s ease infinite;
 }
+
+    @keyframes loading-line {
+      0% {
+        transform: translateX(-100%) scaleX(0.1);
+      }
+      50% {
+        transform: translateX(0%) scaleX(0.7);
+      }
+      100% {
+        transform: translateX(100%) scaleX(0.1);
+      }
+    }
+
+    .loading-line-animation {
+      transform: translateX(-100%);
+      animation: loading-line 2s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+      transform-origin: left;
+    }
+
+    /* --- Dropdown Animations --- */
+    #menu-toggle i {
+      transition: transform 0.2s ease-in-out;
+    }
+    #menu-toggle.active i {
+      transform: rotate(0deg);
+    }
+
+    /* --- Plus Menu Icon --- */
+    #plus-icon {
+      transition: transform 0.2s ease-in-out;
+    }
+    #plus-icon.rotate-180 {
+      transform: rotate(180deg);
+    }
+
+
+    #dont-show-again {
+      border: none !important;
+      background-color: #f9fafb !important;
+      accent-color: #ef4444;
+    }
+
+    /* --- Input Bar Grid Layout --- */
+    #input-bar-container {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      grid-template-areas: "primary trailing";
+    }
+
+    #right-icons-wrapper {
+      grid-area: trailing;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 8px;
+    }
+
+    #left-icons-wrapper {
+      display: none;
+    }
