@@ -232,8 +232,8 @@ function renderChat() {
         if (a) {
             // Assistant message
             htmlContent.push(`
-                <div class="mb-1 flex items-start gap-2 mt-7"> 
-                    <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full mt-1"/> 
+                <div class="mb-1 flex items-start gap-2 mt-5"> 
+                    <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full"/> 
                     <div class="max-w-[85%] text-gray-900 pt-1"> 
                         ${escapeHTML(a)}
                     </div>
