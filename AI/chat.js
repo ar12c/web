@@ -545,13 +545,8 @@ function renderChat() {
         // ----------------------- ASSISTANT MESSAGE -----------------------
         if (a) {
             htmlContent.push(`
-<<<<<<< HEAD
-                <div class="mb-1 flex items-start gap-2 mt-5"> 
-                    <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full"/> 
-=======
                 <div class="ai-message-row mb-1 flex items-start gap-2 mt-7"> 
                     <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full mt-1"/> 
->>>>>>> 461b39b (AI UPDATE 4)
                     <div class="max-w-[85%] text-gray-900 pt-1"> 
                         ${escapeHTML(a)}
                     </div>
