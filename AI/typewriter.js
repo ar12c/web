@@ -9,12 +9,13 @@
     if (!input) return;
 
     const prompts = [
-      'Hi OkemoLLM',
+      'Hi Okemo Language Model',
       'Is Mineek awesomesauce?',
       'Procursus?',
       'What are you?',
       'clanker',
-      'can axolotls spread rumors?'
+      'can axolotls spread rumors?',
+      'meow meow'
     ];
 
     const typingSpeed = 100;     // ms per character while typing
