@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Chat OkemoLLM</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind --><script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="/src/output.css"/>
+    <!-- External assets (Note: these would need to be locally available in a real setup) --><link rel="stylesheet" href="/src/output.css"/>
     <link rel="stylesheet" href="/AI/thing.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"/>
     <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
@@ -82,14 +82,8 @@
             /* Forces red accent color (for the checkmark itself) */
             accent-color: #ef4444; /* Tailwind red-500 */
         }
+        /* Ensures the focus ring uses the red color defined by focus:ring-red-500 */
         
-        /* --- UPDATE NOTES CHECKBOX STYLING --- */
-        #notes-dont-show-again {
-            border: none !important;
-            background-color: #f9fafb !important; /* Tailwind gray-50 */
-            accent-color: #ef4444; /* Tailwind red-500 */
-        }
-
         /* --- Grid Layout for Input Bar Anchoring --- */
         #input-bar-container {
             display: grid;
@@ -115,17 +109,12 @@
             max-height: 150px;
         }
 
-        #s-wrapper {
+        #right-icons-wrapper {
             grid-area: trailing;
             display: flex;
             align-items: end; /* Ensure icons stay at the bottom of the row */
             gap: 8px;
-<<<<<<< HEAD
             padding-right: 0; /* REMOVED extra padding */
-=======
-            /* FIX: Use negative margin to pull the button flush with the right edge (overriding p-2 padding of 8px) */
-            margin-right: -8px; 
->>>>>>> 461b39b (AI UPDATE 4)
         }
         
         #okemo-input {
@@ -142,7 +131,6 @@
             width: 100%;
             transition: opacity 0.3s ease-in-out;
         }
-<<<<<<< HEAD
         @keyframes gradientScrollFast {
   0% { background-position: 0% 0%; }
   50% { background-position: 100% 0%; }
@@ -153,48 +141,16 @@
   background: linear-gradient(90deg, #ff6b6b, #54a0ff, #a454ff, #ff6b6b);
   background-size: 200%;
   animation: gradientScrollFast 8s ease infinite;
-=======
-
-        /* --- NEW RAINBOW GRADIENT ANIMATION --- */
-        @keyframes gradientScrollFast {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 0%; }
-            100% { background-position: 200% 0%; }
-        }
-
-        .animate-rainbow {
-            background: linear-gradient(90deg, #ff6b6b, #54a0ff, #a454ff, #ff6b6b);
-            background-size: 200%;
-            animation: gradientScrollFast 8s ease infinite;
-        }
-        
-        /* --- UPDATE BADGE --- */
-        .update-badge {
-            position: absolute;
-            top: 20px; /* Adjust to sit above or near the title */
-            left: 100%; /* Position to the right of the title */
-            margin-left: 5px; /* Spacing from the title */
-            width: 8px;
-            height: 8px;
-            background-color: #f87171; /* Tailwind red-400 */
-            border-radius: 50%;
-            border: 2px solid #f9fafb; /* gray-50 to match body */
->>>>>>> 461b39b (AI UPDATE 4)
         }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen font-inter flex flex-col">
     
-<<<<<<< HEAD
     <!-- --- DISCLAIMER MODAL --- -->
     <!-- Default state is now hidden to prevent FOUC (Flash of Unstyled Content) -->
     <!-- The JavaScript will remove 'hidden' if the preference is NOT found. -->
     <div id="disclaimer-modal" class="fixed inset-0 bg-neutral-900/10 flex items-center justify-center z-50 transition-opacity duration-300 backdrop-blur-sm">
         <div class="bg-white p-6 rounded-4xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-=======
-    <div id="disclaimer-modal" class="fixed inset-0 bg-neutral-900/10 flex items-center justify-center z-50 transition-opacity duration-300 hidden backdrop-blur-sm">
-        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
->>>>>>> 461b39b (AI UPDATE 4)
             <h3 class="text-2xl font-bold mb-4 text-neutral-800">Okemo Disclaimer</h3>
             <div class="text-gray-700 mb-6 text-sm space-y-3">
                 <p>
@@ -204,7 +160,7 @@
                     By clicking Agree:
                 </p>
                 <ul class="list-disc list-inside ml-2 space-y-1">
-                    <li>Your input is logged and used to improve the model.</li>
+                    <li>Your input may be logged and used to improve the model.</li>
                     <li>This service is extremely unsecure.</li>
                     <li>Your conversations may or may not be shared around the internet.</li>
                 </ul>
@@ -213,7 +169,7 @@
                 </p>
             </div>
             
-            <div class="flex items-center mb-4">
+            <!-- NEW: Checkbox for "Don't show again" --><div class="flex items-center mb-4">
                 <input type="checkbox" id="dont-show-again" class="w-4 h-4 text-red-600 bg-gray-50 border-none rounded focus:ring-red-500">
                 <label for="dont-show-again" class="ml-2 text-sm font-medium text-gray-700">Don't show this again</label>
             </div>
@@ -233,93 +189,69 @@
             </div>
         </div>
     </div>
-<div id="update-notes-modal" class="fixed inset-0 bg-neutral-900/10 flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 hidden backdrop-blur-sm">        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-            <h3 class="text-2xl font-bold mb-4 text-neutral-800 flex items-center">
-                <i class="fa-solid fa-bell text-red-500 mr-2"></i> What's New!
-            </h3>
-            <div class="text-gray-700 mb-6 text-sm space-y-4">
-                <h4 class="text-lg font-semibold text-neutral-800">
-                    Version 0.1.1 - October 2025
-                </h4>
-                <ul class="list-disc list-inside ml-2 space-y-2 text-gray-700">
-                    <li>✨ New Loading Bar: sleek, animated loading line is now visible during generation.</li>
-                    <li>💬 Voting: You can take part in training the AI.</li>
-                    <li>💬 Chat: No more UNK.</li>
-                    <li>🛠️ Input Fixes: Improved input bar alignment and mobile responsiveness.</li>
-                </ul>
-            </div>
-            
-            <div class="flex items-center mb-4">
-                <input type="checkbox" id="notes-dont-show-again" class="w-4 h-4 text-red-600 bg-gray-50 border-none rounded focus:ring-red-500">
-                <label for="notes-dont-show-again" class="ml-2 text-sm font-medium text-gray-700">Don't show this version's notes again</label>
-            </div>
-
-            <button 
-                id="update-notes-close" 
-                class="w-full py-2 bg-red-500 text-white font-semibold rounded-3xl hover:bg-red-600 transition duration-150"
-            >
-                Got It!
-            </button>
-        </div>
-    </div>
+    <!-- --- END DISCLAIMER MODAL --- --><!-- Top header - Fixed, and constrained -->
     <div id="fixed-header-wrapper" class="fixed top-0 left-0 right-0 z-30 bg-gray-100/80 backdrop-blur-md">
         <div class="w-full mx-auto max-w-2xl px-8"> 
             <header class="pt-6 pb-4 flex items-center gap-3 relative"> 
-                <div class="flex items-center relative">
+                <!-- Title and Dropdown Toggle --><div class="flex items-center">
                     <a href="/AI/OkemoLLM.html" id="okemo-title" class="text-2xl font-semibold cursor-pointer">
-                        OLM
+                        OkemoLLM
                     </a>
-                    <span id="update-note-badge" class="update-badge hidden"></span>
                     <button id="menu-toggle" class="ml-1 text-lg text-gray-700 hover:text-neutral-800 transition p-1 rounded-full">
+                        <!-- ADDED ID for JS hook -->
                         <i class="fa-solid fa-caret-down transition duration-150 transform" id="menu-icon"></i>
                     </button>
                 </div>
+                <!-- BETA tag -->
+                <!-- APPLIED RAINBOW ANIMATION CLASS -->
                 <a href="/AI/OkemoLLM.html" class="text-sm rounded-full animate-rainbow text-white p-0.5 px-3">
                     Preview <i class="fa-solid fa-flask"></i>
                 </a>
 
-                <div id="okemo-dropdown" class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
+                <!-- Dropdown Menu --><div id="okemo-dropdown" class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
                     
                     <a href="#" id="new-chat-dropdown-1" class="relative flex items-center px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-xl transition duration-100">
                         <span class="text-lg mr-2 w-4 text-center font-bold">+</span> New Chat
                     </a>
                     <a href="#" id="new-chat-dropdown-2" class="relative flex items-center px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-xl transition duration-100">
-                        <i class="fas fa-code-branch mr-2 w-4 text-center"></i> OLM 1
-                    </a>
-                    <div class="my-1 border-t border-gray-100"></div>
-                    <a href="#" id="show-update-notes" class="relative flex items-center px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-xl transition duration-100">
-                        <i class="fa-solid fa-note-sticky mr-2 w-4 text-center"></i> Update Notes
+                        <i class="fas fa-code-branch mr-2 w-4 text-center"></i> OkemoLLM 0.1
                     </a>
                 </div>
             </header>
         </div>
     </div>
 
+    <!-- Chat container - Centered, constrained, and vertically flexible -->
+    <!-- CRITICAL FIX: Increased padding-top to compensate for the fixed header height (~76px) -->
     <div class="w-full px-8 pt-[84px] pb-[110px] flex-1 flex flex-col min-h-0 mx-auto max-w-2xl relative">
         
-<<<<<<< HEAD
         <!-- NEW: Large Centered Prompt -->
         <div id="empty-chat-prompt" class="text-3xl select-none">
             What shall we explore?
-=======
-        <div id="empty-chat-prompt" class="text-3xl font-semibold select-none">
-            What are we exploring?
->>>>>>> 461b39b (AI UPDATE 4)
         </div>
 
+        <!-- CHAT BOX: Scrollable history -->
+        <!-- Added relative positioning for the regenerate button anchor -->
         <div id="okemo-chat" class="chat-scroll p-4 overflow-y-auto flex-1 relative"></div>
-        </div>
+        <!-- Status message remains OUTSIDE the main chat container -->
+    </div>
 
+    <!-- Bottom-fixed input - Stays at the bottom of the viewport (fixed position) -->
+    <!-- Restructured this entire fixed div for better spacing control -->
     <div class="fixed bottom-0 left-0 right-0 z-20 bg-gray-100 shadow-lg pt-2 pb-8">
         <div class="w-full max-w-2xl px-8 mx-auto">
-             <div id="okemo-status" class="min-h-5 text-sm text-gray-500 mb-2"></div>
+             <!-- STATUS MESSAGE MOVED HERE for visibility above the input box -->
+            <div id="okemo-status" class="min-h-5 text-sm text-gray-500 mb-2"></div>
             
+            <!-- NEW: Loading Bar Container (Rounded) -->
             <div id="okemo-loading-bar" class="h-0.5 w-full overflow-hidden hidden rounded-full mb-2">
                 <div class="loading-line-animation h-full bg-neutral-800"></div>
             </div>
             
+            <!-- Main Input Row (Highly Rounded) -->
             <div id="input-bar-container" class="w-full bg-white rounded-4xl shadow-xl p-2 grid gap-2 border border-gray-200 relative">
                 
+                <!-- Text Area -->
                 <textarea
                     id="okemo-input"
                     placeholder="Ask anything" 
@@ -327,14 +259,12 @@
                     class="rounded-3xl px-5 py-2 text-base focus:outline-none text-gray-900 placeholder:text-gray-400 resize-none h-auto min-h-[48px] max-h-40 overflow-hidden bg-gray-50 focus:ring-2 focus:ring-neutral-400"
                 ></textarea>
                 
-                <div id="s-wrapper">
+                <!-- Right Icons Wrapper: Contains Send Button -->
+                <div id="right-icons-wrapper">
+                    <!-- Send Button (Far Right icon) -->
                     <button
                         id="okemo-send"
-<<<<<<< HEAD
                         class="mb-1 mr-1 cursor-pointer rounded-full bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-900 text-white w-10 h-10 flex items-center justify-center transition duration-150 transform hover:scale-105"
-=======
-                        class="mb-1 mr-3 cursor-pointer rounded-full bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-900 text-white w-10 h-10 flex items-center justify-center transition duration-150 transform hover:scale-105"
->>>>>>> 461b39b (AI UPDATE 4)
                         aria-label="Send"
                     >
                         <i class="fa-solid fa-arrow-up"></i>
@@ -344,6 +274,7 @@
         </div>
     </div>
 
+    <!-- Link to external JavaScript file -->
     <script type="module" src="chat.js"></script>
 </body>
 </html>
