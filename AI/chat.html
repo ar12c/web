@@ -7,10 +7,8 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="/src/output.css"/>
-    <link rel="stylesheet" href="/AI/thing.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"/>
     <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+
     <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
     <meta content="OkemoVail" property="og:title">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +28,7 @@
                 transform: translateX(-100%) scaleX(0.1);
             }
             50% {
-                transform: translateX(0%) scaleX(0.7);
+                transform: translateX(0%) scaleX(0.5);
             }
             100% {
                 transform: translateX(100%) scaleX(0.1);
@@ -47,18 +45,19 @@
 
         /* Custom Transition for Dropdown Arrow (OkemoLLM title) */
         #menu-toggle i {
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.3s ease-in-out;
         }
         #menu-toggle.active i {
             transform: rotate(180deg);
         }
         
-        /* Custom Transition for Plus Menu Caret */
+        /* Custom Transition for Plus Menu Caret (MODIFIED to use fa-plus rotation) */
         #plus-icon {
             transition: transform 0.2s ease-in-out;
         }
-        #plus-icon.rotate-180 {
-            transform: rotate(180deg);
+        /* When the menu is open, rotate the plus to look like an X or up arrow */
+        #plus-menu-toggle.active #plus-icon {
+            transform: rotate(45deg); 
         }
 
         /* Fix to ensure textarea doesn't show scrollbar on initial load */
@@ -68,57 +67,65 @@
             display: flex;
             align-items: center;
             /* Added padding-top/bottom to visually center text within the 48px min-height */
-            padding-top: 10px; /* Reduced vertical padding */
+            padding-top: 12px; /* Reduced vertical padding */
             padding-bottom: 10px; /* Reduced vertical padding */
         }
 
-        /* --- Checkbox Styling Fix --- */
-        #dont-show-again {
-            border: none !important;
-            background-color: #f9fafb !important; /* Tailwind neutral-50 */
-            .dark & { background-color: #262626 !important; } /* Tailwind neutral-800 */
-            /* Checkbox accent color to neutral/white */
-            accent-color: #4b5563; /* Tailwind neutral-500 */
-            .dark & { accent-color: #fff; } /* White for dark mode contrast */
-        }
-        
-        /* --- UPDATE NOTES CHECKBOX STYLING --- */
-        #notes-dont-show-again {
-            border: none !important;
-            background-color: #f9fafb !important; /* Tailwind neutral-50 */
-             .dark & { background-color: #262626 !important; } /* Tailwind neutral-800 */
-            /* Checkbox accent color to neutral/white */
-            accent-color: #4b5563; /* Tailwind neutral-500 */
-            .dark & { accent-color: #fff; } /* White for dark mode contrast */
+        /* --- NEW STYLES FOR IMAGE/FILE PREVIEW --- */
+        #file-preview-container {
+             /* Ensures preview spans the whole input area */
+            grid-column: 1 / span 2; 
+            padding-left: 10px;
+            padding-right: 10px;
+            
+            /* CRITICAL FIX: Explicitly set to start at row 1 */
+            grid-row: 1; 
+            z-index: 10; /* Ensure it stays above the textarea if needed */
         }
 
-        /* --- Grid Layout for Input Bar Anchoring --- */
-        #input-bar-container {
-            display: grid;
-            grid-template-columns: 1fr auto; 
-            align-items: end; 
-            grid-template-areas: "primary trailing";
-        }
-        
-        #input-area-wrapper {
-             grid-area: primary;
-        }
-
+        /* The input and buttons must start on row 2 */
         #okemo-input {
-            grid-area: primary;
+            grid-row: 2; /* Force textarea to row 2 */
+            /* Removed grid-area: primary */
             padding-left: 20px; 
             padding-right: 0; 
             min-height: 48px; 
-            max-height: 150px;
+            max-height: 200px;
         }
 
         #s-wrapper {
-            grid-area: trailing;
+            grid-row: 2; /* Force buttons to row 2 */
+            /* Removed grid-area: trailing */
             display: flex;
             align-items: end; 
-            gap: 8px;
-            margin-right: -8px; 
+            gap: 4px; /* Reduced gap between buttons */
+            margin-right: -4px; 
         }
+        
+        #file-preview-container > div {
+            border-radius: 12px;
+        }
+
+        /* --- Checkbox Styling Fix --- */
+        #dont-show-again, #notes-dont-show-again {
+            border: none !important;
+            background-color: #f9fafb !important; /* Tailwind neutral-50 */
+            /* Using a common selector for both checkboxes */
+             .dark & { background-color: #262626 !important; } /* Tailwind neutral-800 */
+            /* Checkbox accent color to neutral/white */
+            accent-color: #4b5563; /* Tailwind neutral-500 */
+             .dark & { accent-color: #fff; } /* White for dark mode contrast */
+        }
+        
+        /* --- Grid Layout for Input Bar Anchoring (Kept the same grid) --- */
+        #input-bar-container {
+            /* IMPORTANT: We rely purely on explicit grid-row assignments now */
+            display: grid;
+            grid-template-columns: 1fr auto; 
+            align-items: end; 
+        }
+        
+        /* Removed #input-area-wrapper */
         
         #okemo-input {
             margin-bottom: 0 !important;
@@ -133,19 +140,6 @@
             text-align: center;
             width: 100%;
             transition: opacity 0.3s ease-in-out;
-        }
-
-        /* --- NEW RAINBOW GRADIENT ANIMATION (Neutralized colors in dark mode) --- */
-        @keyframes gradientScrollFast {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 0%; }
-            100% { background-position: 200% 0%; }
-        }
-        /* Keeping this as the default for the full rainbow effect */
-        .animate-rainbow {
-            background: linear-gradient(90deg, #ff6b6b, #54a0ff, #a454ff, #ff6b6b);
-            background-size: 200%;
-            animation: gradientScrollFast 8s ease infinite;
         }
         
         /* --- UPDATE BADGE --- */
@@ -162,18 +156,23 @@
             border: 2px solid #f9fafb; /* neutral-50 to match light body */
             .dark & { border-color: #1f2937; } /* gray-800 to contrast with gray-900 background */
         }
+
+        /* Added custom class for 5xl radius (as the user was trying to use it) */
+        .rounded-5xl {
+            border-radius: 2rem;
+        }
     </style>
 </head>
 <body class="bg-neutral-100 dark:bg-neutral-900 min-h-screen font-inter flex flex-col transition-colors duration-300 text-neutral-700 dark:text-white">
     
     <div id="disclaimer-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 hidden backdrop-blur-sm">
         <div class="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-            <h3 class="text-2xl font-bold mb-4 text-neutral-800 dark:text-white">Okemo Disclaimer</h3>
-            <div class="text-neutral-700 dark:text-neutral-400 mb-6 text-sm space-y-3">
+            <h3 class="text-2xl font-bold mb-4 text-neutral-800 dark:text-white transition-all duration-300">Okemo Disclaimer</h3>
+            <div class="text-neutral-700 dark:text-neutral-400 mb-6 text-sm space-y-3 transition-all duration-300">
                 <p>
                     OkemoLLM is currently in public beta. All of its generated content may be inaccurate, incomplete, or biased.
                 </p>
-                <p class="font-semibold text-neutral-700 dark:text-neutral-300">
+                <p class="font-semibold text-neutral-700 dark:text-neutral-300 transition-all duration-300">
                     By clicking Agree:
                 </p>
                 <ul class="list-disc list-inside ml-2 space-y-1">
@@ -181,25 +180,25 @@
                     <li>This service is extremely unsecure.</li>
                     <li>Your conversations may or may not be shared around the internet.</li>
                 </ul>
-                <p class="mt-4 text-base font-bold text-red-600">
+                <p class="mt-4 text-base font-bold text-red-600 transition-all duration-300">
                     <i class="fa-solid fa-triangle-exclamation mr-1"></i> PLEASE AVOID SHARING SENSITIVE INFORMATION.
                 </p>
             </div>
             
-            <div class="flex items-center mb-4">
-                <input type="checkbox" id="dont-show-again" class="w-4 h-4 text-neutral-500 dark:text-white bg-neutral-50 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500">
-                <label for="dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">Don't show this again</label>
+            <div class="flex items-center mb-4 transition-all duration-300">
+                <input type="checkbox" id="dont-show-again" class="w-4 h-4 text-neutral-500 dark:text-white bg-neutral-50 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500 transition-all duration-300">
+                <label for="dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-all duration-300">Don't show this again</label>
             </div>
 
-            <div class="flex gap-4">
+            <div class="flex gap-4 transition-all duration-300">
                 <button 
                     id="disclaimer-agree" 
-                    class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-3xl hover:bg-neutral-700 dark:hover:bg-neutral-200 transition duration-150"
+                    class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-3xl hover:bg-neutral-700 dark:hover:bg-neutral-200 transition duration-300"
                 >
                     Agree
                 </button>
                 <a href="/AI/OkemoLLM.html"
-                    class="block w-full max-w-sm mx-auto py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-800 dark:text-white font-semibold rounded-3xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition duration-150 text-center">
+                    class="block w-full max-w-sm mx-auto py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-800 dark:text-white font-semibold rounded-3xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition duration-300 text-center">
                     Disagree
                 </a>
 
@@ -209,29 +208,28 @@
     
     <div id="update-notes-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 hidden backdrop-blur-sm">        
         <div class="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-            <h3 class="2xl font-bold mb-4 text-neutral-800 dark:text-white flex items-center">
-                <i class="fa-solid fa-bell text-red-500 mr-2"></i> What's New!
+            <h3 class="2xl font-bold mb-4 text-neutral-800 dark:text-white flex items-center transition-all duration-300">
+                <i class="fa-solid fa-bell text-red-500 mr-2 transition-all duration-300"></i> What's New!
             </h3>
-            <div class="text-neutral-700 dark:text-neutral-400 mb-6 text-sm space-y-4">
-                <h4 class="text-lg font-semibold text-neutral-800 dark:text-white">
-                    Version 0.1.1 - October 2025
+            <div class="text-neutral-700 dark:text-neutral-400 mb-6 text-sm space-y-4 transition-all duration-300">
+                <h4 class="text-lg font-semibold text-neutral-800 dark:text-white transition-all duration-300">
+                    Version 0.1.2 - October 2025
                 </h4>
-                <ul class="list-disc list-inside ml-2 space-y-2 text-neutral-700 dark:text-neutral-400">
-                    <li class="dark:text-white">✨ New Loading Bar: sleek, animated loading line is now visible during generation.</li>
-                    <li>💬 Voting: You can take part in training the AI.</li>
-                    <li>💬 Chat: No more UNK.</li>
-                    <li>🛠️ Input Fixes: Improved input bar alignment and mobile responsiveness.</li>
+                <ul class="list-disc list-inside ml-2 space-y-2 text-neutral-700 dark:text-neutral-400 transition-all duration-300">
+                    <li>Better responses: More humanly understandable respones</li>
+                    <li>Web search: Learning from the web</li>
+                    <li>File/Photo: OkemoLLM can now see your photos and files</li>
                 </ul>
             </div>
             
-            <div class="flex items-center mb-4">
-                <input type="checkbox" id="notes-dont-show-again" class="w-4 h-4 text-neutral-500 dark:text-white bg-neutral-50 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500">
-                <label for="notes-dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">Don't show this version's notes again</label>
+            <div class="flex items-center mb-4 transition-all duration-300">
+                <input type="checkbox" id="notes-dont-show-again" class="w-4 h-4 text-neutral-500 dark:text-white bg-neutral-50 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500 transition-all duration-300">
+                <label for="notes-dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-all duration-300">Don't show this version's notes again</label>
             </div>
 
             <button 
                 id="update-notes-close" 
-                class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-3xl hover:bg-neutral-700 dark:hover:bg-neutral-200 transition duration-150"
+                class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-3xl hover:bg-neutral-700 dark:hover:bg-neutral-200 transition duration-300"
             >
                 Got It!
             </button>
@@ -240,31 +238,31 @@
 
     <div id="fixed-header-wrapper" class="fixed top-0 left-0 right-0 z-30 bg-neutral-100/80 dark:bg-neutral-900/95 backdrop-blur-md transition-colors duration-300">
         <div class="w-full mx-auto max-w-2xl px-8"> 
-            <header class="pt-6 pb-4 flex items-center gap-3 relative"> 
-                <div class="flex items-center relative">
-                    <a href="/AI/OkemoLLM.html" id="okemo-title" class="text-2xl font-semibold cursor-pointer text-neutral-900 dark:text-white">
+            <header class="pt-6 pb-4 flex items-center gap-3 relative transition-all duration-300"> 
+                <div class="flex items-center relative transition-all duration-300">
+                    <a href="/AI/OkemoLLM.html" id="okemo-title" class="text-2xl font-semibold cursor-pointer text-neutral-900 dark:text-white transition-all duration-300">
                         OLM
                     </a>
                     <span id="update-note-badge" class="update-badge hidden"></span>
-                    <button id="menu-toggle" class="ml-1 text-lg text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition p-1 rounded-full">
+                    <button id="menu-toggle" class="ml-1 text-lg text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition p-1 rounded-full duration-300">
                         <i class="fa-solid fa-caret-down transition duration-150 transform" id="menu-icon"></i>
                     </button>
                 </div>
-                <a href="/AI/OkemoLLM.html" class="text-sm rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 p-0.5 px-3">
+                <a href="/AI/OkemoLLM.html" class="text-sm rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 p-0.5 px-3 transition-all duration-300">
                     Beta <i class="fa-solid fa-flask"></i>
                 </a>
 
                 <div id="okemo-dropdown" class="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
                     
-                    <a href="#" id="new-chat-dropdown-1" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-100">
-                        <span class="text-lg mr-2 w-4 text-center font-bold">+</span> New Chat
+                    <a href="#" id="new-chat-dropdown-1" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-300">
+                        <span class="text-lg mr-2 w-4 text-center font-bold transition-all duration-300">+</span> New Chat
                     </a>
-                    <a href="#" id="new-chat-dropdown-2" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-100">
-                        <i class="fas fa-code-branch mr-2 w-4 text-center"></i> OLM 1
+                    <a href="#" id="new-chat-dropdown-2" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-300">
+                        <i class="fas fa-code-branch mr-2 w-4 text-center transition-all duration-300"></i> OLM 1
                     </a>
-                    <div class="my-1 border-t border-neutral-100 dark:border-neutral-800"></div>
-                    <a href="#" id="show-update-notes" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-100">
-                        <i class="fa-solid fa-note-sticky mr-2 w-4 text-center"></i> Update Notes
+                    <div class="my-1 border-t border-neutral-100 dark:border-neutral-800 transition-all duration-300"></div>
+                    <a href="#" id="show-update-notes" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-300">
+                        <i class="fa-solid fa-note-sticky mr-2 w-4 text-center transition-all duration-300"></i> Update Notes
                     </a>
                 </div>
             </header>
@@ -277,36 +275,63 @@
             What are we exploring?
         </div>
 
-        <div id="okemo-chat" class="chat-scroll p-4 overflow-y-auto flex-1 relative"></div>
-        </div>
+        <div id="okemo-chat" class="chat-scroll p-4 overflow-y-auto flex-1 relative transition-all duration-300"></div>
+    </div>
 
-    <div class="fixed bottom-0 left-0 right-0 z-20 shadow-lg pt-2 pb-8 transition-colors duration-300 bg-neutral-100/90 dark:bg-neutral-900/90 backdrop-blur-sm">
-        <div class="w-full max-w-2xl px-8 mx-auto">
-             <div id="okemo-status" class="min-h-5 text-sm text-neutral-500 dark:text-neutral-500 mb-2"></div>
-            
-            <div id="okemo-loading-bar" class="h-0.5 w-full overflow-hidden hidden rounded-full mb-2">
-                <div class="loading-line-animation h-full bg-neutral-900 dark:bg-white"></div>
-            </div>
-            
-            <div id="input-bar-container" class="w-full bg-white dark:bg-neutral-800 rounded-4xl shadow-xl p-2 grid gap-2 border border-neutral-200 dark:border-neutral-800 relative">
+    <div class="fixed bottom-0 left-0 right-0 z-20 shadow-lg pb-6 transition-colors duration-300 bg-neutral-100/90 dark:bg-neutral-900/90 backdrop-blur-sm">
+  <div class="w-full max-w-2xl px-8 mx-auto">
+    <div id="okemo-status" class="min-h-5 text-sm text-neutral-500 dark:text-neutral-500 mb-1 transition-all duration-300"></div>
+
+    <div id="okemo-loading-bar" class="h-0.5 w-full overflow-hidden hidden rounded-full mb-2 transition-all duration-300">
+      <div class="loading-line-animation h-full bg-neutral-900 dark:bg-white transition-all duration-300"></div>
+    </div>
+            <div id="input-bar-container" class="w-full bg-white dark:bg-neutral-800 rounded-5xl shadow-xl px-2 pb-2 grid gap-2 border border-neutral-200 dark:border-neutral-800 relative transition-all duration-300">
                 
+                <div id="file-preview-container" class="hidden col-span-2 transition-all duration-300">
+                    </div>
                 <textarea
                     id="okemo-input"
                     placeholder="Ask anything" 
                     rows="1" 
-                    class="rounded-3xl px-5 py-2 text-base focus:outline-none text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-300 resize-none h-auto min-h-[48px] max-h-40 overflow-hidden bg-neutral-100 dark:bg-neutral-700 focus:ring-2 focus:ring-neutral-500 dark:focus:ring-white transition-colors duration-300"
+                    class="rounded-3xl px-5 py-2 text-base focus:outline-none text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-300 resize-none h-auto min-h-[48px] max-h-60 overflow-hidden bg-neutral-100 dark:bg-neutral-700 focus:ring-2 focus:ring-neutral-500 dark:focus:ring-white transition-all duration-300"
                 ></textarea>
                 
-                <div id="s-wrapper">
+                <div id="s-wrapper" class="transition-all duration-300">
+                    <div id="input-dropdown" class="absolute right-1 bottom-[calc(100%+10px)] w-48 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-bottom-right">
+                        
+                        <button id="web-search-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-300">
+                            <i class="fa-solid fa-globe mr-2 w-4 text-center text-sky-500 dark:text-sky-400 transition-all duration-300"></i> Web Search
+                        </button>
+
+                        <button id="add-image-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-300">
+                            <i class="fa-solid fa-image mr-2 w-4 text-center text-purple-500 dark:text-purple-400 transition-all duration-300"></i> Upload Photo
+                        </button>
+                        
+                        <button id="new-feature-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-300">
+                            <i class="fa-solid fa-paperclip mr-2 w-4 text-center text-green-500 dark:text-green-400 transition-all duration-300"></i> Attach File
+                        </button>
+                    </div>
+                    
                     <button
-                        id="okemo-send"
-                        class="mb-1 mr-3 cursor-pointer rounded-full bg-neutral-900 hover:bg-neutral-700 active:bg-black dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-300 text-white dark:text-black w-10 h-10 flex items-center justify-center transition duration-150 transform hover:scale-105"
+                        id="plus-menu-toggle"
+                        class="mb-2 mr-1 cursor-pointer rounded-full bg-neutral-200 hover:bg-neutral-300 active:bg-neutral-400 text-neutral-800 dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:active:bg-neutral-500 dark:text-white w-8 h-8 flex items-center justify-center transition duration-300 transform hover:scale-105"
+                        aria-label="Open Input Menu"
+                    >
+                        <i id="plus-icon" class="fa-solid fa-plus text-lg transition-all duration-300"></i>
+                    </button>
+
+                    <button id="okemo-send"
+                        class="mb-1 mr-2 cursor-pointer rounded-full bg-neutral-900 hover:bg-neutral-700 active:bg-black dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-300 text-white dark:text-black w-10 h-10 flex items-center justify-center transition duration-300 transform hover:scale-105"
                         aria-label="Send"
                     >
-                        <i class="fa-solid fa-arrow-up"></i>
+                        <i class="fa-solid fa-arrow-up transition-all duration-300"></i>
                     </button>
                 </div>
             </div>
+            
+            <input type="file" id="file-upload-input" class="hidden" accept=".pdf,.doc,.docx,.txt">
+            <input type="file" id="image-upload-input" class="hidden" accept="image/*">
+            
         </div>
     </div>
 
@@ -321,7 +346,15 @@
           htmlElement.classList.remove('dark');
         } else if (storedTheme === 'dark') {
           htmlElement.classList.add('dark');
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // Default to system dark mode if no preference saved
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
         }
+        
+        // After loading the theme, update all toolbox icon colors
+        document.dispatchEvent(new Event('themeLoaded'));
       }
 
       document.addEventListener('DOMContentLoaded', loadTheme);
