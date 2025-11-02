@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -74,51 +74,49 @@
 
         /* --- Checkbox Styling Fix --- */
         #dont-show-again {
-            /* Forcefully remove border */
             border: none !important;
-            /* Explicitly set background color */
-            background-color: #f9fafb !important; /* Tailwind gray-50 */
-            /* Forces red accent color (for the checkmark itself) */
-            accent-color: #ef4444; /* Tailwind red-500 */
+            background-color: #f9fafb !important; /* Tailwind neutral-50 */
+            .dark & { background-color: #262626 !important; } /* Tailwind neutral-800 */
+            /* Checkbox accent color to neutral/white */
+            accent-color: #4b5563; /* Tailwind neutral-500 */
+            .dark & { accent-color: #fff; } /* White for dark mode contrast */
         }
         
         /* --- UPDATE NOTES CHECKBOX STYLING --- */
         #notes-dont-show-again {
             border: none !important;
-            background-color: #f9fafb !important; /* Tailwind gray-50 */
-            accent-color: #ef4444; /* Tailwind red-500 */
+            background-color: #f9fafb !important; /* Tailwind neutral-50 */
+             .dark & { background-color: #262626 !important; } /* Tailwind neutral-800 */
+            /* Checkbox accent color to neutral/white */
+            accent-color: #4b5563; /* Tailwind neutral-500 */
+            .dark & { accent-color: #fff; } /* White for dark mode contrast */
         }
 
         /* --- Grid Layout for Input Bar Anchoring --- */
         #input-bar-container {
             display: grid;
-            /* Now 1fr for textarea and auto for the single send button */
             grid-template-columns: 1fr auto; 
-            /* Reverted back to items-end for stable button anchoring (buttons at bottom when expanded) */
             align-items: end; 
             grid-template-areas: "primary trailing";
         }
         
         #input-area-wrapper {
-             /* Wrapper is removed, contents moved to primary */
              grid-area: primary;
         }
 
         #okemo-input {
             grid-area: primary;
-            /* Restore original horizontal padding and min/max heights */
             padding-left: 20px; 
             padding-right: 0; 
-            min-height: 48px; /* Standard minimum height */
+            min-height: 48px; 
             max-height: 150px;
         }
 
         #s-wrapper {
             grid-area: trailing;
             display: flex;
-            align-items: end; /* Ensure icons stay at the bottom of the row */
+            align-items: end; 
             gap: 8px;
-            /* FIX: Use negative margin to pull the button flush with the right edge (overriding p-2 padding of 8px) */
             margin-right: -8px; 
         }
         
@@ -137,13 +135,13 @@
             transition: opacity 0.3s ease-in-out;
         }
 
-        /* --- NEW RAINBOW GRADIENT ANIMATION --- */
+        /* --- NEW RAINBOW GRADIENT ANIMATION (Neutralized colors in dark mode) --- */
         @keyframes gradientScrollFast {
             0% { background-position: 0% 0%; }
             50% { background-position: 100% 0%; }
             100% { background-position: 200% 0%; }
         }
-
+        /* Keeping this as the default for the full rainbow effect */
         .animate-rainbow {
             background: linear-gradient(90deg, #ff6b6b, #54a0ff, #a454ff, #ff6b6b);
             background-size: 200%;
@@ -153,27 +151,29 @@
         /* --- UPDATE BADGE --- */
         .update-badge {
             position: absolute;
-            top: 20px; /* Adjust to sit above or near the title */
-            left: 100%; /* Position to the right of the title */
-            margin-left: 5px; /* Spacing from the title */
+            top: 20px; 
+            left: 100%; 
+            margin-left: 5px; 
             width: 8px;
             height: 8px;
+            /* Retain red for urgency/new updates */
             background-color: #f87171; /* Tailwind red-400 */
             border-radius: 50%;
-            border: 2px solid #f9fafb; /* gray-50 to match body */
+            border: 2px solid #f9fafb; /* neutral-50 to match light body */
+            .dark & { border-color: #1f2937; } /* gray-800 to contrast with gray-900 background */
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen font-inter flex flex-col">
+<body class="bg-neutral-100 dark:bg-neutral-900 min-h-screen font-inter flex flex-col transition-colors duration-300 text-neutral-700 dark:text-white">
     
-    <div id="disclaimer-modal" class="fixed inset-0 bg-neutral-900/10 flex items-center justify-center z-50 transition-opacity duration-300 hidden backdrop-blur-sm">
-        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-            <h3 class="text-2xl font-bold mb-4 text-neutral-800">Okemo Disclaimer</h3>
-            <div class="text-gray-700 mb-6 text-sm space-y-3">
+    <div id="disclaimer-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 hidden backdrop-blur-sm">
+        <div class="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
+            <h3 class="text-2xl font-bold mb-4 text-neutral-800 dark:text-white">Okemo Disclaimer</h3>
+            <div class="text-neutral-700 dark:text-neutral-400 mb-6 text-sm space-y-3">
                 <p>
                     OkemoLLM is currently in public beta. All of its generated content may be inaccurate, incomplete, or biased.
                 </p>
-                <p class="font-semibold text-neutral-700">
+                <p class="font-semibold text-neutral-700 dark:text-neutral-300">
                     By clicking Agree:
                 </p>
                 <ul class="list-disc list-inside ml-2 space-y-1">
@@ -187,35 +187,37 @@
             </div>
             
             <div class="flex items-center mb-4">
-                <input type="checkbox" id="dont-show-again" class="w-4 h-4 text-red-600 bg-gray-50 border-none rounded focus:ring-red-500">
-                <label for="dont-show-again" class="ml-2 text-sm font-medium text-gray-700">Don't show this again</label>
+                <input type="checkbox" id="dont-show-again" class="w-4 h-4 text-neutral-500 dark:text-white bg-neutral-50 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500">
+                <label for="dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">Don't show this again</label>
             </div>
 
             <div class="flex gap-4">
                 <button 
                     id="disclaimer-agree" 
-                    class="w-full py-2 bg-neutral-800 text-white font-semibold rounded-3xl hover:bg-neutral-700 transition duration-150"
+                    class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-3xl hover:bg-neutral-700 dark:hover:bg-neutral-200 transition duration-150"
                 >
                     Agree
                 </button>
                 <a href="/AI/OkemoLLM.html"
-                    class="block w-full max-w-sm mx-auto py-2 border border-neutral-300 bg-white text-neutral-800 font-semibold rounded-3xl hover:bg-gray-100 transition duration-150 text-center">
+                    class="block w-full max-w-sm mx-auto py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-800 dark:text-white font-semibold rounded-3xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition duration-150 text-center">
                     Disagree
                 </a>
 
             </div>
         </div>
     </div>
-<div id="update-notes-modal" class="fixed inset-0 bg-neutral-900/10 flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 hidden backdrop-blur-sm">        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-            <h3 class="text-2xl font-bold mb-4 text-neutral-800 flex items-center">
+    
+    <div id="update-notes-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 hidden backdrop-blur-sm">        
+        <div class="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
+            <h3 class="2xl font-bold mb-4 text-neutral-800 dark:text-white flex items-center">
                 <i class="fa-solid fa-bell text-red-500 mr-2"></i> What's New!
             </h3>
-            <div class="text-gray-700 mb-6 text-sm space-y-4">
-                <h4 class="text-lg font-semibold text-neutral-800">
+            <div class="text-neutral-700 dark:text-neutral-400 mb-6 text-sm space-y-4">
+                <h4 class="text-lg font-semibold text-neutral-800 dark:text-white">
                     Version 0.1.1 - October 2025
                 </h4>
-                <ul class="list-disc list-inside ml-2 space-y-2 text-gray-700">
-                    <li>✨ New Loading Bar: sleek, animated loading line is now visible during generation.</li>
+                <ul class="list-disc list-inside ml-2 space-y-2 text-neutral-700 dark:text-neutral-400">
+                    <li class="dark:text-white">✨ New Loading Bar: sleek, animated loading line is now visible during generation.</li>
                     <li>💬 Voting: You can take part in training the AI.</li>
                     <li>💬 Chat: No more UNK.</li>
                     <li>🛠️ Input Fixes: Improved input bar alignment and mobile responsiveness.</li>
@@ -223,44 +225,45 @@
             </div>
             
             <div class="flex items-center mb-4">
-                <input type="checkbox" id="notes-dont-show-again" class="w-4 h-4 text-red-600 bg-gray-50 border-none rounded focus:ring-red-500">
-                <label for="notes-dont-show-again" class="ml-2 text-sm font-medium text-gray-700">Don't show this version's notes again</label>
+                <input type="checkbox" id="notes-dont-show-again" class="w-4 h-4 text-neutral-500 dark:text-white bg-neutral-50 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500">
+                <label for="notes-dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">Don't show this version's notes again</label>
             </div>
 
             <button 
                 id="update-notes-close" 
-                class="w-full py-2 bg-red-500 text-white font-semibold rounded-3xl hover:bg-red-600 transition duration-150"
+                class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-3xl hover:bg-neutral-700 dark:hover:bg-neutral-200 transition duration-150"
             >
                 Got It!
             </button>
         </div>
     </div>
-    <div id="fixed-header-wrapper" class="fixed top-0 left-0 right-0 z-30 bg-gray-100/80 backdrop-blur-md">
+
+    <div id="fixed-header-wrapper" class="fixed top-0 left-0 right-0 z-30 bg-neutral-100/80 dark:bg-neutral-900/95 backdrop-blur-md transition-colors duration-300">
         <div class="w-full mx-auto max-w-2xl px-8"> 
             <header class="pt-6 pb-4 flex items-center gap-3 relative"> 
                 <div class="flex items-center relative">
-                    <a href="/AI/OkemoLLM.html" id="okemo-title" class="text-2xl font-semibold cursor-pointer">
+                    <a href="/AI/OkemoLLM.html" id="okemo-title" class="text-2xl font-semibold cursor-pointer text-neutral-900 dark:text-white">
                         OLM
                     </a>
                     <span id="update-note-badge" class="update-badge hidden"></span>
-                    <button id="menu-toggle" class="ml-1 text-lg text-gray-700 hover:text-neutral-800 transition p-1 rounded-full">
+                    <button id="menu-toggle" class="ml-1 text-lg text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition p-1 rounded-full">
                         <i class="fa-solid fa-caret-down transition duration-150 transform" id="menu-icon"></i>
                     </button>
                 </div>
-                <a href="/AI/OkemoLLM.html" class="text-sm rounded-full bg-neutral-200 p-0.5 px-3">
+                <a href="/AI/OkemoLLM.html" class="text-sm rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 p-0.5 px-3">
                     Beta <i class="fa-solid fa-flask"></i>
                 </a>
 
-                <div id="okemo-dropdown" class="absolute left-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
+                <div id="okemo-dropdown" class="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
                     
-                    <a href="#" id="new-chat-dropdown-1" class="relative flex items-center px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-xl transition duration-100">
+                    <a href="#" id="new-chat-dropdown-1" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-100">
                         <span class="text-lg mr-2 w-4 text-center font-bold">+</span> New Chat
                     </a>
-                    <a href="#" id="new-chat-dropdown-2" class="relative flex items-center px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-xl transition duration-100">
+                    <a href="#" id="new-chat-dropdown-2" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-100">
                         <i class="fas fa-code-branch mr-2 w-4 text-center"></i> OLM 1
                     </a>
-                    <div class="my-1 border-t border-gray-100"></div>
-                    <a href="#" id="show-update-notes" class="relative flex items-center px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-xl transition duration-100">
+                    <div class="my-1 border-t border-neutral-100 dark:border-neutral-800"></div>
+                    <a href="#" id="show-update-notes" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-xl transition duration-100">
                         <i class="fa-solid fa-note-sticky mr-2 w-4 text-center"></i> Update Notes
                     </a>
                 </div>
@@ -268,36 +271,36 @@
         </div>
     </div>
 
-    <div class="w-full px-8 pt-[84px] pb-[110px] flex-1 flex flex-col min-h-0 mx-auto max-w-2xl relative">
+    <div class="w-full px-8 pt-[84px] pb-[110px] flex-1 flex flex-col min-h-0 mx-auto max-w-2xl relative transition-colors duration-300">
         
-        <div id="empty-chat-prompt" class="text-3xl select-none">
+        <div id="empty-chat-prompt" class="text-3xl select-none text-black dark:text-white">
             What are we exploring?
         </div>
 
         <div id="okemo-chat" class="chat-scroll p-4 overflow-y-auto flex-1 relative"></div>
         </div>
 
-    <div class="fixed bottom-0 left-0 right-0 z-20 bg-gray-100 shadow-lg pt-2 pb-8">
+    <div class="fixed bottom-0 left-0 right-0 z-20 shadow-lg pt-2 pb-8 transition-colors duration-300 bg-neutral-100/90 dark:bg-neutral-900/90 backdrop-blur-sm">
         <div class="w-full max-w-2xl px-8 mx-auto">
-             <div id="okemo-status" class="min-h-5 text-sm text-gray-500 mb-2"></div>
+             <div id="okemo-status" class="min-h-5 text-sm text-neutral-500 dark:text-neutral-500 mb-2"></div>
             
             <div id="okemo-loading-bar" class="h-0.5 w-full overflow-hidden hidden rounded-full mb-2">
-                <div class="loading-line-animation h-full bg-neutral-800"></div>
+                <div class="loading-line-animation h-full bg-neutral-900 dark:bg-white"></div>
             </div>
             
-            <div id="input-bar-container" class="w-full bg-white rounded-4xl shadow-xl p-2 grid gap-2 border border-gray-200 relative">
+            <div id="input-bar-container" class="w-full bg-white dark:bg-neutral-800 rounded-4xl shadow-xl p-2 grid gap-2 border border-neutral-200 dark:border-neutral-800 relative">
                 
                 <textarea
                     id="okemo-input"
                     placeholder="Ask anything" 
                     rows="1" 
-                    class="rounded-3xl px-5 py-2 text-base focus:outline-none text-gray-900 placeholder:text-gray-400 resize-none h-auto min-h-[48px] max-h-40 overflow-hidden bg-gray-50 focus:ring-2 focus:ring-neutral-400"
+                    class="rounded-3xl px-5 py-2 text-base focus:outline-none text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-300 resize-none h-auto min-h-[48px] max-h-40 overflow-hidden bg-neutral-100 dark:bg-neutral-700 focus:ring-2 focus:ring-neutral-500 dark:focus:ring-white transition-colors duration-300"
                 ></textarea>
                 
                 <div id="s-wrapper">
                     <button
                         id="okemo-send"
-                        class="mb-1 mr-3 cursor-pointer rounded-full bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-900 text-white w-10 h-10 flex items-center justify-center transition duration-150 transform hover:scale-105"
+                        class="mb-1 mr-3 cursor-pointer rounded-full bg-neutral-900 hover:bg-neutral-700 active:bg-black dark:bg-white dark:hover:bg-neutral-200 dark:active:bg-neutral-300 text-white dark:text-black w-10 h-10 flex items-center justify-center transition duration-150 transform hover:scale-105"
                         aria-label="Send"
                     >
                         <i class="fa-solid fa-arrow-up"></i>
@@ -307,6 +310,22 @@
         </div>
     </div>
 
+    <script>
+      const htmlElement = document.documentElement;
+      const themeKey = 'theme';
+
+      function loadTheme() {
+        const storedTheme = localStorage.getItem(themeKey);
+
+        if (storedTheme === 'light') {
+          htmlElement.classList.remove('dark');
+        } else if (storedTheme === 'dark') {
+          htmlElement.classList.add('dark');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
     <script type="module" src="chat.js"></script>
 </body>
 </html>

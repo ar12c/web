@@ -111,11 +111,11 @@ function showTooltip(event) {
     // Create the tooltip element
     const tooltip = document.createElement('div');
     tooltip.id = 'dynamic-tooltip';
-    // *** FIX: Use 'fixed' positioning and a high z-index (z-[9999] in Tailwind) ***
-    tooltip.className = 'fixed z-[9999] px-2 py-1 text-xs text-white bg-gray-800 rounded-lg shadow-xl opacity-0 transition-opacity duration-200 pointer-events-none whitespace-nowrap';
+    // Use 'fixed' positioning and neutral dark mode colors
+    tooltip.className = 'fixed z-[9999] px-2 py-1 text-xs text-white bg-neutral-800 rounded-lg shadow-xl opacity-0 transition-opacity duration-200 pointer-events-none whitespace-nowrap';
     tooltip.textContent = content;
 
-    // *** FIX: Append to the document body to escape parent stacking contexts ***
+    // Append to the document body to escape parent stacking contexts
     document.body.appendChild(tooltip); 
     currentTooltip = tooltip;
 
@@ -357,12 +357,20 @@ async function initOkemo() {
 
 /**
 * Updates the status message at the bottom of the chat.
+* @param {string} msg - The status message content.
+* @param {boolean} isError - If true, uses an error color.
+* @param {string} targetElementId - The ID of the element to update.
 */
 function showStatus(msg, isError = false, targetElementId = "okemo-status") {
     const el = document.getElementById(targetElementId);
     if (!el) return;
+    
+    // Neutral status colors
+    const errorColorClass = "text-red-500"; // Retain red for errors/urgency
+    const statusColorClass = "text-neutral-500";
+    
     el.textContent = msg;
-    el.className = `min-h-5 text-sm ${isError ? "text-red-600" : "text-gray-500"}`;
+    el.className = `min-h-5 text-sm ${isError ? errorColorClass : statusColorClass}`;
 }
 
 /**
@@ -378,23 +386,34 @@ function escapeHTML(s) {
 }
 
 
-// Function to create the reusable button container HTML
+// Key Change 1: Update toolbox button icon colors to white in dark mode
 function createButtonContainerHTML(isLastResponse, turnId) {
-    // Only the last AI response gets the feedback buttons, but ALL messages get Copy/Export/Regenerate
+    
+    // Light mode icon color (neutral-600)
+    const lightIconColor = "color: #525252ff;";
+    // Dark mode icon color (white)
+    const darkIconColor = "color: #ffffff;"; 
+    // This style sets the color based on whether the HTML root element has the 'dark' class
+    const finalIconStyle = `style="${lightIconColor}" data-dark-style="${darkIconColor}"`;
+    
+    // Hover background colors
+    const hoverBg = "hover:bg-neutral-300 dark:hover:bg-neutral-700";
+    
+    // Only the last AI response gets the feedback buttons
     const feedbackButtons = isLastResponse ? `
         <button 
             id="good-response-feedback-${turnId}"
-            class="text-sm font-medium px-2 py-1 rounded hover:bg-gray-300 transition duration-150"
+            class="text-sm font-medium px-2 py-1 rounded transition duration-150 ${hoverBg}"
             data-tooltip-content="Good Response"
         >
-            <i class="fa-regular fa-thumbs-up" style="color: #696969ff;"></i>
+            <i class="fa-regular fa-thumbs-up" ${finalIconStyle}></i>
         </button>
         <button 
             id="bad-response-feedback-${turnId}"
-            class="text-sm font-medium px-2 py-1 rounded hover:bg-gray-300 transition duration-150"
+            class="text-sm font-medium px-2 py-1 rounded transition duration-150 ${hoverBg}"
             data-tooltip-content="Bad Response"
         >
-            <i class="fa-regular fa-thumbs-down" style="color: #696969ff;"></i>
+            <i class="fa-regular fa-thumbs-down" ${finalIconStyle}></i>
         </button>
     ` : '';
     
@@ -406,24 +425,24 @@ function createButtonContainerHTML(isLastResponse, turnId) {
             ${feedbackButtons}
             <button 
                 id="copy-button-${turnId}"
-                class="text-sm font-medium px-2 py-1 rounded hover:bg-gray-300 transition duration-150"
+                class="text-sm font-medium px-2 py-1 rounded transition duration-150 ${hoverBg}"
                 data-tooltip-content="Copy"
             >
-                <i class="fa-regular fa-copy" style="color: #696969ff;"></i>
+                <i class="fa-regular fa-copy" ${finalIconStyle}></i>
             </button>
             <button 
                 id="export-chat-button-${turnId}"
-                class="text-sm font-medium px-2 py-1 rounded hover:bg-gray-300 transition duration-150"
+                class="text-sm font-medium px-2 py-1 rounded transition duration-150 ${hoverBg}"
                 data-tooltip-content="Export as .txt"
             >
-                <i class="fa-solid fa-file-export" style="color: #696969ff;"></i>
+                <i class="fa-solid fa-file-export" ${finalIconStyle}></i>
             </button>
             <button 
                 id="regenerate-button-${turnId}"
-                class="text-sm font-medium px-2 py-1 rounded hover:bg-gray-300 transition duration-150"
+                class="text-sm font-medium px-2 py-1 rounded transition duration-150 ${hoverBg}"
                 data-tooltip-content="Regenerate"
             >
-                <i class="fas fa-redo-alt" style="color: #696969ff;"></i>
+                <i class="fas fa-redo-alt" ${finalIconStyle}></i>
             </button>
         </div>
     `;
@@ -436,6 +455,25 @@ function attachToolboxListeners(wrapperEl, index) {
     const isLastTurn = index === history.length - 1;
 
     if (!toolbox) return;
+    
+    // Helper to set the icon color based on the current theme (Run on render)
+    const updateIconColors = () => {
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        toolbox.querySelectorAll('i').forEach(icon => {
+            const darkStyle = icon.getAttribute('data-dark-style');
+            const lightStyle = icon.getAttribute('style');
+            
+            if (isDarkMode && darkStyle) {
+                icon.setAttribute('style', darkStyle);
+            } else {
+                icon.setAttribute('style', lightStyle);
+            }
+        });
+    };
+    
+    // Apply initial color based on theme
+    updateIconColors();
+
 
     // 1. Hover/Visibility Logic (Only attach for non-last turns)
     if (!isLastTurn) {
@@ -532,22 +570,22 @@ function renderChat() {
         // ----------------------- START TURN WRAPPER -----------------------
         htmlContent.push(`<div id="${wrapperId}" class="chat-turn-wrapper">`);
 
-        // ----------------------- USER MESSAGE -----------------------
+        // ----------------------- USER MESSAGE (Key Change 2: Darker user bubble) -----------------------
         if (u) {
             htmlContent.push(`
                     <div class="user-message-row mb-3 flex justify-end">
-                        <div class="inline-block max-w-[85%] rounded-2xl px-4 py-2 bg-neutral-200 transform transition duration-150 ease-out">
+                        <div class="inline-block max-w-[85%] rounded-2xl px-4 py-2 bg-neutral-200 dark:bg-neutral-800 dark:text-white transform transition duration-150 ease-out">
                             ${escapeHTML(u)}
                         </div>
                     </div>`);
         }
         
-        // ----------------------- ASSISTANT MESSAGE -----------------------
+        // ----------------------- ASSISTANT MESSAGE (Neutral) -----------------------
         if (a) {
             htmlContent.push(`
                 <div class="ai-message-row mb-1 flex items-start gap-2 mt-7"> 
-                    <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full mt-1"/> 
-                    <div class="max-w-[85%] text-gray-900 pt-1"> 
+                    <img src="/src/Vailailogo.svg" alt="AI logo" class="w-8 h-8 rounded-full mt-1 dark:invert"/> 
+                    <div class="max-w-[85%] text-neutral-900 dark:text-white pt-1"> 
                         ${escapeHTML(a)}
                     </div>
                 </div>
@@ -600,11 +638,15 @@ function copyResponseByTurnIndex(btn, turnIndex) {
         return;
     }
 
-    // Standard copy logic implementation
+    // Update success colors to be neutral/black
     const originalIconClass = 'fa-regular fa-copy';
     const successIconClass = 'fa-solid fa-check';
-    const originalIconColor = '#696969ff';
-    const successIconColor = '#16a34a';
+    
+    // Key Change 3: Update success colors (Black Checkmark against White Button Background)
+    const successIconColor = '#000000'; // Black checkmark
+    
+    // Get the current icon's color (which was set by attachToolboxListeners)
+    const currentIconStyle = btn.querySelector('i').getAttribute('style');
 
     // Create a temporary textarea element to hold the text
     const tempTextarea = document.createElement('textarea');
@@ -626,9 +668,11 @@ function copyResponseByTurnIndex(btn, turnIndex) {
             
             // Visual feedback on the button
             if (btn) {
+                // Success icon must be black to contrast with the white button background in dark mode
                 btn.innerHTML = `<i class="${successIconClass}" style="color: ${successIconColor};"></i>`;
                 setTimeout(() => {
-                    btn.innerHTML = `<i class="${originalIconClass}" style="color: ${originalIconColor};"></i>`;
+                    // Revert to the original style (which already accounts for light/dark mode)
+                    btn.innerHTML = `<i class="${originalIconClass}" style="${currentIconStyle}"></i>`;
                 }, 1500);
             }
         } else {
@@ -652,6 +696,15 @@ function exportChatHistory(btn) {
         showStatus("No conversation to export. Start chatting first! 📝", true);
         return;
     }
+    
+    // Update success colors to be neutral/black
+    const originalIconClass = 'fa-solid fa-file-export';
+    const successIconClass = 'fa-solid fa-check';
+    const successIconColor = '#000000'; // Black checkmark
+    
+    // Get the current icon's color (which was set by attachToolboxListeners)
+    const currentIconStyle = btn.querySelector('i').getAttribute('style');
+
 
     // 1. Format the conversation for export
     let fileContent = `OkemoLLM Chat Export - ${new Date().toLocaleString()}\n`;
@@ -689,13 +742,11 @@ function exportChatHistory(btn) {
     
     // Visual feedback on the button itself 
     if (btn) {
-        const originalIcon = '<i class="fa-solid fa-file-export" style="color: #696969ff;"></i>';
-        const successIcon = '<i class="fa-solid fa-check" style="color: #16a34a;"></i>';
-
-        btn.innerHTML = successIcon;
+        // Success icon must be black to contrast with the white button background in dark mode
+        btn.innerHTML = `<i class="${successIconClass}" style="color: ${successIconColor};"></i>`;
         setTimeout(() => {
-            // Revert icon back to export
-            btn.innerHTML = originalIcon;
+            // Revert icon back to export using the original style
+            btn.innerHTML = `<i class="${originalIconClass}" style="${currentIconStyle}"></i>`;
         }, 1500);
     }
     
