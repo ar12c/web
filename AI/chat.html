@@ -1,1651 +1,349 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Chat OLM</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat OLM</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
-    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+  <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
+  <meta content="OkemoVail" property="og:title">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+     
+  <style>
+    /* 1. UNIFORM BACKGROUNDS (Light Mode: #FAFAFA, Dark Mode: #171717) */
+    .bg-light-uniform { background-color: #FAFAFA; }
+    .text-light-base { color: #171717; } /* neutral-900 */
+    .bg-dark-uniform { background-color: #171717; }
+    .text-dark-base { color: #F5F5F5; } /* neutral-100 */
 
-    <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
-    <meta content="OkemoVail" property="og:title">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Modernized Styles for a cleaner, Gemini/ChatGPT aesthetic */
-        .chat-scroll { 
-            scroll-behavior: smooth; 
-            overflow-x: hidden;
-            /* FIX: Remove fixed background color to make it transparent/inherit body background */
-            background-color: transparent !important; 
-            filter: var(--chat-bg-filter, none);
-        }
-        
-        /* --- Loading Animation Styles (Line) */
-        @keyframes loading-line {
-            0% {
-                transform: translateX(-100%) scaleX(0.1);
-            }
-            50% {
-                transform: translateX(0%) scaleX(0.5);
-            }
-            100% {
-                transform: translateX(100%) scaleX(0.1);
-            }
-        }
+    /* Global containers inherit the uniform background */
+    body {
+      background-color: #FAFAFA;
+      color: #171717;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark body {
+      background-color: #171717;
+      color: #F5F5F5;
+    }
+    /* Fixed header and footer bar must also inherit */
+    #fixed-header-wrapper, .fixed.bottom-0 {
+        background-color: #FAFAFA;
+    }
+    .dark #fixed-header-wrapper, .dark .fixed.bottom-0 {
+        background-color: #171717;
+    }
+    /* Input container uses a slightly different neutral to stand out only with shadow */
+    #input-bar-container {
+        background-color: #FFFFFF;
+        box-shadow: 0 2px 5px -1px rgb(0 0 0 / 0.1); 
+    }
+    .dark #input-bar-container {
+        background-color: #262626; /* neutral-800 */
+        box-shadow: 0 2px 5px -1px rgb(255 255 255 / 0.05); 
+    }
 
-        .loading-line-animation {
-            animation: loading-line 2s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-            transform-origin: left;
-        }
+    /* 2. CUSTOM ICON COLOR LOGIC */
+    .ai-logo-placeholder {
+      min-width: 32px; min-height: 32px; border-radius: 9999px;
+      background-color: #171717; color: white; 
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 700;
+    }
+    .dark .ai-logo-placeholder {
+      background-color: #F5F5F5; color: #171717; 
+    }
 
-        /* Custom Transition for Dropdown Arrow */
-        #menu-toggle i, #plus-icon {
-            transition: transform 0.3s ease-in-out;
-        }
-        #menu-toggle.active i {
-            transform: rotate(180deg);
-        }
-        
-        /* Plus icon rotation for menu open */
-        #plus-menu-toggle.active #plus-icon {
-            transform: rotate(45deg); 
-        }
+    /* Target all icons that should be light gray in light mode */
+    .chat-toolbox i, #menu-toggle i, #plus-icon {
+        color: #6b7280; /* neutral-500: Lighter gray for sleek, non-distracting look */
+        transition: color 0.3s;
+    }
+    .dark .chat-toolbox i, .dark #menu-toggle i, .dark #plus-icon {
+        color: #d4d4d4; /* neutral-300: Lighter for visibility in dark mode */
+    }
 
-        /* Input Area Layout */
-        #input-bar-container {
-            display: grid;
-            grid-template-columns: 1fr auto; 
-            align-items: end; 
-            /* Grid layout now covers two rows to stack file preview above text area */
-            grid-template-rows: auto 1fr;
-        }
-        
-        #file-preview-container {
-            grid-column: 1 / span 2; 
-            grid-row: 1; 
-            padding: 0 16px; /* Match left/right padding of textarea */
-            padding-top: 10px;
-            z-index: 10;
-        }
-        
-        #okemo-input {
-            grid-row: 2; 
-            grid-column: 1;
-            padding: 12px 16px; 
-            min-height: 48px; 
-            max-height: 200px;
-            /* Flex to center text vertically */
-            display: flex; 
-            align-items: center;
-        }
-
-        #s-wrapper {
-            grid-row: 2; 
-            grid-column: 2;
-            display: flex;
-            align-items: flex-end; /* Align to the bottom of the input container */
-            gap: 4px; 
-            margin-right: 4px; 
-            margin-bottom: 4px; /* Ensure buttons are slightly raised */
-        }
-        
-        /* Center the big welcome prompt */
-        #empty-chat-prompt {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            width: 100%;
-            transition: opacity 0.3s ease-in-out;
-        }
-        
-        /* --- UPDATE BADGE (Simplified) --- */
-        .update-badge {
-            position: absolute;
-            top: 2px; 
-            left: 100%; 
-            margin-left: 0px; 
-            width: 8px;
-            height: 8px;
-            background-color: #ef4444; /* Tailwind red-500 */
-            border-radius: 50%;
-            border: 2px solid #ffffff; /* light background (white) */
-            .dark & { border-color: #111827; } /* dark background (neutral-900) */
-        }
-
-        /* Chat Message Specific Styling */
-        /* AI Message Container */
-        .ai-message-row {
-            padding: 16px 0; /* Padding for the entire block */
-            border-bottom: 1px solid #e5e7eb; /* Subtle separator */
-            .dark & { border-bottom-color: #374151; }
-        }
-        
-        /* AI Text Content */
-        .ai-message-row > div:nth-child(2) {
-            /* Max width for AI text */
-            max-width: calc(100% - 40px); /* 8px padding + 32px icon width + 4px gap */
-            line-height: 1.6;
-            white-space: pre-wrap; /* Preserve whitespace/newlines for responses */
-        }
-
-        /* User Message Container */
-        .user-message-row {
-            /* Full width block for User response background */
-            background-color: transparent; /* Makes the whole row blend with body background */
-        }
-
-        /* User Message Bubble */
-        .user-message-row > div {
-            /* FIX: New User Bubble Colors (neutral-200/neutral-800 with correct text colors) */
-            background-color: #e5e7eb; /* neutral-200 in light mode */
-            color: #171717; /* neutral-900 (dark text) in light mode */
-            border-radius: 1.5rem 0.5rem 1.5rem 1.5rem; /* Smoother corner for human bubble */
-        }
-        .dark .user-message-row > div {
-             background-color: #3f3f46; /* neutral-800 in dark mode */
-             color: white; /* white text in dark mode */
-        }
-        
-        /* AI Logo (Placeholder: 'O' for OLM) */
-        .ai-logo-placeholder {
-            min-width: 32px;
-            min-height: 32px;
-            border-radius: 9999px;
-            /* Black background, white text for light mode */
-            background-color: #171717; /* Neutral 900 */
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            font-weight: 700;
-        }
-        /* In dark mode, invert the logo color for contrast against the dark background */
-        .dark .ai-logo-placeholder {
-            background-color: white;
-            color: #171717; /* Neutral 900 */
-        }
-    </style>
+    /* --- General UI Cleanup --- */
+    .chat-scroll { overflow-x: hidden; background-color: transparent !important; }
+    @keyframes loading-line {
+      0% { transform: translateX(-100%) scaleX(0.1); }
+      50% { transform: translateX(0%) scaleX(0.5); }
+      100% { transform: translateX(100%) scaleX(0.1); }
+    }
+    .loading-line-animation {
+      animation: loading-line 2s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+      transform-origin: left;
+    }
+    #menu-toggle i, #plus-icon { transition: transform 0.3s ease-in-out; }
+    #menu-toggle.active i { transform: rotate(180deg); }
+    #plus-menu-toggle.active #plus-icon { transform: rotate(45deg); }
+    #input-bar-container {
+      display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; align-items: end; 
+      border: 1px solid transparent; /* Ensure border doesn't clutter */
+    }
+    #file-preview-container { grid-column: 1 / span 2; grid-row: 1; padding: 10px 16px 0; z-index: 10; }
+    #okemo-input { 
+        grid-row: 2; grid-column: 1; padding: 12px 16px; min-height: 48px; max-height: 200px; 
+        display: flex; align-items: center; background-color: transparent;
+    }
+    #s-wrapper { 
+        grid-row: 2; grid-column: 2; display: flex; align-items: flex-end; gap: 4px; 
+        margin-right: 4px; margin-bottom: 4px;
+    }
+    #empty-chat-prompt {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+      text-align: center; width: 100%; transition: opacity 0.3s ease-in-out;
+    }
+    /* Message Styling */
+    .ai-message-row {
+      padding: 12px 0; 
+      border-bottom: 1px solid #e5e7eb;
+      .dark & { border-bottom-color: #374151; }
+    }
+    .ai-message-row > div:nth-child(2) { max-width: calc(100% - 40px); line-height: 1.5; white-space: pre-wrap; }
+    .user-message-row { background-color: transparent; }
+    .user-message-row > div {
+      background-color: #E5E7EB; /* Subtle off-white for user bubble */
+      color: #171717;
+      border-radius: 12px; 
+    }
+    .dark .user-message-row > div {
+      background-color: #3f3f46; /* neutral-800 dark */
+      color: white;
+    }
+    .update-badge { /* ... styles retained ... */ }
+  </style>
 </head>
-<!-- FIX: Changed body background to neutral-100/900 for Light/Dark Mode separation -->
-<body class="bg-neutral-100 dark:bg-neutral-900 min-h-screen font-inter flex flex-col transition-colors duration-300 text-neutral-800 dark:text-neutral-200">
-    
-    <!-- Modals -->
-    <div id="disclaimer-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 hidden backdrop-blur-sm">
-        <div class="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-            <h3 class="text-2xl font-bold mb-4 text-neutral-900 dark:text-white transition-all duration-300">Okemo Disclaimer</h3>
-            <div class="text-neutral-600 dark:text-neutral-400 mb-6 text-sm space-y-3 transition-all duration-300">
-                <p>OkemoLLM is currently in public beta. All of its generated content may be inaccurate, incomplete, or biased.</p>
-                <p class="font-semibold text-neutral-800 dark:text-neutral-300 transition-all duration-300">By clicking Agree:</p>
-                <ul class="list-disc list-inside ml-2 space-y-1">
-                    <li>Your input is logged and used to improve the model.</li>
-                    <li>This service is extremely unsecure.</li>
-                    <li>Your conversations may or may not be shared around the internet.</li>
-                </ul>
-                <p class="mt-4 text-base font-bold text-red-600 transition-all duration-300">
-                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> PLEASE AVOID SHARING SENSITIVE INFORMATION.
-                </p>
-            </div>
-            
-            <div class="flex items-center mb-4 transition-all duration-300">
-                <input type="checkbox" id="dont-show-again" class="w-4 h-4 text-neutral-600 bg-neutral-100 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500 transition-all duration-300 accent-neutral-500">
-                <label for="dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-all duration-300">Don't show this again</label>
-            </div>
+<body class="min-h-screen font-inter flex flex-col transition-colors duration-300">
+   
+  <div id="disclaimer-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 hidden backdrop-blur-sm">
+    <div class="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
+      <h3 class="text-2xl font-bold mb-4 text-neutral-900 dark:text-white transition-all duration-300">Okemo Disclaimer</h3>
+      <div class="text-neutral-600 dark:text-neutral-400 mb-6 text-sm space-y-3 transition-all duration-300">
+        <p>OkemoLLM is currently in public beta. All of its generated content may be inaccurate, incomplete, or biased.</p>
+        <p class="font-semibold text-neutral-800 dark:text-neutral-300 transition-all duration-300">By clicking Agree:</p>
+        <ul class="list-disc list-inside ml-2 space-y-1">
+          <li>Your input is logged and used to improve the model.</li>
+          <li>This service is extremely unsecure.</li>
+          <li>Your conversations may or may not be shared around the internet.</li>
+        </ul>
+        <p class="mt-4 text-base font-bold text-red-600 transition-all duration-300">
+          <i class="fa-solid fa-triangle-exclamation mr-1"></i> PLEASE AVOID SHARING SENSITIVE INFORMATION.
+        </p>
+      </div>
+      
+      <div class="flex items-center mb-4 transition-all duration-300">
+        <input type="checkbox" id="dont-show-again" class="w-4 h-4 text-neutral-600 bg-neutral-100 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500 transition-all duration-300 accent-neutral-500">
+        <label for="dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-all duration-300">Don't show this again</label>
+      </div>
 
-            <div class="flex gap-4 transition-all duration-300">
-                <button 
-                    id="disclaimer-agree" 
-                    class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl hover:bg-neutral-800 dark:hover:bg-neutral-100 transition duration-300"
-                >
-                    Agree
-                </button>
-                <a href="#"
-                    class="block w-full py-2 border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white font-semibold rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700 transition duration-300 text-center">
-                    Disagree
-                </a>
+      <div class="flex gap-4 transition-all duration-300">
+        <button
+          id="disclaimer-agree"
+          class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl hover:bg-neutral-800 dark:hover:bg-neutral-100 transition duration-300"
+        >
+          <i class="fas fa-check"></i>
+        </button>
+        <a href="OkemoLLM.html"
+          class="block w-full py-2 border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white font-semibold rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700 transition duration-300 text-center"
+          aria-label="Disagree"
+        >
+          <i class="fas fa-times"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div id="bad-feedback-modal"
+    class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden z-[1000] transition-opacity duration-300 opacity-0">
+    <div class="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 relative">
+      <h2 class="text-lg font-semibold mb-3 dark:text-white">Bad Response Feedback</h2>
+      <p class="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
+        What should the prompt have been instead?
+      </p>
+      <textarea id="bad-feedback-input"
+        class="w-full h-24 border border-neutral-300 dark:border-neutral-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-neutral-500 dark:bg-neutral-900 dark:text-white"
+        placeholder="Enter your suggested prompt..."></textarea>
+      <div class="flex justify-end gap-3 mt-4">
+        <button id="cancel-bad-feedback"
+          class="px-4 py-2 rounded-xl bg-neutral-200 hover:bg-neutral-300 text-neutral-800 text-sm transition"
+          aria-label="Cancel">
+          <i class="fas fa-undo"></i>
+        </button>
+        <button id="submit-bad-feedback"
+          class="px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl hover:bg-neutral-800 dark:hover:bg-neutral-100 transition duration-300"
+          aria-label="Submit Feedback">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="update-notes-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 hidden backdrop-blur-sm">
+    <div class="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
+      <h3 class="text-2xl font-bold mb-4 text-neutral-900 dark:text-white flex items-center transition-all duration-300">
+        <i class="fa-solid fa-bell text-neutral-600 dark:text-neutral-400 mr-2 transition-all duration-300"></i> What's New!
+      </h3>
+      <div class="text-neutral-600 dark:text-neutral-400 mb-6 text-sm space-y-4 transition-all duration-300">
+        <h4 class="text-lg font-semibold text-neutral-800 dark:text-white transition-all duration-300">
+          Version 0.1.3 - October 2025
+        </h4>
+        <h4 class="text-lg font-semibold text-neutral-800 text-red transition-all duration-300">
+          BUTTONS DO NOT CURRENTLY WORK
+        </h4>
+        <ul class="list-disc list-inside ml-2 space-y-2 text-neutral-700 dark:text-neutral-400 transition-all duration-300">
+          <li>Web search: Semi-Accurate Web results</li>
+          <li>File/Photo: OkemoLLM can now see your photos and files</li>
+          <li>Button fixes: buttons will be fixed later</li>
+        </ul>
+      </div>
+      
+      <div class="flex items-center mb-4 transition-all duration-300">
+        <input type="checkbox" id="notes-dont-show-again" class="w-4 h-4 text-neutral-600 bg-neutral-100 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500 transition-all duration-300 accent-neutral-500">
+        <label for="notes-dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-all duration-300">Don't show this version's notes again</label>
+      </div>
 
-            </div>
+      <button
+        id="update-notes-close"
+        class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl hover:bg-neutral-800 dark:hover:bg-neutral-100 transition duration-300"
+        aria-label="Close Updates"
+      >
+        <i class="fas fa-check"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="fixed-header-wrapper" class="fixed top-0 left-0 right-0 z-30 backdrop-blur-md transition-colors duration-300 border-b border-neutral-200 dark:border-neutral-800">
+    <div class="w-full mx-auto max-w-2xl px-4 sm:px-8">
+      <header class="py-3 flex items-center justify-between relative transition-all duration-300">
+        <div class="flex items-center relative transition-all duration-300">
+          <a href="OkemoLLM.html" id="okemo-title" class="text-xl font-semibold cursor-pointer text-neutral-900 dark:text-white transition-all duration-300">
+            OLM
+          </a>
+          <span id="update-note-badge" class="update-badge hidden"></span>
+          <button id="menu-toggle" class="ml-1 text-base p-1 rounded-full duration-300" aria-label="Toggle Menu">
+            <i class="fa-solid fa-caret-down transition duration-150 transform" id="menu-icon"></i>
+          </button>
         </div>
+        
+        <a href="#" id="new-chat-link-header" class="px-5 h-10 flex items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-700 dark:bg-white hover:bg-neutral-300 dark:hover:bg-neutral-100 text-white dark:text-black p-2 transition-all duration-300" aria-label="Start New Chat" data-tooltip-content="New Chat">
+          <h1 class="transition duration-150 transform text-black dark:text-white font-medium pr-2">New</h1><i class="fa-regular fa-message transition duration-150 transform text-black dark:text-white"></i>
+        </a>
+
+        <div id="okemo-dropdown" class="absolute left-0 top-[calc(100%+5px)] w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
+          <a href="#" id="new-chat-dropdown-2" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
+            <i class="fas fa-code-branch mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300"></i> OLM 1
+          </a>
+          <div class="my-1 border-t border-neutral-100 dark:border-neutral-700 transition-all duration-300"></div>
+          <a href="#" id="show-update-notes" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
+            <i class="fa-solid fa-note-sticky mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300"></i> Update Notes
+          </a>
+        </div>
+      </header>
+    </div>
+  </div>
+
+  <div class="w-full px-4 sm:px-8 pt-[62px] pb-[120px] flex-1 flex flex-col min-h-0 mx-auto max-w-2xl relative transition-colors duration-300">
+    
+    <div id="empty-chat-prompt" class="text-3xl select-none text-neutral-500 dark:text-neutral-400">
+      How can I help you today?
     </div>
     
-    <div id="bad-feedback-modal"
-     class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden z-[1000] transition-opacity duration-300 opacity-0">
-        <div class="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 relative">
-            <h2 class="text-lg font-semibold mb-3 dark:text-white">Bad Response Feedback</h2>
-            <p class="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
-                What should the prompt have been instead?
-            </p>
-            <textarea id="bad-feedback-input"
-                    class="w-full h-24 border border-neutral-300 dark:border-neutral-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-neutral-500 dark:bg-neutral-900 dark:text-white"
-                    placeholder="Enter your suggested prompt..."></textarea>
-            <div class="flex justify-end gap-3 mt-4">
-                <button id="cancel-bad-feedback"
-                        class="px-4 py-2 rounded-xl bg-neutral-200 hover:bg-neutral-300 text-neutral-800 text-sm transition">
-                    Cancel
-                </button>
-                <button id="submit-bad-feedback"
-                        class="px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl hover:bg-neutral-800 dark:hover:bg-neutral-100 transition duration-300">
-                    Submit
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="update-notes-modal" class="fixed inset-0 bg-neutral-900/40 dark:bg-neutral-800/70 flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 hidden backdrop-blur-sm">        
-        <div class="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
-            <h3 class="text-2xl font-bold mb-4 text-neutral-900 dark:text-white flex items-center transition-all duration-300">
-                <i class="fa-solid fa-bell text-neutral-600 dark:text-neutral-400 mr-2 transition-all duration-300"></i> What's New!
-            </h3>
-            <div class="text-neutral-600 dark:text-neutral-400 mb-6 text-sm space-y-4 transition-all duration-300">
-                <h4 class="text-lg font-semibold text-neutral-800 dark:text-white transition-all duration-300">
-                    Version 0.1.2 - October 2025
-                </h4>
-                <ul class="list-disc list-inside ml-2 space-y-2 text-neutral-700 dark:text-neutral-400 transition-all duration-300">
-                    <li>Better responses: More humanly understandable responses</li>
-                    <li>Web search: Learning from the web</li>
-                    <li>File/Photo: OkemoLLM can now see your photos and files</li>
-                </ul>
-            </div>
-            
-            <div class="flex items-center mb-4 transition-all duration-300">
-                <input type="checkbox" id="notes-dont-show-again" class="w-4 h-4 text-neutral-600 bg-neutral-100 dark:bg-neutral-700 border-none rounded focus:ring-neutral-500 transition-all duration-300 accent-neutral-500">
-                <label for="notes-dont-show-again" class="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-all duration-300">Don't show this version's notes again</label>
-            </div>
+    <div id="okemo-chat" class="chat-scroll overflow-y-auto flex-1 relative transition-all duration-300">
+      </div>
+  </div>
 
-            <button 
-                id="update-notes-close" 
-                class="w-full py-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-semibold rounded-xl hover:bg-neutral-800 dark:hover:bg-neutral-100 transition duration-300"
-            >
-                Got It!
+  <div class="fixed bottom-0 left-0 right-0 z-20 transition-colors duration-300">
+    <div class="w-full max-w-2xl px-4 sm:px-8 mx-auto pb-4 pt-2">
+      
+      <div id="okemo-status" class="min-h-5 text-sm text-neutral-500 dark:text-neutral-400 mb-1 transition-all duration-300"></div>
+
+      <div id="okemo-loading-bar" class="h-0.5 w-full overflow-hidden hidden rounded-full mb-2 transition-all duration-300">
+        <div class="loading-line-animation h-full bg-neutral-900 dark:bg-white transition-all duration-300"></div>
+      </div>
+      
+      <div id="input-bar-container" class="w-full rounded-[2rem] border border-neutral-200 dark:border-neutral-700 relative transition-all duration-300">
+        
+        <div id="file-preview-container" class="hidden transition-all duration-300">
+        </div>
+        
+        <textarea
+          id="okemo-input"
+          placeholder="Message OLM..."
+          rows="1"
+          class="rounded-[2rem] focus:outline-none text-base resize-none h-auto min-h-[48px] max-h-60 overflow-hidden bg-transparent transition-all duration-300 border-none focus:ring-0"
+        ></textarea>
+        
+        <div id="s-wrapper" class="transition-all duration-300">
+          
+          <div id="input-dropdown" class="absolute right-0 bottom-[calc(100%+10px)] w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-bottom-right">
+            
+            <button id="web-search-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
+              <i class="fa-solid fa-globe mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300 transition-all duration-300"></i> Web Search
             </button>
-        </div>
-    </div>
 
-    <!-- Fixed Header -->
-    <div id="fixed-header-wrapper" class="fixed top-0 left-0 right-0 z-30 bg-white/80 dark:bg-neutral-900/90 backdrop-blur-md transition-colors duration-300 border-b border-neutral-200 dark:border-neutral-800">
-        <div class="w-full mx-auto max-w-2xl px-4 sm:px-8"> 
-            <header class="py-3 flex items-center justify-between relative transition-all duration-300"> 
-                <div class="flex items-center relative transition-all duration-300">
-                    <a href="#" id="okemo-title" class="text-xl font-semibold cursor-pointer text-neutral-900 dark:text-white transition-all duration-300">
-                        OLM
-                    </a>
-                    <span id="update-note-badge" class="update-badge hidden"></span>
-                    <button id="menu-toggle" class="ml-1 text-base text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition p-1 rounded-full duration-300">
-                        <i class="fa-solid fa-caret-down transition duration-150 transform" id="menu-icon"></i>
-                    </button>
-                </div>
-                
-                <a href="#" id="new-chat-link-header" class="text-sm rounded-xl bg-neutral-900 dark:bg-white hover:bg-neutral-800 dark:hover:bg-neutral-100 text-white dark:text-black p-2 px-3 transition-all duration-300">
-                    <i class="fa-regular fa-message mr-1"></i> New Chat
-                </a>
-
-                <div id="okemo-dropdown" class="absolute left-0 top-[calc(100%+10px)] w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
-                    
-                    <a href="#" id="new-chat-dropdown-1" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-                        <i class="fa-regular fa-square-plus mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300"></i> New Chat (Duplicate)
-                    </a>
-                    <a href="#" id="new-chat-dropdown-2" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-                        <i class="fas fa-code-branch mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300"></i> OLM 1 (Legacy)
-                    </a>
-                    <div class="my-1 border-t border-neutral-100 dark:border-neutral-700 transition-all duration-300"></div>
-                    <a href="#" id="show-update-notes" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-                        <i class="fa-solid fa-note-sticky mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300"></i> Update Notes
-                    </a>
-                </div>
-            </header>
-        </div>
-    </div>
-
-    <!-- Main Chat Area -->
-    <div class="w-full px-4 sm:px-8 pt-[62px] pb-[120px] flex-1 flex flex-col min-h-0 mx-auto max-w-2xl relative transition-colors duration-300">
-        
-        <div id="empty-chat-prompt" class="text-3xl select-none text-neutral-500 dark:text-neutral-400 font-light">
-            How can I help you today?
-        </div>
-        
-        <!-- FIX: The chat window (okemo-chat) is what needs the distinct background. -->
-        <div id="okemo-chat" class="chat-scroll overflow-y-auto flex-1 relative transition-all duration-300">
-            <!-- Chat messages injected here -->
-        </div>
-    </div>
-
-    <!-- Fixed Input Bar -->
-    <div class="fixed bottom-0 left-0 right-0 z-20 transition-colors duration-300 bg-white dark:bg-neutral-900">
-        <div class="w-full max-w-2xl px-4 sm:px-8 mx-auto pb-4 pt-2">
+            <button id="add-image-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
+              <i class="fa-solid fa-image mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300 transition-all duration-300"></i> Upload Photo
+            </button>
             
-            <div id="okemo-status" class="min-h-5 text-sm text-neutral-500 dark:text-neutral-400 mb-1 transition-all duration-300"></div>
+            <button id="new-feature-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
+              <i class="fa-solid fa-paperclip mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300 transition-all duration-300"></i> Attach File
+            </button>
+          </div>
+          
+          <button
+            id="plus-menu-toggle"
+            class="cursor-pointer rounded-full w-8 h-9 flex items-center justify-center transition duration-300 transform"
+            aria-label="Open Input Menu"
+            data-tooltip-content="Attach/Options"
+          >
+            <i id="plus-icon" class="fa-solid fa-plus text-lg transition-all duration-300"></i>
+          </button>
 
-            <div id="okemo-loading-bar" class="h-0.5 w-full overflow-hidden hidden rounded-full mb-2 transition-all duration-300">
-                <div class="loading-line-animation h-full bg-neutral-900 dark:bg-white transition-all duration-300"></div>
-            </div>
-            
-            <div id="input-bar-container" class="w-full bg-neutral-100 dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 relative transition-all duration-300">
-                
-                <!-- File Preview Container (Row 1) -->
-                <div id="file-preview-container" class="hidden transition-all duration-300">
-                    </div>
-                
-                <!-- Textarea (Row 2, Column 1) -->
-                <textarea
-                    id="okemo-input"
-                    placeholder="Message OLM..." 
-                    rows="1" 
-                    class="rounded-xl focus:outline-none text-base text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 resize-none h-auto min-h-[48px] max-h-60 overflow-hidden bg-transparent transition-all duration-300 border-none focus:ring-0"
-                ></textarea>
-                
-                <!-- Buttons Wrapper (Row 2, Column 2) -->
-                <div id="s-wrapper" class="transition-all duration-300">
-                    
-                    <!-- Dropdown Menu for Plus Button -->
-                    <div id="input-dropdown" class="absolute right-0 bottom-[calc(100%+10px)] w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-xl z-10 hidden p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-bottom-right">
-                        
-                        <button id="web-search-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-                            <i class="fa-solid fa-globe mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300 transition-all duration-300"></i> Web Search
-                        </button>
-
-                        <button id="add-image-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-                            <i class="fa-solid fa-image mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300 transition-all duration-300"></i> Upload Photo
-                        </button>
-                        
-                        <button id="new-feature-option" class="w-full relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-                            <i class="fa-solid fa-paperclip mr-2 w-4 text-center text-neutral-600 dark:text-neutral-300 transition-all duration-300"></i> Attach File
-                        </button>
-                    </div>
-                    
-                    <!-- Plus Menu Toggle Button -->
-                    <button
-                        id="plus-menu-toggle"
-                        class="cursor-pointer rounded-full text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white w-8 h-8 flex items-center justify-center transition duration-300 transform"
-                        aria-label="Open Input Menu"
-                    >
-                        <i id="plus-icon" class="fa-solid fa-plus text-lg transition-all duration-300"></i>
-                    </button>
-
-                    <!-- Send Button -->
-                    <button id="okemo-send"
-                        class="cursor-pointer rounded-xl bg-neutral-900 dark:bg-white hover:bg-neutral-800 dark:hover:bg-neutral-100 active:bg-black dark:active:bg-neutral-300 text-white dark:text-black w-10 h-10 flex items-center justify-center transition duration-300"
-                        aria-label="Send"
-                    >
-                        <i class="fa-solid fa-arrow-up text-sm transition-all duration-300"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <input type="file" id="file-upload-input" class="hidden" accept=".pdf,.doc,.docx,.txt">
-            <input type="file" id="image-upload-input" class="hidden" accept="image/*">
-            
+          <button id="okemo-send"
+            class="cursor-pointer rounded-full bg-neutral-900 dark:bg-white hover:bg-neutral-800 dark:hover:bg-neutral-100 active:bg-black dark:active:bg-neutral-300 text-white dark:text-black w-10 h-10 flex items-center justify-center transition duration-300"
+            aria-label="Send Message"
+            data-tooltip-content="Send"
+          >
+            <i class="fa-solid fa-arrow-up text-sm transition-all duration-300"></i>
+          </button>
         </div>
+      </div>
+      
+      <input type="file" id="file-upload-input" class="hidden" accept=".pdf,.doc,.docx,.txt">
+      <input type="file" id="image-upload-input" class="hidden" accept="image/*">
+      
     </div>
+  </div>
 
-    <!-- Theme Script -->
-    <script>
-      const htmlElement = document.documentElement;
-      const themeKey = 'theme';
+  <script>
+    const htmlElement = document.documentElement;
+    const themeKey = 'theme';
 
-      function loadTheme() {
-        const storedTheme = localStorage.getItem(themeKey);
+    function loadTheme() {
+      const storedTheme = localStorage.getItem(themeKey);
 
-        if (storedTheme === 'light') {
-          htmlElement.classList.remove('dark');
-        } else if (storedTheme === 'dark') {
-          htmlElement.classList.add('dark');
-        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            htmlElement.classList.add('dark');
-        } else {
-            htmlElement.classList.remove('dark');
-        }
-        
-        document.dispatchEvent(new Event('themeLoaded'));
+      if (storedTheme === 'light') {
+        htmlElement.classList.remove('dark');
+      } else if (storedTheme === 'dark') {
+        htmlElement.classList.add('dark');
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        htmlElement.classList.add('dark');
+      } else {
+        htmlElement.classList.remove('dark');
       }
+      
+      document.dispatchEvent(new Event('themeLoaded'));
+    }
 
-      document.addEventListener('DOMContentLoaded', loadTheme);
-    </script>
-    
-    <script type="module">
-        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+    document.addEventListener('DOMContentLoaded', loadTheme);
+  </script>
 
-        const SPACE_ID = "ar12c/okemo2";
-        let gradioClient = null;
-        let history = [];
-        const MAX_RETRIES = 3;
-        let retryCount = 0;
-
-        // Local storage keys
-        const DISCLAIMER_KEY = "okemoDisclaimerAccepted";
-        const NOTES_SEEN_KEY = "okemo-notes-v0.1.2-seen";
-
-        // UI constraints
-        const MAX_TEXTAREA_HEIGHT = 150;
-        const MAX_CHARS = 500;
-
-        // Global state for new features
-        // NOTE: webSearchStatus now controls the local prepending of the <WEB> tag.
-        let webSearchStatus = true; 
-        let currentFile = null;      
-
-        // Tooltip state
-        let currentTooltip = null;
-        let hideTimeout = null;
-
-        // UI Elements (Global Declarations)
-        let textarea;
-        let disclaimerAgreeButton;
-        let disclaimerCheckbox;
-        let menuToggleButton;
-        let newChatLink1;
-        let newChatLink2;
-        let updateNotesLink;
-        let okemoSendButton;
-        let updateNotesCloseBtn;
-        let updateNotesCheckbox;
-
-        let webSearchOption; 
-        let filePreviewContainer;
-        let fileUploadInput;
-        let imageUploadInput;
-        let addImageOption;
-        let newFeatureOption;
-
-        let dropdown;
-        let disclaimerModal;
-        let updateNotesModal;
-        let menuIcon;
-        let updateBadge;
-
-        let emptyChatPrompt;
-        let okemoChatBox;
-        let newChatLinkHeader; // New element added in HTML rewrite
-
-        // Regex to extract the temporary object URL and file names injected into the user message for preview
-        const IMAGE_URL_REGEX = /\[IMAGE_PREVIEW_URL:(.*?)]/;
-        const FILE_ATTACHMENT_REGEX = /\(Attached: (.*?)\)/;
-
-
-        // =================================================================================
-        // 1. INITIALIZATION & ELEMENT SELECTION
-        // =================================================================================
-
-        function initializeElements() {
-          textarea = document.getElementById("okemo-input");
-          disclaimerAgreeButton = document.getElementById("disclaimer-agree");
-          disclaimerCheckbox = document.getElementById("dont-show-again");
-          menuToggleButton = document.getElementById("menu-toggle");
-          okemoSendButton = document.getElementById("okemo-send");
-          updateNotesModal = document.getElementById("update-notes-modal");
-          updateNotesCloseBtn = document.getElementById("update-notes-close");
-          updateNotesCheckbox = document.getElementById('notes-dont-show-again');
-          updateBadge = document.getElementById("update-note-badge");
-          
-          if (updateBadge) {
-              updateBadge.style.transform = 'translateX(2px)';
-          }
-          
-          dropdown = document.getElementById("okemo-dropdown");
-          disclaimerModal = document.getElementById("disclaimer-modal");
-          okemoChatBox = document.getElementById("okemo-chat");
-          menuIcon = document.getElementById("menu-icon");
-          newChatLink1 = document.getElementById("new-chat-dropdown-1");
-          newChatLink2 = document.getElementById("new-chat-dropdown-2");
-          updateNotesLink = document.getElementById("show-update-notes");
-          emptyChatPrompt = document.getElementById("empty-chat-prompt");
-            newChatLinkHeader = document.getElementById("new-chat-link-header");
-
-          // NEW FILE/WEB SEARCH ELEMENTS
-          webSearchOption = document.getElementById("web-search-option"); 
-          filePreviewContainer = document.getElementById("file-preview-container");
-          fileUploadInput = document.getElementById("file-upload-input");
-          imageUploadInput = document.getElementById("image-upload-input");
-          addImageOption = document.getElementById("add-image-option");
-          newFeatureOption = document.getElementById("new-feature-option");
-        }
-
-        async function initOkemo() {
-          try {
-            if (typeof Client !== "undefined") {
-              // Ensure Client is loaded, then connect
-              gradioClient = await Client.connect(SPACE_ID);
-              retryCount = 0;
-              showStatus("Connected to OkemoLLM! ✨");
-              setTimeout(() => showStatus(""), 1500);
-            }
-          } catch (err) {
-            console.error("Failed to connect to OkemoLLM:", err);
-            if (retryCount < MAX_RETRIES) {
-              retryCount += 1;
-              const delay = Math.min(2000 * Math.pow(2, retryCount - 1), 15000);
-              showStatus(`Failed to connect. Retrying in ${Math.round(delay / 1000)}s…`, true);
-              setTimeout(() => initOkemo(), delay);
-            } else {
-              showStatus("Unable to connect to OkemoLLM after multiple attempts. 😭", true);
-            }
-          }
-        }
-
-
-        // =================================================================================
-        // 2. UI UTILITIES (Tooltips, Status, Modals, Dropdowns)
-        // =================================================================================
-
-        function showTooltip(event) {
-          if (hideTimeout) {
-            clearTimeout(hideTimeout);
-            hideTimeout = null;
-          }
-          const button = event.currentTarget;
-          const content = button.getAttribute("data-tooltip-content");
-          if (!content) return;
-          if (currentTooltip && currentTooltip.parentNode) {
-            currentTooltip.parentNode.removeChild(currentTooltip);
-            currentTooltip = null;
-          }
-          const tooltip = document.createElement("div");
-          tooltip.id = "dynamic-tooltip";
-          tooltip.className = "fixed z-[9999] px-2 py-1 text-xs text-white bg-neutral-800 rounded-lg shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none whitespace-nowrap";
-          tooltip.textContent = content;
-          document.body.appendChild(tooltip);
-          currentTooltip = tooltip;
-          const rect = button.getBoundingClientRect();
-          void tooltip.offsetWidth;
-          const tw = tooltip.offsetWidth;
-          const top = rect.bottom + 8;
-          const left = rect.left + rect.width / 2 - tw / 2;
-          tooltip.style.top = `${top}px`;
-          tooltip.style.left = `${left}px`;
-          setTimeout(() => {
-            tooltip.classList.remove("opacity-0");
-            tooltip.classList.add("opacity-100");
-          }, 10);
-        }
-
-        function hideTooltip(duration = 300) {
-          if (hideTimeout) clearTimeout(hideTimeout);
-          if (!currentTooltip) return;
-          currentTooltip.classList.remove("opacity-100");
-          currentTooltip.classList.add("opacity-0");
-          hideTimeout = setTimeout(() => {
-            if (currentTooltip && document.body.contains(currentTooltip)) {
-              document.body.removeChild(currentTooltip);
-            }
-            currentTooltip = null;
-            hideTimeout = null;
-          }, duration);
-        }
-
-        function updateEmptyChatPromptVisibility() {
-          if (!emptyChatPrompt) return;
-          if (history.length === 0) {
-            emptyChatPrompt.classList.remove("hidden");
-            emptyChatPrompt.style.opacity = "1";
-          } else {
-            emptyChatPrompt.style.opacity = "0";
-            setTimeout(() => {
-              emptyChatPrompt.classList.add("hidden");
-            }, 300);
-          }
-        }
-
-        function showStatus(msg, isError = false, targetElementId = "okemo-status") {
-          const el = document.getElementById(targetElementId);
-          if (!el) return;
-          const errorColorClass = "text-red-500";
-          const statusColorClass = "text-neutral-500 dark:text-neutral-400";
-          el.textContent = msg;
-          el.className = `min-h-5 text-sm ${isError ? errorColorClass : statusColorClass} mb-1`;
-        }
-
-        function checkDisclaimerStatus() {
-          const accepted = localStorage.getItem(DISCLAIMER_KEY);
-          if (!disclaimerModal) return;
-          if (accepted !== "true") {
-            disclaimerModal.classList.remove("hidden", "opacity-0");
-          }
-        }
-
-        function acceptDisclaimer() {
-          if (disclaimerCheckbox && disclaimerCheckbox.checked) {
-            localStorage.setItem(DISCLAIMER_KEY, "true");
-          }
-          if (disclaimerModal) {
-            disclaimerModal.classList.add("opacity-0");
-            setTimeout(() => disclaimerModal.classList.add("hidden"), 300);
-          }
-          checkUpdateNotesStatus();
-        }
-
-        function checkUpdateNotesStatus() {
-          const seen = localStorage.getItem(NOTES_SEEN_KEY);
-          if (!updateNotesModal) return;
-          const disclaimerHidden = !disclaimerModal || disclaimerModal.classList.contains("hidden") || disclaimerModal.style.display === "none";
-          if (seen !== "true") {
-            if (updateBadge) updateBadge.classList.remove("hidden");
-            if (disclaimerHidden) {
-              showUpdateNotes();
-            }
-          } else {
-            if (updateBadge) updateBadge.classList.add("hidden");
-          }
-        }
-
-        function showUpdateNotes() {
-          if (updateNotesModal) {
-            updateNotesModal.classList.remove("hidden");
-            setTimeout(() => {
-              updateNotesModal.classList.remove("opacity-0");
-              updateNotesModal.classList.add("opacity-100");
-            }, 10);
-          }
-          if (updateBadge) updateBadge.classList.add("hidden");
-        }
-
-        function closeUpdateNotes() {
-          if (updateNotesCheckbox && updateNotesCheckbox.checked) {
-              localStorage.setItem(NOTES_SEEN_KEY, 'true');
-          } else {
-              if (updateBadge) updateBadge.classList.remove("hidden");
-          }
-
-          if (updateNotesModal) updateNotesModal.classList.add("hidden");
-        }
-
-        function toggleDropdown() {
-          if (!dropdown) return;
-          if (dropdown.classList.contains("hidden")) {
-            dropdown.classList.remove("hidden");
-            if (menuToggleButton) menuToggleButton.classList.add("active");
-            if (menuIcon) menuIcon.classList.remove("rotate-180");
-            void dropdown.offsetWidth;
-            dropdown.classList.remove("opacity-0", "scale-y-0");
-            dropdown.classList.add("opacity-100", "scale-y-100");
-          } else {
-            closeDropdown();
-          }
-        }
-
-        function closeDropdown() {
-          if (!dropdown || dropdown.classList.contains("hidden")) return;
-          if (menuToggleButton) menuToggleButton.classList.remove("active");
-          if (menuIcon) menuIcon.classList.remove("rotate-180");
-          dropdown.classList.remove("opacity-100", "scale-y-100");
-          dropdown.classList.add("opacity-0", "scale-y-0");
-          setTimeout(() => {
-            dropdown.classList.add("hidden");
-          }, 300);
-        }
-
-        function newChat(e) {
-          if (e) e.preventDefault();
-          history = [];
-          renderChat();
-          closeDropdown();
-          clearFileAttachment(); 
-          updateWebSearchUI(true, false); 
-          showStatus("New chat started.");
-          if (textarea) textarea.focus();
-          updateEmptyChatPromptVisibility();
-        }
-
-
-        // =================================================================================
-        // 3. FILE AND WEB SEARCH UTILITIES
-        // =================================================================================
-
-        function updateWebSearchUI(isEnabled, showStatusMsg = false) {
-            webSearchStatus = isEnabled;
-            if (!webSearchOption) return;
-            
-            const icon = webSearchOption.querySelector("i");
-            
-            // Update background and text color to indicate selected state (Monochrome tint)
-            webSearchOption.classList.toggle("bg-neutral-200", isEnabled);
-            webSearchOption.classList.toggle("dark:bg-neutral-700", isEnabled);
-            
-            // Ensure icon color is visible
-            icon.classList.toggle("text-neutral-700", isEnabled);
-            icon.classList.toggle("dark:text-neutral-300", isEnabled);
-
-            if (showStatusMsg) {
-                // Update status message to reflect backend control
-                showStatus(isEnabled ? "Web search enabled. Next message will include '<WEB>'." : "Web search disabled. Search tag will be omitted.");
-            }
-        }
-
-
-        /**
-         * Renders the file attachment preview or clears it. Displays image thumbnail if applicable.
-         */
-        function renderFilePreview(file) {
-            currentFile = file;
-            if (!filePreviewContainer) return;
-
-            // Revoke previous object URL to prevent memory leaks
-            if (filePreviewContainer.dataset.objectUrl) {
-                URL.revokeObjectURL(filePreviewContainer.dataset.objectUrl);
-                filePreviewContainer.removeAttribute('data-object-url');
-            }
-
-            if (file) {
-                let isImage = file.type.startsWith("image");
-                let objectUrl = URL.createObjectURL(file);
-                filePreviewContainer.dataset.objectUrl = objectUrl; // Store URL for later revocation
-
-                let previewHtml;
-
-                if (isImage) {
-                    const fileName = file.name;
-                    // Modernized image preview
-                    previewHtml = `
-                        <div class="relative w-24 h-24 mt-4 mb-2 rounded-xl overflow-hidden border border-neutral-300 dark:border-neutral-600">
-                            <img src="${objectUrl}" alt="Attached image preview" class="w-full h-full object-cover"/>
-                            <button id="remove-file-button"
-                                    class="absolute top-1 right-1 bg-neutral-900/70 hover:bg-neutral-900 text-white w-6 h-6 flex items-center justify-center rounded-full shadow-md transition duration-300 z-10"
-                                    aria-label="Remove attached image: ${fileName}">
-                                <i class="fa-solid fa-xmark text-xs"></i>
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    let iconClass = "fa-file";
-                    if (file.name.endsWith(".pdf")) iconClass = "fa-file-pdf";
-                    else if (file.name.endsWith(".doc") || file.name.endsWith(".docx")) iconClass = "fa-file-word";
-                    else if (file.name.endsWith(".txt")) iconClass = "fa-file-lines";
-                    
-                    const iconHtml = `<i class="fa-solid ${iconClass} mr-2 text-base text-neutral-500 dark:text-neutral-400"></i>`;
-                    const fileName = file.name;
-
-                    // Modernized file preview
-                    previewHtml = `
-                        <div class="flex items-center justify-between p-2 mt-2 mb-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 text-sm font-medium rounded-lg">
-                            <div class="flex items-center truncate max-w-[85%]">
-                                ${iconHtml}
-                                <span class="truncate">${fileName}</span>
-                            </div>
-                            <button id="remove-file-button" class="text-neutral-500 hover:text-red-500 p-1 rounded-full transition duration-300" aria-label="Remove attached file">
-                                <i class="fa-solid fa-xmark text-lg"></i>
-                            </button>
-                        </div>
-                    `;
-                }
-
-                filePreviewContainer.innerHTML = previewHtml;
-                filePreviewContainer.classList.remove("hidden");
-
-                if (okemoChatBox) okemoChatBox.scrollTop = okemoChatBox.scrollHeight;
-
-                document.getElementById("remove-file-button").addEventListener('click', clearFileAttachment);
-
-            } else {
-                filePreviewContainer.classList.add("hidden");
-                filePreviewContainer.innerHTML = "";
-            }
-        }
-
-        function clearFileAttachment() {
-            // Revoke object URL before clearing preview if one exists
-            if (filePreviewContainer && filePreviewContainer.dataset.objectUrl) {
-                URL.revokeObjectURL(filePreviewContainer.dataset.objectUrl);
-            }
-            renderFilePreview(null);
-            if (fileUploadInput) fileUploadInput.value = "";
-            if (imageUploadInput) imageUploadInput.value = "";
-            
-            if(textarea) textarea.dispatchEvent(new Event('input'));
-        }
-
-
-        // =================================================================================
-        // 4. CHAT RENDERING AND TOOLBOX
-        // =================================================================================
-
-        function escapeHTML(s) {
-          return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        function createButtonContainerHTML(isLastResponse, turnId) {
-          // Style for icons: dark gray on light, light gray on dark
-          const lightIconColor = "color: #4b5563;"; // neutral-600
-          const darkIconColor = "color: #9ca3af;";  // neutral-400
-          const iconStyleAttributes = `data-light-style="${lightIconColor}" data-dark-style="${darkIconColor}"`; 
-          const hoverBg = "hover:bg-neutral-200 dark:hover:bg-neutral-700";
-          
-          // Feedback buttons are only shown on the last response
-          const feedbackButtons = isLastResponse
-            ? `
-                <button id="good-response-feedback-${turnId}" class="text-sm font-medium p-1 rounded-full transition duration-300 ${hoverBg}" data-tooltip-content="Good Response">
-                  <i class="fa-regular fa-thumbs-up text-sm" ${iconStyleAttributes}></i>
-                </button>
-                <button id="bad-response-feedback-${turnId}" class="text-sm font-medium p-1 rounded-full transition duration-300 ${hoverBg}" data-tooltip-content="Bad Response">
-                  <i class="fa-regular fa-thumbs-down text-sm" ${iconStyleAttributes}></i>
-                </button>
-              `
-            : "";
-            
-          const visibilityClass = isLastResponse ? "opacity-100 pointer-events-auto always-visible" : "opacity-0 pointer-events-none";
-          
-          // Combined Toolbox (Copy, Export, Regenerate, Feedback)
-          return `
-            <div class="flex items-center transition-opacity duration-300 chat-toolbox ${visibilityClass} gap-1" id="regenerate-container-${turnId}">
-                ${feedbackButtons}
-                <button id="copy-button-${turnId}" class="text-sm font-medium p-1 rounded-full transition duration-300 ${hoverBg}" data-tooltip-content="Copy">
-                  <i class="fa-regular fa-copy text-sm" ${iconStyleAttributes}></i>
-                </button>
-                <button id="export-chat-button-${turnId}" class="text-sm font-medium p-1 rounded-full transition duration-300 ${hoverBg}" data-tooltip-content="Export as .txt">
-                  <i class="fa-solid fa-file-export text-sm" ${iconStyleAttributes}></i>
-                </button>
-                <button id="regenerate-button-${turnId}" class="text-sm font-medium p-1 rounded-full transition duration-300 ${hoverBg}" data-tooltip-content="Regenerate">
-                  <i class="fas fa-redo-alt text-sm" ${iconStyleAttributes}></i>
-                </button>
-            </div>
-          `;
-        }
-
-        function attachToolboxListeners(wrapperEl, index) {
-          const turnId = index;
-          const toolbox = wrapperEl.querySelector(`#regenerate-container-${turnId}`);
-          const isLastTurn = index === history.length - 1;
-          if (!toolbox) return;
-          
-          const updateIconColors = () => {
-            const isDarkMode = document.documentElement.classList.contains("dark");
-            toolbox.querySelectorAll("i").forEach((icon) => {
-              const darkStyle = icon.getAttribute("data-dark-style");
-              const lightStyle = icon.getAttribute("data-light-style");
-              
-              if (isDarkMode && darkStyle) {
-                icon.setAttribute("style", darkStyle);
-              } else if (lightStyle) {
-                icon.setAttribute("style", lightStyle);
-              }
-            });
-          };
-          
-          updateIconColors();
-          document.removeEventListener('themeLoaded', updateIconColors);
-          document.addEventListener('themeLoaded', updateIconColors);
-
-          if (!isLastTurn) {
-            wrapperEl.addEventListener("mouseover", () => {
-              toolbox.classList.remove("opacity-0", "pointer-events-none");
-              toolbox.classList.add("opacity-100", "pointer-events-auto");
-            });
-            wrapperEl.addEventListener("mouseout", () => {
-              toolbox.classList.remove("opacity-100", "pointer-events-auto");
-              toolbox.classList.add("opacity-0", "pointer-events-none");
-              hideTooltip();
-            });
-          }
-          
-          const copyButton = toolbox.querySelector(`#copy-button-${turnId}`);
-          const exportChatButton = toolbox.querySelector(`#export-chat-button-${turnId}`);
-          const regenerateButton = toolbox.querySelector(`#regenerate-button-${turnId}`);
-          const goodFeedbackButton = toolbox.querySelector(`#good-response-feedback-${turnId}`);
-          const badFeedbackButton = toolbox.querySelector(`#bad-response-feedback-${turnId}`);
-          
-          // Add listeners for all buttons
-          const buttons = [copyButton, exportChatButton, regenerateButton, goodFeedbackButton, badFeedbackButton];
-          buttons.forEach(button => {
-                if (button) {
-                    button.addEventListener("mouseover", showTooltip);
-                    button.addEventListener("mouseout", () => hideTooltip());
-                }
-            });
-
-          if (copyButton) {
-            copyButton.addEventListener("click", (e) => {
-              e.preventDefault();
-              copyResponseByTurnIndex(copyButton, index); 
-            });
-          }
-          if (exportChatButton) {
-            exportChatButton.addEventListener("click", (e) => {
-              e.preventDefault();
-              exportChatHistory(exportChatButton);
-            });
-          }
-          if (regenerateButton) {
-            if (isLastTurn) {
-              regenerateButton.addEventListener("click", (e) => {
-                e.preventDefault();
-                sendOkemoMessage(false, e.currentTarget); 
-              });
-            } else {
-              regenerateButton.style.opacity = "0.5";
-              regenerateButton.style.cursor = "not-allowed";
-              regenerateButton.setAttribute("data-tooltip-content", "Regeneration only available for the latest turn.");
-            }
-          }
-          if (goodFeedbackButton) {
-            goodFeedbackButton.addEventListener("click", (e) => {
-              e.preventDefault();
-              sendFeedback("Good Response", true, goodFeedbackButton, badFeedbackButton); 
-            });
-          }
-          
-          if (badFeedbackButton) {
-            if (!isLastTurn) {
-                badFeedbackButton.addEventListener("click", (e) => {
-                     e.preventDefault();
-                     sendFeedback("Bad Response", false, goodFeedbackButton, badFeedbackButton); 
-                });
-            }
-            setupBadFeedbackPopup(badFeedbackButton); 
-          }
-        }
-
-        // Function that handles the Bad Response feedback modal
-        function setupBadFeedbackPopup(badFeedbackButton) {
-          if (!badFeedbackButton) return;
-          
-          badFeedbackButton.removeEventListener("click", badFeedbackButton.clickHandler);
-
-          const clickHandler = (e) => {
-            e.preventDefault();
-            
-            // Only show modal for the last turn
-            const isLastTurn = badFeedbackButton.id.includes(`bad-response-feedback-${history.length - 1}`);
-
-            if (!isLastTurn) {
-                sendFeedback("Bad Response", false, null, null);
-                return;
-            }
-
-            const modal = document.getElementById("bad-feedback-modal");
-            const textarea = document.getElementById("bad-feedback-input");
-            
-            if (!modal || !textarea) {
-              sendFeedback("Bad Response", false, null, null);
-              return;
-            }
-
-            textarea.value = "";
-            modal.classList.remove("hidden");
-            setTimeout(() => modal.classList.remove("opacity-0"), 10);
-            textarea.focus();
-
-            const submitBtn = document.getElementById("submit-bad-feedback");
-            const cancelBtn = document.getElementById("cancel-bad-feedback");
-
-            const oldSubmitHandler = submitBtn.clickHandler;
-            const oldCancelHandler = cancelBtn.clickHandler;
-            if (oldSubmitHandler) submitBtn.removeEventListener("click", oldSubmitHandler);
-            if (oldCancelHandler) cancelBtn.removeEventListener("click", oldCancelHandler);
-
-            const closeModal = () => {
-              modal.classList.add("opacity-0");
-              setTimeout(() => modal.classList.add("hidden"), 300);
-            };
-
-            const handleSubmit = async () => {
-              const newPrompt = textarea.value.trim();
-              if (!newPrompt) {
-                console.error("Please enter a suggested prompt before submitting.");
-                showStatus("Please enter a suggested prompt before submitting.", true);
-                return;
-              }
-              
-              badFeedbackButton.disabled = true;
-              const goodBtn = document.getElementById(`good-response-feedback-${history.length - 1}`);
-              if (goodBtn) goodBtn.disabled = true;
-
-              closeModal();
-              showStatus("Submitting detailed feedback...");
-
-              try {
-                if (!gradioClient) await initOkemo();
-                const inputs = [history, newPrompt];
-                const result = await gradioClient.predict("/feedback_bad_with_prompt", inputs); 
-                const feedbackMessage = result?.data?.[1] || "Feedback received. Thank thank you!";
-                showStatus(feedbackMessage);
-              } catch (err) {
-                console.error("Error sending feedback prompt:", err);
-                showStatus("Failed to send feedback. Check console.", true);
-              } finally {
-                badFeedbackButton.disabled = false;
-                if (goodBtn) goodBtn.disabled = false;
-                setTimeout(() => showStatus(""), 1500); 
-              }
-            };
-
-            const handleCancel = () => {
-              closeModal();
-              sendFeedback("Bad Response", false, null, null); 
-            };
-            
-            submitBtn.clickHandler = handleSubmit;
-            cancelBtn.clickHandler = handleCancel;
-            submitBtn.addEventListener("click", handleSubmit);
-            cancelBtn.addEventListener("click", handleCancel);
-          };
-          
-          badFeedbackButton.clickHandler = clickHandler;
-          badFeedbackButton.addEventListener("click", clickHandler);
-        }
-
-        function renderChat() {
-          const box = okemoChatBox;
-          if (!box) return;
-          box.innerHTML = "";
-          const htmlContent = [];
-          
-          for (let i = 0; i < history.length; i++) {
-            const [u, a] = history[i];
-            const isLastTurn = i === history.length - 1;
-            const wrapperId = `chat-turn-${i}`;
-            
-            // User Message Block (Always appears in a row with a background)
-            if (u) {
-                const imageUrlMatch = u.match(IMAGE_URL_REGEX);
-                const attachmentMatch = u.match(FILE_ATTACHMENT_REGEX);
-                
-                let userDisplayContent = escapeHTML(u);
-                let mediaHtml = '';
-                
-                if (imageUrlMatch) {
-                    const imageUrl = imageUrlMatch[1];
-                    userDisplayContent = userDisplayContent.replace(escapeHTML(imageUrlMatch[0]), '').trim();
-                    
-                    mediaHtml = `
-                        <div class="mt-2">
-                            <img src="${imageUrl}" class="max-w-full h-auto rounded-lg" style="max-height: 250px; object-fit: cover;" alt="Attached Image"/>
-                        </div>
-                    `;
-                } else if (attachmentMatch) {
-                    userDisplayContent = userDisplayContent.replace(escapeHTML(attachmentMatch[0]), '').trim();
-                    mediaHtml = `<div class="mt-2 text-sm opacity-80">${escapeHTML(attachmentMatch[0])}</div>`;
-                }
-
-                const textHtml = userDisplayContent ? `<div>${userDisplayContent}</div>` : '';
-            
-                htmlContent.push(`
-                  <div class="user-message-row w-full flex justify-end px-4 sm:px-8">
-                    <!-- User Message Bubble (Colors applied via CSS classes) -->
-                    <div class="inline-block max-w-[85%] rounded-2xl px-4 py-2 transform transition duration-300 ease-out">
-                      ${textHtml}
-                      ${mediaHtml}
-                    </div>
-                  </div>`);
-            }
-            
-            // AI Message Block
-            if (a) {
-                htmlContent.push(`<div id="${wrapperId}" class="chat-turn-wrapper">`);
-                // AI message row structure
-                htmlContent.push(`
-                  <div class="ai-message-row flex items-start gap-3 px-4 sm:px-8">
-                    <div class="ai-logo-placeholder">O</div>
-                    <div class="max-w-[85%] pt-1 text-base text-neutral-900 dark:text-neutral-200" style="white-space: pre-wrap;">
-                      ${escapeHTML(a)}
-                    </div>
-                  </div>
-                  <div class="mb-4 flex justify-start pl-[52px] relative chat-turn-buttons">
-                    ${createButtonContainerHTML(isLastTurn, i)}
-                  </div>
-                </div>`);
-            } else if (u) {
-                // If it's a user message without an AI response, we still need the wrapper for the toolbox in the next step
-                htmlContent.push(`<div id="${wrapperId}" class="chat-turn-wrapper"></div>`);
-            }
-          }
-            
-          box.innerHTML = htmlContent.join("");
-          
-          // Re-attach listeners for all turns
-          for (let i = 0; i < history.length; i++) {
-            const turnWrapper = document.getElementById(`chat-turn-${i}`);
-            if (turnWrapper) attachToolboxListeners(turnWrapper, i);
-          }
-          
-          updateEmptyChatPromptVisibility();
-          box.scrollTop = box.scrollHeight;
-          
-          // Re-attach the special logic for the last turn's bad feedback button after re-rendering
-          if (history.length > 0) {
-              const lastTurnId = history.length - 1;
-              const lastTurnWrapper = document.getElementById(`chat-turn-${lastTurnId}`);
-              if (lastTurnWrapper) {
-                  const badFeedbackButton = lastTurnWrapper.querySelector(`#bad-response-feedback-${lastTurnId}`);
-                  setupBadFeedbackPopup(badFeedbackButton); 
-              }
-          }
-        }
-
-        // =================================================================================
-        // 5. API INTERACTION (Send Message and Feedback)
-        // =================================================================================
-
-        async function sendFeedback(rating, triggerLearning, goodBtn, badBtn) {
-          if (history.length === 0) {
-            showStatus("No message to rate. Start a conversation first! 🤷‍♀️", true);
-            return;
-          }
-          
-          if (goodBtn) goodBtn.disabled = true;
-          if (badBtn) badBtn.disabled = true;
-          
-          const loadingBar = document.getElementById("okemo-loading-bar");
-          if (loadingBar) loadingBar.classList.remove("hidden");
-          showStatus(`Sending feedback: ${rating}...`);
-
-          try {
-            if (!gradioClient) await initOkemo();
-            if (!gradioClient) throw new Error("No connection to OkemoLLM.");
-
-            const endpoint = triggerLearning ? "/feedback_good" : "/feedback_bad";
-            const inputs = [history]; 
-            
-            const result = await gradioClient.predict(endpoint, inputs);
-            
-            const updatedHistoryFromServer = result?.data?.[0];
-            if (Array.isArray(updatedHistoryFromServer)) {
-                history = updatedHistoryFromServer;
-            }
-            
-            const feedbackMessage = result?.data?.[1] || `${rating} logged successfully.`;
-            showStatus(feedbackMessage);
-            renderChat();
-            
-          } catch (err) {
-            console.error("Feedback submission error:", err);
-            showStatus(`Error submitting feedback. Please check the console.`, true);
-          } finally {
-            if (loadingBar) loadingBar.classList.add("hidden");
-            setTimeout(() => showStatus(""), 1500);
-          }
-        }
-
-
-        async function sendOkemoMessage(isPlusMenuAction = false, element = null) {
-          const inputEl = textarea;
-          const btnEl = okemoSendButton;
-          const loadingBar = document.getElementById("okemo-loading-bar");
-          
-          if (!inputEl || !btnEl || !loadingBar) return;
-
-          let userMsg = inputEl.value.trim();
-          const isRegenerate = element && element.id.includes("regenerate-button");
-          const isStandardSend = !isRegenerate;
-          
-          if (isStandardSend && userMsg.length > MAX_CHARS) {
-            showStatus(`Message exceeds maximum limit of ${MAX_CHARS} characters.`, true);
-            return;
-          }
-          if (isStandardSend && !userMsg && !currentFile) {
-            showStatus(`Please enter a message or attach a file.`, true);
-            return;
-          }
-
-          let messageToSendToAPI;
-          let cleanUserMessageForHistory;
-          
-          let imageMarker = ''; 
-          // New variable for web search tag
-          const webSearchTag = webSearchStatus ? "<WEB>" : ""; 
-
-
-          // --- 1. Determine Prompt and History state ---
-          if (isRegenerate) {
-              if (history.length === 0) {
-                  showStatus("Please type a message before requesting regeneration.", true);
-                  return;
-              }
-              const lastUserMessage = history[history.length - 1][0]; 
-              if (!lastUserMessage) {
-                  showStatus("Cannot regenerate: last user message was empty.", true);
-                  return;
-              }
-              
-              const existingMatch = lastUserMessage.match(IMAGE_URL_REGEX);
-              if (existingMatch) {
-                  imageMarker = existingMatch[0];
-              }
-              
-              history.pop();
-              
-              cleanUserMessageForHistory = lastUserMessage.replace(IMAGE_URL_REGEX, '').replace(FILE_ATTACHMENT_REGEX, '').trim();
-              // FIX: Ensure webSearchTag is correctly prepended to the final message. 
-              // The backend requires the tag to be present in the message text.
-              messageToSendToAPI = `${webSearchTag} Please generate a completely new and distinct response for the following: "${cleanUserMessageForHistory}"`.trim();
-          } else {
-              // Standard send
-              // FIX: Ensure webSearchTag is correctly prepended to the final message.
-              messageToSendToAPI = `${webSearchTag} ${userMsg}`.trim();
-              cleanUserMessageForHistory = userMsg;
-          }
-          
-          // --- 2. Grab current state for Gradio API ---
-          // webSearchStatus is now used only for prepending the tag, not as a separate API input
-
-          // --- 3. Disable UI and Show Loading ---
-          const toolbox = document.querySelector(".chat-toolbox.always-visible");
-          if (toolbox) {
-              toolbox.querySelectorAll("button").forEach((b) => (b.disabled = true));
-          }
-          btnEl.disabled = true;
-          btnEl.classList.add("opacity-50", "cursor-not-allowed");
-          // Remove enabled button colors when disabled
-          btnEl.classList.remove("bg-neutral-900", "dark:bg-white", "hover:bg-neutral-800", "dark:hover:bg-neutral-100");
-          loadingBar.classList.remove("hidden"); 
-          showStatus("OLM Thinking...");
-
-          const historyToSend = [...history]; 
-
-          // **OPTIMISTIC UPDATE:** Display the user message immediately.
-          if (isStandardSend || isRegenerate) {
-              // The history message should include the user's text, any file markers, and the web search tag.
-              let historyMessage = cleanUserMessageForHistory;
-              
-              // Only prepend the webSearchTag to the displayed history message if it was actually included in the API call, 
-              // and if the user didn't already include it manually in their prompt.
-              const isTagAlreadyInUserMsg = cleanUserMessageForHistory.toUpperCase().includes("<WEB>");
-              if (webSearchTag && !isTagAlreadyInUserMsg) {
-                  historyMessage = `${webSearchTag} ${historyMessage}`;
-              }
-
-              if (currentFile) {
-                  if (currentFile.type.startsWith("image")) {
-                      imageMarker = ` [IMAGE_PREVIEW_URL:${filePreviewContainer.dataset.objectUrl}]`;
-                      historyMessage += imageMarker;
-                  } else {
-                      historyMessage += ` (Attached: ${currentFile.name})`;
-                  }
-              } else if (isRegenerate && imageMarker) {
-                  historyMessage += imageMarker; 
-              }
-              history.push([historyMessage.trim(), null]); // Trim whitespace from history message
-          }
-          renderChat(); 
-
-          try {
-              if (!gradioClient) {
-                  showStatus("Connecting to OkemoLLM…", true);
-                  await initOkemo();
-                  if (!gradioClient) throw new Error("Failed to connect to OkemoLLM.");
-              }
-
-              if (isStandardSend) {
-                  inputEl.value = "";
-                  inputEl.style.height = "48px";
-              }
-
-              // CRITICAL: Align inputs to the Gradio API /on_submit (4 inputs: message, history, file, web_enabled_flag_unused)
-              const inputs = [
-                  messageToSendToAPI, 
-                  historyToSend,      
-                  currentFile
-              ];
-              
-              // Placeholder for the ignored fourth argument (web_search_enabled_flag_unused)
-              inputs.push(true);
-              
-              const result = await gradioClient.predict("/on_submit", inputs);
-              
-              let updatedHistoryFromServer = result?.data?.[0];
-              const statusMessage = result?.data?.[1];
-
-              if (Array.isArray(updatedHistoryFromServer)) {
-                  
-                  // Re-inject the local image marker into the server's history
-                  if (imageMarker && updatedHistoryFromServer.length > 0) {
-                      const lastTurnIndex = updatedHistoryFromServer.length - 1;
-                      const lastUserMsg = updatedHistoryFromServer[lastTurnIndex][0];
-                      
-                      if (lastUserMsg && !lastUserMsg.includes(imageMarker)) {
-                          updatedHistoryFromServer[lastTurnIndex][0] = lastUserMsg + imageMarker;
-                      }
-                  }
-                  history = updatedHistoryFromServer;
-                  showStatus(statusMessage || "Received response from OLM.");
-              } else {
-                  // Failure: Rollback the optimistic update
-                  history.pop();
-                  showStatus("Error: Invalid response from server.", true);
-                  throw new Error("Invalid response from OkemoLLM.");
-              }
-              
-          } catch (err) {
-              console.error("Prediction error:", err);
-              showStatus(`Error: ${err.message || "Unknown error."}`, true);
-              
-              // Preserve user message on error
-              if (history.length > 0 && history[history.length - 1][1] === null) {
-                   history[history.length - 1][1] = "Error: Could not get response.";
-              }
-              
-          } finally {
-              loadingBar.classList.add("hidden");
-              renderChat(); 
-              okemoSendButton.disabled = false;
-              okemoSendButton.classList.remove("opacity-50", "cursor-not-allowed");
-              // Restore enabled button colors
-              okemoSendButton.classList.add("bg-neutral-900", "dark:bg-white", "hover:bg-neutral-800", "dark:hover:bg-neutral-100");
-              setTimeout(() => showStatus(""), 1500); 
-              
-              // Re-enable the toolbox buttons
-              const lastTurnToolbox = document.querySelector(`#regenerate-container-${history.length - 1}`);
-              if (lastTurnToolbox) {
-                 lastTurnToolbox.querySelectorAll("button").forEach((b) => (b.disabled = false));
-              }
-
-              // Final cleanup: clear the file attachment state only for standard sends
-              if (isStandardSend) clearFileAttachment();
-          }
-        }
-
-        // =================================================================================
-        // 6. UTILITY ACTIONS (Copy, Export)
-        // =================================================================================
-
-        async function copyResponseByTurnIndex(btn, turnIndex) {
-          if (turnIndex < 0 || turnIndex >= history.length) {
-            showStatus("Invalid message index.", true);
-            return;
-          }
-          const [userMsg, aiMsg] = history[turnIndex];
-          
-          const cleanUserMsg = userMsg 
-            ? userMsg.replace(IMAGE_URL_REGEX, '').replace(FILE_ATTACHMENT_REGEX, '').trim() 
-            : '';
-
-          const textToCopy = aiMsg || cleanUserMsg;
-
-          if (!textToCopy) {
-            showStatus("Nothing to copy.", true);
-            return;
-          }
-          const originalIconClass = "fa-regular fa-copy";
-          const successIconClass = "fa-solid fa-check";
-          // Changed success color to neutral-600 for monochrome look
-          const successIconColor = "#4b5563"; 
-          const iconEl = btn.querySelector("i");
-          
-          const darkStyle = iconEl.getAttribute('data-dark-style');
-          const lightStyle = iconEl.getAttribute('data-light-style');
-
-          try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              await navigator.clipboard.writeText(textToCopy);
-            } else {
-              const tempTextarea = document.createElement("textarea");
-              tempTextarea.value = textToCopy;
-              tempTextarea.style.position = "fixed";
-              tempTextarea.style.top = "0";
-              tempTextarea.style.left = "0";
-              tempTextarea.style.opacity = "0";
-              document.body.appendChild(tempTextarea);
-              tempTextarea.select();
-              tempTextarea.setSelectionRange(0, 99999);
-              const successful = document.execCommand("copy");
-              document.body.removeChild(tempTextarea);
-              if (!successful) throw new Error("Copy command failed.");
-            }
-            showStatus("Response copied to clipboard! ✅");
-            if (btn) {
-              btn.innerHTML = `<i class="${successIconClass} text-sm" style="color: ${successIconColor};" data-dark-style="${darkStyle}" data-light-style="${lightStyle}"></i>`;
-              setTimeout(() => {
-                btn.innerHTML = `<i class="${originalIconClass} text-sm" data-dark-style="${darkStyle}" data-light-style="${lightStyle}"></i>`;
-                 // Manually re-apply the correct theme style after timeout
-                 const isDarkMode = document.documentElement.classList.contains("dark");
-                 const iconElAfterTimeout = btn.querySelector("i");
-                 if(iconElAfterTimeout) {
-                     iconElAfterTimeout.setAttribute("style", isDarkMode ? darkStyle : lightStyle);
-                 }
-              }, 300);
-            }
-          } catch (err) {
-            console.error("Copy failed:", err);
-            showStatus("Failed to copy. Please try manually.", true);
-          }
-        }
-
-        function exportChatHistory(btn) {
-          if (history.length === 0) {
-            showStatus("No conversation to export. Start chatting first! 📝", true);
-            return;
-          }
-          const originalIconClass = "fa-solid fa-file-export";
-          const successIconClass = "fa-solid fa-check";
-          // Changed success color to neutral-600 for monochrome look
-          const successIconColor = "#4b5563";
-          const iconEl = btn.querySelector("i");
-          
-          const darkStyle = iconEl.getAttribute('data-dark-style');
-          const lightStyle = iconEl.getAttribute('data-light-style');
-          
-          let fileContent = `OkemoLLM Chat Export - ${new Date().toLocaleString()}\n`;
-          fileContent += "---------------------------------------\n\n";
-          
-          history.forEach(([user, assistant]) => {
-            // Clean user message of preview markers before exporting
-            const cleanUser = user 
-                ? user.replace(IMAGE_URL_REGEX, ' [Attached Image]').replace(FILE_ATTACHMENT_REGEX, ' [Attached File]').trim() 
-                : '';
-                
-            if (cleanUser) fileContent += `USER: ${cleanUser}\n`;
-            if (assistant) fileContent += `OLM: ${assistant}\n\n`;
-          });
-          
-          const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.download = `okemo_chat_export_${new Date().toISOString().slice(0, 10)}.txt`;
-          a.href = url;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          showStatus("Chat exported successfully! 📤");
-          
-          if (btn) {
-            btn.innerHTML = `<i class="${successIconClass} text-sm" style="color: ${successIconColor};" data-dark-style="${darkStyle}" data-light-style="${lightStyle}"></i>`;
-            setTimeout(() => {
-              btn.innerHTML = `<i class="${originalIconClass} text-sm" data-dark-style="${darkStyle}" data-light-style="${lightStyle}"></i>`;
-               // Manually re-apply the correct theme style after timeout
-               const isDarkMode = document.documentElement.classList.contains("dark");
-               const iconElAfterTimeout = btn.querySelector("i");
-               if(iconElAfterTimeout) {
-                   iconElAfterTimeout.setAttribute("style", isDarkMode ? darkStyle : lightStyle);
-               }
-            }, 300);
-          }
-          setTimeout(() => showStatus(""), 1500); 
-        }
-
-
-        // =================================================================================
-        // 7. INPUT BINDINGS & LISTENERS
-        // =================================================================================
-
-        function bindInput() {
-          if (!textarea) return;
-          
-          textarea.addEventListener("input", function () {
-            this.style.height = "auto";
-            const minHeight = 48;
-            const newHeight = Math.min(this.scrollHeight, MAX_TEXTAREA_HEIGHT);
-            
-            this.style.height = `${newHeight}px`;
-
-            // Empty chat prompt visibility
-            if (emptyChatPrompt) {
-              if (this.value.trim().length > 0) {
-                emptyChatPrompt.style.opacity = "0";
-                setTimeout(() => emptyChatPrompt.classList.add("hidden"), 300);
-              } else if (history.length === 0) {
-                emptyChatPrompt.classList.remove("hidden");
-                setTimeout(() => emptyChatPrompt.style.opacity = "1", 10); 
-              }
-            }
-            
-            // Fix: Explicitly enable/disable the Send button based on content OR file
-            const hasText = this.value.trim().length > 0;
-            
-            if (okemoSendButton) {
-                okemoSendButton.disabled = !(hasText || currentFile);
-
-                if (hasText || currentFile) {
-                    okemoSendButton.classList.remove("opacity-50", "cursor-not-allowed");
-                    // Add enabled button colors
-                    okemoSendButton.classList.add("bg-neutral-900", "dark:bg-white", "hover:bg-neutral-800", "dark:hover:bg-neutral-100");
-                } else {
-                    okemoSendButton.classList.add("opacity-50", "cursor-not-allowed");
-                    // Remove enabled button colors when disabled
-                    okemoSendButton.classList.remove("bg-neutral-900", "dark:bg-white", "hover:bg-neutral-800", "dark:hover:bg-neutral-100");
-                }
-            }
-          });
-
-          // Handle Enter key for sending
-          textarea.addEventListener("keydown", function(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-              event.preventDefault(); 
-              if (okemoSendButton && !okemoSendButton.disabled) {
-                sendOkemoMessage();
-              }
-            }
-          });
-        }
-
-        function initListeners() {
-          initializeElements();
-          
-          // --- Modals and Toggles ---
-          if (disclaimerAgreeButton) disclaimerAgreeButton.addEventListener("click", acceptDisclaimer);
-          if (menuToggleButton) menuToggleButton.addEventListener("click", toggleDropdown);
-          if (updateNotesLink) updateNotesLink.addEventListener("click", (e) => { e.preventDefault(); showUpdateNotes(); closeDropdown(); });
-          if (updateNotesCloseBtn) updateNotesCloseBtn.addEventListener("click", closeUpdateNotes);
-          
-          // New Chat Handlers
-          if (newChatLink1) newChatLink1.addEventListener("click", newChat);
-          if (newChatLink2) newChatLink2.addEventListener("click", newChat);
-          if (newChatLinkHeader) newChatLinkHeader.addEventListener("click", newChat);
-          
-          document.addEventListener("click", (e) => {
-            const plusMenuToggle = document.getElementById("plus-menu-toggle");
-            const inputDropdown = document.getElementById("input-dropdown");
-
-            // Close header dropdown
-            if (dropdown && !menuToggleButton.contains(e.target) && !dropdown.contains(e.target)) {
-              closeDropdown();
-            }
-            // Close plus menu dropdown
-            if (inputDropdown && plusMenuToggle && !plusMenuToggle.contains(e.target) && !inputDropdown.contains(e.target)) {
-                inputDropdown.classList.remove("opacity-100", "scale-y-100");
-                inputDropdown.classList.add("opacity-0", "scale-y-0");
-                plusMenuToggle.classList.remove("active");
-                setTimeout(() => {
-                    inputDropdown.classList.add("hidden");
-                }, 300);
-            }
-
-          });
-
-          // --- Main Action Buttons ---
-          if (okemoSendButton) {
-            const initiallyDisabled = !textarea || (textarea.value.trim().length === 0 && !currentFile);
-            okemoSendButton.disabled = initiallyDisabled;
-            if (initiallyDisabled) {
-                okemoSendButton.classList.add("opacity-50", "cursor-not-allowed");
-            }
-            okemoSendButton.addEventListener("click", () => sendOkemoMessage());
-          }
-          
-          // --- Plus Menu Toggle ---
-          const plusMenuToggle = document.getElementById("plus-menu-toggle");
-          const inputDropdown = document.getElementById("input-dropdown");
-          if (plusMenuToggle && inputDropdown) {
-              plusMenuToggle.addEventListener("click", () => {
-                  if (inputDropdown.classList.contains("hidden")) {
-                      inputDropdown.classList.remove("hidden");
-                      plusMenuToggle.classList.add("active");
-                      void inputDropdown.offsetWidth;
-                      inputDropdown.classList.remove("opacity-0", "scale-y-0");
-                      inputDropdown.classList.add("opacity-100", "scale-y-100");
-                  } else {
-                      inputDropdown.classList.remove("opacity-100", "scale-y-100");
-                      inputDropdown.classList.add("opacity-0", "scale-y-0");
-                      plusMenuToggle.classList.remove("active");
-                      setTimeout(() => {
-                          inputDropdown.classList.add("hidden");
-                      }, 300);
-                  }
-              });
-          }
-          
-          // --- Web Search Toggle ---
-          if (webSearchOption) {
-              // Set initial state visually
-              updateWebSearchUI(webSearchStatus);
-              
-              webSearchOption.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  // Toggle the status flag and update UI
-                  updateWebSearchUI(!webSearchStatus, true);
-                  if (inputDropdown) {
-                        inputDropdown.classList.remove("opacity-100", "scale-y-100");
-                        inputDropdown.classList.add("opacity-0", "scale-y-0");
-                        setTimeout(() => inputDropdown.classList.add("hidden"), 300);
-                    }
-                  if (plusMenuToggle) plusMenuToggle.classList.remove("active");
-              });
-          }
-
-          // Bind "Upload Photo" button to hidden image input
-          if (addImageOption && imageUploadInput) {
-              addImageOption.addEventListener("click", () => {
-                  imageUploadInput.click();
-              });
-          }
-
-          // Bind "Attach File" button to hidden general file input
-          if (newFeatureOption && fileUploadInput) {
-              newFeatureOption.addEventListener("click", () => {
-                  fileUploadInput.click();
-              });
-          }
-
-          // Handle file selection change for ALL file inputs
-          [fileUploadInput, imageUploadInput].forEach(input => {
-            if (input) {
-              input.addEventListener('change', (e) => {
-                const otherInput = (input === fileUploadInput) ? imageUploadInput : fileUploadInput;
-                if (otherInput) otherInput.value = ""; 
-                
-                if (e.target.files.length > 0) {
-                  const file = e.target.files[0];
-                  renderFilePreview(file);
-                  if (textarea) textarea.focus();
-                } else {
-                  renderFilePreview(null);
-                }
-                if (inputDropdown) inputDropdown.classList.add("hidden");
-                if (plusMenuToggle) plusMenuToggle.classList.remove("active");
-                
-                if(textarea) textarea.dispatchEvent(new Event('input'));
-              });
-            }
-          });
-
-          bindInput();
-        }
-
-
-        // =================================================================================
-        // 8. DOCUMENT READY
-        // =================================================================================
-
-        document.addEventListener('DOMContentLoaded', () => {
-          initListeners();
-          checkDisclaimerStatus();
-          checkUpdateNotesStatus();
-          initOkemo(); 
-        });
-        
-    </script>
+  <script type="module" src="chat.js"></script>
 </body>
 </html>
