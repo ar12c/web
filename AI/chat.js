@@ -9,8 +9,8 @@ let gradioClient = null;
 // Local chat state
 let history = []; // local history as [[userMsg, aiMsg], ...]
 let currentFile = null;
-const MAX_TEXTAREA_HEIGHT = 150;
-const MAX_CHARS = 500;
+const MAX_TEXTAREA_HEIGHT = 300;
+const MAX_CHARS = 1024;
 
 // UI elements (will be initialized)
 let textarea, sendButton, chatBox, loadingBar, fileUploadInput, filePreviewContainer, emptyChatPrompt, statusEl;
