@@ -1,22 +1,33 @@
 // chat.js — OkemoLLM frontend integrator for Hugging Face Space "ar12c/okemo2"
-// Place this file in your site's JS and ensure the HTML IDs referenced exist.
+// Complete script: dropdowns, disclaimer/update modals, file/image attachments,
+// ChatGPT-like toolbox, streaming via Gradio Client, whitespace-normalized AI rendering.
 
 import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-const SPACE_ID = "ar12c/okemo2"; // Hugging Face Space
+const SPACE_ID = "ar12c/okemo2"; // Hugging Face Space ID
 let gradioClient = null;
 
 // Local chat state
-let history = []; // local history as [[userMsg, aiMsg], ...]
+let history = []; // [[userMsg, aiMsg], ...]
 let currentFile = null;
 const MAX_TEXTAREA_HEIGHT = 300;
 const MAX_CHARS = 1024;
 
-// UI elements (will be initialized)
-let textarea, sendButton, chatBox, loadingBar, fileUploadInput, filePreviewContainer, emptyChatPrompt, statusEl;
+// Persisted flags
+const DISCLAIMER_AGREED_KEY = "okemo_disclaimer_agreed";
+const UPDATE_NOTES_KEY = "okemo_update_v013"; // bump this when you ship new notes
+
+// UI elements
+let textarea, sendButton, chatBox, loadingBar, fileUploadInput, imageUploadInput, filePreviewContainer, emptyChatPrompt, statusEl;
+let menuToggle, okemoDropdown, plusMenuToggle, inputDropdown;
+let disclaimerModal, updateNotesModal, badFeedbackModal;
+
+// --- CRITICAL CONSTANT ---
+const WEB_TOKEN = "<WEB>";
+const WEB_ICON = "🌐"; // Globe icon for display
 
 // ------------------------------------------------
-// Helper utilities
+// Helpers
 // ------------------------------------------------
 function escapeHTML(s) {
   if (s === null || s === undefined) return "";
@@ -36,31 +47,207 @@ function showStatus(msg = "", isError = false) {
 
 function ensureHistoryArray(h) {
   if (!Array.isArray(h)) return [];
-  // Convert any non-[[u,a],...] forms into a normalized array
   if (h.length === 0) return [];
-  // If first element looks like {role:, content:} objects, attempt conversion
-  if (h[0] && typeof h[0] === "object" && !Array.isArray(h[0])) {
-    // Try to map messages grouped by turns => fallback to empty
-    try {
-      // If it's an array of objects like [{role:'user',content:'x'},{role:'assistant',content:'y'}, ...]
-      const asPairs = [];
-      for (let i = 0; i < h.length; i += 2) {
-        const u = (h[i] && (h[i].content || "")) || "";
-        const a = (h[i + 1] && (h[i + 1].content || "")) || null;
-        asPairs.push([u, a]);
-      }
-      return asPairs;
-    } catch (e) {
-      return [];
+  if (Array.isArray(h[0])) return h; // already [[u,a], ...]
+  if (h[0] && typeof h[0] === "object" && h[0].content !== undefined) {
+    const asPairs = [];
+    for (let i = 0; i < h.length; i += 2) {
+      const u = (h[i] && (h[i].content || "")) || "";
+      const a = (h[i + 1] && (h[i + 1].content || "")) || null;
+      asPairs.push([u, a]);
     }
+    return asPairs;
   }
-  // If shape is already [[u,a], ...] keep it
-  if (Array.isArray(h[0])) return h;
   return [];
 }
 
+/**
+ * Collapse excessive whitespace/newlines and clean up punctuation spacing.
+ * @param {string} text 
+ * @returns {string} Formatted HTML.
+ */
+function formatAiHtml(text) {
+  if (!text) return "";
+  let t = text.replace(/\r/g, "");
+  t = t.replace(/[ \t]+/g, " ");          // collapse multiple spaces
+  t = t.replace(/\n{3,}/g, "\n\n");       // cap consecutive newlines at 2
+  
+  // ENHANCED: Collapse space before common punctuation AND double quotes (")
+  t = t.replace(/\s+([,.!?;:"])/g, "$1"); 
+  
+  t = t.replace(/'\s+/g, "'");            // fix "i ' m" → "i'm"
+  t = t.trim();
+  const paragraphs = t.split(/\n{2}/).map(p => escapeHTML(p).replace(/\n/g, "<br/>"));
+  return paragraphs.map(p => `<p>${p}</p>`).join("");
+}
+
+// Modal helpers
+function showModal(modal) {
+  if (!modal) return;
+  modal.classList.remove("hidden");
+  setTimeout(() => modal.classList.remove("opacity-0"), 10);
+}
+
+function hideModal(modal) {
+  if (!modal) return;
+  modal.classList.add("opacity-0");
+  setTimeout(() => modal.classList.add("hidden"), 300);
+}
+
 // ------------------------------------------------
-// Basic rendering of chat history
+// ⭐ NEW SELF-CONTAINED Dropdown Logic (Recode)
+// ------------------------------------------------
+
+/** Closes a specific dropdown element */
+function closeSingleDropdown(toggleEl, dropdownEl) {
+    if (!dropdownEl.classList.contains("opacity-100")) return; // Only close if open
+    
+    // Start transition to close
+    dropdownEl.classList.remove("opacity-100");
+    dropdownEl.classList.add("opacity-0", "scale-y-0");
+    
+    toggleEl.classList.remove("active");
+    
+    // Wait for transition (200ms) then set display to none
+    setTimeout(() => {
+        dropdownEl.classList.add("hidden");
+    }, 200); 
+}
+
+/** Opens a specific dropdown element */
+function openSingleDropdown(toggleEl, dropdownEl) {
+    // 1. Prepare for transition
+    dropdownEl.classList.remove("hidden");
+    dropdownEl.classList.add("opacity-0", "scale-y-0"); // Ensure initial closed state for transition
+    
+    // 2. Start transition after a tiny delay
+    setTimeout(() => {
+        dropdownEl.classList.remove("opacity-0", "scale-y-0");
+        dropdownEl.classList.add("opacity-100");
+        toggleEl.classList.add("active");
+    }, 10);
+}
+
+/** Closes all dropdowns */
+function closeAllDropdowns() {
+    closeSingleDropdown(menuToggle, okemoDropdown);
+    closeSingleDropdown(plusMenuToggle, inputDropdown);
+}
+
+
+// ------------------------------------------------
+// Toolbox actions (Copy, Regenerate, Good/Bad feedback, <WEB> next)
+// ------------------------------------------------
+async function ensureClient() {
+  if (!gradioClient) {
+    gradioClient = await Client.connect(SPACE_ID);
+  }
+  return gradioClient;
+}
+
+async function regenerateTurn(turnIndex) {
+  try {
+    await ensureClient();
+    const [userMsg] = history[turnIndex] || ["", ""];
+    // CRITICAL: Ensure we remove the WEB_TOKEN and file attachment info before sending to model
+    const cleanUserMsg = (userMsg || "")
+      .replace(/\s*\(Attached:.*?\)\s*/g, "")
+      .replace(/\s*\[IMAGE_PREVIEW_URL:.*?]\s*/g, "")
+      .replace(new RegExp(`${WEB_ICON}\\s*`, 'g'), "") // Remove globe icon
+      .trim();
+
+    if (!cleanUserMsg) {
+      showStatus("Cannot regenerate: empty user message.", true);
+      return;
+    }
+
+    // Regenerate in-place
+    history[turnIndex][1] = null;
+    renderChat();
+    showStatus("Regenerating…");
+
+    const inputs = [
+      cleanUserMsg,
+      history.map(([u, a]) => [u, a]),
+      null, // do not re-send file by default
+      false,
+    ];
+
+    const job = gradioClient.submit("/on_submit", inputs);
+    for await (const chunk of job) {
+      if (chunk && Array.isArray(chunk.data) && chunk.data.length > 0) {
+        const serverHistoryCandidate = chunk.data[0];
+        const normalized = Array.isArray(serverHistoryCandidate) && Array.isArray(serverHistoryCandidate[0])
+          ? serverHistoryCandidate
+          : ensureHistoryArray(serverHistoryCandidate);
+
+        if (normalized && normalized.length) {
+          // sanitize last turn a bit to avoid odd spacing during stream
+          const last = normalized[normalized.length - 1];
+          if (last && typeof last[1] === "string") {
+            last[1] = last[1]
+              .replace(/[ \t]+/g, " ")
+              .replace(/\s+([,.!?;:"])/g, "$1") // Adjusted for quotes and colons
+              .replace(/'\s+/g, "'");
+          }
+          history = normalized;
+          renderChat();
+        }
+
+        const status = chunk.data[1];
+        if (typeof status === "string") showStatus(status);
+      }
+    }
+    const final = await job.result;
+    const finalStatus = final?.data?.[1];
+    showStatus(finalStatus || "Response complete.");
+    setTimeout(() => showStatus(""), 1500);
+  } catch (e) {
+    console.error("Regenerate failed:", e);
+    showStatus("Failed to regenerate.", true);
+  }
+}
+
+async function sendFeedback(kind = "Good Response") {
+  try {
+    await ensureClient();
+    const endpoint = kind === "Good Response" ? "/feedback_good" : "/feedback_bad";
+    const inputs = [history];
+    const result = await gradioClient.predict(endpoint, inputs);
+    const reply = result?.data?.[1] || `${kind} recorded.`;
+    showStatus(reply);
+  } catch (e) {
+    console.error("Feedback send failed:", e);
+    showStatus("Failed to send feedback.", true);
+  } finally {
+    setTimeout(() => showStatus(""), 1500);
+  }
+}
+
+function copyTextToClipboard(text) {
+  try {
+    navigator.clipboard.writeText(text || "");
+    showStatus("Copied to clipboard.");
+    setTimeout(() => showStatus(""), 1200);
+  } catch {
+    showStatus("Copy failed.", true);
+  }
+}
+
+// 🌐 REPLACED LOGIC: Now adds the globe icon to the textarea.
+function markNextTurnWeb() {
+  const current = textarea.value.trim();
+  if (!current.includes(WEB_ICON)) {
+    // Add the icon to the end of the text
+    textarea.value = current ? `${current} ${WEB_ICON}` : WEB_ICON;
+    textarea.dispatchEvent(new Event("input"));
+  }
+  showStatus(`Next turn will use web search (${WEB_TOKEN}).`);
+  setTimeout(() => showStatus(""), 1200);
+}
+
+// ------------------------------------------------
+// Chat rendering with toolbox
 // ------------------------------------------------
 function renderChat() {
   if (!chatBox) return;
@@ -82,14 +269,23 @@ function renderChat() {
   }
 
   history.forEach((turn, idx) => {
-    const userMsg = turn[0] || "";
-    const aiMsg = turn[1] || "";
+    // 🌐 REPLACED LOGIC: Replace the actual WEB_TOKEN with the icon for display only
+    let userMsg = turn[0] || "";
+    userMsg = userMsg.replace(new RegExp(WEB_TOKEN, 'g'), WEB_ICON); // Replace token with icon for display
+
+    const aiMsg = turn[1];
+    
+    // Apply mt-10 only to the first message (index 0)
+    const topMarginClass = idx === 0 ? "mt-10" : "mb-3";
 
     // User bubble (right aligned)
     const userDiv = document.createElement("div");
-    userDiv.className = "user-message-row mb-3 flex justify-end";
+    // Use the determined margin class
+    userDiv.className = `user-message-row ${topMarginClass} flex justify-end`;
+    
+    // UPDATED: Increased vertical padding from py-2 to py-3 for better visual balance
     userDiv.innerHTML = `
-      <div class="inline-block max-w-[85%] rounded-2xl px-4 py-2 bg-neutral-200 dark:bg-neutral-800 dark:text-white">
+      <div class="inline-block max-w-[85%] rounded-2xl px-4 py-3 bg-neutral-200 dark:bg-neutral-800 dark:text-white">
         ${escapeHTML(userMsg).replace(/\n/g, "<br/>")}
       </div>
     `;
@@ -98,19 +294,64 @@ function renderChat() {
     // AI bubble (left aligned)
     const aiWrapper = document.createElement("div");
     aiWrapper.className = "ai-message-row mb-1 flex items-start gap-2 mt-2";
+    const safeAi = aiMsg == null ? "" : formatAiHtml(aiMsg);
     aiWrapper.innerHTML = `
       <img src="/src/Vailailogo.svg" alt="AI" class="w-8 h-8 rounded-full mt-1 dark:invert"/>
-      <div class="max-w-[85%] text-neutral-900 dark:text-white pt-1">${escapeHTML(aiMsg).replace(/\n/g, "<br/>")}</div>
+      <div class="max-w-[85%] text-neutral-900 dark:text-white pt-1">
+        ${safeAi}
+        ${aiMsg != null ? `<div class="chat-toolbox flex items-center gap-3 mt-3 text-sm text-neutral-500 dark:text-neutral-400">
+          <button class="tool-btn copy-btn" data-idx="${idx}" title="Copy"><i class="fa-regular fa-copy"></i><span class="ml-1 hidden sm:inline"></span></button>
+          <button class="tool-btn regen-btn" data-idx="${idx}" title="Regenerate"><i class="fa-solid fa-rotate-right"></i><span class="hidden sm:inline"></span></button>
+          <span class="mx-1 text-neutral-300 dark:text-neutral-600">|</span>
+          <button class="tool-btn good-btn" data-idx="${idx}" title="Good"><i class="fa-regular fa-thumbs-up"></i></button>
+          <button class="tool-btn bad-btn" data-idx="${idx}" title="Bad"><i class="fa-regular fa-thumbs-down"></i></button>
+        </div>` : ""}
+      </div>
     `;
     chatBox.appendChild(aiWrapper);
 
-    // small spacer / actions placeholder
     const spacer = document.createElement("div");
-    spacer.className = "mb-4";
+    // This spacer is now effectively redundant with the updated margins, but retained for old compatibility
+    spacer.className = "mb-4"; 
     chatBox.appendChild(spacer);
   });
 
   chatBox.scrollTop = chatBox.scrollHeight;
+
+  // Bind toolbox buttons after render
+  bindToolboxEvents();
+}
+
+function bindToolboxEvents() {
+  // Copy
+  document.querySelectorAll(".copy-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.idx);
+      const aiText = history[idx]?.[1] || "";
+      copyTextToClipboard(aiText);
+    });
+  });
+  // Regenerate
+  document.querySelectorAll(".regen-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = Number(btn.dataset.idx);
+      regenerateTurn(idx);
+    });
+  });
+  // Feedback
+  document.querySelectorAll(".good-btn").forEach((btn) => {
+    btn.addEventListener("click", () => sendFeedback("Good Response"));
+  });
+  document.querySelectorAll(".bad-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (badFeedbackModal) showModal(badFeedbackModal);
+      else sendFeedback("Bad Response");
+    });
+  });
+  // Web tag for next turn
+  document.querySelectorAll(".web-btn").forEach((btn) => {
+    btn.addEventListener("click", markNextTurnWeb);
+  });
 }
 
 // ------------------------------------------------
@@ -137,8 +378,8 @@ function renderFilePreview(file) {
     `;
   } else {
     filePreviewContainer.innerHTML = `
-      <div class="flex items-center justify-between p-2 bg-neutral-100 rounded-xl">
-        <div class="truncate">${escapeHTML(file.name)}</div>
+      <div class="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-700 rounded-xl text-sm">
+        <div class="truncate text-neutral-800 dark:text-neutral-200">${escapeHTML(file.name)}</div>
         <button id="remove-file-btn" class="ml-2 text-red-500">Remove</button>
       </div>
     `;
@@ -152,17 +393,22 @@ function renderFilePreview(file) {
 function clearFileAttachment() {
   currentFile = null;
   if (fileUploadInput) fileUploadInput.value = "";
+  if (imageUploadInput) imageUploadInput.value = "";
   if (filePreviewContainer) {
-    URL.revokeObjectURL(filePreviewContainer.querySelector("img")?.src || "");
+    const img = filePreviewContainer.querySelector("img");
+    if (img && img.src) URL.revokeObjectURL(img.src);
     filePreviewContainer.innerHTML = "";
     filePreviewContainer.classList.add("hidden");
   }
-  // Re-enable send button state update
   updateSendButtonState();
 }
 
+// 🌐 MODIFIED LOGIC: Replace icon with token when checking state
 function updateSendButtonState() {
-  const hasText = textarea && textarea.value.trim().length > 0;
+  // Check for text, replacing the icon with the token before checking length
+  const rawText = textarea ? textarea.value.replace(new RegExp(WEB_ICON, 'g'), WEB_TOKEN).trim() : '';
+  const hasText = rawText.length > 0;
+  
   if (!sendButton) return;
   if (hasText || currentFile) {
     sendButton.disabled = false;
@@ -174,7 +420,7 @@ function updateSendButtonState() {
 }
 
 // ------------------------------------------------
-// Init & connect to Gradio client
+// Gradio client
 // ------------------------------------------------
 async function initGradioClient() {
   try {
@@ -190,13 +436,14 @@ async function initGradioClient() {
 }
 
 // ------------------------------------------------
-// Primary: send message to backend & stream result
+// Primary: send message & stream result
 // ------------------------------------------------
-async function sendOkemoMessage(isRegenerate = false, regenerateElement = null) {
+async function sendOkemoMessage() {
   if (!textarea || !sendButton) return;
-  let userMsg = textarea.value.trim();
+  
+  // 🌐 CRITICAL MODIFICATION: Replace the icon with the actual token before sending!
+  let userMsg = textarea.value.replace(new RegExp(WEB_ICON, 'g'), WEB_TOKEN).trim();
 
-  // validation
   if (!userMsg && !currentFile) {
     showStatus("Please enter a message or attach a file.", true);
     return;
@@ -206,113 +453,102 @@ async function sendOkemoMessage(isRegenerate = false, regenerateElement = null) 
     return;
   }
 
-  // Prepare optimistic update
+  // Optimistic update
   let historyMessage = userMsg || "";
   if (currentFile) {
     historyMessage += ` (Attached: ${currentFile.name || "file"})`;
   }
-
-  // Add turn placeholder (user, null)
   history.push([historyMessage, null]);
   renderChat();
 
-  // Clear input for standard send
+  // Reset input height and text
   textarea.value = "";
   textarea.style.height = "48px";
   updateSendButtonState();
 
-  // Show loading
+  // Show loading bar (no animation)
   if (loadingBar) loadingBar.classList.remove("hidden");
   showStatus("OkemoLLM Thinking...");
 
-  // Prepare inputs for Gradio endpoint:
-  // on_submit expects [user_message, history, uploaded_file, web_search_flag]
-  const historyToSend = history.map(([u, a]) => [u, a]); // shallow copy
+  // CRITICAL: The userMsg SENT HERE already contains the <WEB> token if the globe was present.
   const inputs = [
     userMsg,
-    historyToSend,
+    history.map(([u, a]) => [u, a]),
     currentFile,
-    false, // web_search_enabled flag (your backend uses <WEB> tag anyway)
+    false, // <WEB> handled by tag; backend ignores this flag
   ];
 
-  // Ensure connected
   try {
     if (!gradioClient) {
       await initGradioClient();
       if (!gradioClient) throw new Error("Unable to connect to remote Space.");
     }
 
-    // Submit job for streaming
     const job = gradioClient.submit("/on_submit", inputs);
 
-    // We will await the iterator, parsing chunks as they come
     for await (const chunk of job) {
-      try {
-        // typical chunk structure: { data: [ historyFromServer, statusStr, ... ], ... }
-        if (chunk && Array.isArray(chunk.data) && chunk.data.length > 0) {
-          const serverHistoryCandidate = chunk.data[0];
+      if (chunk && Array.isArray(chunk.data) && chunk.data.length > 0) {
+        const serverHistoryCandidate = chunk.data[0];
 
-          // Normalize what the server sent into our expected [[u,a], ...] format
-          let normalized = null;
-
-          // Case A: it's already an array-of-pairs
-          if (Array.isArray(serverHistoryCandidate) && serverHistoryCandidate.length > 0 && Array.isArray(serverHistoryCandidate[0])) {
-            normalized = serverHistoryCandidate;
-          } else if (Array.isArray(serverHistoryCandidate) && serverHistoryCandidate[0] && serverHistoryCandidate[0].content !== undefined) {
-            // Case B: array of objects with .content (convert pairs)
-            try {
-              // Attempt grouping by pairs of objects
-              const arr = serverHistoryCandidate;
-              const pairs = [];
-              for (let i = 0; i < arr.length; i += 2) {
-                const u = arr[i] ? (arr[i].content || "") : "";
-                const a = arr[i + 1] ? (arr[i + 1].content || "") : null;
-                pairs.push([u, a]);
-              }
-              normalized = pairs;
-            } catch (e) {
-              normalized = null;
-            }
-          } else if (Array.isArray(serverHistoryCandidate) && serverHistoryCandidate.length === 2 && typeof serverHistoryCandidate[0] === "string") {
-            // Rare case: single-turn [user, assistant]
-            normalized = [serverHistoryCandidate];
-          } else {
-            // Unexpected format: do not crash; just log
-            console.warn("Unexpected server history format:", serverHistoryCandidate);
+        // Normalize server history
+        let normalized = null;
+        if (Array.isArray(serverHistoryCandidate) && serverHistoryCandidate.length > 0 && Array.isArray(serverHistoryCandidate[0])) {
+          normalized = serverHistoryCandidate;
+        } else if (Array.isArray(serverHistoryCandidate) && serverHistoryCandidate[0] && serverHistoryCandidate[0].content !== undefined) {
+          const arr = serverHistoryCandidate;
+          const pairs = [];
+          for (let i = 0; i < arr.length; i += 2) {
+            const u = arr[i] ? (arr[i].content || "") : "";
+            const a = arr[i + 1] ? (arr[i + 1].content || "") : null;
+            pairs.push([u, a]);
           }
+          normalized = pairs;
+        } else if (Array.isArray(serverHistoryCandidate) && serverHistoryCandidate.length === 2 && typeof serverHistoryCandidate[0] === "string") {
+          normalized = [serverHistoryCandidate];
+        }
 
-          if (normalized) {
-            history = normalized;
+        if (normalized) {
+          // sanitize last AI message a bit to avoid odd spacing during stream
+          const last = normalized[normalized.length - 1];
+          if (last && typeof last[1] === "string") {
+            last[1] = last[1]
+              .replace(/[ \t]+/g, " ")
+              .replace(/\s+([,.!?;:"])/g, "$1") // Adjusted for quotes and colons
+              .replace(/'\s+/g, "'");
+          }
+          history = normalized;
+          renderChat();
+        } else {
+          const alt = ensureHistoryArray(serverHistoryCandidate);
+          if (alt.length) {
+            const last = alt[alt.length - 1];
+            if (last && typeof last[1] === "string") {
+              last[1] = last[1]
+                .replace(/[ \t]+/g, " ")
+                .replace(/\s+([,.!?;:"])/g, "$1") // Adjusted for quotes and colons
+                .replace(/'\s+/g, "'");
+            }
+            history = alt;
             renderChat();
           } else {
-            // fallback: if server sent a full chat object wrapped differently, try to coerce outer array
-            const alt = ensureHistoryArray(serverHistoryCandidate);
-            if (alt.length) {
-              history = alt;
-              renderChat();
-            }
-          }
-
-          // Optionally, update status text if provided
-          const possibleStatus = chunk.data[1];
-          if (possibleStatus && typeof possibleStatus === "string") {
-            showStatus(possibleStatus);
+            console.warn("Unexpected server history format:", serverHistoryCandidate);
           }
         }
-      } catch (parseErr) {
-        console.error("Stream parsing error:", parseErr);
+
+        const possibleStatus = chunk.data[1];
+        if (typeof possibleStatus === "string") showStatus(possibleStatus);
       }
     }
 
-    // job finished, read final result
+    // Response fully received → hide loading bar now
     const finalResult = await job.result;
     const finalStatus = finalResult?.data?.[1];
-    if (finalStatus) showStatus(finalStatus);
-    else showStatus("Response complete.");
+    if (loadingBar) loadingBar.classList.add("hidden");
+    showStatus(finalStatus || "Response complete.");
+    setTimeout(() => showStatus(""), 1500);
 
   } catch (err) {
     console.error("Prediction error:", err);
-    // mark last AI message as error if still null
     const lastIdx = history.length - 1;
     if (lastIdx >= 0 && history[lastIdx][1] === null) {
       history[lastIdx][1] = "Error: could not receive response.";
@@ -320,54 +556,46 @@ async function sendOkemoMessage(isRegenerate = false, regenerateElement = null) 
     renderChat();
     showStatus(err.message || "Error receiving response.", true);
 
-  } finally {
+    // Ensure loading bar is hidden on errors too
     if (loadingBar) loadingBar.classList.add("hidden");
-    updateSendButtonState();
-    // Clear attached file after send (if standard send)
-    if (currentFile) clearFileAttachment();
-    setTimeout(() => showStatus(""), 1500);
-  }
-}
 
-// ------------------------------------------------
-// Feedback stubs (Good/Bad) — call backend endpoints if desired
-// ------------------------------------------------
-async function sendFeedback(kind = "Good Response") {
-  try {
-    if (!gradioClient) await initGradioClient();
-    if (!gradioClient) throw new Error("No connection.");
-
-    const endpoint = kind === "Good Response" ? "/feedback_good" : "/feedback_bad";
-    const inputs = [history];
-    const result = await gradioClient.predict(endpoint, inputs);
-    const reply = result?.data?.[1] || `${kind} recorded.`;
-    showStatus(reply);
-  } catch (e) {
-    console.error("Feedback send failed:", e);
-    showStatus("Failed to send feedback.", true);
   } finally {
-    setTimeout(() => showStatus(""), 1500);
+    updateSendButtonState();
+    if (currentFile) clearFileAttachment();
   }
 }
 
 // ------------------------------------------------
-// Input bindings & initialization
+// Input bindings, dropdowns, modals
 // ------------------------------------------------
 function bindUI() {
+  // Main controls
   textarea = document.getElementById("okemo-input");
   sendButton = document.getElementById("okemo-send");
   chatBox = document.getElementById("okemo-chat");
-  loadingBar = document.getElementById("okemo-loading-bar");
+  loadingBar = document.getElementById("okemo-loading-bar"); // optional: element may not exist
   fileUploadInput = document.getElementById("file-upload-input");
+  imageUploadInput = document.getElementById("image-upload-input");
   filePreviewContainer = document.getElementById("file-preview-container");
   emptyChatPrompt = document.getElementById("empty-chat-prompt");
   statusEl = document.getElementById("okemo-status");
+
+  // Dropdowns
+  menuToggle = document.getElementById("menu-toggle");
+  okemoDropdown = document.getElementById("okemo-dropdown");
+  plusMenuToggle = document.getElementById("plus-menu-toggle");
+  inputDropdown = document.getElementById("input-dropdown");
+
+  // Modals
+  disclaimerModal = document.getElementById("disclaimer-modal");
+  updateNotesModal = document.getElementById("update-notes-modal");
+  badFeedbackModal = document.getElementById("bad-feedback-modal");
 
   if (!textarea || !sendButton || !chatBox) {
     console.warn("Missing required HTML elements (okemo-input, okemo-send, okemo-chat).");
   }
 
-  // Textarea auto-resize
+  // Textarea auto-resize + Enter-to-send
   if (textarea) {
     textarea.addEventListener("input", function () {
       this.style.height = "auto";
@@ -375,7 +603,6 @@ function bindUI() {
       this.style.height = `${Math.max(newH, 48)}px`;
       updateSendButtonState();
     });
-
     textarea.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -391,25 +618,195 @@ function bindUI() {
     });
   }
 
+  // File inputs
   if (fileUploadInput) {
     fileUploadInput.addEventListener("change", (e) => {
       const f = e.target.files && e.target.files[0];
-      if (f) {
-        renderFilePreview(f);
-      }
+      if (f) renderFilePreview(f);
+      updateSendButtonState();
+    });
+  }
+  if (imageUploadInput) {
+    imageUploadInput.addEventListener("change", (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) renderFilePreview(f);
       updateSendButtonState();
     });
   }
 
-  // simple shortcuts for feedback (if you wire up buttons)
+  // Optional feedback modal buttons (global)
   const goodBtn = document.getElementById("good-feedback-btn");
   const badBtn = document.getElementById("bad-feedback-btn");
   if (goodBtn) goodBtn.addEventListener("click", () => sendFeedback("Good Response"));
-  if (badBtn) badBtn.addEventListener("click", () => sendFeedback("Bad Response"));
+  if (badBtn) badBtn.addEventListener("click", () => {
+    if (badFeedbackModal) showModal(badFeedbackModal);
+    else sendFeedback("Bad Response");
+  });
+
+  const badCancel = document.getElementById("cancel-bad-feedback");
+  const badSubmit = document.getElementById("submit-bad-feedback");
+  const badInput = document.getElementById("bad-feedback-input");
+  if (badCancel) badCancel.addEventListener("click", () => {
+    hideModal(badFeedbackModal);
+    if (badInput) badInput.value = "";
+  });
+  if (badSubmit) badSubmit.addEventListener("click", async () => {
+    await sendFeedback("Bad Response");
+    hideModal(badFeedbackModal);
+    if (badInput) badInput.value = "";
+  });
+
+  // --- START CRITICAL FIX (Using self-contained logic and blocking global clicks) ---
+
+  // 1. Initial State: Ensure all menus are correctly closed on load
+  closeAllDropdowns();
+
+  // 2. Header Dropdown Toggle
+  if (menuToggle && okemoDropdown) {
+    // This handler runs in the capture phase (true) and blocks all other click events.
+    menuToggle.addEventListener("click", (e) => {
+      e.stopImmediatePropagation(); 
+      if (okemoDropdown.classList.contains("opacity-100")) {
+          closeSingleDropdown(menuToggle, okemoDropdown); // Close self
+      } else {
+          closeAllDropdowns(); // Close all (including the other menu)
+          openSingleDropdown(menuToggle, okemoDropdown); // Open self
+      }
+    }, true); 
+  }
+
+  // 3. Input Plus Menu Toggle
+  if (plusMenuToggle && inputDropdown) {
+    // This handler runs in the capture phase (true) and blocks all other click events.
+    plusMenuToggle.addEventListener("click", (e) => {
+      e.stopImmediatePropagation(); 
+      if (inputDropdown.classList.contains("opacity-100")) {
+          closeSingleDropdown(plusMenuToggle, inputDropdown); // Close self
+      } else {
+          closeAllDropdowns(); // Close all (including the other menu)
+          openSingleDropdown(plusMenuToggle, inputDropdown); // Open self
+      }
+    }, true); 
+  }
+
+  // 4. Fallback/Click Outside Logic (Now only handles clicks outside the toggles/menus)
+  document.addEventListener("click", (e) => {
+      // If the click is not inside either dropdown or their toggle buttons, close all.
+      const isClickInsideOkemoArea = (okemoDropdown && okemoDropdown.contains(e.target)) || (menuToggle && menuToggle.contains(e.target));
+      const isClickInsideInputArea = (inputDropdown && inputDropdown.contains(e.target)) || (plusMenuToggle && plusMenuToggle.contains(e.target));
+
+      if (!isClickInsideOkemoArea && !isClickInsideInputArea) {
+          closeAllDropdowns();
+      }
+  });
+
+
+  // Input dropdown options
+  const webSearchOption = document.getElementById("web-search-option");
+  const addImageOption = document.getElementById("add-image-option");
+  const newFeatureOption = document.getElementById("new-feature-option");
+
+  // Fix for Input Dropdown Options (Must manually close after selection)
+  const dropdownOptions = [webSearchOption, addImageOption, newFeatureOption];
+  dropdownOptions.forEach(option => {
+    if (option) {
+      option.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevents document click listener from firing too soon
+        
+        // Custom logic for the button's purpose
+        if (option.id === "web-search-option") {
+          // 🌐 Calls the updated function
+          markNextTurnWeb();
+          textarea.focus();
+        } else if (option.id === "add-image-option" && imageUploadInput) {
+          imageUploadInput.click();
+        } else if (option.id === "new-feature-option" && fileUploadInput) {
+          fileUploadInput.click();
+        }
+
+        closeAllDropdowns(); // Use unified function to close
+      });
+    }
+  });
+  
+  // New Chat link clears local history (Header Dropdown)
+  const newChatHeader = document.getElementById("new-chat-link-header"); // Primary header button
+  const newChatDropdown = document.getElementById("new-chat-dropdown-2"); // Dropdown link
+  const showUpdateNotes = document.getElementById("show-update-notes"); // Dropdown link
+
+  if (newChatHeader) {
+    newChatHeader.addEventListener("click", (e) => {
+      e.preventDefault();
+      history = [];
+      renderChat();
+      showStatus("Chat cleared. Starting new conversation.");
+      clearFileAttachment();
+    });
+  }
+  
+  // Header Dropdown Option Handlers (ensure closure after action)
+  [newChatDropdown, showUpdateNotes].forEach(link => {
+    if(link) {
+      link.addEventListener("click", (e) => {
+        e.preventDefault(); // Stop navigation for the link
+        e.stopPropagation(); // Prevents document click listener from firing too soon
+        
+        // Custom logic
+        if (link.id === "new-chat-dropdown-2") {
+            history = [];
+            renderChat();
+            showStatus("Chat cleared. Starting new conversation.");
+            clearFileAttachment();
+        } else if (link.id === "show-update-notes") {
+            showModal(updateNotesModal);
+        }
+        
+        closeAllDropdowns(); // Use unified function to close
+      });
+    }
+  });
+  // --- END CRITICAL FIX ---
+
 
   // Initial state
   updateSendButtonState();
   renderChat();
+
+  // Disclaimer & update notes flow
+  const disclaimerAgreed = localStorage.getItem(DISCLAIMER_AGREED_KEY) === "true";
+  const updatesSeen = localStorage.getItem(UPDATE_NOTES_KEY) === "true";
+
+  if (!disclaimerAgreed && disclaimerModal) {
+    showModal(disclaimerModal);
+  } else if (!updatesSeen && updateNotesModal) {
+    showModal(updateNotesModal);
+  }
+
+  const disclaimerAgreeBtn = document.getElementById("disclaimer-agree");
+  if (disclaimerAgreeBtn && disclaimerModal) {
+    disclaimerAgreeBtn.addEventListener("click", () => {
+      const dontShowAgain = document.getElementById("dont-show-again");
+      if (dontShowAgain && dontShowAgain.checked) {
+        localStorage.setItem(DISCLAIMER_AGREED_KEY, "true");
+      }
+      hideModal(disclaimerModal);
+// After closing disclaimer, show updates if not seen
+      if (!updatesSeen && updateNotesModal) {
+        showModal(updateNotesModal);
+      }
+    });
+  }
+
+  const updatesCloseBtn = document.getElementById("update-notes-close");
+  if (updatesCloseBtn && updateNotesModal) {
+    updatesCloseBtn.addEventListener("click", () => {
+      const notesDontShowAgain = document.getElementById("notes-dont-show-again");
+      if (notesDontShowAgain && notesDontShowAgain.checked) {
+        localStorage.setItem(UPDATE_NOTES_KEY, "true");
+      }
+      hideModal(updateNotesModal);
+    });
+  }
 }
 
 // ------------------------------------------------
@@ -417,5 +814,5 @@ function bindUI() {
 // ------------------------------------------------
 window.addEventListener("DOMContentLoaded", async () => {
   bindUI();
-  await initGradioClient(); // try to connect early
+  await initGradioClient(); // connect early
 });
