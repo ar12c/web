@@ -15,12 +15,13 @@ const MAX_CHARS = 1024;
 
 // Persisted flags
 const DISCLAIMER_AGREED_KEY = "okemo_disclaimer_agreed";
-const UPDATE_NOTES_KEY = "okemo_update_v013"; // bump this when you ship new notes
+const UPDATE_NOTES_KEY = "okemo_update_v0.2.0"; // bump this when you ship new notes
 
 // UI elements
+// ADD badInput HERE
 let textarea, sendButton, chatBox, loadingBar, fileUploadInput, imageUploadInput, filePreviewContainer, emptyChatPrompt, statusEl;
 let menuToggle, okemoDropdown, plusMenuToggle, inputDropdown;
-let disclaimerModal, updateNotesModal, badFeedbackModal;
+let disclaimerModal, updateNotesModal, badFeedbackModal, badInput; // <-- badInput declared here
 
 // --- CRITICAL CONSTANT ---
 const WEB_TOKEN = "<WEB>";
@@ -31,6 +32,8 @@ const WEB_ICON = "🌐"; // Globe icon for display
 const THOUGHT_MARKER_RE = /\[THOUGHT\](.*?)\[\/THOUGHT\]/gs; 
 // -------------------------
 
+// Variable to hold the timeout ID for auto-clearing the status message
+let statusTimeout = null;
 
 // ------------------------------------------------
 // Helpers
@@ -47,8 +50,23 @@ function escapeHTML(s) {
 
 function showStatus(msg = "", isError = false) {
     if (!statusEl) return;
+    
+    // Clear any existing timeout to prevent premature clearing of a new message
+    if (statusTimeout) {
+        clearTimeout(statusTimeout);
+        statusTimeout = null;
+    }
+    
     statusEl.textContent = msg;
-    statusEl.className = isError ? "text-red-500 text-sm" : "text-neutral-500 text-sm";
+    statusEl.className = isError ? "text-red-500 text-sm mb-1" : "text-neutral-500 dark:text-neutral-400 text-sm mb-1";
+    
+    // Automatically clear the status bar after 3 seconds
+    if (msg) {
+        statusTimeout = setTimeout(() => {
+            statusEl.textContent = "";
+            statusTimeout = null;
+        }, 3000); 
+    }
 }
 
 function ensureHistoryArray(h) {
@@ -65,6 +83,42 @@ function ensureHistoryArray(h) {
         return asPairs;
     }
     return [];
+}
+
+/**
+ * Starts the blinking cursor in the last AI message.
+ */
+function startCursor() {
+    // Select the direct container of the AI's generated text, which is the <div> right after the image
+    const lastAiTextContainer = chatBox.querySelector('.ai-message-row:last-child > div:nth-child(2)');
+    
+    if (lastAiTextContainer) {
+        // 1. Stop any existing cursor
+        stopCursor(); 
+        
+        // 2. Create the cursor element
+        let cursor = document.createElement('span');
+        cursor.classList.add('blinking-cursor');
+        // Using the Unicode Block character
+        cursor.innerHTML = '&#9608;'; 
+        
+        // 3. Append the cursor to the text container
+        lastAiTextContainer.appendChild(cursor);
+        
+        // 4. Ensure scroll is maintained
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+}
+
+/**
+ * Stops and removes the blinking cursor.
+ */
+function stopCursor() {
+    // Select the cursor inside the last message row
+    const cursor = chatBox.querySelector('.ai-message-row:last-child .blinking-cursor');
+    if (cursor && cursor.parentNode) {
+        cursor.parentNode.removeChild(cursor);
+    }
 }
 
 /**
@@ -206,7 +260,9 @@ async function regenerateTurn(turnIndex) {
         // Regenerate in-place
         history[turnIndex][1] = null;
         renderChat();
+        
         showStatus("Regenerating…");
+        startCursor(); // Start cursor immediately after rendering partial chat
 
         const inputs = [
             cleanUserMsg,
@@ -234,36 +290,64 @@ async function regenerateTurn(turnIndex) {
                     }
                     history = normalized;
                     renderChat();
+                    startCursor(); // Re-start cursor after rendering the new chunk
                 }
 
                 const status = chunk.data[1];
                 if (typeof status === "string") showStatus(status);
             }
         }
+        
+        // Stop cursor when the stream is complete
+        stopCursor();
         const final = await job.result;
         const finalStatus = final?.data?.[1];
         showStatus(finalStatus || "Response complete.");
-        setTimeout(() => showStatus(""), 1500);
     } catch (e) {
         console.error("Regenerate failed:", e);
+        stopCursor();
         showStatus("Failed to regenerate.", true);
-    }
+    } 
 }
 
-async function sendFeedback(kind = "Good Response") {
+/**
+ * Sends feedback to the backend.
+ * @param {string} kind - "Good Response" or "Bad Response".
+ * @param {string} [message=""] - Optional detailed feedback message for bad responses (used as desired response for /feedback_train).
+ */
+async function sendFeedback(kind = "Good Response", message = "") {
     try {
         await ensureClient();
-        const endpoint = kind === "Good Response" ? "/feedback_good" : "/feedback_bad";
-        const inputs = [history];
+        
+        let endpoint = null;
+        let inputs = [];
+        
+        if (kind === "Bad Response" && message.length > 0) {
+            // FIX: Use the dedicated training endpoint for 'Bad Response' with a message.
+            // The endpoint expects (Chat History, Desired Response)
+            endpoint = "/feedback_train";
+            inputs = [history, message];
+            
+        } else if (kind === "Good Response") {
+            // Placeholder endpoint for Good Feedback (assuming it logs history)
+            endpoint = "/feedback_good"; 
+            inputs = [history];
+        } else {
+             // If bad feedback is sent without a message, just log it as a simple failure (or use a simple logging endpoint)
+             endpoint = "/feedback_bad";
+             inputs = [history, message];
+        }
+
         const result = await gradioClient.predict(endpoint, inputs);
-        const reply = result?.data?.[1] || `${kind} recorded.`;
+        const reply = result?.data?.[0] || `${kind} recorded.`;
+        
+        // Show status message for the user
         showStatus(reply);
+        
     } catch (e) {
         console.error("Feedback send failed:", e);
-        showStatus("Failed to send feedback.", true);
-    } finally {
-        setTimeout(() => showStatus(""), 1500);
-    }
+        showStatus("Failed to send feedback/training data.", true);
+    } 
 }
 
 function copyTextToClipboard(text) {
@@ -273,7 +357,6 @@ function copyTextToClipboard(text) {
     try {
         navigator.clipboard.writeText(cleanText || "");
         showStatus("Copied to clipboard.");
-        setTimeout(() => showStatus(""), 1200);
     } catch {
         showStatus("Copy failed.", true);
     }
@@ -288,7 +371,6 @@ function markNextTurnWeb() {
         textarea.dispatchEvent(new Event("input"));
     }
     showStatus(`Next turn will use web search (${WEB_TOKEN}).`);
-    setTimeout(() => showStatus(""), 1200);
 }
 
 // ------------------------------------------------
@@ -476,7 +558,7 @@ async function initGradioClient() {
     try {
         if (!gradioClient) {
             gradioClient = await Client.connect(SPACE_ID);
-            showStatus("Connected to OkemoLLM ✨");
+            showStatus("Connected to OLM ✨");
             setTimeout(() => showStatus(""), 1500);
         }
     } catch (err) {
@@ -516,9 +598,8 @@ async function sendOkemoMessage() {
     textarea.style.height = "48px";
     updateSendButtonState();
 
-    // Show loading bar (no animation)
-    if (loadingBar) loadingBar.classList.remove("hidden");
-    showStatus("OkemoLLM Thinking...");
+    showStatus("Generating...");
+    startCursor(); // Start cursor immediately after rendering partial chat
 
     // CRITICAL: The userMsg SENT HERE already contains the <WEB> token if the globe was present.
     const inputs = [
@@ -568,34 +649,20 @@ async function sendOkemoMessage() {
                     }
                     history = normalized;
                     renderChat();
-                } else {
-                    const alt = ensureHistoryArray(serverHistoryCandidate);
-                    if (alt.length) {
-                        const last = alt[alt.length - 1];
-                        if (last && typeof last[1] === "string") {
-                            last[1] = last[1]
-                                .replace(/[ \t]+/g, " ")
-                                .replace(/\s+([,.!?;:"])/g, "$1") // Adjusted for quotes and colons
-                                .replace(/'\s+/g, "'");
-                        }
-                        history = alt;
-                        renderChat();
-                    } else {
-                        console.warn("Unexpected server history format:", serverHistoryCandidate);
-                    }
+                    startCursor(); // Re-start cursor after rendering the new chunk
                 }
 
                 const possibleStatus = chunk.data[1];
                 if (typeof possibleStatus === "string") showStatus(possibleStatus);
             }
         }
-
-        // Response fully received → hide loading bar now
+        
+        // Stop cursor when the stream is complete
+        stopCursor();
+        // Response fully received -> process final result
         const finalResult = await job.result;
         const finalStatus = finalResult?.data?.[1];
-        if (loadingBar) loadingBar.classList.add("hidden");
         showStatus(finalStatus || "Response complete.");
-        setTimeout(() => showStatus(""), 1500);
 
     } catch (err) {
         console.error("Prediction error:", err);
@@ -604,10 +671,8 @@ async function sendOkemoMessage() {
             history[lastIdx][1] = "Error: could not receive response.";
         }
         renderChat();
+        stopCursor();
         showStatus(err.message || "Error receiving response.", true);
-
-        // Ensure loading bar is hidden on errors too
-        if (loadingBar) loadingBar.classList.add("hidden");
 
     } finally {
         updateSendButtonState();
@@ -623,12 +688,11 @@ function bindUI() {
     textarea = document.getElementById("okemo-input");
     sendButton = document.getElementById("okemo-send");
     chatBox = document.getElementById("okemo-chat");
-    loadingBar = document.getElementById("okemo-loading-bar"); // optional: element may not exist
+    statusEl = document.getElementById("okemo-status"); 
     fileUploadInput = document.getElementById("file-upload-input");
     imageUploadInput = document.getElementById("image-upload-input");
     filePreviewContainer = document.getElementById("file-preview-container");
     emptyChatPrompt = document.getElementById("empty-chat-prompt");
-    statusEl = document.getElementById("okemo-status");
 
     // Dropdowns
     menuToggle = document.getElementById("menu-toggle");
@@ -641,6 +705,9 @@ function bindUI() {
     updateNotesModal = document.getElementById("update-notes-modal");
     badFeedbackModal = document.getElementById("bad-feedback-modal");
 
+    // FIX: Declare badInput globally and initialize it here
+    badInput = document.getElementById("bad-feedback-input"); 
+    
     if (!textarea || !sendButton || !chatBox) {
         console.warn("Missing required HTML elements (okemo-input, okemo-send, okemo-chat).");
     }
@@ -695,16 +762,28 @@ function bindUI() {
 
     const badCancel = document.getElementById("cancel-bad-feedback");
     const badSubmit = document.getElementById("submit-bad-feedback");
-    const badInput = document.getElementById("bad-feedback-input");
+    
     if (badCancel) badCancel.addEventListener("click", () => {
         hideModal(badFeedbackModal);
         if (badInput) badInput.value = "";
     });
+    
+    // --- FIX: Bad Feedback Submit Logic ---
     if (badSubmit) badSubmit.addEventListener("click", async () => {
-        await sendFeedback("Bad Response");
+        // 1. Get the feedback text (User's Desired/Correct Response)
+        const desiredResponse = badInput ? badInput.value.trim() : "";
+        
+        // 2. Send the feedback to the dedicated training endpoint
+        await sendFeedback("Bad Response", desiredResponse);
+        
+        // 3. Clean up and close modal
         hideModal(badFeedbackModal);
         if (badInput) badInput.value = "";
+        
+        // Log a message to the chat status bar
+        showStatus("Feedback sent for training.", false);
     });
+    // -------------------------------------
 
     // --- START CRITICAL FIX (Using self-contained logic and blocking global clicks) ---
 
