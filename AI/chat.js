@@ -4,8 +4,22 @@
 
 import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-const SPACE_ID = "ar12c/okemo2"; // Hugging Face Space ID
+// --- MODEL CONFIGURATION ---
+const MODEL_CONFIG = {
+    BASE: {
+        id: "ar12c/okemo2",
+        name: "OLM 0.5"
+    },
+    PRO: {
+        // Using all-lowercase ID for reliable URL construction
+        id: "ar12c/okemollm", 
+        name: "OLM 0.5 Pro"
+    }
+};
+
+let currentSpaceId = MODEL_CONFIG.BASE.id; 
 let gradioClient = null;
+// ----------------------------
 
 // Local chat state
 let history = []; // [[userMsg, aiMsg], ...]
@@ -18,10 +32,10 @@ const DISCLAIMER_AGREED_KEY = "okemo_disclaimer_agreed";
 const UPDATE_NOTES_KEY = "okemo_update_v0.2.0"; // bump this when you ship new notes
 
 // UI elements
-// ADD badInput HERE
-let textarea, sendButton, chatBox, loadingBar, fileUploadInput, imageUploadInput, filePreviewContainer, emptyChatPrompt, statusEl;
+let textarea, sendButton, chatBox, loadingBar, fileUploadInput, imageUploadInput, filePreviewContainer, emptyChatPrompt, statusEl, modelTitleEl;
 let menuToggle, okemoDropdown, plusMenuToggle, inputDropdown;
-let disclaimerModal, updateNotesModal, badFeedbackModal, badInput; // <-- badInput declared here
+let disclaimerModal, updateNotesModal, badFeedbackModal, badInput;
+let modelSelectBase, modelSelectPro; // NEW UI elements for model selection
 
 // --- CRITICAL CONSTANT ---
 const WEB_TOKEN = "<WEB>";
@@ -232,11 +246,53 @@ function closeAllDropdowns() {
 
 
 // ------------------------------------------------
+// Model Switching Logic
+// ------------------------------------------------
+async function switchModel(newSpaceId, newModelName) {
+    if (newSpaceId === currentSpaceId) {
+        showStatus(`${newModelName} is already active.`);
+        return;
+    }
+
+    currentSpaceId = newSpaceId;
+    gradioClient = null; // Force a new connection
+
+    // Update UI title and status
+    document.getElementById("okemo-title").textContent = newModelName.split(' ')[0]; // Use short name (e.g., OLM)
+    document.title = `Chat ${newModelName}`; // Update HTML title
+
+    // Clear history to reflect the model change
+    history = [];
+    renderChat();
+    
+    showStatus(`Switching to ${newModelName}...`);
+    
+    // Find all model links and update their styles to reflect the current selection
+    [modelSelectBase, modelSelectPro].forEach(link => {
+        if (!link) return;
+        const linkModelId = link.dataset.modelId;
+        if (linkModelId === newSpaceId) {
+            link.classList.add("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
+        } else {
+            link.classList.remove("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
+        }
+    });
+
+    try {
+        await initGradioClient();
+        showStatus(`${newModelName} is ready ✨`);
+    } catch (e) {
+        showStatus(`Failed to connect to ${newModelName} Space.`, true);
+    }
+}
+
+// ------------------------------------------------
 // Toolbox actions (Copy, Regenerate, Good/Bad feedback, <WEB> next)
 // ------------------------------------------------
 async function ensureClient() {
     if (!gradioClient) {
-        gradioClient = await Client.connect(SPACE_ID);
+        // Connects to the currentSpaceId
+        gradioClient = await Client.connect(currentSpaceId);
     }
     return gradioClient;
 }
@@ -370,7 +426,7 @@ function markNextTurnWeb() {
         textarea.value = current ? `${current} ${WEB_ICON}` : WEB_ICON;
         textarea.dispatchEvent(new Event("input"));
     }
-    showStatus(`Next turn will use web search (${WEB_TOKEN}).`);
+    showStatus(`Using web search (${WEB_TOKEN}).`);
 }
 
 // ------------------------------------------------
@@ -557,13 +613,22 @@ function updateSendButtonState() {
 async function initGradioClient() {
     try {
         if (!gradioClient) {
-            gradioClient = await Client.connect(SPACE_ID);
-            showStatus("Connected to OLM ✨");
+            let connectId = currentSpaceId;
+            
+            // CRITICAL FIX: If using the mixed-case repository ID (or its lowercase form), 
+            // hardcode the connection to the fully normalized URL to ensure stability.
+            if (currentSpaceId.toLowerCase() === "ar12c/okemollm") {
+                connectId = "https://ar12c-okemollm.hf.space/";
+            }
+            
+            gradioClient = await Client.connect(connectId); 
+            showStatus(`Connected to ${currentSpaceId.split('/')[1]} ✨`);
             setTimeout(() => showStatus(""), 1500);
         }
     } catch (err) {
         console.error("Gradio Client connect error:", err);
-        showStatus("Failed to connect to remote Space.", true);
+        showStatus(`Failed to connect to remote Space: ${currentSpaceId}.`, true);
+        throw err; // Re-throw to stop subsequent processes that rely on the client
     }
 }
 
@@ -621,7 +686,7 @@ async function sendOkemoMessage() {
             if (chunk && Array.isArray(chunk.data) && chunk.data.length > 0) {
                 const serverHistoryCandidate = chunk.data[0];
 
-                // Normalize server history
+                // Normalize server history (logic remains the same)
                 let normalized = null;
                 if (Array.isArray(serverHistoryCandidate) && serverHistoryCandidate.length > 0 && Array.isArray(serverHistoryCandidate[0])) {
                     normalized = serverHistoryCandidate;
@@ -708,6 +773,17 @@ function bindUI() {
     // FIX: Declare badInput globally and initialize it here
     badInput = document.getElementById("bad-feedback-input"); 
     
+    // NEW Model Selectors
+    modelSelectBase = document.getElementById("model-select-base");
+    modelSelectPro = document.getElementById("model-select-pro");
+    // Ensure the main title is updated to show the current model name
+    document.getElementById("okemo-title").textContent = MODEL_CONFIG.BASE.name.split(' ')[0]; // Initial short name
+
+    // Set initial model style
+    if (modelSelectBase) {
+        modelSelectBase.classList.add("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
+    }
+
     if (!textarea || !sendButton || !chatBox) {
         console.warn("Missing required HTML elements (okemo-input, okemo-send, okemo-chat).");
     }
@@ -817,8 +893,24 @@ function bindUI() {
             }
         }, true); 
     }
+    
+    // 4. Model Switching Bindings
+    [modelSelectBase, modelSelectPro].forEach(modelLink => {
+        if (modelLink) {
+            modelLink.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation(); 
+                const newId = modelLink.dataset.modelId;
+                const newName = modelLink.dataset.modelName;
+                
+                // Switch the model and close the dropdown
+                switchModel(newId, newName);
+                closeAllDropdowns();
+            });
+        }
+    });
 
-    // 4. Fallback/Click Outside Logic (Now only handles clicks outside the toggles/menus)
+    // 5. Fallback/Click Outside Logic (Now only handles clicks outside the toggles/menus)
     document.addEventListener("click", (e) => {
         // If the click is not inside either dropdown or their toggle buttons, close all.
         const isClickInsideOkemoArea = (okemoDropdown && okemoDropdown.contains(e.target)) || (menuToggle && menuToggle.contains(e.target));
@@ -860,7 +952,7 @@ function bindUI() {
     
     // New Chat link clears local history (Header Dropdown)
     const newChatHeader = document.getElementById("new-chat-link-header"); // Primary header button
-    const newChatDropdown = document.getElementById("new-chat-dropdown-2"); // Dropdown link
+    const newChatDropdown = document.getElementById("new-chat-dropdown-2"); // This ID is reused in HTML, but the new selector is model-select-base/pro for model links
     const showUpdateNotes = document.getElementById("show-update-notes"); // Dropdown link
 
     if (newChatHeader) {
@@ -874,19 +966,14 @@ function bindUI() {
     }
     
     // Header Dropdown Option Handlers (ensure closure after action)
-    [newChatDropdown, showUpdateNotes].forEach(link => {
+    [showUpdateNotes].forEach(link => { // Only Update Notes remains here, as model switching handles chat clearing
         if(link) {
             link.addEventListener("click", (e) => {
                 e.preventDefault(); // Stop navigation for the link
                 e.stopPropagation(); // Prevents document click listener from firing too soon
                 
                 // Custom logic
-                if (link.id === "new-chat-dropdown-2") {
-                    history = [];
-                    renderChat();
-                    showStatus("Chat cleared. Starting new conversation.");
-                    clearFileAttachment();
-                } else if (link.id === "show-update-notes") {
+                if (link.id === "show-update-notes") {
                     showModal(updateNotesModal);
                 }
                 
@@ -943,5 +1030,6 @@ function bindUI() {
 // ------------------------------------------------
 window.addEventListener("DOMContentLoaded", async () => {
     bindUI();
-    await initGradioClient(); // connect early
+    // Use the function that connects to the currentSpaceId (MODEL_CONFIG.BASE.id initially)
+    await initGradioClient(); 
 });
