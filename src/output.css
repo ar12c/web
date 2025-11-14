@@ -12,7 +12,9 @@
     --color-blue-100: oklch(93.2% 0.032 255.585);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-950: oklch(28.2% 0.091 267.935);
+    --color-purple-100: oklch(94.6% 0.033 307.174);
     --color-purple-500: oklch(62.7% 0.265 303.9);
+    --color-purple-950: oklch(29.1% 0.149 302.717);
     --color-pink-100: oklch(94.8% 0.028 342.258);
     --color-pink-950: oklch(28.4% 0.109 3.907);
     --color-rose-400: oklch(71.2% 0.194 13.428);
@@ -1124,6 +1126,9 @@
   .text-pink-100 {
     color: var(--color-pink-100);
   }
+  .text-purple-100 {
+    color: var(--color-purple-100);
+  }
   .text-red-500 {
     color: var(--color-red-500);
   }
@@ -1629,6 +1634,11 @@
   .dark\:text-pink-950 {
     @media (prefers-color-scheme: dark) {
       color: var(--color-pink-950);
+    }
+  }
+  .dark\:text-purple-950 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-purple-950);
     }
   }
   .dark\:text-white {
