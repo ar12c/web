@@ -10,12 +10,11 @@
 
     const prompts = [
       'Hi Okemo Language Model',
-      'Is Mineek awesomesauce?',
-      'Procursus?',
+      'Who is Charles Lerclec?',
+      'Tell me a joke',
       'What are you?',
       'clanker',
       'can axolotls spread rumors?',
-      'meow meow'
     ];
 
     const typingSpeed = 100;     // ms per character while typing
