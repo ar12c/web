@@ -167,7 +167,7 @@ function formatAiHtml(text) {
         thoughtHTML = `
             <details class="text-xs text-neutral-600 dark:text-neutral-500 my-2 pt-2 border-t border-neutral-300 dark:border-neutral-700">
                 <summary class="cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-400">
-                    <i class="fa-solid fa-brain mr-1"></i>Internal Reasoning (CoT)
+                    <i class="text-neutral-800 fa-brain mr-1"></i>Internal Reasoning (CoT)
                 </summary>
                 <div class="mt-2 ml-1 p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
                     ${thoughtBodyHTML}
