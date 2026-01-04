@@ -322,7 +322,7 @@
       <header class="py-3 flex items-center justify-between relative">
         <div class="flex items-center relative">
           <a href="OkemoLLM.html" id="okemo-title" class="text-xl font-semibold cursor-pointer text-neutral-900 dark:text-white">
-            OLM
+            OLM <span id="model-display-number" class="text-neutral-500 font-normal">2</span>
           </a>
           <span id="update-note-badge" class="update-badge hidden"></span>
           <button id="menu-toggle" class="ml-1 text-base p-1 rounded-full duration-300" aria-label="Toggle Menu">
@@ -330,18 +330,18 @@
           </button>
         </div>
         
-        <a href="#" id="new-chat-link-header" class="px-5 h-9 flex items-center justify-center rounded-[2rem] bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-black dark:text-white transition-all duration-300" aria-label="Start New Chat" data-tooltip-content="New Chat">
+        <a href="#" id="new-chat-link-header" class="px-5 h-9 flex items-center justify-center rounded-[2rem] bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-black dark:text-white transition-all duration-300" aria-label="Start New Chat">
           <h1 class="font-medium pr-1 text-sm">New</h1><i class="fa-regular fa-message text-sm"></i>
         </a>
 
         <div id="okemo-dropdown" class="absolute left-0 top-[calc(100%+5px)] w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-xl z-10 p-1 transform opacity-0 scale-y-0 transition-all duration-200 ease-out origin-top">
-            
-          <a href="#" id="model-select-base" data-model-id="ar12c/okemo2" data-model-name="OLM 0.5" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-            <i class="fas fa-code-branch mr-2 w-4 text-center icon-neutral"></i> <span id="model-name-base">OLM 0.5</span>
+
+          <a href="#" id="model-select-base" data-model-id="ar12c/okemo2" data-model-name="OLM 1" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
+            <i class="fas fa-code-branch mr-2 w-4 text-center icon-neutral"></i> <span>OLM 1</span>
           </a>
             
-          <a href="#" id="model-select-pro" data-model-id="ar12c/okemo2-pro" data-model-name="OLM 0.5 Pro" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
-            <i class="fas fa-brain mr-2"></i> <span id="model-name-pro">OLM 0.5 Pro</span>
+          <a href="#" id="model-select-pro" data-model-id="ar12c/okemollm" data-model-name="OLM 2" class="relative flex items-center px-3 py-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition duration-300">
+            <i class="fas fa-brain mr-2"></i> <span>OLM 2</span>
           </a>
             
           <div class="my-1 border-t border-neutral-100 dark:border-neutral-700"></div>
@@ -353,7 +353,7 @@
       </header>
     </div>
   </div>
-
+  
   <div class="w-full px-4 sm:px-8 pt-[62px] pb-[100px] flex-1 flex flex-col min-h-0 mx-auto max-w-2xl relative">
     
     <div id="empty-chat-prompt" class="text-3xl select-none text-neutral-500 dark:text-neutral-400">

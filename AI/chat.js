@@ -5,19 +5,20 @@
 import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
 // --- MODEL CONFIGURATION ---
+// --- MODEL CONFIGURATION ---
 const MODEL_CONFIG = {
     BASE: {
         id: "ar12c/okemo2",
-        name: "OLM 0.5"
+        name: "OLM 1" // Updated from OLM 0.5
     },
     PRO: {
         // Using all-lowercase ID for reliable URL construction
         id: "ar12c/okemollm", 
-        name: "OLM 0.5 Pro"
+        name: "OLM 2" // Updated from OLM 0.5 Pro
     }
 };
 
-let currentSpaceId = MODEL_CONFIG.BASE.id; 
+let currentSpaceId = MODEL_CONFIG.PRO.id;
 let gradioClient = null;
 // ----------------------------
 
@@ -255,23 +256,25 @@ async function switchModel(newSpaceId, newModelName) {
     }
 
     currentSpaceId = newSpaceId;
-    gradioClient = null; // Force a new connection
+    gradioClient = null; // Force new connection
 
-    // Update UI title and status
-    document.getElementById("okemo-title").textContent = newModelName.split(' ')[0]; // Use short name (e.g., OLM)
-    document.title = `Chat ${newModelName}`; // Update HTML title
+    // Update the Header Span (OLM [1 or 2])
+    const modelNumber = newModelName.split(' ')[1]; // Extracts "1" or "2"
+    const modelNumEl = document.getElementById("model-display-number");
+    if (modelNumEl) {
+        modelNumEl.textContent = modelNumber;
+    }
 
-    // Clear history to reflect the model change
+    document.title = `Chat ${newModelName}`;
     history = [];
     renderChat();
     
     showStatus(`Switching to ${newModelName}...`);
     
-    // Find all model links and update their styles to reflect the current selection
+    // UI selection styling logic...
     [modelSelectBase, modelSelectPro].forEach(link => {
         if (!link) return;
-        const linkModelId = link.dataset.modelId;
-        if (linkModelId === newSpaceId) {
+        if (link.dataset.modelId === newSpaceId) {
             link.classList.add("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
         } else {
             link.classList.remove("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
@@ -280,9 +283,8 @@ async function switchModel(newSpaceId, newModelName) {
 
     try {
         await initGradioClient();
-        showStatus(`${newModelName} is ready ✨`);
     } catch (e) {
-        showStatus(`Failed to connect to ${newModelName} Space.`, true);
+        showStatus(`Failed to connect to ${newModelName}.`, true);
     }
 }
 
@@ -615,20 +617,23 @@ async function initGradioClient() {
         if (!gradioClient) {
             let connectId = currentSpaceId;
             
-            // CRITICAL FIX: If using the mixed-case repository ID (or its lowercase form), 
-            // hardcode the connection to the fully normalized URL to ensure stability.
+            // Determine the display name based on the current ID
+            const activeModel = Object.values(MODEL_CONFIG).find(m => m.id === currentSpaceId);
+            const displayName = activeModel ? activeModel.name : currentSpaceId;
+
             if (currentSpaceId.toLowerCase() === "ar12c/okemollm") {
                 connectId = "https://ar12c-okemollm.hf.space/";
             }
             
             gradioClient = await Client.connect(connectId); 
-            showStatus(`Connected to ${currentSpaceId.split('/')[1]} ✨`);
+            // Changed from splitting currentSpaceId to using displayName
+            showStatus(`${displayName} is connected `);
             setTimeout(() => showStatus(""), 1500);
         }
     } catch (err) {
         console.error("Gradio Client connect error:", err);
-        showStatus(`Failed to connect to remote Space: ${currentSpaceId}.`, true);
-        throw err; // Re-throw to stop subsequent processes that rely on the client
+        showStatus(`Failed to connect to ${currentSpaceId}.`, true);
+        throw err;
     }
 }
 
@@ -749,7 +754,7 @@ async function sendOkemoMessage() {
 // Input bindings, dropdowns, modals
 // ------------------------------------------------
 function bindUI() {
-    // Main controls
+    // 1. Initialize Main Elements
     textarea = document.getElementById("okemo-input");
     sendButton = document.getElementById("okemo-send");
     chatBox = document.getElementById("okemo-chat");
@@ -759,36 +764,46 @@ function bindUI() {
     filePreviewContainer = document.getElementById("file-preview-container");
     emptyChatPrompt = document.getElementById("empty-chat-prompt");
 
-    // Dropdowns
+    // 2. Initialize Dropdowns & Modals
     menuToggle = document.getElementById("menu-toggle");
     okemoDropdown = document.getElementById("okemo-dropdown");
     plusMenuToggle = document.getElementById("plus-menu-toggle");
     inputDropdown = document.getElementById("input-dropdown");
-
-    // Modals
     disclaimerModal = document.getElementById("disclaimer-modal");
     updateNotesModal = document.getElementById("update-notes-modal");
     badFeedbackModal = document.getElementById("bad-feedback-modal");
-
-    // FIX: Declare badInput globally and initialize it here
     badInput = document.getElementById("bad-feedback-input"); 
     
-    // NEW Model Selectors
+    // 3. Model Selectors
     modelSelectBase = document.getElementById("model-select-base");
     modelSelectPro = document.getElementById("model-select-pro");
-    // Ensure the main title is updated to show the current model name
-    document.getElementById("okemo-title").textContent = MODEL_CONFIG.BASE.name.split(' ')[0]; // Initial short name
 
-    // Set initial model style
+    // --- DEFAULT STATE: OLM 2 ---
+    const defaultName = MODEL_CONFIG.PRO.name; // "OLM 2"
+    const defaultNum = defaultName.split(' ')[1]; // "2"
+
+    // Update the Header Span number
+    const modelNumEl = document.getElementById("model-display-number");
+    if (modelNumEl) {
+        modelNumEl.textContent = defaultNum;
+    }
+
+    // Ensure the Brand text is set correctly
+    const okemoTitle = document.getElementById("okemo-title");
+    if (okemoTitle && okemoTitle.firstChild) {
+        okemoTitle.firstChild.textContent = "OLM ";
+    }
+
+    // Set initial visual selection in the dropdown
+    if (modelSelectPro) {
+        modelSelectPro.classList.add("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
+    }
     if (modelSelectBase) {
-        modelSelectBase.classList.add("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
+        modelSelectBase.classList.remove("bg-neutral-100", "dark:bg-neutral-700", "font-semibold");
     }
+    // ----------------------------
 
-    if (!textarea || !sendButton || !chatBox) {
-        console.warn("Missing required HTML elements (okemo-input, okemo-send, okemo-chat).");
-    }
-
-    // Textarea auto-resize + Enter-to-send
+    // 4. Input Events (Auto-resize & Enter-to-send)
     if (textarea) {
         textarea.addEventListener("input", function () {
             this.style.height = "auto";
@@ -811,7 +826,7 @@ function bindUI() {
         });
     }
 
-    // File inputs
+    // 5. File & Image Uploads
     if (fileUploadInput) {
         fileUploadInput.addEventListener("change", (e) => {
             const f = e.target.files && e.target.files[0];
@@ -827,15 +842,7 @@ function bindUI() {
         });
     }
 
-    // Optional feedback modal buttons (global)
-    const goodBtn = document.getElementById("good-feedback-btn");
-    const badBtn = document.getElementById("bad-feedback-btn");
-    if (goodBtn) goodBtn.addEventListener("click", () => sendFeedback("Good Response"));
-    if (badBtn) badBtn.addEventListener("click", () => {
-        if (badFeedbackModal) showModal(badFeedbackModal);
-        else sendFeedback("Bad Response");
-    });
-
+    // 6. Feedback Modal Logic
     const badCancel = document.getElementById("cancel-bad-feedback");
     const badSubmit = document.getElementById("submit-bad-feedback");
     
@@ -844,57 +851,42 @@ function bindUI() {
         if (badInput) badInput.value = "";
     });
     
-    // --- FIX: Bad Feedback Submit Logic ---
     if (badSubmit) badSubmit.addEventListener("click", async () => {
-        // 1. Get the feedback text (User's Desired/Correct Response)
         const desiredResponse = badInput ? badInput.value.trim() : "";
-        
-        // 2. Send the feedback to the dedicated training endpoint
         await sendFeedback("Bad Response", desiredResponse);
-        
-        // 3. Clean up and close modal
         hideModal(badFeedbackModal);
         if (badInput) badInput.value = "";
-        
-        // Log a message to the chat status bar
         showStatus("Feedback sent for training.", false);
     });
-    // -------------------------------------
 
-    // --- START CRITICAL FIX (Using self-contained logic and blocking global clicks) ---
-
-    // 1. Initial State: Ensure all menus are correctly closed on load
+    // 7. Dropdown Toggle Logic
     closeAllDropdowns();
 
-    // 2. Header Dropdown Toggle
     if (menuToggle && okemoDropdown) {
-        // This handler runs in the capture phase (true) and blocks all other click events.
         menuToggle.addEventListener("click", (e) => {
             e.stopImmediatePropagation(); 
             if (okemoDropdown.classList.contains("opacity-100")) {
-                closeSingleDropdown(menuToggle, okemoDropdown); // Close self
+                closeSingleDropdown(menuToggle, okemoDropdown);
             } else {
-                closeAllDropdowns(); // Close all (including the other menu)
-                openSingleDropdown(menuToggle, okemoDropdown); // Open self
+                closeAllDropdowns();
+                openSingleDropdown(menuToggle, okemoDropdown);
             }
         }, true); 
     }
 
-    // 3. Input Plus Menu Toggle
     if (plusMenuToggle && inputDropdown) {
-        // This handler runs in the capture phase (true) and blocks all other click events.
         plusMenuToggle.addEventListener("click", (e) => {
             e.stopImmediatePropagation(); 
             if (inputDropdown.classList.contains("opacity-100")) {
-                closeSingleDropdown(plusMenuToggle, inputDropdown); // Close self
+                closeSingleDropdown(plusMenuToggle, inputDropdown);
             } else {
-                closeAllDropdowns(); // Close all (including the other menu)
-                openSingleDropdown(plusMenuToggle, inputDropdown); // Open self
+                closeAllDropdowns();
+                openSingleDropdown(plusMenuToggle, inputDropdown);
             }
         }, true); 
     }
     
-    // 4. Model Switching Bindings
+    // 8. Model Switching Listener
     [modelSelectBase, modelSelectPro].forEach(modelLink => {
         if (modelLink) {
             modelLink.addEventListener("click", (e) => {
@@ -902,41 +894,31 @@ function bindUI() {
                 e.stopPropagation(); 
                 const newId = modelLink.dataset.modelId;
                 const newName = modelLink.dataset.modelName;
-                
-                // Switch the model and close the dropdown
                 switchModel(newId, newName);
                 closeAllDropdowns();
             });
         }
     });
 
-    // 5. Fallback/Click Outside Logic (Now only handles clicks outside the toggles/menus)
+    // 9. Global Click Handler (Closes dropdowns on outside click)
     document.addEventListener("click", (e) => {
-        // If the click is not inside either dropdown or their toggle buttons, close all.
         const isClickInsideOkemoArea = (okemoDropdown && okemoDropdown.contains(e.target)) || (menuToggle && menuToggle.contains(e.target));
         const isClickInsideInputArea = (inputDropdown && inputDropdown.contains(e.target)) || (plusMenuToggle && plusMenuToggle.contains(e.target));
-
         if (!isClickInsideOkemoArea && !isClickInsideInputArea) {
             closeAllDropdowns();
         }
     });
 
-
-    // Input dropdown options
+    // 10. Input Options (Web, Photo, File)
     const webSearchOption = document.getElementById("web-search-option");
     const addImageOption = document.getElementById("add-image-option");
     const newFeatureOption = document.getElementById("new-feature-option");
 
-    // Fix for Input Dropdown Options (Must manually close after selection)
-    const dropdownOptions = [webSearchOption, addImageOption, newFeatureOption];
-    dropdownOptions.forEach(option => {
+    [webSearchOption, addImageOption, newFeatureOption].forEach(option => {
         if (option) {
             option.addEventListener("click", (e) => {
-                e.stopPropagation(); // Prevents document click listener from firing too soon
-                
-                // Custom logic for the button's purpose
+                e.stopPropagation(); 
                 if (option.id === "web-search-option") {
-                    // 🌐 Calls the updated function
                     markNextTurnWeb();
                     textarea.focus();
                 } else if (option.id === "add-image-option" && imageUploadInput) {
@@ -944,51 +926,39 @@ function bindUI() {
                 } else if (option.id === "new-feature-option" && fileUploadInput) {
                     fileUploadInput.click();
                 }
-
-                closeAllDropdowns(); // Use unified function to close
+                closeAllDropdowns();
             });
         }
     });
     
-    // New Chat link clears local history (Header Dropdown)
-    const newChatHeader = document.getElementById("new-chat-link-header"); // Primary header button
-    const newChatDropdown = document.getElementById("new-chat-dropdown-2"); // This ID is reused in HTML, but the new selector is model-select-base/pro for model links
-    const showUpdateNotes = document.getElementById("show-update-notes"); // Dropdown link
+    // 11. Header Actions (New Chat & Notes)
+    const newChatHeader = document.getElementById("new-chat-link-header");
+    const showUpdateNotes = document.getElementById("show-update-notes");
 
     if (newChatHeader) {
         newChatHeader.addEventListener("click", (e) => {
             e.preventDefault();
             history = [];
             renderChat();
-            showStatus("Chat cleared. Starting new conversation.");
+            showStatus("Chat cleared.");
             clearFileAttachment();
         });
     }
     
-    // Header Dropdown Option Handlers (ensure closure after action)
-    [showUpdateNotes].forEach(link => { // Only Update Notes remains here, as model switching handles chat clearing
-        if(link) {
-            link.addEventListener("click", (e) => {
-                e.preventDefault(); // Stop navigation for the link
-                e.stopPropagation(); // Prevents document click listener from firing too soon
-                
-                // Custom logic
-                if (link.id === "show-update-notes") {
-                    showModal(updateNotesModal);
-                }
-                
-                closeAllDropdowns(); // Use unified function to close
-            });
-        }
-    });
-    // --- END CRITICAL FIX ---
+    if(showUpdateNotes) {
+        showUpdateNotes.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation(); 
+            showModal(updateNotesModal);
+            closeAllDropdowns();
+        });
+    }
 
-
-    // Initial state
+    // 12. Final Initialization
     updateSendButtonState();
     renderChat();
 
-    // Disclaimer & update notes flow
+    // Disclaimer & Update Notes Flow
     const disclaimerAgreed = localStorage.getItem(DISCLAIMER_AGREED_KEY) === "true";
     const updatesSeen = localStorage.getItem(UPDATE_NOTES_KEY) === "true";
 
@@ -1001,30 +971,20 @@ function bindUI() {
     const disclaimerAgreeBtn = document.getElementById("disclaimer-agree");
     if (disclaimerAgreeBtn && disclaimerModal) {
         disclaimerAgreeBtn.addEventListener("click", () => {
-            const dontShowAgain = document.getElementById("dont-show-again");
-            if (dontShowAgain && dontShowAgain.checked) {
-                localStorage.setItem(DISCLAIMER_AGREED_KEY, "true");
-            }
+            localStorage.setItem(DISCLAIMER_AGREED_KEY, "true");
             hideModal(disclaimerModal);
-// After closing disclaimer, show updates if not seen
-            if (!updatesSeen && updateNotesModal) {
-                showModal(updateNotesModal);
-            }
+            if (!updatesSeen && updateNotesModal) showModal(updateNotesModal);
         });
     }
 
     const updatesCloseBtn = document.getElementById("update-notes-close");
     if (updatesCloseBtn && updateNotesModal) {
         updatesCloseBtn.addEventListener("click", () => {
-            const notesDontShowAgain = document.getElementById("notes-dont-show-again");
-            if (notesDontShowAgain && notesDontShowAgain.checked) {
-                localStorage.setItem(UPDATE_NOTES_KEY, "true");
-            }
+            localStorage.setItem(UPDATE_NOTES_KEY, "true");
             hideModal(updateNotesModal);
         });
     }
 }
-
 // ------------------------------------------------
 // Kickoff
 // ------------------------------------------------

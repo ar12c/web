@@ -11,35 +11,30 @@
       const storedTheme = localStorage.getItem(themeKey);
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const shouldBeDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
-      if (shouldBeDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      document.documentElement.classList.toggle('dark', shouldBeDark);
     })();
   </script>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/src/output.css"/>
-  <link rel="stylesheet" href="/AI/thing.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"/>
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
-  <link rel="Shortcut icon" type="x-icon" href="/images/blehfile.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* 1. Original Side Bar Animations - Tailored to not clash with Tailwind utilities */
-    @keyframes gradientSide {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 0.2; }
-    }
-    .animate-gradient-original {
-      animation: gradientSide 8s ease-in-out infinite;
+    /* Custom Keyframes for the Mesh Background */
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(10%, 15%) scale(1.1); }
+      100% { transform: translate(-5%, -10%) scale(1); }
     }
 
-    /* 2. Word-by-Word Reveal Animation */
+    .animate-drift {
+      animation: drift 15s ease-in-out infinite alternate;
+    }
+
+    /* Word-by-Word Reveal Animation */
     @keyframes revealBlur {
       0% { opacity: 0; transform: translateY(15px); filter: blur(10px); }
       100% { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -50,7 +45,7 @@
       animation: revealBlur 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
 
-    /* 3. Floating Logo Logic */
+    /* Floating Logo Logic */
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
@@ -59,25 +54,6 @@
       animation: float 6s ease-in-out infinite;
     }
 
-    /* 4. Background Glow Pulse */
-    @keyframes glowPulse {
-      0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.1); }
-    }
-    .hero-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 50%, transparent 70%);
-      filter: blur(80px);
-      z-index: -1;
-      animation: glowPulse 12s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    /* Simple cleanup for Tailwind clashing */
     .animate-element-fade {
       opacity: 0;
       animation: revealBlur 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
@@ -86,96 +62,81 @@
     html { scroll-behavior: smooth; }
   </style>
 </head>
-<body class="bg-neutral-100 dark:bg-neutral-900 min-h-screen font-inter transition-colors duration-500 overflow-x-hidden">
+<body class="bg-neutral-50 dark:bg-neutral-950 min-h-screen font-inter transition-colors duration-500 overflow-x-hidden relative">
 
-  <div class="z-[-10] pointer-events-none fixed inset-y-0 left-0 w-1/5 animate-gradient-original bg-neutral-400/20 dark:bg-neutral-600/10 blur-3xl"></div>
-  <div class="z-[-10] pointer-events-none fixed inset-y-0 right-0 w-1/5 animate-gradient-original bg-neutral-400/20 dark:bg-neutral-600/10 blur-3xl"></div>
+  <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+    <div class="absolute -top-[10%] -left-[10%] w-[500px] h-[500px] rounded-full bg-blue-400/20 dark:bg-blue-600/10 blur-[100px] animate-drift"></div>
+    <div class="absolute top-[20%] -right-[5%] w-[600px] h-[600px] rounded-full bg-purple-400/20 dark:bg-purple-600/10 blur-[120px] animate-drift" style="animation-delay: -5s;"></div>
+    <div class="absolute -bottom-[10%] left-[20%] w-[450px] h-[450px] rounded-full bg-indigo-400/20 dark:bg-indigo-900/10 blur-[100px] animate-drift" style="animation-delay: -10s;"></div>
+  </div>
 
-  <main class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative z-10">
-    <div class="hero-glow"></div>
-
+  <main class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
     <header class="w-full flex items-center justify-center mb-6 animate-float-only">
-      <img src="/src/Vailailogo.svg" alt="Vailai logo" class="w-12 h-12 rounded-full dark:invert block drop-shadow-md"/>
+      <img src="/src/Vailailogo.svg" alt="Vailai logo" class="w-14 h-14 rounded-full dark:invert block drop-shadow-2xl"/>
     </header>
 
-    <h1 id="main-title" class="text-3xl font-bold text-black dark:text-white mb-2">Introducing OLM</h1>
-    <p id="sub-title" class="text-lg opacity-30 mb-8 dark:text-neutral-400">Okemo Language Model</p>
+    <h1 id="main-title" class="text-4xl md:text-5xl font-bold text-black dark:text-white mb-2 tracking-tight">Introducing OLM</h1>
+    <p id="sub-title" class="text-xl opacity-50 mb-10 dark:text-neutral-400 font-medium">Okemo Language Model</p>
     
-    <div class="w-full z-100 animate-element-fade" style="animation-delay: 1.1s;">
-      <div class="mx-auto w-full max-w-sm bg-white dark:bg-neutral-900 rounded-full shadow-xl dark:shadow-2xl p-2 flex items-center gap-2 border border-neutral-200 dark:border-neutral-800 transition-all duration-300 focus-within:ring-2 focus-within:ring-blue-500/30">
+    <div class="w-full z-10 animate-element-fade" style="animation-delay: 1.1s;">
+      <div class="mx-auto w-full max-w-md bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl rounded-full shadow-2xl p-2 flex items-center gap-2 border border-neutral-200/50 dark:border-neutral-800 transition-all duration-300 focus-within:ring-4 focus-within:ring-blue-500/20">
         <input
           id="aiPromptInput"
           type="text"
           placeholder="Message OLM..."
           class="flex-1 rounded-full px-5 py-2 text-base outline-none bg-transparent text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
         />
-        <i class="fa-solid fa-plus text-neutral-500 dark:text-neutral-200 mr-1 cursor-pointer"></i>
-        <a href="/AI/chat.html" class="rounded-full bg-neutral-900 dark:bg-neutral-700 text-white w-10 h-10 flex items-center justify-center hover:scale-105 transition-transform">
+        <i class="fa-solid fa-plus text-neutral-400 dark:text-neutral-500 mr-1 cursor-pointer hover:text-blue-500 transition-colors"></i>
+        <a href="/AI/chat.html" class="rounded-full bg-neutral-950 dark:bg-neutral-100 text-white dark:text-neutral-950 w-10 h-10 flex items-center justify-center hover:scale-105 active:scale-95 transition-all">
           <i class="fa-solid fa-arrow-up"></i>
         </a>
       </div>
     </div>
 
-    <div class="absolute inset-x-0 bottom-[10vh] flex justify-center z-50 animate-element-fade" style="animation-delay: 1.4s;">
-      <a href="/AI/chat.html" class="inline-flex items-center gap-2 text-md py-2.5 px-6 font-medium text-neutral-900 dark:text-white bg-white dark:bg-neutral-800 rounded-full border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all shadow-sm">
-        <span>Try</span>
-        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+    <div class="absolute inset-x-0 bottom-[8vh] flex justify-center z-20 animate-element-fade" style="animation-delay: 1.4s;">
+      <a href="/AI/chat.html" class="group inline-flex items-center gap-2 text-sm py-3 px-8 font-semibold text-neutral-900 dark:text-white bg-white/50 dark:bg-neutral-800/50 backdrop-blur-md rounded-full border border-neutral-200 dark:border-neutral-700 hover:bg-white dark:hover:bg-neutral-700 transition-all shadow-lg">
+        <span>Try Now</span>
+        <i class="fa-solid fa-arrow-up-right-from-square text-xs group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
       </a>
     </div>
   </main>
 
-  <section id="features" class="relative min-h-screen w-full px-6 py-24 bg-white dark:bg-neutral-900 flex items-center justify-center">
+  <section id="features" class="relative min-h-screen w-full px-6 py-32 bg-white/40 dark:bg-neutral-950/40 backdrop-blur-3xl flex items-center justify-center">
     <div class="mx-auto max-w-6xl w-full">
-      <div class="text-center mb-16 animate-element-fade" style="animation-delay: 1.7s;">
-        <h2 id="features-title" class="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white">OkemoLLM Features</h2>
-        <p id="features-sub" class="mt-3 text-neutral-600 dark:text-neutral-400">Built for my fun</p>
+      <div class="text-center mb-20 animate-element-fade" style="animation-delay: 1.7s;">
+        <h2 id="features-title" class="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">OkemoLLM Features</h2>
+        <p id="features-sub" class="mt-4 text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto italic">"i okemollm okemollm, and glittery okemollm, glittery glittery storm..."</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-        <div class="animate-element-fade group p-6 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-2 transition-all duration-300 w-full max-w-sm" style="animation-delay: 1.9s;">
-          <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 dark:bg-neutral-700 text-white group-hover:bg-blue-500 transition-colors">
-              <i class="fa-solid fa-rocket"></i>
-            </div>
-            <h3 class="text-xl font-semibold dark:text-white">Fast Inference</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="animate-element-fade group p-8 rounded-[2rem] border border-neutral-200/60 dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/60 hover:bg-white dark:hover:bg-neutral-900 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500" style="animation-delay: 1.9s;">
+          <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500 text-white shadow-lg shadow-blue-500/20 mb-6">
+            <i class="fa-solid fa-rocket text-xl"></i>
           </div>
-          <p class="mt-4 text-neutral-600 dark:text-neutral-400 leading-relaxed">Okemo tech. Fast, but admittedly a bit shitty.</p>
+          <h3 class="text-xl font-bold dark:text-white mb-3">Fast Inference</h3>
+          <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">Okemo tech. Fast, but admittedly a bit shitty.</p>
         </div>
 
-        <div class="animate-element-fade group p-6 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-2 transition-all duration-300 w-full max-w-sm" style="animation-delay: 2.1s;">
-          <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 dark:bg-neutral-700 text-white group-hover:bg-purple-500 transition-colors">
-              <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <h3 class="text-xl font-semibold dark:text-white">Privacy</h3>
+        <div class="animate-element-fade group p-8 rounded-[2rem] border border-neutral-200/60 dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/60 hover:bg-white dark:hover:bg-neutral-900 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500" style="animation-delay: 2.1s;">
+          <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500 text-white shadow-lg shadow-purple-500/20 mb-6">
+            <i class="fa-solid fa-shield-halved text-xl"></i>
           </div>
-          <p class="mt-4 text-neutral-600 dark:text-neutral-400 leading-relaxed">0 Privacy. We learn from your every word.</p>
+          <h3 class="text-xl font-bold dark:text-white mb-3">Privacy</h3>
+          <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">0 Privacy. We learn from your every word.</p>
         </div>
 
-        <div class="animate-element-fade group p-6 rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-2 transition-all duration-300 w-full max-w-sm" style="animation-delay: 2.3s;">
-          <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-900 dark:bg-neutral-700 text-white group-hover:bg-green-500 transition-colors">
-              <i class="fa-solid fa-sliders"></i>
-            </div>
-            <h3 class="text-xl font-semibold dark:text-white">Open source</h3>
+        <div class="animate-element-fade group p-8 rounded-[2rem] border border-neutral-200/60 dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/60 hover:bg-white dark:hover:bg-neutral-900 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500" style="animation-delay: 2.3s;">
+          <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 mb-6">
+            <i class="fa-solid fa-code text-xl"></i>
           </div>
-          <p class="mt-4 text-neutral-600 dark:text-neutral-300 underline decoration-neutral-400">it's open source bro</p>
+          <h3 class="text-xl font-bold dark:text-white mb-3">Open Source</h3>
+          <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed italic">"It's open source bro"</p>
         </div>
       </div>
     </div>
   </section>
 
   <script>
-    // Theme Loader
-    function loadTheme() {
-      const storedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
-        document.documentElement.classList.add('dark');
-      }
-    }
-    document.addEventListener('DOMContentLoaded', loadTheme);
-
     // Optimized word-by-word reveal
     function splitAndAnimate(id, baseDelay) {
       const el = document.getElementById(id);
@@ -187,17 +148,16 @@
         const span = document.createElement('span');
         span.innerText = word + (i < words.length - 1 ? '\u00A0' : ''); 
         span.className = 'animate-word';
-        span.style.animationDelay = (baseDelay + (i * 0.1)) + 's';
+        span.style.animationDelay = (baseDelay + (i * 0.08)) + 's';
         el.appendChild(span);
       });
     }
 
-    // Trigger on load for smooth sequence
     window.addEventListener('load', () => {
       splitAndAnimate('main-title', 0.2);
-      splitAndAnimate('sub-title', 0.7);
-      splitAndAnimate('features-title', 1.7);
-      splitAndAnimate('features-sub', 1.9);
+      splitAndAnimate('sub-title', 0.6);
+      splitAndAnimate('features-title', 1.6);
+      splitAndAnimate('features-sub', 1.8);
     });
   </script>
 </body>
