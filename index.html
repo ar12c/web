@@ -7,16 +7,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Newspaper Serifs + High-end Sans -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&display=swap" rel="stylesheet">
+  <!-- Newspaper Serifs + High-end Sans + Chat UI Sans (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
   <script>
     tailwind.config = {
-      darkMode: 'class',
+      darkMode: 'media',
       theme: {
         extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
           colors: {
             paper: '#f9f7f2',
             ink: '#1a1a1a',
@@ -37,8 +40,10 @@
       background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.03'/%3E%3C/svg%3E");
       transition: background-color 0.5s ease, color 0.5s ease;
     }
-    .dark .newspaper-texture {
-      background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E");
+    @media (prefers-color-scheme: dark) {
+      .newspaper-texture {
+        background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E");
+      }
     }
 
     /* CUSTOM ANIMATIONS */
@@ -64,7 +69,7 @@
       animation: shine 6s linear infinite;
     }
 
-    /* Opaque Liquid Glass - Refined for Dark Mode */
+    /* Opaque Liquid Glass */
     .liquid-glass-smooth {
       border-radius: 0px;
       transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
@@ -79,10 +84,12 @@
       position: relative;
     }
     
-    .dark .liquid-glass-smooth {
-      background: hsl(0, 0%, 12%);
-      border-color: #3f3f46;
-      color: #e5e7eb;
+    @media (prefers-color-scheme: dark) {
+      .liquid-glass-smooth {
+        background: hsl(0, 0%, 12%);
+        border-color: #3f3f46;
+        color: #e5e7eb;
+      }
     }
 
     .liquid-glass-smooth:hover {
@@ -97,15 +104,6 @@
       color: #ffffff !important;
     }
 
-    /* Restaurant Menu Styling - Cleaned and Left Aligned */
-    .menu-item {
-      display: inline-block;
-      text-decoration: none;
-      width: fit-content;
-      text-align: left;
-    }
-
-    /* FIXED POSITION OVERLAY MENU */
     #side-menu {
       width: 350px;
       height: 100vh;
@@ -114,10 +112,9 @@
       left: 0;
       transform: translateX(-100%);
       transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s ease, border-color 0.5s ease;
-      z-index: 200; /* Ensure it stays above everything */
+      z-index: 200;
     }
 
-    /* backdrop when menu is open */
     .menu-backdrop {
       position: fixed;
       inset: 0;
@@ -134,12 +131,10 @@
       visibility: visible;
     }
 
-    /* Fixed Menu Drawer Opening - Now an overlay */
     .menu-open #side-menu {
       transform: translateX(0);
     }
 
-    /* Prevent body scroll when menu is open */
     body.menu-open {
       overflow: hidden;
     }
@@ -154,14 +149,15 @@
       #side-menu { width: 90%; }
     }
 
-    /* Selection Colors */
     ::selection {
       background: #1e3a8a;
       color: white;
     }
-    .dark ::selection {
-      background: #3b82f6;
-      color: black;
+    @media (prefers-color-scheme: dark) {
+      ::selection {
+        background: #3b82f6;
+        color: black;
+      }
     }
   </style>
 </head>
@@ -170,59 +166,61 @@
   <!-- Fixed Menu Backdrop -->
   <div class="menu-backdrop" onclick="toggleMenu()"></div>
 
-  <!-- Sliding Side Menu (Fixed Overlay) -->
-  <aside id="side-menu" class="bg-paper dark:bg-dark-paper border-r-8 border-double border-ink dark:border-zinc-700 shadow-2xl flex flex-col p-10 overflow-y-auto">
+  <!-- Sliding Side Menu -->
+  <aside id="side-menu" class="bg-paper dark:bg-dark-paper border-r-8 border-double border-ink dark:border-zinc-700 shadow-2xl flex flex-col p-10 overflow-y-auto text-left">
     <div class="flex flex-col items-start mb-10">
-      <!-- Simple Close Button -->
       <button onclick="toggleMenu()" class="mb-8 text-2xl text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors">
         <i class="fa-solid fa-arrow-left-long"></i>
       </button>
       <div class="border-y-2 border-ink dark:border-zinc-700 py-2 px-6 w-full text-center">
-        <h2 class="font-['Playfair_Display',serif] text-2xl font-black italic uppercase tracking-widest text-ink dark:text-dark-ink">Carte du Jour</h2>
+        <h2 class="font-['Playfair_Display',serif] text-2xl font-black italic uppercase tracking-widest text-ink dark:text-dark-ink">MENU</h2>
       </div>
     </div>
     
     <div class="space-y-12">
-      <!-- Section 1 -->
-      <div class="group">
-        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">I. L'Entrée</h3>
-        <a href="#hero" class="js-nav-link menu-item text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors">
+      <div class="group text-left">
+        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">Starter</h3>
+        <a href="#hero" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-2">
           <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">Introduction</span>
         </a>
       </div>
 
-      <!-- Section 2 -->
-      <div class="group">
-        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">II. Les Plats</h3>
-        <div class="space-y-6 flex flex-col">
-          <a href="#foundry" class="js-nav-link menu-item text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors">
-            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">The Foundry</span>
+      <div class="group text-left">
+        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">Entrées</h3>
+        <div class="space-y-4 flex flex-col">
+          <a href="#olm-section" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
+            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">OLM 2</span>
+          </a>
+          <a href="#philosophy" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
+            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">Philosophy</span>
+          </a>
+          <a href="#foundry" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
+            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">The Technical</span>
           </a>
         </div>
       </div>
 
-      <!-- Section 3 -->
-      <div class="group">
-        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">III. Dessert</h3>
-        <a href="#footer" class="js-nav-link menu-item text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors">
-          <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">Contact</span>
-        </a>
+      <div class="group text-left">
+        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">Dessert</h3>
+        <div class="space-y-4 flex flex-col">
+          <a href="#contact" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
+            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">Contact</span>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Menu Footer -->
     <div class="mt-auto border-t-2 border-black/10 dark:border-white/10 pt-6 opacity-40 text-ink dark:text-dark-ink text-[9px] font-bold uppercase leading-relaxed text-left">
-      Digital Portfolio 2.0<br>
-      © OkemoVail Archive
+      OKEMOMENU 0.1<br>
+      <i class="fa-solid fa-code"></i> OkemoVail Code
     </div>
   </aside>
 
   <!-- Site Content Wrapper -->
   <div id="site-wrapper" class="relative">
     
-    <!-- Controls Container (Fixed Position) -->
+    <!-- Controls Container -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
-      <!-- Icon-Only Menu Button -->
       <button onclick="toggleMenu()" class="liquid-glass-smooth w-[60px] h-[60px] flex items-center justify-center group" aria-label="Toggle Menu">
         <div class="flex flex-col gap-1 w-5">
           <div class="h-[2px] w-full bg-current transition-all group-hover:w-1/2"></div>
@@ -230,225 +228,335 @@
           <div class="h-[2px] w-full bg-current transition-all group-hover:w-3/4"></div>
         </div>
       </button>
-
-      <!-- Theme Toggle -->
-      <button id="theme-toggle" class="liquid-glass-smooth w-[60px] h-[60px] flex items-center justify-center shadow-xl" aria-label="Toggle Theme">
-        <i class="fa-solid fa-moon dark:hidden"></i>
-        <i class="fa-solid fa-sun hidden dark:block"></i>
-      </button>
     </div>
 
     <div class="newspaper-texture bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink min-h-screen w-full">
       
-      <!-- PAGE ONE -->
-      <section id="hero" class="min-h-screen flex flex-col justify-between p-6 md:p-12 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden">
+      <!-- HERO SECTION -->
+      <section id="hero" class="min-h-screen flex flex-col justify-between px-6 md:px-16 lg:px-24 py-8 md:py-12 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden text-left">
         <div class="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">
-          <div>EDITION 1.0 // ARCHIVE</div>
-          <div class="hidden sm:block"><i class="fa-solid fa-location-dot"></i> HONG KONG / 香港</div>
-          <div id="date-stamp">JANUARY 6, 2026</div>
+          <div>HONG KONG // 香港</div>
+          <div id="date-stamp" class="text-right">JANUARY 6, 2026</div>
         </div>
 
         <div class="flex-grow flex flex-col items-start justify-center text-left py-12">
-          <div class="max-w-6xl w-full flex flex-col items-start">
+          <div class="w-full flex flex-col md:flex-row justify-between items-start gap-12">
             
-            <!-- Mobile Profile Image -->
-            <div class="md:hidden mb-10">
-               <div class="inline-block border-2 border-black dark:border-zinc-700 bg-black dark:bg-zinc-800 p-[1px] shadow-[4px_4px_0px_#1e3a8a] -rotate-[1.5deg]">
-                  <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-32 h-32 object-cover grayscale brightness-110 contrast-125 border-2 border-white dark:border-dark-paper" alt="OkemoVail">
+            <div class="max-w-4xl">
+              <!-- Mobile Profile Image -->
+              <div class="md:hidden mb-10">
+                 <div class="inline-block border-2 border-black dark:border-zinc-700 bg-black dark:bg-zinc-800 p-[1px] shadow-[4px_4px_0px_#1e3a8a] -rotate-[1.5deg]">
+                    <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-32 h-32 object-cover grayscale brightness-110 contrast-125 border-2 border-white dark:border-dark-paper transition-all duration-500 hover:grayscale-0 cursor-pointer" alt="OkemoVail">
+                 </div>
+              </div>
+
+              <h1 class="font-['Playfair_Display',serif] text-[clamp(1.8rem,7.5vw,7.5vw)] font-black uppercase tracking-tighter leading-[0.9] mb-8 w-full text-left select-none break-words text-ink dark:text-dark-ink">
+                Hi, I'm <br>
+                <span class="gradient-name animate-reveal italic inline-block pb-2">OkemoVail.</span>
+              </h1>
+
+              <div class="flex flex-col items-start gap-8 md:gap-12 mt-4 w-full">
+                <p class="text-2xl sm:text-3xl md:text-5xl font-black leading-[1.4] md:leading-[1.7] tracking-tighter max-w-2xl text-left text-ink dark:text-dark-ink">
+                  AN ARCHITECT OF <br class="hidden md:block">
+                  <span class="bg-black dark:bg-blue-600 text-white px-2 py-0 inline-block shadow-[6px_6px_0px_#1e3a8a]">THE DIGITAL REALM</span>
+                </p>
+                
+                <div class="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start justify-start pb-10">
+                  <span id="hero-cta" class="liquid-glass-smooth px-10 md:px-12 py-4 md:py-5 text-[10px] md:text-sm font-black uppercase tracking-widest cursor-pointer whitespace-nowrap text-left">
+                    Scroll down <i class="fa-solid fa-arrow-down"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Desktop Profile Image -->
+            <div class="hidden md:block flex-shrink-0">
+               <div class="inline-block border-[4px] border-black dark:border-zinc-700 bg-black dark:bg-zinc-800 p-1 shadow-[12px_12px_0px_#1e3a8a] -rotate-[2deg] transition-all duration-500 hover:rotate-0 hover:scale-105">
+                  <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-[20vw] max-w-[380px] h-auto object-cover grayscale brightness-110 contrast-125 border-2 border-white dark:border-dark-paper transition-all duration-500 hover:grayscale-0 cursor-pointer" alt="OkemoVail">
                </div>
             </div>
 
-            <h1 class="font-['Playfair_Display',serif] text-[clamp(2rem,11vw,13vw)] font-black uppercase tracking-tighter leading-[0.9] md:leading-[0.8] mb-8 md:mb-12 w-full text-left select-none break-words">
-              Hi, I'm 
-              <span class="hidden md:inline-block vertical-middle border-[4px] border-black dark:border-zinc-700 bg-black dark:bg-zinc-800 p-0.5 shadow-[8px_8px_0px_#1e3a8a] -rotate-[1.5deg] transition-all duration-300 hover:rotate-0 hover:scale-110 hover:shadow-[0px_0px_15px_rgba(30,58,138,0.3)] ml-4">
-                <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-[10vw] h-[10vw] object-cover grayscale brightness-110 contrast-125 border-2 border-white dark:border-dark-paper" alt="OkemoVail">
-              </span>
-              <br>
-              <span class="gradient-name animate-reveal italic inline-block pb-2">OkemoVail.</span>
-            </h1>
-
-            <div class="flex flex-col items-start gap-8 md:gap-12 mt-4 md:mt-6 w-full">
-              <p class="text-2xl sm:text-3xl md:text-5xl font-black leading-[1.4] md:leading-[1.7] tracking-tighter max-w-4xl text-left">
-                AN ARCHITECT OF <br class="hidden md:block">
-                <span class="bg-black dark:bg-blue-600 text-white px-2 py-0 inline-block shadow-[6px_6px_0px_#1e3a8a]">DIGITAL NARRATIVES</span>
-              </p>
-              
-              <div class="flex flex-col md:flex-row gap-8 md:gap-10 items-start justify-start pb-10">
-                <span id="hero-cta" class="liquid-glass-smooth px-10 md:px-12 py-4 md:py-5 text-[10px] md:text-sm font-black uppercase tracking-widest cursor-pointer whitespace-nowrap">
-                  Review The Stack ↓
-                </span>
-                <p class="text-[11px] md:text-base leading-relaxed text-left max-w-sm opacity-80 font-medium pt-1 md:pt-2">
-                  Bridging the gap between 90s classical design and modern technical engineering. 
-                  Based in the heart of Hong Kong.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 
-        <div class="pt-4 border-t border-black/10 dark:border-white/10 flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-40">
+        <div class="pt-4 border-t border-black/10 dark:border-white/10 flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-40 text-ink dark:text-dark-ink">
           <span>* Page 01 // Section A *</span>
           <span>Local Time: <span id="clock-display">00:00:00</span></span>
         </div>
       </section>
 
-      <!-- SECTION B: THE TECHNICAL GAZETTE -->
-      <div id="foundry" class="max-w-screen-2xl mx-auto p-6 md:p-20 lg:p-32 overflow-hidden">
-        <section class="mb-32 opacity-0 translate-y-10 transition-all duration-1000 ease-out fade-in">
-          <div class="flex items-center gap-4 md:gap-6 mb-12 md:mb-16">
-            <h2 class="bg-black dark:bg-blue-600 text-white px-4 md:px-8 py-2 md:py-3 text-xl md:text-4xl font-black italic uppercase tracking-tighter skew-x-[-8deg] shadow-[6px_6px_0px_#1e3a8a]">
-              The Technical Gazette
+      <!-- OLM 2.1 SECTION -->
+      <section id="olm-section" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink transition-all duration-700 text-left">
+        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10">
+          <div class="flex flex-col md:flex-row items-end justify-between border-b-2 border-ink/10 dark:border-white/20 pb-8 mb-16 text-left">
+            <h2 class="font-['Playfair_Display',serif] text-5xl md:text-8xl font-black italic uppercase tracking-tighter">OLM 2</h2>
+            <p class="font-black text-xs md:text-sm uppercase tracking-[0.5em] opacity-50 md:pb-4">Okemo Language Model</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-8 text-left">
+              <p class="text-2xl md:text-4xl font-black leading-tight tracking-tighter">
+                EVOLVING THE <span class="text-blue-600 dark:text-blue-500">OKEMO ENGINE</span> THROUGH REPETITIVE REFINEMENT.
+              </p>
+              <div class="h-1 w-24 bg-blue-600 dark:bg-blue-500"></div>
+              <p class="text-sm md:text-lg opacity-70 font-medium leading-relaxed max-w-md text-ink dark:text-dark-ink">
+                OLM 2 is the next stepping stone in Okemo Language Model's capability, merging a lot of impossible tasks while being extremely lightweight. With full human speech capabilities. OLM may not be world class, but its a step in the right direction.EVOLVING THE SYNTACTIC ENGINE THROUGH ITERATIVE REFINEMENT.
+
+
+              </p>
+              <div class="flex gap-4">
+                 <a href="/AI/OkemoLLM.html" target="_blank" class="liquid-glass-smooth px-10 md:px-12 py-4 md:py-5 text-[10px] md:text-sm font-black uppercase tracking-widest cursor-pointer whitespace-nowrap text-left flex items-center gap-3">
+                   Try ↗
+                 </a>
+              </div>
+            </div>
+            
+            <!-- CHAT INTERFACE BOX -->
+            <div class="relative group font-inter">
+              <div class="absolute inset-0 bg-blue-500/5 dark:bg-blue-500/10 blur-3xl rounded-full transition-all group-hover:bg-blue-500/20"></div>
+              <div class="relative border border-neutral-200 dark:border-[#3f3f46] shadow-2xl bg-[#FAFAFA] dark:bg-[#171717] overflow-hidden rounded-[2rem] transition-colors duration-500 flex flex-col h-[500px] text-left">
+                
+                <!-- Fixed Header -->
+                <div class="px-6 py-4 border-b border-neutral-200 dark:border-[#3f3f46] bg-[#FAFAFA] dark:bg-[#171717] flex items-center justify-between transition-colors">
+                  <div class="flex items-center">
+                    <span class="text-lg font-semibold text-[#171717] dark:text-[#F5F5F5]">
+                      OLM <span class="text-neutral-500 font-normal">2</span>
+                    </span>
+                    <button class="ml-1 text-sm text-neutral-400"><i class="fa-solid fa-caret-down"></i></button>
+                  </div>
+                  
+                  <div class="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+                    <i class="fa-regular fa-message text-xs"></i>
+                  </div>
+                </div>
+
+                <!-- Chat Body (One-line prompt) -->
+                <div class="flex-grow p-6 flex flex-col items-center justify-center relative overflow-y-auto overflow-x-hidden">
+                  <div id="empty-chat-prompt" class="text-xl md:text-2xl font-semibold text-neutral-400 dark:text-neutral-500 text-center px-4 select-none leading-tight whitespace-nowrap">
+                    How can I help you today?
+                  </div>
+                </div>
+
+                <!-- Input Bar -->
+                <div class="p-6 pt-0">
+                  <div class="bg-white dark:bg-[#262626] border border-neutral-200 dark:border-[#3f3f46] rounded-[2rem] p-1.5 flex items-center shadow-sm transition-colors">
+                    <button class="w-10 h-10 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition">
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
+                    
+                    <div class="flex-grow px-3 text-neutral-400 dark:text-neutral-500 text-sm select-none">
+                      Message OLM...
+                    </div>
+                    
+                    <button class="w-10 h-10 flex items-center justify-center bg-[#171717] dark:bg-[#F5F5F5] text-[#FAFAFA] dark:text-[#171717] rounded-full shadow-md transition transform active:scale-95">
+                      <i class="fa-solid fa-arrow-up text-sm"></i>
+                    </button>
+                  </div>
+                  
+                  <div class="text-[9px] text-center text-neutral-400 dark:text-neutral-500 mt-3 uppercase tracking-widest font-bold">
+                    OLM Protocol Beta 0.2.1
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHILOSOPHY SECTION: THE 3Es -->
+      <section id="philosophy" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink transition-all duration-700 text-left">
+        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10">
+          <div class="flex flex-col md:flex-row items-end justify-between border-b-2 border-ink/10 dark:border-white/20 pb-8 mb-16 text-left">
+            <h2 class="font-['Playfair_Display',serif] text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-ink dark:text-dark-ink">THE 3Es</h2>
+            <p class="font-black text-xs md:text-sm uppercase tracking-[0.5em] opacity-50 md:pb-4 text-ink dark:text-dark-ink">The Okemo Standard</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20">
+            <!-- Expressive -->
+            <div class="space-y-6 group">
+              <div class="flex items-baseline gap-4">
+                <span class="font-['Playfair_Display',serif] text-7xl font-black italic opacity-20 group-hover:opacity-100 group-hover:text-accent-blue transition-all">E1</span>
+                <h3 class="text-3xl font-black uppercase tracking-tighter text-ink dark:text-dark-ink">Expressive</h3>
+              </div>
+              <div class="h-1 w-12 bg-ink/10 dark:bg-white/10 group-hover:w-full group-hover:bg-accent-blue transition-all duration-500"></div>
+              <p class="text-lg leading-relaxed opacity-70 text-ink dark:text-dark-ink">
+                Design that communicates. Every pixel and interaction should tell a story, turning cold code into a digital narrative that resonates with the human experience.
+              </p>
+            </div>
+
+            <!-- Expeditious -->
+            <div class="space-y-6 group">
+              <div class="flex items-baseline gap-4">
+                <span class="font-['Playfair_Display',serif] text-7xl font-black italic opacity-20 group-hover:opacity-100 group-hover:text-blue-500 transition-all">E2</span>
+                <h3 class="text-3xl font-black uppercase tracking-tighter text-ink dark:text-dark-ink">Expeditious</h3>
+              </div>
+              <div class="h-1 w-12 bg-ink/10 dark:bg-white/10 group-hover:w-full group-hover:bg-blue-500 transition-all duration-500"></div>
+              <p class="text-lg leading-relaxed opacity-70 text-ink dark:text-dark-ink">
+                Velocity without compromise. Engineering designed for immediate deployment and rapid scaling, ensuring that dreams reach reality at the speed of thought.
+              </p>
+            </div>
+
+            <!-- Economical -->
+            <div class="space-y-6 group">
+              <div class="flex items-baseline gap-4">
+                <span class="font-['Playfair_Display',serif] text-7xl font-black italic opacity-20 group-hover:opacity-100 group-hover:text-desktop-teal transition-all">E3</span>
+                <h3 class="text-3xl font-black uppercase tracking-tighter text-ink dark:text-dark-ink">Economical</h3>
+              </div>
+              <div class="h-1 w-12 bg-ink/10 dark:bg-white/10 group-hover:w-full group-hover:bg-desktop-teal transition-all duration-500"></div>
+              <p class="text-lg leading-relaxed opacity-70 text-ink dark:text-dark-ink">
+                Lean precision. Maximizing digital impact while minimizing technical debt and resource overhead. Efficiency is the ultimate form of sophistication.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- THE TECHNICAL SECTION -->
+      <section id="foundry" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden text-left bg-paper dark:bg-dark-paper transition-all duration-700">
+        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10 transition-all duration-1000 ease-out text-left">
+          <div class="flex items-center gap-4 md:gap-6 mb-12 md:mb-16 text-left">
+            <h2 class="bg-black dark:bg-blue-600 text-white px-4 md:px-8 py-2 md:py-3 text-xl md:text-4xl font-black uppercase tracking-tighter shadow-[6px_6px_0px_#1e3a8a] text-left">
+              The Technical 
             </h2>
             <div class="h-1 md:h-2 flex-grow bg-black/10 dark:bg-white/10"></div>
           </div>
 
-          <!-- Divisions Grid -->
           <div class="grid grid-cols-1 lg:grid-cols-3 lg:border-b-2 lg:border-black lg:dark:border-zinc-700">
             <!-- Engineering -->
-            <div class="flex flex-col h-full mb-16 lg:mb-0 lg:pr-12 lg:pb-12 lg:border-r lg:border-black/10 lg:dark:border-white/10 group">
-              <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-accent-blue dark:text-blue-400">Engineering</h3>
-              <p class="mb-8 italic font-bold text-base md:text-lg leading-tight opacity-90">"Logic is the ink, code is the paper."</p>
-              <div class="space-y-4 font-black text-xs md:text-base tracking-tighter mt-auto">
-                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform cursor-pointer"><i class="devicon-javascript-plain text-xl md:text-2xl"></i> JAVASCRIPT / TYPESCRIPT</div>
-                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform cursor-pointer"><i class="devicon-python-plain text-xl md:text-2xl"></i> PYTHON AUTOMATION</div>
-                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform cursor-pointer"><i class="devicon-html5-plain text-xl md:text-2xl"></i> WEB STANDARDS & CSS</div>
-                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform cursor-pointer"><i class="devicon-swift-plain text-xl md:text-2xl"></i> SWIFT UI LOGIC</div>
-                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform cursor-pointer"><i class="devicon-lua-plain text-xl md:text-2xl"></i> LUA SCRIPTING</div>
+            <div class="flex flex-col h-full mb-16 lg:mb-0 lg:pr-12 lg:pb-12 lg:border-r lg:border-black/10 lg:dark:border-white/10 group text-left">
+              <div class="mb-2">
+                <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-accent-blue dark:text-blue-400 text-left">Engineering</h3>
+                <p class="italic font-bold text-base md:text-lg leading-tight opacity-90 text-left text-ink dark:text-dark-ink">"Logic is the ink, code is the paper."</p>
+              </div>
+              <div class="grid grid-cols-1 gap-4 font-black text-xs md:text-base tracking-tighter mt-4 text-left">
+                <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 group/item py-2 border-b border-ink/5 dark:border-white/5 text-left text-ink dark:text-dark-ink">
+                  <i class="devicon-javascript-plain text-xl md:text-3xl text-yellow-500"></i> 
+                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">JAVASCRIPT</span>
+                </a>
+                <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 group/item py-2 border-b border-ink/5 dark:border-white/5 text-left text-ink dark:text-dark-ink">
+                  <i class="devicon-python-plain text-xl md:text-3xl text-blue-500"></i> 
+                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">PYTHON</span>
+                </a>
+                <div class="flex items-center gap-4 group/item py-2 border-b border-ink/5 dark:border-white/5 text-left text-ink dark:text-dark-ink">
+                  <i class="devicon-html5-plain text-xl md:text-3xl text-orange-500"></i> 
+                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">HTML / CSS</span>
+                </div>
+                <div class="flex items-center gap-4 group/item py-2 text-left text-ink dark:text-dark-ink">
+                  <i class="devicon-lua-plain text-xl md:text-3xl text-blue-400"></i> 
+                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">LUA</span>
+                </div>
               </div>
             </div>
 
             <!-- Visual Language -->
-            <div class="flex flex-col h-full mb-16 lg:mb-0 lg:px-12 lg:pb-12 lg:border-r lg:border-black/10 lg:dark:border-white/10 group">
-              <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-ink dark:text-dark-ink">Visual Language</h3>
-              <p class="mb-8 leading-snug text-base md:text-lg text-left text-justify opacity-90">
-                Focused on the intersection of <strong>Material You</strong> and <strong>Apple Design</strong>. Turning constraints into clarity through color theory.
-              </p>
-              <div class="mt-auto">
-                <div class="h-24 w-full border-2 border-dashed border-black/20 dark:border-white/20 flex items-center justify-center italic text-[10px] md:text-xs opacity-50">
-                  Visual Strategy Department
+            <div class="flex flex-col h-full mb-16 lg:mb-0 lg:px-12 lg:pb-12 lg:border-r lg:border-black/10 lg:dark:border-white/10 group text-left">
+              <div class="mb-2">
+                <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-ink dark:text-dark-ink text-left">Visual Language</h3>
+                <p class="leading-snug text-base md:text-lg text-left text-justify opacity-90 text-ink dark:text-dark-ink">
+                  Focused on the intersection of <strong>Material You</strong> and <strong>Apple Design</strong>. Turning constraints into clarity through color theory.
+                </p>
+              </div>
+              <div class="mt-4">
+                <div class="border-4 border-black dark:border-zinc-700 p-1 bg-white dark:bg-zinc-800 relative overflow-hidden group transition-colors">
+                  <img src="/images/materialyou.png" 
+                       class="h-40 w-full object-cover grayscale transition-all duration-500 hover:grayscale-0" 
+                       alt="UI Language">
                 </div>
-                <p class="text-[10px] uppercase font-black tracking-widest text-accent-blue dark:text-blue-400 mt-6 border-t border-black/10 dark:border-white/10 pt-4">Visual Engineering Division</p>
+                <p class="text-[10px] uppercase font-black tracking-widest text-accent-blue dark:text-blue-400 mt-6 border-t border-black/10 dark:border-white/10 pt-4 text-left">UI Engineering</p>
               </div>
             </div>
 
-            <!-- Spatial Design -->
-            <div id="spatial" class="flex flex-col h-full mb-16 lg:mb-0 lg:pl-12 lg:pb-12 group">
-              <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-accent-blue dark:text-blue-400">Spatial Design</h3>
-              <p class="leading-snug mb-8 text-base md:text-lg text-left text-justify opacity-90">
-                Crafting environments with digital precision in <strong>Blender</strong>. Exploring the three-dimensional web through optimized mesh flow.
-              </p>
-              <div class="mt-auto">
-                <div class="border-4 md:border-8 border-black dark:border-zinc-700 p-1 bg-white dark:bg-zinc-800 relative overflow-hidden group transition-colors">
-                  <div class="h-32 md:h-40 bg-gray-200 dark:bg-zinc-900 flex items-center justify-center font-black text-[8px] md:text-[10px] text-gray-400 dark:text-zinc-600 uppercase tracking-[0.4em] md:tracking-[0.5em] text-center px-4">
-                     <span class="group-hover:scale-110 transition-transform duration-700 text-left">[ RENDER_ARCHIVE_SECURED ]</span>
-                  </div>
+            <!-- DEPTH Design -->
+            <div id="spatial" class="flex flex-col h-full mb-16 lg:mb-0 lg:pl-12 lg:pb-12 group text-left">
+              <div class="mb-2 text-left">
+                <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-accent-blue dark:text-blue-400 text-left">DEPTH Design</h3>
+                <p class="leading-snug text-base md:text-lg text-left text-justify opacity-90 text-ink dark:text-dark-ink">
+                  Crafting environments with digital precision in <strong>Blender</strong>. Exploring the three-dimensional web through optimized mesh flow.
+                </p>
+              </div>
+              <div class="mt-4 text-left">
+                <div class="border-4 border-black dark:border-zinc-700 p-1 bg-white dark:bg-zinc-800 relative overflow-hidden group transition-colors">
+                  <img src="/images/kiwi.png" 
+                       class="h-40 w-full object-cover grayscale transition-all duration-500 hover:grayscale-0" 
+                       alt="Depth Design">
                 </div>
+                <p class="text-[10px] uppercase font-black tracking-widest text-accent-blue dark:text-blue-400 mt-6 border-t border-black/10 dark:border-white/10 pt-4 text-left">Spatial Architecture</p>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <!-- FOOTER -->
-        <footer id="footer" class="border-t-8 border-black dark:border-zinc-700 pt-16 pb-12">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+      <!-- STAY IN TOUCH SECTION -->
+      <section id="contact" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink transition-all duration-700 text-left">
+        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10 text-left">
+          <div class="flex flex-col md:flex-row items-end justify-between border-b-2 border-ink/10 dark:border-white/20 pb-8 mb-16 text-left">
+            <h2 class="font-['Playfair_Display',serif] text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-ink dark:text-dark-ink">Stay in touch</h2>
+            <p class="font-black text-xs md:text-sm uppercase tracking-[0.5em] opacity-50 md:pb-4 text-ink dark:text-dark-ink">Direct // Access</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-12 text-left">
             <div class="md:col-span-3 text-left">
-              <div class="flex flex-wrap gap-3 md:gap-6 font-black uppercase text-[10px] md:text-xs tracking-[0.1em] mb-10 md:mb-12 justify-start items-center">
-                <a href="https://github.com" target="_blank" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3">Github</a>
-                <a href="https://discord.com" target="_blank" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3">Discord</a>
-                <a href="https://twitter.com" target="_blank" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3">Twitter</a>
-                <a href="mailto:contact@okemovail.com" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3">Contact</a>
+              <div class="flex flex-wrap gap-3 md:gap-6 font-black uppercase text-[10px] md:text-xs tracking-[0.1em] mb-10 md:mb-12 justify-start items-center text-left">
+                <!-- Email button removed as requested -->
+                <a href="https://github.com/ar12c" target="_blank" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3 text-left">GitHub</a>
+                <a href="https://www.youtube.com/@SochiVail" target="_blank" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3 text-left">YouTube</a>
               </div>
               <p class="text-xl sm:text-2xl md:text-5xl font-black italic font-serif leading-none tracking-tighter text-ink dark:text-dark-ink mb-12 text-left">
-                "Technology is at its best when it feels like magic, but functions like clockwork."
+                "Shit works when shit-works."
               </p>
-              <div class="flex justify-between items-end border-t border-black/10 dark:border-white/10 pt-6">
+              <div class="flex justify-between items-end border-t border-black/10 dark:border-white/10 pt-6 text-left text-ink dark:text-dark-ink">
                 <div class="font-black text-[9px] md:text-[10px] uppercase opacity-40 tracking-widest text-left">
-                  &copy; 1996-2026 OKEMO TIMES // HKG
+                  &copy; 2024-2026 OKEMO CODE
                 </div>
-                <div class="text-[8px] md:text-[9px] font-black bg-black dark:bg-blue-600 text-white px-2 md:px-3 py-1 uppercase tracking-widest skew-x-[-15deg]">Authorized Access</div>
               </div>
             </div>
             <div class="hidden md:block md:col-span-1">
-              <div class="bg-black dark:bg-zinc-800 p-1 shadow-[8px_8px_0px_#1e3a8a] transition-colors duration-500">
-                <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-full grayscale brightness-110 contrast-150 border-2 border-white dark:border-dark-paper" alt="Avatar">
+              <div class="bg-black dark:bg-zinc-800 p-1 shadow-[8px_8px_0phttpsx_#1e3a8a] transition-colors duration-500">
+                <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-full grayscale brightness-110 contrast-150 border-2 border-white dark:border-dark-paper transition-all duration-500 hover:grayscale-0 cursor-pointer" alt="Avatar">
               </div>
             </div>
           </div>
-        </footer>
-      </div>
+        </div>
+      </section>
+
     </div>
   </div>
 
   <script>
-    /**
-     * Menu Toggle Logic
-     */
     function toggleMenu() {
       document.body.classList.toggle('menu-open');
     }
 
-    /**
-     * Navigation Logic
-     * Handles smooth scrolling for internal links and closes the menu.
-     */
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a[href^="#"], .js-nav-link');
       if (link) {
         const href = link.getAttribute('href');
-        
-        // Handle internal anchor links
         if (href && href.startsWith('#')) {
           e.preventDefault();
           const targetId = href.substring(1);
           const targetElement = document.getElementById(targetId);
-          
           if (targetElement) {
-            // Close menu first if it's open
             if (document.body.classList.contains('menu-open')) {
               toggleMenu();
             }
-            
-            // Smooth scroll
-            targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         }
       }
     });
 
-    /**
-     * Hero CTA Button
-     */
     const heroCta = document.getElementById('hero-cta');
     if (heroCta) {
       heroCta.addEventListener('click', () => {
-        const foundrySection = document.getElementById('foundry');
-        if (foundrySection) {
-          foundrySection.scrollIntoView({ behavior: 'smooth' });
+        const nextSection = document.getElementById('olm-section');
+        if (nextSection) {
+          nextSection.scrollIntoView({ behavior: 'smooth' });
         }
       });
     }
 
-    /**
-     * Theme Toggle Logic
-     */
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const htmlElement = document.documentElement;
-    
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      htmlElement.classList.add('dark');
-    }
-
-    themeToggleBtn.addEventListener('click', () => {
-      htmlElement.classList.toggle('dark');
-      localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
-    });
-
-    /**
-     * Clock & Date Update
-     */
     function updateClock() {
       const now = new Date();
       const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
@@ -464,9 +572,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    /**
-     * Fade-in Animation Logic
-     */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
