@@ -39,7 +39,7 @@
 
   <style>
     /* Newspaper Paper Effect */
-        .mac-window {
+    .mac-window {
       background: #ccc;
       border-top: 2px solid #fff;
       border-left: 2px solid #fff;
@@ -47,6 +47,7 @@
       border-bottom: 2px solid #666;
       box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
       padding: 2px;
+      transition: all 0.5s ease;
     }
 
     .mac-title-bar {
@@ -96,6 +97,41 @@
       overflow: hidden;
     }
 
+    /* Dark Mode Mac Windows */
+    @media (prefers-color-scheme: dark) {
+      .mac-window {
+        background: #2d2d2d;
+        border-top-color: #444;
+        border-left-color: #444;
+        border-right-color: #111;
+        border-bottom-color: #111;
+        box-shadow: 8px 8px 0px rgba(0,0,0,0.6);
+      }
+      .mac-title-bar {
+        background: repeating-linear-gradient(
+          to bottom,
+          #2d2d2d,
+          #2d2d2d 2px,
+          #3d3d3d 2px,
+          #3d3d3d 4px
+        );
+        border-color: #000;
+      }
+      .mac-title-text {
+        background: #2d2d2d;
+        color: #e5e7eb;
+      }
+      .mac-control {
+        background: #2d2d2d;
+        border-color: #000;
+        box-shadow: inset 1px 1px 0px #444;
+      }
+      .mac-content-area {
+        background: #121212;
+        border-color: #000;
+      }
+    }
+
     /* Custom System 9 Scrollbars */
     .mac-scroll::-webkit-scrollbar {
       width: 16px;
@@ -109,6 +145,18 @@
       background: #ccc;
       border: 2px solid #000;
       box-shadow: inset 1px 1px 0px #fff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .mac-scroll::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        background-image: radial-gradient(#333 15%, transparent 16%);
+      }
+      .mac-scroll::-webkit-scrollbar-thumb {
+        background: #2d2d2d;
+        border-color: #000;
+        box-shadow: inset 1px 1px 0px #444;
+      }
     }
 
     /* Gazete/Newspaper Components inside Window */
@@ -360,19 +408,24 @@
 
       <section id="olm-section" class="min-h-screen flex flex-col justify-center px-6 md:px-16 py-20 max-w-screen-2xl mx-auto border-b-8 border-double border-ink dark:border-zinc-800">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div class="space-y-8">
+          <div class="space-y-8 flex flex-col items-start">
             <h2 class="font-serif text-5xl md:text-8xl font-black italic uppercase tracking-tighter">OLM 2</h2>
             <p class="text-2xl md:text-3xl font-black leading-tight tracking-tighter">
-              REFINING THE <span class="text-accent-blue dark:text-blue-500">SYNTACTIC ENGINE</span> THROUGH ITERATIVE EVOLUTION.
+              REFINING THE <span class="text-accent-blue dark:text-blue-500">OKEMO ENGINE</span> THROUGH ITERATIVE EVOLUTION.
             </p>
             <div class="h-1 w-24 bg-accent-blue"></div>
             <p class="opacity-70 text-lg leading-relaxed max-w-md">
-              A specialized language model designed for high-expressivity and low-latency interaction. Built upon the Gazette protocol.
+              OLM 2 is the next stepping stone in Okemo Language Model's capability, merging a lot of impossible tasks while being extremely lightweight. With full human speech capabilities. OLM may not be world class, but its a step in the right direction.
             </p>
+            
+            <!-- NEW TRY BUTTON -->
+            <button id="try-olm-btn" class="liquid-glass-smooth px-12 py-5 text-[10px] md:text-sm font-black uppercase tracking-widest cursor-pointer whitespace-nowrap text-left mt-4 group">
+              Try OLM 2 <i class="fa-solid fa-terminal ml-2 group-hover:translate-x-1 transition-transform"></i>
+            </button>
           </div>
 
           <!-- REPLICATED CHAT WINDOW -->
-          <div class="mac-window w-full max-w-xl mx-auto flex flex-col h-[650px]">
+          <div id="olm-chat-window" class="mac-window w-full max-w-xl mx-auto flex flex-col h-[650px] transition-all duration-500">
             <div class="mac-title-bar">
               <div class="mac-control mac-close"></div>
               <div class="mac-title-text">OLM Chat Application</div>
@@ -413,7 +466,7 @@
                       <button class="w-8 h-8 flex items-center justify-center hover:text-accent-blue transition-colors">
                         <i class="fa-solid fa-plus text-sm"></i>
                       </button>
-                      <input type="text" placeholder="ENTER PROMPT..." class="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:opacity-20">
+                      <input id="olm-chat-input" type="text" placeholder="ENTER PROMPT..." class="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:opacity-20">
                       <button class="btn-newspaper w-8 h-8 flex items-center justify-center">
                         <i class="fa-solid fa-arrow-right text-[10px]"></i>
                       </button>
@@ -581,6 +634,7 @@
       document.body.classList.toggle('menu-open');
     }
 
+    // Navigation and Scrolling
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a[href^="#"], .js-nav-link');
       if (link) {
@@ -599,6 +653,7 @@
       }
     });
 
+    // Hero CTA behavior
     const heroCta = document.getElementById('hero-cta');
     if (heroCta) {
       heroCta.addEventListener('click', () => {
@@ -609,15 +664,31 @@
       });
     }
 
+    // Try Button Behavior: Scroll and Focus Chat
+    const tryOlmBtn = document.getElementById('try-olm-btn');
+    const olmChatWindow = document.getElementById('olm-chat-window');
+    const olmChatInput = document.getElementById('olm-chat-input');
+
+    if (tryOlmBtn && olmChatWindow) {
+      tryOlmBtn.addEventListener('click', () => {
+        olmChatWindow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Visual feedback
+        olmChatWindow.classList.add('scale-[1.02]');
+        setTimeout(() => {
+          olmChatWindow.classList.remove('scale-[1.02]');
+          if (olmChatInput) olmChatInput.focus();
+        }, 500);
+      });
+    }
+
+    // Clock and Date updates
     function updateClock() {
       const now = new Date();
       
-      // Update Date Stamp (January 6, 2026)
       const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
       const dateStamp = document.getElementById('date-stamp');
       if (dateStamp) dateStamp.textContent = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
       
-      // Update Clock (Hong Kong Time)
       const timeOptions = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
       const hktTime = new Intl.DateTimeFormat('en-GB', timeOptions).format(now);
       const clockDisplay = document.getElementById('clock-display');
@@ -627,6 +698,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // Fade-in animations on scroll
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
