@@ -39,6 +39,83 @@
 
   <style>
     /* Newspaper Paper Effect */
+        .mac-window {
+      background: #ccc;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      border-right: 2px solid #666;
+      border-bottom: 2px solid #666;
+      box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
+      padding: 2px;
+    }
+
+    .mac-title-bar {
+      background: repeating-linear-gradient(
+        to bottom,
+        #ccc,
+        #ccc 2px,
+        #eee 2px,
+        #eee 4px
+      );
+      border: 2px solid #000;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .mac-title-text {
+      background: #ccc;
+      padding: 0 10px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      color: #000;
+      z-index: 2;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .mac-control {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #ccc;
+      border: 2px solid #000;
+      box-shadow: inset 1px 1px 0px #fff;
+    }
+    .mac-close { left: 6px; }
+    .mac-zoom { right: 6px; }
+
+    .mac-content-area {
+      background: #fff;
+      border: 2px solid #000;
+      margin-top: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Custom System 9 Scrollbars */
+    .mac-scroll::-webkit-scrollbar {
+      width: 16px;
+    }
+    .mac-scroll::-webkit-scrollbar-track {
+      background: #eee;
+      background-image: radial-gradient(#aaa 15%, transparent 16%);
+      background-size: 4px 4px;
+    }
+    .mac-scroll::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border: 2px solid #000;
+      box-shadow: inset 1px 1px 0px #fff;
+    }
+
+    /* Gazete/Newspaper Components inside Window */
+    .gazette-border {
+      border: 3px solid #1a1a1a;
+    }
+    
     .newspaper-texture {
       background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.03'/%3E%3C/svg%3E");
       transition: background-color 0.5s ease, color 0.5s ease;
@@ -281,70 +358,66 @@
         </div>
       </section>
 
-      <section id="olm-section" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink transition-all duration-700 text-left">
-        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10">
-          <div class="flex flex-col md:flex-row items-end justify-between border-b-2 border-ink/10 dark:border-white/20 pb-8 mb-16 text-left">
-            <h2 class="font-['Playfair_Display',serif] text-5xl md:text-8xl font-black italic uppercase tracking-tighter">OLM 2</h2>
-            <p class="font-black text-xs md:text-sm uppercase tracking-[0.5em] opacity-50 md:pb-4">Okemo Language Model</p>
+      <section id="olm-section" class="min-h-screen flex flex-col justify-center px-6 md:px-16 py-20 max-w-screen-2xl mx-auto border-b-8 border-double border-ink dark:border-zinc-800">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div class="space-y-8">
+            <h2 class="font-serif text-5xl md:text-8xl font-black italic uppercase tracking-tighter">OLM 2</h2>
+            <p class="text-2xl md:text-3xl font-black leading-tight tracking-tighter">
+              REFINING THE <span class="text-accent-blue dark:text-blue-500">SYNTACTIC ENGINE</span> THROUGH ITERATIVE EVOLUTION.
+            </p>
+            <div class="h-1 w-24 bg-accent-blue"></div>
+            <p class="opacity-70 text-lg leading-relaxed max-w-md">
+              A specialized language model designed for high-expressivity and low-latency interaction. Built upon the Gazette protocol.
+            </p>
           </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div class="space-y-8 text-left">
-              <p class="text-2xl md:text-4xl font-black leading-tight tracking-tighter">
-                EVOLVING THE <span class="text-blue-600 dark:text-blue-500">OKEMO ENGINE</span> THROUGH REPETITIVE REFINEMENT.
-              </p>
-              <div class="h-1 w-24 bg-blue-600 dark:bg-blue-500"></div>
-              <p class="text-sm md:text-lg opacity-70 font-medium leading-relaxed max-w-md text-ink dark:text-dark-ink">
-                OLM 2 is the next stepping stone in Okemo Language Model's capability, merging a lot of impossible tasks while being extremely lightweight. With full human speech capabilities. OLM may not be world class, but its a step in the right direction.EVOLVING THE SYNTACTIC ENGINE THROUGH ITERATIVE REFINEMENT.
-              </p>
-              <div class="flex gap-4">
-                 <a href="/AI/OkemoLLM.html" target="_blank" class="liquid-glass-smooth px-10 md:px-12 py-4 md:py-5 text-[10px] md:text-sm font-black uppercase tracking-widest cursor-pointer whitespace-nowrap text-left flex items-center gap-3">
-                   Try ↗
-                 </a>
-              </div>
+
+          <!-- REPLICATED CHAT WINDOW -->
+          <div class="mac-window w-full max-w-xl mx-auto flex flex-col h-[650px]">
+            <div class="mac-title-bar">
+              <div class="mac-control mac-close"></div>
+              <div class="mac-title-text">OLM Chat Application</div>
+              <div class="mac-control mac-zoom"></div>
             </div>
             
-            <div class="relative group font-inter">
-              <div class="absolute inset-0 bg-blue-500/5 dark:bg-blue-500/10 blur-3xl rounded-full transition-all group-hover:bg-blue-500/20"></div>
-              <div class="relative border border-neutral-200 dark:border-[#3f3f46] shadow-2xl bg-[#FAFAFA] dark:bg-[#171717] overflow-hidden rounded-[2rem] transition-colors duration-500 flex flex-col h-[500px] text-left">
+            <div class="mac-content-area flex flex-col h-full newspaper-texture bg-paper dark:bg-dark-paper">
+              
+              <!-- Chat Header Ported from chat.html -->
+              <div class="w-full px-4 pt-4 border-b border-ink dark:border-zinc-700 pb-2 mb-2">
+                <div class="flex justify-between items-end text-[8px] font-black uppercase tracking-[0.2em] opacity-60">
+                  <div class="flex items-center gap-1 cursor-pointer hover:text-accent-blue transition-colors">
+                    <span>OLM <span class="model-num">2</span></span>
+                    <i class="fa-solid fa-caret-down text-[6px]"></i>
+                  </div>
+                  <div class="date-stamp-dynamic italic">JANUARY 6, 2026</div>
+                </div>
+              </div>
+
+              <!-- Chat Content Area -->
+              <div class="flex-1 flex flex-col relative px-4 overflow-hidden">
                 
-                <div class="px-6 py-4 border-b border-neutral-200 dark:border-[#3f3f46] bg-[#FAFAFA] dark:bg-[#171717] flex items-center justify-between transition-colors">
-                  <div class="flex items-center">
-                    <span class="text-lg font-semibold text-[#171717] dark:text-[#F5F5F5]">
-                      OLM <span class="text-neutral-500 font-normal">2</span>
-                    </span>
-                    <button class="ml-1 text-sm text-neutral-400"><i class="fa-solid fa-caret-down"></i></button>
-                  </div>
-                  
-                  <div class="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
-                    <i class="fa-regular fa-message text-xs"></i>
-                  </div>
+                <!-- Empty Prompt Ported from chat.html -->
+                <div id="window-empty-prompt" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full px-6 pointer-events-none transition-opacity duration-500">
+                  <h2 class="font-serif text-2xl md:text-3xl font-black uppercase tracking-tighter leading-none mb-4">
+                    How can I help you <br><span class="italic text-accent-blue">today?</span>
+                  </h2>
                 </div>
 
-                <div class="flex-grow p-6 flex flex-col items-center justify-center relative overflow-y-auto overflow-x-hidden">
-                  <div id="empty-chat-prompt" class="text-xl md:text-2xl font-semibold text-neutral-400 dark:text-neutral-500 text-center px-4 select-none leading-tight whitespace-nowrap">
-                    How can I help you today?
-                  </div>
+                <div class="flex-1 overflow-y-auto space-y-6 mac-scroll pb-24 pt-4">
+                  <!-- Messages would render here -->
                 </div>
 
-                <div class="p-6 pt-0">
-                  <div class="bg-white dark:bg-[#262626] border border-neutral-200 dark:border-[#3f3f46] rounded-[2rem] p-1.5 flex items-center shadow-sm transition-colors">
-                    <button class="w-10 h-10 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition">
-                      <i class="fa-solid fa-plus"></i>
-                    </button>
-                    
-                    <div class="flex-grow px-3 text-neutral-400 dark:text-neutral-500 text-sm select-none">
-                      Message OLM...
-                    </div>
-                    
-                    <button class="w-10 h-10 flex items-center justify-center bg-[#171717] dark:bg-[#F5F5F5] text-[#FAFAFA] dark:text-[#171717] rounded-full shadow-md transition transform active:scale-95">
-                      <i class="fa-solid fa-arrow-up text-sm"></i>
-                    </button>
-                  </div>
-                  
-                  <div class="text-[9px] text-center text-neutral-400 dark:text-neutral-500 mt-3 uppercase tracking-widest font-bold">
-                    OLM Protocol Beta 0.2.1
-                  </div>
+                <!-- Sticky Input Bar Ported from chat.html -->
+                <div class="absolute bottom-0 left-0 right-0 bg-paper dark:bg-dark-paper border-t-4 border-double border-ink dark:border-zinc-800 py-4 px-4 z-40">
+                   <div id="window-status" class="text-[7px] font-black uppercase tracking-widest opacity-40 italic mb-2">READY // PROTOCOL 0.2.1</div>
+                   <div class="gazette-border bg-paper dark:bg-zinc-900 shadow-[4px_4px_0px_#1e3a8a] p-1 flex items-center gap-2">
+                      <button class="w-8 h-8 flex items-center justify-center hover:text-accent-blue transition-colors">
+                        <i class="fa-solid fa-plus text-sm"></i>
+                      </button>
+                      <input type="text" placeholder="ENTER PROMPT..." class="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:opacity-20">
+                      <button class="btn-newspaper w-8 h-8 flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                      </button>
+                   </div>
                 </div>
 
               </div>
