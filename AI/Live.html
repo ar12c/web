@@ -54,41 +54,6 @@
     @media (max-width: 768px) {
       .col-divider { border-right: none; border-bottom: 1px solid rgba(26, 26, 26, 0.1); }
     }
-
-    .liquid-glass-smooth {
-      border-radius: 0px;
-      transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
-                  transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6),
-                  background 0.4s ease,
-                  box-shadow 0.4s ease,
-                  border-color 0.4s ease,
-                  color 0.3s ease;
-      background: #f9f7f2; 
-      border: 3px solid #1a1a1a;
-      z-index: 110; 
-      position: relative;
-    }
-    
-    @media (prefers-color-scheme: dark) {
-      .liquid-glass-smooth {
-        background: hsl(0, 0%, 12%);
-        border-color: #3f3f46;
-        color: #e5e7eb;
-      }
-    }
-
-    .liquid-glass-smooth:hover {
-      border-radius: 100px !important;
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(30, 58, 138, 0.95) !important;
-      border-color: #3b82f6;
-      box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.6),
-                  inset 0 0 10px rgba(255, 255, 255, 0.1);
-      transform: translateY(-8px) scale(1.05);
-      color: #ffffff !important;
-    }
-    [v-cloak] { display: none; }
   </style>
 </head>
 <body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 overflow-x-hidden">
@@ -135,7 +100,7 @@
     <!-- MAIN LOSS STORY -->
     <section class="grid grid-cols-1 lg:grid-cols-3 border-b-2 border-ink/10 dark:border-zinc-800 mb-10">
       <div class="lg:col-span-2 py-10 lg:pr-12">
-        <span class="text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1">JEPA LOSS RATE</span>
+        <span class="text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1">LATEST LOSS RATE</span>
         <h2 id="val-loss" class="font-serif text-[clamp(4rem,12vw,12vw)] font-black italic leading-[0.8] tracking-tighter mb-12">
           0.0000
         </h2>
@@ -150,7 +115,7 @@
         <div class="space-y-6">
           <div>
             <span class="text-[10px] font-black uppercase tracking-widest opacity-40 block mb-2">Current Activity</span>
-            <p id="activity-text" class="font-serif text-2xl font-black italic leading-none uppercase">Pre-training</p>
+            <p id="activity-text" class="font-serif text-2xl font-black italic leading-none uppercase">Pre-training <br>Standby</p>
           </div>
         </div>
       </div>
@@ -159,7 +124,7 @@
     <!-- ERROR ALERT -->
     <div id="error-alert" class="hidden border-2 border-red-500 p-4 mb-10 flex items-center gap-3 text-red-500 font-black uppercase tracking-widest text-xs">
       <i class="fa-solid fa-circle-exclamation"></i>
-      <span>SHIT CODE, NOTHING IS WORKING</span>
+      <span>SYSTEM FAULT: DATA DISRUPTION</span>
     </div>
 
     <!-- COLUMN STATS -->
@@ -203,22 +168,22 @@
             <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">VRAM Pool</span>
           </div>
           <div class="flex flex-col">
-            <span id="val-vram" class="font-serif text-4xl font-black italic tracking-tighter">0.0 GB</span>
+            <span id="val-vram" class="font-serif text-4xl font-black italic tracking-tighter">0.00 GB</span>
             <span class="text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Allocated</span>
           </div>
         </div>
 
-        <!-- ETA -->
+        <!-- ARCHITECTURE (MODE) -->
         <div class="p-8 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-10 h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-clock"></i>
+              <i class="fa-solid fa-microchip"></i>
             </div>
-            <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Time Horizon</span>
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Engine</span>
           </div>
           <div class="flex flex-col">
-            <span id="val-eta" class="font-serif text-4xl font-black italic tracking-tighter">0 Days</span>
-            <span class="text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">EST to Finish</span>
+            <span id="val-mode" class="font-serif text-4xl font-black italic tracking-tighter uppercase">N/A</span>
+            <span class="text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Active Architecture</span>
           </div>
         </div>
 
@@ -238,28 +203,31 @@
   <script>
     /**
      * CONFIGURATION
-     * Update this with your Firebase Realtime Database URL
      */
     const DATABASE_URL = "https://olmlive-4a343-default-rtdb.firebaseio.com/stats.json";
+    const STALE_THRESHOLD_SECONDS = 300; // 5 minute disconnected state
 
     async function fetchStats() {
       try {
         const response = await fetch(DATABASE_URL);
-        if (!response.ok) throw new Error("Network response was not ok");
+        if (!response.ok) throw new Error("Fetch failed");
         const data = await response.json();
 
         if (data) {
-          // Update values
-          document.getElementById('val-loss').innerText = data.loss.toFixed(4);
-          document.getElementById('val-step').innerText = data.step.toLocaleString();
-          document.getElementById('val-tps').innerText = data.tokens_per_sec.toLocaleString();
-          document.getElementById('val-vram').innerText = data.vram_gb.toFixed(1) + " GB";
-          document.getElementById('val-eta').innerText = data.eta_days.toFixed(1) + " Days";
+          // Update core metrics
+          document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
+          document.getElementById('val-step').innerText = (data.step || 0).toLocaleString();
+          document.getElementById('val-tps').innerText = (data.tps || 0).toLocaleString();
+          document.getElementById('val-vram').innerText = (data.vram_gb || 0).toFixed(2) + " GB";
+          
+          // Only show the JEPA part (split by hyphen and take the first part)
+          const modeRaw = data.mode || "N/A";
+          document.getElementById('val-mode').innerText = modeRaw.split('-')[0];
 
-          // Calculate staleness
+          // Check for staleness using the 'timestamp' field
           const now = Date.now() / 1000;
-          const lastUpdate = data.last_update || 0;
-          const isLive = (now - lastUpdate) < 300; // 2 minutes threshold
+          const lastUpdate = data.timestamp || 0;
+          const isLive = (now - lastUpdate) < STALE_THRESHOLD_SECONDS;
           
           const dot = document.getElementById('status-dot');
           const text = document.getElementById('status-text');
@@ -278,7 +246,6 @@
           document.getElementById('error-alert').classList.add('hidden');
         }
       } catch (e) {
-        // Fail state
         document.getElementById('error-alert').classList.remove('hidden');
         document.getElementById('status-dot').className = "w-2 h-2 rounded-full bg-red-500";
         document.getElementById('status-text').innerText = "Feed Disconnected";
@@ -298,13 +265,12 @@
       }
     }
 
-    // Refresh every 5 seconds, clock every second
     setInterval(fetchStats, 5000);
     setInterval(updateClock, 1000);
     
-    // Initial calls
     fetchStats();
     updateClock();
   </script>
 </body>
 </html>
+
