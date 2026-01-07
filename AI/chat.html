@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat OLM</title>
-    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+  <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
   <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Newspaper Serifs + High-end Sans + Chat UI Sans (Inter) -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
@@ -52,17 +51,13 @@
       scrollbar-color: #1a1a1a transparent;
     }
 
-    /* Gazette Component Styling */
     .gazette-border {
-      border: 3px solid #1a1a1a;
-    }
-    @media (prefers-color-scheme: dark) {
-      .gazette-border { border-color: #3f3f46; }
+      border: 3px solid #1e3a8a;
     }
 
     .btn-newspaper {
       background: #f9f7f2; 
-      border: 3px solid #1a1a1a;
+      border: 2px solid #1a1a1a;
       transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
     @media (prefers-color-scheme: dark) {
@@ -72,8 +67,8 @@
       background: #1e3a8a !important;
       border-color: #1e3a8a;
       color: #ffffff !important;
-      transform: translateY(-2px);
-      box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+      box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
     }
 
     /* Message Bubbles as News Items */
@@ -91,7 +86,17 @@
       .ai-message-row { border-left-color: #e5e7eb; }
     }
 
-    /* Modal Styling */
+    .typing-dots::after {
+      content: '';
+      animation: dots 1.5s infinite;
+    }
+    @keyframes dots {
+      0% { content: ''; }
+      33% { content: '.'; }
+      66% { content: '..'; }
+      100% { content: '...'; }
+    }
+
     .modal-paper {
       background-color: #f9f7f2;
       border: 8px double #1a1a1a;
@@ -100,26 +105,9 @@
       .modal-paper { background-color: #121212; border-color: #3f3f46; }
     }
 
-    /* Dropdown Transitions to match chat.js */
-    #okemo-dropdown {
-      transform-origin: top;
+    #input-model-dropdown, #input-dropdown, #okemo-dropdown {
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    #input-dropdown {
-      transform-origin: bottom;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .blinking-cursor {
-      font-size: 1.1em;
-      font-weight: 700;
-      animation: blink 0.7s infinite step-end;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 2px;
-    }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
     html { scroll-behavior: smooth; }
     ::selection { background: #1e3a8a; color: white; }
@@ -127,11 +115,17 @@
 </head>
 <body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 min-h-screen flex flex-col overflow-x-hidden">
 
-  <!-- TOP MARGIN NAVIGATION -->
+  <!-- Ghost Elements required by chat.js to prevent null pointer exceptions -->
+  <div class="hidden">
+    <div id="menu-toggle"></div>
+    <div id="okemo-dropdown"></div>
+    <span id="model-display-number"></span>
+  </div>
+
   <header class="w-full max-w-2xl mx-auto px-6 pt-8 z-50">
     <div class="flex justify-between items-center mb-4">
       <nav>
-        <a href="OkemoLLM.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
+        <a href="#" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
           <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
           <span>Back</span>
         </a>
@@ -144,80 +138,86 @@
 
     <div class="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] font-black uppercase tracking-[0.3em] relative">
       <div class="flex items-center gap-2 relative">
-        <!-- Combined title and toggle for model switching -->
-        <div id="menu-toggle" class="cursor-pointer hover:text-accent-blue flex items-center gap-1">
-          <span id="okemo-title">OLM <span id="model-display-number">2</span></span>
-          <i class="fa-solid fa-caret-down text-[8px]" id="menu-icon"></i>
-        </div>
-        
-        <!-- Model Dropdown styled as Gazette Menu -->
-        <div id="okemo-dropdown" class="absolute left-0 top-full mt-2 w-48 bg-paper dark:bg-dark-paper border-2 border-ink dark:border-zinc-700 shadow-xl z-50 p-1 hidden opacity-0 scale-y-0 origin-top">
-          <a href="#" id="model-select-base" data-model-id="ar12c/okemo2" data-model-name="OLM 1" class="block px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">OLM 1</a>
-          <a href="#" id="model-select-pro" data-model-id="ar12c/okemollm" data-model-name="OLM 2" class="block px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">OLM 2</a>
-          <div class="border-t border-ink/10 dark:border-white/10 my-1"></div>
-          <a href="#" id="show-update-notes" class="block px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors italic">Update Notes</a>
-        </div>
+        <span id="okemo-title" class="italic">OLM</span>
       </div>
-      <div id="date-stamp" class="italic italic">JANUARY 6, 2026</div>
+      <div id="date-stamp" class="italic text-right">JANUARY 6, 2026</div>
     </div>
   </header>
 
-  <!-- CHAT AREA -->
-  <main class="flex-1 flex flex-col w-full max-w-2xl mx-auto px-6 py-10 relative">
-    
-    <div id="empty-chat-prompt" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full px-10 pointer-events-none transition-opacity duration-500">
-      <h2 class="font-serif text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-4">
-        How can I help you <br><span class="italic text-accent-blue">today?</span>
-      </h2>
+  <main class="flex-1 flex flex-col w-full max-w-2xl mx-auto px-6 py-10 relative overflow-hidden">
+    <div id="empty-chat-prompt" class="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full px-10 pointer-events-none transition-opacity duration-500">
+      <div class="inline-block border-4 border-double border-ink/10 dark:border-white/10 p-8 md:p-12">
+        <h2 class="font-serif text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+          How can I help you <br><span class="italic text-accent-blue">today?</span>
+        </h2>
+      </div>
     </div>
 
-    <div id="okemo-chat" class="chat-scroll flex-1 overflow-y-auto space-y-8 pb-32">
-      <!-- Messages injected via JS -->
+    <!-- Reverted bottom padding to pb-48 for better clearance -->
+    <div id="okemo-chat" class="chat-scroll flex-1 overflow-y-auto space-y-8 pb-48">
+      <!-- Messages go here -->
     </div>
+
+    <!-- Scroll button moved up to match reverted padding -->
+    <button id="scroll-bottom-btn" class="fixed bottom-[180px] left-1/2 -translate-x-1/2 btn-newspaper w-10 h-10 rounded-full flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 z-50 shadow-lg">
+      <i class="fa-solid fa-arrow-down"></i>
+    </button>
   </main>
 
-  <!-- STICKY INPUT BAR -->
-  <div class="fixed bottom-0 left-0 right-0 bg-paper dark:bg-dark-paper border-t-[8px] border-double border-ink dark:border-zinc-800 py-6 px-6 z-40 transition-colors">
-    <div class="max-w-xl mx-auto relative group">
+  <!-- Removed bottom padding (pb-0) as requested -->
+  <div class="fixed bottom-0 left-0 right-0 bg-paper dark:bg-dark-paper border-t-[8px] border-double border-ink dark:border-zinc-800 pt-2 pb-0 px-4 md:px-6 z-40 transition-colors">
+    <div class="max-w-xl mx-auto relative group mb-4">
+      <div id="okemo-status" class="absolute -top-4 left-0 text-[9px] font-black uppercase tracking-widest opacity-40 italic"></div>
       
-      <div id="okemo-status" class="absolute -top-8 left-0 text-[9px] font-black uppercase tracking-widest opacity-40 italic"></div>
-      
-      <!-- Stabilized Input Container (Removed focus-within transform) -->
-      <div class="gazette-border bg-paper dark:bg-zinc-900 shadow-[8px_8px_0px_#1e3a8a] p-2 flex flex-col gap-2">
+      <div id="file-preview-container" class="mb-2 hidden"></div>
+
+      <div class="gazette-border bg-paper dark:bg-zinc-900 flex flex-col p-3 transition-all">
+        <textarea id="okemo-input" placeholder="ASK ANYTHING..." rows="1" class="w-full py-2 px-1 text-sm md:text-base font-bold tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:text-ink/20 dark:placeholder:text-white/20 resize-none max-h-48 overflow-hidden leading-relaxed"></textarea>
         
-        <div class="flex items-center gap-2 relative">
-          <!-- Input Dropdown (Removed Photo/File options) -->
-          <div id="input-dropdown" class="absolute left-0 bottom-full mb-4 w-48 bg-paper dark:bg-dark-paper border-2 border-ink dark:border-zinc-700 shadow-xl p-1 hidden opacity-0 scale-y-0 origin-bottom-left">
-            <button id="web-search-option" class="w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">Web Search</button>
+        <div class="flex justify-between items-center mt-3 pt-2 border-t border-ink/10 dark:border-white/10">
+          <div class="relative">
+             <button id="plus-menu-toggle" class="w-9 h-9 flex items-center justify-center hover:text-accent-blue transition-colors flex-shrink-0">
+               <i id="plus-icon" class="fa-solid fa-plus text-lg"></i>
+             </button>
+             <div id="input-dropdown" class="absolute left-0 bottom-full mb-3 w-40 bg-paper dark:bg-dark-paper border-2 border-ink dark:border-zinc-700 shadow-xl p-1 hidden opacity-0 scale-y-0 origin-bottom-left">
+               <button id="web-search-option" class="w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">Web Search</button>
+               <button id="add-image-option" class="w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">Add Image</button>
+               <button id="new-feature-option" class="w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">Add File</button>
+             </div>
           </div>
 
-          <button id="plus-menu-toggle" class="w-10 h-10 flex items-center justify-center hover:text-accent-blue transition-colors">
-            <i id="plus-icon" class="fa-solid fa-plus text-lg"></i>
-          </button>
-          
-          <textarea
-            id="okemo-input"
-            placeholder="ENTER PROMPT..."
-            rows="1"
-            class="flex-1 py-3 text-sm md:text-base font-bold uppercase tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:text-ink/20 dark:placeholder:text-white/20 resize-none max-h-40 overflow-hidden"
-          ></textarea>
-          
-          <button id="okemo-send" class="btn-newspaper w-12 h-12 flex items-center justify-center">
-            <i class="fa-solid fa-arrow-right text-sm"></i>
-          </button>
+          <div class="flex items-center gap-2 relative">
+            <div class="relative">
+              <button id="model-switch-btn" class="flex items-center gap-2 px-3 py-1.5 btn-newspaper text-[9px] font-black uppercase tracking-widest">
+                <span id="active-model-name">OLM 2</span>
+                <i class="fa-solid fa-caret-down text-[8px]"></i>
+              </button>
+              
+              <div id="input-model-dropdown" class="absolute right-0 bottom-full mb-3 w-40 bg-paper dark:bg-dark-paper border-2 border-ink dark:border-zinc-700 shadow-xl p-1 hidden opacity-0 scale-y-0 origin-bottom-right">
+                <button id="model-select-pro" data-model-id="ar12c/okemollm" data-model-name="OLM 2" class="model-opt w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">OLM 2</button>
+                <button id="model-select-base" data-model-id="ar12c/okemo2" data-model-name="OLM 1" class="model-opt w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">OLM 1</button>
+              </div>
+            </div>
+
+            <button id="okemo-send" class="btn-newspaper w-9 h-9 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="flex justify-between items-center mt-4">
-        <p class="text-[8px] font-black uppercase tracking-widest opacity-40 italic">
-          * Beta Protocol 0.2.1 // Errors possible *
+      <div class="flex justify-between items-center mt-3 mb-2">
+        <p class="text-[8px] font-black uppercase tracking-widest opacity-40">
+          PROPRIETARY REPORTER 0.2.1 | VERIFY ALL SOURCES
         </p>
       </div>
     </div>
   </div>
 
-  <!-- MODALS -->
-  <!-- Disclaimer Notice -->
+  <input type="file" id="file-upload-input" class="hidden" />
+  <input type="file" id="image-upload-input" accept="image/*" class="hidden" />
+
+  <!-- Modals -->
   <div id="disclaimer-modal" class="fixed inset-0 bg-ink/60 backdrop-blur-sm flex items-center justify-center z-[60] hidden opacity-0 transition-opacity">
     <div class="modal-paper p-8 max-w-md w-full mx-4 shadow-[12px_12px_0px_#1e3a8a]">
       <h3 class="font-serif text-3xl font-black uppercase italic mb-6">Disclaimer</h3>
@@ -227,12 +227,10 @@
       </div>
       <div class="flex gap-4">
         <button id="disclaimer-agree" class="btn-newspaper flex-1 py-3 font-black uppercase text-[10px]">I Accept</button>
-        <a href="index.html" class="btn-newspaper flex-1 py-3 font-black uppercase text-[10px] text-center">Decline</a>
       </div>
     </div>
   </div>
 
-  <!-- Update Notes Notice -->
   <div id="update-notes-modal" class="fixed inset-0 bg-ink/60 backdrop-blur-sm flex items-center justify-center z-[60] hidden opacity-0 transition-opacity">
     <div class="modal-paper p-8 max-w-md w-full mx-4 shadow-[12px_12px_0px_#1e3a8a]">
       <h3 class="font-serif text-3xl font-black uppercase italic mb-6">Update Notes</h3>
@@ -248,7 +246,6 @@
     </div>
   </div>
 
-  <!-- Bad Feedback Notice -->
   <div id="bad-feedback-modal" class="fixed inset-0 bg-ink/60 backdrop-blur-sm flex items-center justify-center z-[60] hidden opacity-0 transition-opacity">
     <div class="modal-paper p-8 max-w-md w-full mx-4 shadow-[12px_12px_0px_#1e3a8a]">
       <h3 class="font-serif text-3xl font-black uppercase italic mb-6">Feedback</h3>
@@ -262,5 +259,111 @@
   </div>
 
   <script type="module" src="chat.js"></script>
+
+  <script>
+    window.addEventListener('load', () => {
+      const modelBtn = document.getElementById('model-switch-btn');
+      const modelDropdown = document.getElementById('input-model-dropdown');
+      const activeName = document.getElementById('active-model-name');
+      const chatContainer = document.getElementById('okemo-chat');
+      const scrollBtn = document.getElementById('scroll-bottom-btn');
+
+      // Manual toggle for model switch in chatbox
+      if (modelBtn && modelDropdown) {
+        modelBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isHidden = modelDropdown.classList.contains('hidden');
+          if (isHidden) {
+            modelDropdown.classList.remove('hidden');
+            setTimeout(() => {
+              modelDropdown.classList.remove('opacity-0', 'scale-y-0');
+            }, 10);
+          } else {
+            closeModelDropdown();
+          }
+        });
+
+        document.addEventListener('click', () => {
+          closeModelDropdown();
+        });
+      }
+
+      function closeModelDropdown() {
+        if (!modelDropdown) return;
+        modelDropdown.classList.add('opacity-0', 'scale-y-0');
+        setTimeout(() => modelDropdown.classList.add('hidden'), 200);
+      }
+
+      // Update UI name when a selection is made
+      document.querySelectorAll('.model-opt').forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          const name = opt.dataset.modelName;
+          if (activeName) activeName.textContent = name;
+          closeModelDropdown();
+        });
+      });
+
+      // --- IMPROVED AUTO SCROLL & SCROLL BUTTON LOGIC ---
+      
+      let isAutoScrolling = true;
+
+      const scrollToBottom = (behavior = 'auto') => {
+        if (!chatContainer) return;
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      };
+
+      const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = chatContainer;
+        
+        // Tolerance threshold for "at the bottom"
+        const threshold = 100;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < threshold;
+        
+        isAutoScrolling = isNearBottom;
+
+        // Show button if we are scrolled up and there is content to scroll through
+        if (!isNearBottom && scrollHeight > clientHeight) {
+          scrollBtn.classList.remove('opacity-0', 'pointer-events-none');
+          scrollBtn.classList.add('opacity-100');
+        } else {
+          scrollBtn.classList.add('opacity-0', 'pointer-events-none');
+          scrollBtn.classList.remove('opacity-100');
+        }
+      };
+
+      // MutationObserver watches for new elements in the chat container
+      // This is crucial for catching real-time message additions
+      const observer = new MutationObserver(() => {
+        if (isAutoScrolling) {
+          // Force immediate scroll for better responsiveness in real-time chats
+          scrollToBottom();
+          // Secondary fallback to catch late layout shifts
+          setTimeout(scrollToBottom, 50);
+        }
+      });
+
+      if (chatContainer) {
+        chatContainer.addEventListener('scroll', handleScroll);
+        
+        observer.observe(chatContainer, { 
+          childList: true, 
+          subtree: true,
+          characterData: true // Watch for text content changes (typing effect)
+        });
+
+        scrollBtn.addEventListener('click', () => {
+          isAutoScrolling = true;
+          chatContainer.scrollTo({
+            top: chatContainer.scrollHeight,
+            behavior: 'smooth'
+          });
+        });
+
+        // Initialize button state and initial scroll position
+        handleScroll();
+        scrollToBottom();
+      }
+    });
+  </script>
 </body>
 </html>
