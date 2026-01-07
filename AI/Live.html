@@ -259,7 +259,7 @@
           // Calculate staleness
           const now = Date.now() / 1000;
           const lastUpdate = data.last_update || 0;
-          const isLive = (now - lastUpdate) < 120; // 2 minutes threshold
+          const isLive = (now - lastUpdate) < 300; // 2 minutes threshold
           
           const dot = document.getElementById('status-dot');
           const text = document.getElementById('status-text');
