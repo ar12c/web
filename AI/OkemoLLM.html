@@ -3,16 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OLM</title>
-    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-
+  <title>OLM | The New Protocol</title>
+  <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Newspaper Serifs + High-end Sans + Chat UI Sans (Inter) -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
   <script>
@@ -38,7 +34,6 @@
   </script>
 
   <style>
-    /* Newspaper Paper Effect */
     .newspaper-texture {
       background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.03'/%3E%3C/svg%3E");
     }
@@ -48,7 +43,7 @@
       }
     }
 
-    /* Word-by-Word Reveal */
+    /* Word-by-word reveal animations */
     @keyframes revealBlur {
       0% { opacity: 0; transform: translateY(15px); filter: blur(10px); }
       100% { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -59,30 +54,41 @@
       animation: revealBlur 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
 
-    /* Liquid Glass Buttons (Solid Variant) */
-    .btn-newspaper {
+    /* Liquid Glass Button Style */
+    .liquid-glass-smooth {
+      border-radius: 0px;
+      transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
+                  transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6),
+                  background 0.4s ease,
+                  box-shadow 0.4s ease,
+                  border-color 0.4s ease,
+                  color 0.3s ease;
       background: #f9f7f2; 
       border: 3px solid #1a1a1a;
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      z-index: 110; 
+      position: relative;
     }
     
     @media (prefers-color-scheme: dark) {
-      .btn-newspaper {
-        background: #121212;
+      .liquid-glass-smooth {
+        background: hsl(0, 0%, 12%);
         border-color: #3f3f46;
         color: #e5e7eb;
       }
     }
 
-    .btn-newspaper:hover {
-      background: #1e3a8a !important;
-      border-color: #1e3a8a;
+    .liquid-glass-smooth:hover {
+      border-radius: 100px !important;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(30, 58, 138, 0.95) !important;
+      border-color: #3b82f6;
+      box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.6),
+                  inset 0 0 10px rgba(255, 255, 255, 0.1);
+      transform: translateY(-8px) scale(1.05);
       color: #ffffff !important;
-      transform: translateY(-4px);
-      box-shadow: 6px 6px 0px rgba(0,0,0,0.15);
     }
 
-    /* Column Dividers */
     .col-divider {
       border-right: 1px solid rgba(26, 26, 26, 0.1);
     }
@@ -101,7 +107,6 @@
 
   <!-- TOP MARGIN NAVIGATION -->
   <header class="max-w-screen-2xl mx-auto px-6 md:px-16 pt-8">
-    <!-- Back Button Component -->
     <nav class="mb-6">
       <a href="/index.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
         <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
@@ -113,12 +118,12 @@
       <div class="flex gap-6">
         <span>Vol. 02</span>
       </div>
-      <div id="date-stamp" class="text-right italic">JANUARY 6, 2026</div>
+      <div id="date-stamp" class="text-right italic text-[10px]">JANUARY 7, 2026</div>
     </div>
     
     <div class="py-10 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-6">
       <div class="flex items-center gap-4">
-        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail logo" class="w-16 h-16 grayscale border-2 border-ink dark:border-zinc-700 p-1"/>
+        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OLM logo" class="w-16 h-16 grayscale border-2 border-ink dark:border-zinc-700 p-1"/>
         <div class="leading-none">
           <h1 class="font-serif text-5xl md:text-7xl font-black uppercase tracking-tighter">OLM</h1>
           <p class="text-[10px] font-black uppercase tracking-[0.4em] ml-1 opacity-50">Okemo Language Model</p>
@@ -135,38 +140,31 @@
   <main class="max-w-screen-2xl mx-auto">
     
     <!-- HERO SECTION -->
-    <section class="px-6 md:px-16 py-16 md:py-24 border-b-2 border-ink/10 dark:border-zinc-800">
+    <section class="px-6 md:px-16 py-10 md:py-16 border-b-2 border-ink/10 dark:border-zinc-800">
       <div class="max-w-4xl">
-        <h2 id="main-title" class="font-serif text-[clamp(2.5rem,8vw,8vw)] font-black uppercase leading-[0.85] tracking-tighter mb-10 text-left">
+        <h2 id="main-title" class="font-serif text-[clamp(2.5rem,8vw,8vw)] font-black uppercase leading-[0.85] tracking-tighter mb-4 text-left">
           Introducing <br>
-          <span class="italic">The New Protocol.</span>
+          <span class="italic">OLM 2.</span>
         </h2>
 
-        <div class="max-w-2xl mb-12">
-          <p class="text-xl md:text-2xl font-black leading-tight tracking-tight mb-6">
+        <div class="max-w-2xl mb-8">
+          <p class="text-xl md:text-2xl font-black leading-tight tracking-tight mb-4 uppercase">
             A SYNTACTIC ENGINE BUILT ON THE PRINCIPLES OF <span class="bg-ink dark:bg-zinc-700 text-paper dark:text-white px-2">THE 3Es</span>: EXPRESSIVE, EXPEDITIOUS, AND ECONOMICAL.
           </p>
         </div>
 
-        <!-- Interaction Box -->
-        <div class="relative max-w-xl group font-inter">
-          <div class="border-[4px] border-ink dark:border-zinc-700 bg-paper dark:bg-zinc-900 p-2 flex items-center gap-3 transition-transform hover:-translate-y-1">
-            <input
-              id="aiPromptInput"
-              type="text"
-              placeholder="try it now"
-              class="flex-1 px-4 py-3 text-sm md:text-base font-bold uppercase tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:text-ink/30 dark:placeholder:text-white/20"
-            />
-            <button id="chatRedirectBtn" class="btn-newspaper w-12 h-12 flex items-center justify-center">
-              <i class="fa-solid fa-arrow-right text-sm"></i>
-            </button>
-          </div>
-          <p class="mt-6 text-[10px] font-black uppercase tracking-widest opacity-40">Press enter to chat.</p>
+        <!-- NEW BUTTON INTERACTION -->
+        <div class="relative inline-block">
+          <button id="initializeBtn" class="liquid-glass-smooth px-12 py-5 font-black uppercase tracking-[0.3em] text-sm md:text-base flex items-center gap-4 group">
+            <span>Try it now</span>
+            <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+          </button>
+          <p class="mt-4 text-[10px] font-black uppercase tracking-widest opacity-40">Ready for deployment.</p>
         </div>
       </div>
     </section>
 
-    <!-- FEATURES SECTION (Classifieds Style) -->
+    <!-- FEATURES SECTION -->
     <section id="features" class="border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800">
       <div class="grid grid-cols-1 md:grid-cols-3">
         
@@ -204,10 +202,10 @@
         </div>
       </div>
 
-      <!-- LATEST NEWS SECTION (Moved under the 3Es) -->
+      <!-- LATEST NEWS SECTION -->
       <div class="border-t-2 border-ink dark:border-zinc-800 p-10 bg-paper dark:bg-zinc-900/20">
         <div class="max-w-4xl">
-          <span class="text-[10px] font-black uppercase tracking-widest bg-ink text-paper px-2 py-1">STOP PRESS // LATEST NEWS</span>
+          <span class="text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1">STOP PRESS // LATEST NEWS</span>
           <p class="mt-6 text-2xl md:text-3xl font-black leading-snug italic tracking-tighter">
             "OLM 2.1 achieves breakthrough in 'not hallucinating too much' while maintaining its signature cynicism."
           </p>
@@ -222,7 +220,7 @@
     <!-- FOOTER -->
     <footer class="px-6 md:px-16 py-12 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">
       <div class="text-[10px] font-black uppercase tracking-[0.3em]">
-        &copy; 2024-2026 OKEMO CODE
+        &copy; 2026 OKEMO CODE
       </div>
       <div class="text-[10px] font-black uppercase tracking-[0.3em]">
         LOCAL TIME: <span id="clock-display">00:00:00</span>
@@ -232,12 +230,11 @@
   </main>
 
   <script>
-    // Optimized word-by-word reveal
     function splitAndAnimate(id, baseDelay) {
       const el = document.getElementById(id);
       if (!el) return;
       const text = el.innerText;
-      const words = text.split(' ');
+      const words = text.split(/\s+/);
       el.innerHTML = ''; 
       words.forEach((word, i) => {
         const span = document.createElement('span');
@@ -245,19 +242,29 @@
         span.className = 'animate-word';
         span.style.animationDelay = (baseDelay + (i * 0.08)) + 's';
         el.appendChild(span);
+        if (word.toLowerCase() === 'introducing') {
+            el.appendChild(document.createElement('br'));
+        }
       });
     }
 
     function updateClock() {
       const now = new Date();
-      const timeOptions = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-      const hktTime = new Intl.DateTimeFormat('en-GB', timeOptions).format(now);
+      const hktTime = new Intl.DateTimeFormat('en-GB', { 
+        timeZone: 'Asia/Hong_Kong', 
+        hour: '2-digit', minute: '2-digit', second: '2-digit', 
+        hour12: false 
+      }).format(now);
+      
       const clockDisplay = document.getElementById('clock-display');
       if (clockDisplay) clockDisplay.textContent = hktTime;
       
-      const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
       const dateStamp = document.getElementById('date-stamp');
-      if (dateStamp) dateStamp.textContent = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
+      if (dateStamp) {
+        dateStamp.textContent = now.toLocaleDateString('en-US', { 
+            month: 'long', day: 'numeric', year: 'numeric' 
+        }).toUpperCase();
+      }
     }
 
     window.addEventListener('load', () => {
@@ -269,28 +276,13 @@
       setInterval(updateClock, 1000);
     });
 
-    // Navigation logic to chat.html
-    const input = document.getElementById('aiPromptInput');
-    const btn = document.getElementById('chatRedirectBtn');
-
-    function navigateToChat() {
-      const query = input.value.trim();
-      if (query) {
-        window.location.href = `chat.html?q=${encodeURIComponent(query)}`;
-      } else {
+    // Navigation logic
+    const initializeBtn = document.getElementById('initializeBtn');
+    if (initializeBtn) {
+      initializeBtn.addEventListener('click', () => {
         window.location.href = `chat.html`;
-      }
+      });
     }
-
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        navigateToChat();
-      }
-    });
-
-    btn.addEventListener('click', () => {
-      navigateToChat();
-    });
   </script>
 </body>
 </html>
