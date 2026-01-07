@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OLM training</title>
+  <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Libre Franklin', 'sans-serif'],
+          },
+          colors: {
+            paper: '#f9f7f2',
+            ink: '#1a1a1a',
+            'accent-blue': '#1e3a8a',
+            'dark-paper': '#121212',
+            'dark-ink': '#e5e7eb',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .newspaper-texture {
+      background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.03'/%3E%3C/svg%3E");
+    }
+    @media (prefers-color-scheme: dark) {
+      .newspaper-texture {
+        background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E");
+      }
+    }
+
+    .col-divider {
+      border-right: 1px solid rgba(26, 26, 26, 0.1);
+    }
+    @media (prefers-color-scheme: dark) {
+      .col-divider { border-right-color: rgba(229, 231, 235, 0.1); }
+    }
+    @media (max-width: 768px) {
+      .col-divider { border-right: none; border-bottom: 1px solid rgba(26, 26, 26, 0.1); }
+    }
+
+    .liquid-glass-smooth {
+      border-radius: 0px;
+      transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
+                  transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6),
+                  background 0.4s ease,
+                  box-shadow 0.4s ease,
+                  border-color 0.4s ease,
+                  color 0.3s ease;
+      background: #f9f7f2; 
+      border: 3px solid #1a1a1a;
+      z-index: 110; 
+      position: relative;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .liquid-glass-smooth {
+        background: hsl(0, 0%, 12%);
+        border-color: #3f3f46;
+        color: #e5e7eb;
+      }
+    }
+
+    .liquid-glass-smooth:hover {
+      border-radius: 100px !important;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(30, 58, 138, 0.95) !important;
+      border-color: #3b82f6;
+      box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.6),
+                  inset 0 0 10px rgba(255, 255, 255, 0.1);
+      transform: translateY(-8px) scale(1.05);
+      color: #ffffff !important;
+    }
+    [v-cloak] { display: none; }
+  </style>
+</head>
+<body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 overflow-x-hidden">
+
+  <!-- TOP MARGIN NAVIGATION -->
+  <header class="max-w-screen-2xl mx-auto px-6 md:px-16 pt-8">
+    <nav class="mb-6">
+      <a href="OkemoLLM.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
+        <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
+        <span>Back</span>
+      </a>
+    </nav>
+
+    <div class="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">
+      <div class="flex gap-6">
+        <span>Vol. 03</span>
+      </div>
+      <div id="date-stamp" class="text-right italic uppercase">JANUARY 7, 2026</div>
+    </div>
+    
+    <div class="py-10 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-6">
+        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OLM logo" class="w-16 h-16 grayscale border-2 border-ink dark:border-zinc-700 p-1 bg-white"/>
+        <div class="leading-none">
+          <h1 class="font-serif text-6xl md:text-8xl font-black uppercase tracking-tighter">OLM</h1>
+          <p class="text-[10px] font-black uppercase tracking-[0.4em] ml-1 opacity-50">OLM 2.1B</p>
+        </div>
+      </div>
+      
+      <div class="text-right hidden md:block max-w-xs">
+        <div class="flex items-center justify-end gap-2 mb-2">
+          <div id="status-dot" class="w-2 h-2 rounded-full bg-red-500"></div>
+          <span id="status-text" class="text-[9px] font-black uppercase tracking-widest">Feed Disconnected</span>
+        </div>
+        <p class="text-[9px] font-bold uppercase leading-tight italic opacity-60">
+          "The most honest intelligence ever compiled. admittedly a bit shitty, but open source bro."
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-screen-2xl mx-auto px-6 md:px-16 py-10">
+    
+    <!-- MAIN LOSS STORY -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 border-b-2 border-ink/10 dark:border-zinc-800 mb-10">
+      <div class="lg:col-span-2 py-10 lg:pr-12">
+        <span class="text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1">JEPA LOSS RATE</span>
+        <h2 id="val-loss" class="font-serif text-[clamp(4rem,12vw,12vw)] font-black italic leading-[0.8] tracking-tighter mb-12">
+          0.0000
+        </h2>
+        <div class="max-w-2xl mb-8">
+          <p class="text-xl md:text-2xl font-black leading-tight tracking-tight uppercase">
+            AN OKEMO ENGINE BUILT ON THE PRINCIPLES OF <br> <span class="bg-ink dark:bg-zinc-700 text-paper dark:text-white px-2">THE 3Es</span>: EXPRESSIVE, EXPEDITIOUS, AND ECONOMICAL.
+          </p>
+        </div>
+      </div>
+      
+      <div class="py-10 lg:pl-12 lg:border-l border-ink/10 dark:border-zinc-800 flex flex-col justify-center">
+        <div class="space-y-6">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-widest opacity-40 block mb-2">Current Activity</span>
+            <p id="activity-text" class="font-serif text-2xl font-black italic leading-none uppercase">Pre-training <br>0.2 target</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ERROR ALERT -->
+    <div id="error-alert" class="hidden border-2 border-red-500 p-4 mb-10 flex items-center gap-3 text-red-500 font-black uppercase tracking-widest text-xs">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span>SHIT CODE, NOTHING IS WORKING</span>
+    </div>
+
+    <!-- COLUMN STATS -->
+    <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-4">
+        
+        <!-- Step -->
+        <div class="p-8 col-divider group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Checkpoint</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="val-step" class="font-serif text-4xl font-black italic tracking-tighter">0</span>
+            <span class="text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Global Iteration</span>
+          </div>
+        </div>
+
+        <!-- TPS -->
+        <div class="p-8 col-divider group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Velocity</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="val-tps" class="font-serif text-4xl font-black italic tracking-tighter">0</span>
+            <span class="text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Tokens / Second</span>
+          </div>
+        </div>
+
+        <!-- VRAM -->
+        <div class="p-8 col-divider group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
+              <i class="fa-solid fa-database"></i>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">VRAM Pool</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="val-vram" class="font-serif text-4xl font-black italic tracking-tighter">0.0 GB</span>
+            <span class="text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Allocated</span>
+          </div>
+        </div>
+
+        <!-- ETA -->
+        <div class="p-8 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60">Time Horizon</span>
+          </div>
+          <div class="flex flex-col">
+            <span id="val-eta" class="font-serif text-4xl font-black italic tracking-tighter">0 Days</span>
+            <span class="text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">EST to Finish</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="px-6 md:px-16 py-12 flex flex-col md:flex-row justify-between items-center gap-8 border-t border-ink/5 dark:border-white/5 mt-10">
+    <div class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
+      &copy; 2026 OKEMO CODE
+    </div>
+    <div class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
+      SYSTEM CLOCK: <span id="clock-display" class="font-mono">00:00:00</span>
+    </div>
+  </footer>
+
+  <script>
+    /**
+     * CONFIGURATION
+     * Update this with your Firebase Realtime Database URL
+     */
+    const DATABASE_URL = "https://olmlive-4a343-default-rtdb.firebaseio.com/stats.json";
+
+    async function fetchStats() {
+      try {
+        const response = await fetch(DATABASE_URL);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+
+        if (data) {
+          // Update values
+          document.getElementById('val-loss').innerText = data.loss.toFixed(4);
+          document.getElementById('val-step').innerText = data.step.toLocaleString();
+          document.getElementById('val-tps').innerText = data.tokens_per_sec.toLocaleString();
+          document.getElementById('val-vram').innerText = data.vram_gb.toFixed(1) + " GB";
+          document.getElementById('val-eta').innerText = data.eta_days.toFixed(1) + " Days";
+
+          // Calculate staleness
+          const now = Date.now() / 1000;
+          const lastUpdate = data.last_update || 0;
+          const isLive = (now - lastUpdate) < 120; // 2 minutes threshold
+          
+          const dot = document.getElementById('status-dot');
+          const text = document.getElementById('status-text');
+          const activity = document.getElementById('activity-text');
+          
+          if (isLive) {
+            dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]";
+            text.innerText = "Feed Connected";
+            activity.innerHTML = "Pre-training <br>In Progress";
+          } else {
+            dot.className = "w-2 h-2 rounded-full bg-red-500";
+            text.innerText = "Feed Disconnected";
+            activity.innerHTML = "Pre-training <br>Paused / Offline";
+          }
+
+          document.getElementById('error-alert').classList.add('hidden');
+        }
+      } catch (e) {
+        // Fail state
+        document.getElementById('error-alert').classList.remove('hidden');
+        document.getElementById('status-dot').className = "w-2 h-2 rounded-full bg-red-500";
+        document.getElementById('status-text').innerText = "Feed Disconnected";
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const clockDisplay = document.getElementById('clock-display');
+      if (clockDisplay) clockDisplay.textContent = now.toLocaleTimeString('en-GB', { hour12: false });
+      
+      const dateStamp = document.getElementById('date-stamp');
+      if (dateStamp) {
+        dateStamp.textContent = now.toLocaleDateString('en-US', { 
+            month: 'long', day: 'numeric', year: 'numeric' 
+        }).toUpperCase();
+      }
+    }
+
+    // Refresh every 5 seconds, clock every second
+    setInterval(fetchStats, 5000);
+    setInterval(updateClock, 1000);
+    
+    // Initial calls
+    fetchStats();
+    updateClock();
+  </script>
+</body>
+</html>

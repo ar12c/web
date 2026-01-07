@@ -27,6 +27,15 @@
             'accent-blue': '#1e3a8a',
             'dark-paper': '#121212',
             'dark-ink': '#e5e7eb',
+          },
+          animation: {
+            'blink-fast': 'blink 1s step-end infinite',
+          },
+          keyframes: {
+            blink: {
+              '0%, 100%': { opacity: 1 },
+              '50%': { opacity: 0 },
+            }
           }
         }
       }
@@ -153,13 +162,23 @@
           </p>
         </div>
 
-        <!-- NEW BUTTON INTERACTION -->
-        <div class="relative inline-block">
-          <button id="initializeBtn" class="liquid-glass-smooth px-12 py-5 font-black uppercase tracking-[0.3em] text-sm md:text-base flex items-center gap-4 group">
-            <span>Try it now</span>
-            <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
-          </button>
-          <p class="mt-4 text-[10px] font-black uppercase tracking-widest opacity-40">Ready for deployment.</p>
+        <!-- BUTTONS INTERACTION -->
+        <div class="flex flex-wrap gap-4 items-start mb-4">
+          <div class="relative inline-block">
+            <button id="initializeBtn" class="liquid-glass-smooth px-12 py-5 font-black uppercase tracking-[0.3em] text-sm md:text-base flex items-center gap-4 group">
+              <span>Try it now</span>
+              <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+            </button>
+            <p class="mt-4 text-[10px] font-black uppercase tracking-widest opacity-40">Ready for deployment.</p>
+          </div>
+
+          <div class="relative inline-block">
+            <button id="liveTrainingBtn" class="liquid-glass-smooth px-12 py-5 font-black uppercase tracking-[0.3em] text-sm md:text-base flex items-center gap-4 group">
+              <i class="fa-solid fa-circle text-[8px] text-red-600 animate-blink-fast"></i>
+              <span>Live Training</span>
+            </button>
+            <p class="mt-4 text-[10px] font-black uppercase tracking-widest opacity-40">Active Stream.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -281,6 +300,13 @@
     if (initializeBtn) {
       initializeBtn.addEventListener('click', () => {
         window.location.href = `chat.html`;
+      });
+    }
+
+    const liveTrainingBtn = document.getElementById('liveTrainingBtn');
+    if (liveTrainingBtn) {
+      liveTrainingBtn.addEventListener('click', () => {
+        window.location.href = `Live.html`;
       });
     }
   </script>
