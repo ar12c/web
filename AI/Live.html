@@ -97,7 +97,7 @@
 
   <header class="max-w-screen-2xl mx-auto px-4 md:px-16 pt-6 md:pt-8">
     <nav class="mb-4 md:mb-6">
-      <a href="OkemoLLM.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
+      <a href="#" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
         <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
         <span>Back</span>
       </a>
@@ -130,7 +130,7 @@
     
     <section class="grid grid-cols-1 lg:grid-cols-3 border-b-2 border-ink/10 dark:border-zinc-800 mb-8 md:mb-10">
       <div class="lg:col-span-2 py-6 md:py-10 lg:pr-12 text-center lg:text-left flex flex-col items-center lg:items-start">
-        <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1 inline-block mb-4">LATEST LOSS RATE</span>
+        <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1 inline-block mb-4">CURRENT INSTANT LOSS</span>
         <h2 id="val-loss" class="font-serif text-[clamp(3.5rem,15vw,10vw)] lg:text-[clamp(4rem,12vw,12vw)] font-black italic leading-[0.8] tracking-tighter mb-6 md:mb-20 animate-word" style="animation-delay: 0.3s">
           0.0000
         </h2>
@@ -169,7 +169,7 @@
     <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 mb-8 md:mb-12">
       <div class="grid grid-cols-2 md:grid-cols-4">
         
-        <!-- Iteration: Right and Bottom border on mobile, Right on desktop -->
+        <!-- Iteration -->
         <div class="p-6 md:p-8 border-r border-b border-ink/20 dark:border-white/20 md:border-b-0 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
@@ -183,21 +183,21 @@
           </div>
         </div>
 
-        <!-- LR: Bottom border on mobile, Right on desktop -->
+        <!-- Moving Avg Loss (Replaced LR) -->
         <div class="p-6 md:p-8 border-b border-ink/20 dark:border-white/20 md:border-b-0 md:border-r group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-gauge-high text-xs md:text-base"></i>
+              <i class="fa-solid fa-wave-square text-xs md:text-base"></i>
             </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">LR</span>
+            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Avg Loss</span>
           </div>
           <div class="flex flex-col">
-            <span id="val-lr" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0.0000</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Optimizer</span>
+            <span id="val-avg-loss" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0.0000</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Moving Avg</span>
           </div>
         </div>
 
-        <!-- VRAM: Right border always -->
+        <!-- VRAM -->
         <div class="p-6 md:p-8 border-r border-ink/20 dark:border-white/20 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
@@ -211,7 +211,7 @@
           </div>
         </div>
 
-        <!-- Runtime: No border -->
+        <!-- Runtime -->
         <div class="p-6 md:p-8 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
@@ -259,16 +259,17 @@
         const data = await response.json();
 
         if (data) {
+          // Main metrics mapping based on your provided JSON format
           document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
+          document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
           document.getElementById('val-step').innerText = (data.update || 0).toLocaleString();
           document.getElementById('val-vram').innerText = (data.vram_gb || 0).toFixed(2) + " GB";
-          
-          const lrVal = data.lr || 0;
-          document.getElementById('val-lr').innerText = lrVal < 0.0001 ? lrVal.toExponential(2) : lrVal.toFixed(6);
           document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
 
+          // Status and Pulse Logic
+          // Using time_elapsed as a proxy for activity if timestamp isn't provided
           const now = Date.now() / 1000;
-          const lastUpdate = data.timestamp || now; 
+          const lastUpdate = data.timestamp || (now - 5); // Fallback to live if no timestamp
           const isLive = (now - lastUpdate) < STALE_THRESHOLD_SECONDS;
           
           const dot = document.getElementById('status-dot');
@@ -307,8 +308,11 @@
       }
     }
 
+    // Polling interval
     setInterval(fetchStats, 5000);
     setInterval(updateClock, 1000);
+    
+    // Initial calls
     fetchStats();
     updateClock();
   </script>
