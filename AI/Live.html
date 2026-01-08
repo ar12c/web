@@ -262,7 +262,7 @@
           // Main metrics mapping based on your provided JSON format
           document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
           document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
-          document.getElementById('val-step').innerText = (data.update || 0).toLocaleString();
+          document.getElementById('val-step').innerText = (data.token_display || 0).toLocaleString();
           document.getElementById('val-vram').innerText = (data.vram_gb || 0).toFixed(2) + " GB";
           document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
 
