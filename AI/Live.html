@@ -117,7 +117,7 @@
       <div class="flex gap-4 md:gap-6">
         <span>Vol. 03</span>
       </div>
-      <div id="date-stamp" class="text-right italic uppercase">JANUARY 7, 2026</div>
+      <div id="date-stamp" class="text-right italic uppercase">JANUARY 9, 2026</div>
     </div>
     
     <div class="py-6 md:py-10 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 flex items-center justify-between gap-4">
@@ -176,7 +176,7 @@
     <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 mb-8 md:mb-12">
       <div class="grid grid-cols-2 md:grid-cols-4">
         
-        <!-- Tokens -->
+        <!-- Throughput (Total Tokens) -->
         <div class="p-6 md:p-8 border-r border-b border-ink/20 dark:border-white/20 md:border-b-0 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
@@ -186,35 +186,35 @@
           </div>
           <div class="flex flex-col">
             <span id="val-step" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Tokens</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Total Tokens</span>
           </div>
         </div>
 
-        <!-- Moving Avg Loss -->
+        <!-- Updates / Batch -->
         <div class="p-6 md:p-8 border-b border-ink/20 dark:border-white/20 md:border-b-0 md:border-r group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-wave-square text-xs md:text-base"></i>
+              <i class="fa-solid fa-rotate text-xs md:text-base"></i>
             </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Avg Loss</span>
+            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Session Updates</span>
           </div>
           <div class="flex flex-col">
-            <span id="val-avg-loss" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0.0000</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Target: <span id="val-target-loss">--</span></span>
+            <span id="val-updates" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Batch Size: <span id="val-batch">--</span></span>
           </div>
         </div>
 
-        <!-- VRAM -->
+        <!-- VRAM (Allocated GB) -->
         <div class="p-6 md:p-8 border-r border-ink/20 dark:border-white/20 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
               <i class="fa-solid fa-microchip text-xs md:text-base"></i>
             </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Memory Usage</span>
+            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">VRAM GB</span>
           </div>
           <div class="flex flex-col">
             <span id="val-vram" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0.00 GB</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Allocated</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Free: <span id="val-vram-free">--</span></span>
           </div>
         </div>
 
@@ -237,14 +237,14 @@
 
     <!-- Charts Section -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-      <!-- Loss Convergence -->
+      <!-- Instant Loss Rate -->
       <div class="border-2 border-ink dark:border-zinc-800 p-6 md:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-3">
-            <i class="fa-solid fa-chart-area text-accent-blue"></i>
-            <h3 class="font-black uppercase tracking-widest text-xs">Loss Convergence</h3>
+            <i class="fa-solid fa-chart-line text-accent-blue"></i>
+            <h3 class="font-black uppercase tracking-widest text-xs">Instant Loss Rate</h3>
           </div>
-          <span class="text-[8px] font-bold opacity-40">LIVE STREAM</span>
+          <span class="text-[8px] font-bold opacity-40">RAW DATA</span>
         </div>
         <div class="chart-container">
           <canvas id="lossChart"></canvas>
@@ -293,8 +293,8 @@
     const STALE_THRESHOLD_SECONDS = 300; // 5 minutes inactivity trigger
     
     let history = []; 
-    let lastKnownStep = null;
-    let lastDataChangeTime = Date.now(); // Track when the numbers last actually updated
+    let lastKnownUpdate = null; // Mapping 'update' key from your JSON
+    let lastDataChangeTime = Date.now(); 
 
     // Chart.js Instances
     let lossChart, vramChart;
@@ -310,14 +310,15 @@
         data: {
           labels: [],
           datasets: [{
-            label: 'Avg Loss',
+            label: 'Instant Loss',
             data: [],
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             fill: true,
-            tension: 0.4,
-            borderWidth: 3,
-            pointRadius: 0
+            tension: 0.1,
+            borderWidth: 2,
+            pointRadius: 2,
+            pointBackgroundColor: '#3b82f6'
           }]
         },
         options: {
@@ -379,41 +380,46 @@
         const data = await response.json();
 
         if (data) {
-          // Check for Heartbeat / Inactivity
-          const currentStep = data.token_display;
+          // Heartbeat Tracking using 'update' key
+          const currentUpdate = data.update;
           const now = Date.now();
           
-          if (currentStep !== lastKnownStep) {
-            // Numbers have changed, reset timer
+          if (currentUpdate !== lastKnownUpdate) {
             lastDataChangeTime = now;
-            lastKnownStep = currentStep;
+            lastKnownUpdate = currentUpdate;
           }
 
           const secondsSinceUpdate = (now - lastDataChangeTime) / 1000;
           const isStale = secondsSinceUpdate >= STALE_THRESHOLD_SECONDS;
 
-          // Update DOM
+          // Update Grid Stats mapping to your JSON keys
           document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
-          document.getElementById('val-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
-          document.getElementById('val-target-loss').innerText = data.target_loss || "2.00";
-          document.getElementById('val-step').innerText = (data.token_display || 0).toLocaleString();
+          document.getElementById('val-step').innerText = (data.total_tokens || 0).toLocaleString();
+          document.getElementById('val-updates').innerText = (data.update || 0).toLocaleString();
+          document.getElementById('val-batch').innerText = data.batch_size || "--";
           document.getElementById('val-vram').innerText = (data.vram_gb || 0).toFixed(2) + " GB";
+          document.getElementById('val-vram-free').innerText = (data.vram_free || 0).toFixed(2) + " GB";
           document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
 
-          // Update History & Charts
+          // Update History Object
           const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          history.push({ time: timeLabel, avg: data.moving_avg_loss, vram: data.vram_gb });
-          if (history.length > 20) history.shift();
+          history.push({ 
+            time: timeLabel, 
+            loss: data.loss, 
+            vram: data.vram_gb 
+          });
+          if (history.length > 30) history.shift();
 
+          // Redraw Charts
           lossChart.data.labels = history.map(h => h.time);
-          lossChart.data.datasets[0].data = history.map(h => h.avg);
+          lossChart.data.datasets[0].data = history.map(h => h.loss);
           lossChart.update('none');
 
           vramChart.data.labels = history.map(h => h.time);
           vramChart.data.datasets[0].data = history.map(h => h.vram);
           vramChart.update('none');
 
-          // Status & Activity Display Logic
+          // Status Management
           const dot = document.getElementById('status-dot');
           const text = document.getElementById('status-text');
           const activity = document.getElementById('activity-text');
@@ -421,14 +427,12 @@
           const errMsg = document.getElementById('error-message');
           
           if (isStale) {
-            // TRIGGER: SERVER DOWN (No update for 5 mins)
             dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-600";
             text.innerText = "Server Down";
             activity.innerHTML = "Telemetry Stalled <br>Server Offline";
             alert.classList.remove('hidden');
             errMsg.innerText = "CRITICAL: SERVER DOWN - NO DATA UPDATE IN 5 MINUTES";
           } else {
-            // Live Status
             dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]";
             text.innerText = "Feed Connected";
             activity.innerHTML = "Pre-training <br>In Progress";
