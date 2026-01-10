@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OLM training</title>
+  <title>OLM-2.1B Live Telemetry</title>
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-
+  
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
@@ -44,277 +47,230 @@
         background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E");
       }
     }
-
+    
     @keyframes revealBlur {
       0% { opacity: 0; transform: translateY(15px); filter: blur(10px); }
       100% { opacity: 1; transform: translateY(0); filter: blur(0); }
     }
     .animate-word {
       display: inline-block;
-      opacity: 0;
       animation: revealBlur 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
 
+    .chart-container {
+      height: 300px;
+      width: 100%;
+      filter: grayscale(1) contrast(1.2);
+      transition: filter 0.3s ease;
+    }
+    .chart-container:hover {
+      filter: grayscale(0) contrast(1);
+    }
+
     .liquid-glass-smooth {
-      border-radius: 0px;
-      transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
-                  transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6),
-                  background 0.4s ease,
-                  box-shadow 0.4s ease,
-                  border-color 0.4s ease,
-                  color 0.3s ease;
-      background: #f9f7f2; 
       border: 3px solid #1a1a1a;
-      z-index: 110; 
-      position: relative;
+      background: #f9f7f2; 
+      transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
     }
     
     @media (prefers-color-scheme: dark) {
-      .liquid-glass-smooth {
-        background: hsl(0, 0%, 12%);
-        border-color: #3f3f46;
-        color: #e5e7eb;
-      }
+      .liquid-glass-smooth { background: #121212; border-color: #3f3f46; color: #e5e7eb; }
     }
 
     .liquid-glass-smooth:hover {
-      border-radius: 100px !important;
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(30, 58, 138, 0.95) !important;
+      border-radius: 100px;
+      background: #1e3a8a !important;
       border-color: #3b82f6;
-      box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.6),
-                  inset 0 0 10px rgba(255, 255, 255, 0.1);
       transform: translateY(-8px) scale(1.05);
-      color: #ffffff !important;
+      color: white !important;
     }
-
-    html { scroll-behavior: smooth; }
-    ::selection { background: #1e3a8a; color: white; }
   </style>
 </head>
 <body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 overflow-x-hidden">
 
-  <header class="max-w-screen-2xl mx-auto px-4 md:px-16 pt-6 md:pt-8">
-    <nav class="mb-4 md:mb-6">
-      <a href="OkemoLLM.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
-        <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
-        <span>Back</span>
-      </a>
-    </nav>
+  <div id="root"></div>
 
-    <div class="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">
-      <div class="flex gap-4 md:gap-6">
-        <span>Vol. 03</span>
-      </div>
-      <div id="date-stamp" class="text-right italic uppercase">JANUARY 7, 2026</div>
-    </div>
-    
-    <div class="py-6 md:py-10 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-4 md:gap-6">
-        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OLM logo" class="w-12 h-12 md:w-16 md:h-16 grayscale border-2 border-ink dark:border-zinc-700 p-1 bg-white flex-shrink-0"/>
-        <div class="leading-none">
-          <h1 class="font-serif text-5xl md:text-8xl font-black uppercase tracking-tighter animate-word" style="animation-delay: 0.1s">OLM</h1>
-          <p class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] ml-1 opacity-50">OLM 2B</p>
-        </div>
-      </div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, Defs, LinearGradient, Stop } = Recharts;
 
-      <div class="flex items-center gap-1.5 self-start md:self-center mt-2 md:mt-0">
-        <div id="status-dot" class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500"></div>
-        <span id="status-text" class="text-[7px] md:text-[9px] font-black uppercase tracking-widest opacity-60 whitespace-nowrap">Feed Disconnected</span>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-screen-2xl mx-auto px-4 md:px-16 py-6 md:py-10">
-    
-    <section class="grid grid-cols-1 lg:grid-cols-3 border-b-2 border-ink/10 dark:border-zinc-800 mb-8 md:mb-10">
-      <div class="lg:col-span-2 py-6 md:py-10 lg:pr-12 text-center lg:text-left flex flex-col items-center lg:items-start">
-        <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1 inline-block mb-4">CURRENT INSTANT LOSS</span>
-        <h2 id="val-loss" class="font-serif text-[clamp(3.5rem,15vw,10vw)] lg:text-[clamp(4rem,12vw,12vw)] font-black italic leading-[0.8] tracking-tighter mb-6 md:mb-20 animate-word" style="animation-delay: 0.3s">
-          0.0000
-        </h2>
-        <div class="max-w-2xl mx-auto lg:mx-0">
-          <p class="text-lg md:text-2xl font-black leading-tight tracking-tight uppercase">
-            AN OKEMO ENGINE BUILT ON THE PRINCIPLES OF <br class="hidden md:block"> <span class="bg-ink dark:bg-zinc-700 text-paper dark:text-white px-2">THE 3Es</span>: EXPRESSIVE, EXPEDITIOUS, AND ECONOMICAL.
-          </p>
-        </div>
-      </div>
-      
-      <div class="py-8 md:py-10 lg:pl-12 lg:border-l border-ink/10 dark:border-zinc-800 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
-        <div class="space-y-6 w-full max-w-sm lg:max-w-none">
-          <div>
-            <div class="mb-6 md:mb-8 flex justify-center lg:justify-start">
-               <a href="https://voidai.app" target="_blank" class="liquid-glass-smooth inline-flex items-center gap-3 p-1 md:p-1.5 w-fit justify-start text-left">
-                <img src="https://voidai.app/voidai.png" alt="VoidAI" class="w-10 h-10 md:w-16 md:h-16 object-contain flex-shrink-0">
-                <div class="flex flex-col pr-2 md:pr-4">
-                  <span class="text-[6px] md:text-[8px] font-bold uppercase tracking-[0.2em] opacity-50 mb-0.5 md:mb-1">SPONSORED BY</span>
-                  <span class="text-sm md:text-xl font-black uppercase tracking-widest font-serif leading-none">voidai.app</span>
-                </div>
-               </a>
-            </div>
-
-            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest opacity-40 block mb-2">Current Activity</span>
-            <p id="activity-text" class="font-serif text-xl md:text-2xl font-black italic leading-none uppercase">Pre-training <br>Standby</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div id="error-alert" class="hidden border-2 border-red-500 p-4 mb-8 flex items-center justify-center lg:justify-start gap-3 text-red-500 font-black uppercase tracking-widest text-[10px] md:text-xs">
-      <i class="fa-solid fa-circle-exclamation"></i>
-      <span>SYSTEM FAULT: DATA DISRUPTION</span>
-    </div>
-
-    <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 mb-8 md:mb-12">
-      <div class="grid grid-cols-2 md:grid-cols-4">
-        
-        <!-- Iteration -->
-        <div class="p-6 md:p-8 border-r border-b border-ink/20 dark:border-white/20 md:border-b-0 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-chart-line text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Tokens Processed</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-step" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Tokens</span>
-          </div>
-        </div>
-
-        <!-- Moving Avg Loss (Replaced LR) -->
-        <div class="p-6 md:p-8 border-b border-ink/20 dark:border-white/20 md:border-b-0 md:border-r group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-wave-square text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Avg Loss</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-avg-loss" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0.0000</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Moving Avg</span>
-          </div>
-        </div>
-
-        <!-- VRAM -->
-        <div class="p-6 md:p-8 border-r border-ink/20 dark:border-white/20 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-database text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">VRAM</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-vram" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0.00 GB</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Allocated</span>
-          </div>
-        </div>
-
-        <!-- Runtime -->
-        <div class="p-6 md:p-8 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-clock text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Runtime</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-elapsed" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">0s</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Elapsed</span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <footer class="px-4 md:px-16 py-8 md:py-12 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6 md:gap-8 border-t border-ink/5 dark:border-white/5 mt-6 md:mt-10">
-    <div class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-      &copy; 2026 OKEMO CODE
-    </div>
-    <div class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-      SYSTEM CLOCK: <span id="clock-display" class="font-mono">00:00:00</span>
-    </div>
-  </footer>
-
-  <script>
     const DATABASE_URL = "https://olmlive-4a343-default-rtdb.firebaseio.com/stats.json";
-    const STALE_THRESHOLD_SECONDS = 300; 
 
-    function formatTime(seconds) {
-      if (!seconds) return "0s";
-      const h = Math.floor(seconds / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      const s = Math.floor(seconds % 60);
-      if (h > 0) return `${h}h ${m}m`;
-      if (m > 0) return `${m}m ${s}s`;
-      return `${s}s`;
-    }
+    const App = () => {
+      const [stats, setStats] = useState(null);
+      const [history, setHistory] = useState([]);
+      const [isLive, setIsLive] = useState(false);
+      const [error, setError] = useState(false);
 
-    async function fetchStats() {
-      try {
-        const response = await fetch(DATABASE_URL);
-        if (!response.ok) throw new Error("Fetch failed");
-        const data = await response.json();
-
-        if (data) {
-          // Main metrics mapping based on your provided JSON format
-          document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
-          document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
-          document.getElementById('val-step').innerText = (data.token_display || 0).toLocaleString();
-          document.getElementById('val-vram').innerText = (data.vram_gb || 0).toFixed(2) + " GB";
-          document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
-
-          // Status and Pulse Logic
-          // Using time_elapsed as a proxy for activity if timestamp isn't provided
-          const now = Date.now() / 1000;
-          const lastUpdate = data.timestamp || (now - 5); // Fallback to live if no timestamp
-          const isLive = (now - lastUpdate) < STALE_THRESHOLD_SECONDS;
+      const fetchData = async () => {
+        try {
+          const response = await fetch(DATABASE_URL);
+          const data = await response.json();
           
-          const dot = document.getElementById('status-dot');
-          const text = document.getElementById('status-text');
-          const activity = document.getElementById('activity-text');
-          
-          if (isLive) {
-            dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]";
-            text.innerText = "Feed Connected";
-            activity.innerHTML = "Pre-training <br>In Progress";
-          } else {
-            dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500";
-            text.innerText = "Feed Disconnected";
-            activity.innerHTML = "Pre-training <br>Paused / Offline";
+          if (data) {
+            setStats(data);
+            setIsLive(true);
+            setError(false);
+            setHistory(prev => {
+              const newPoint = { 
+                time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }), 
+                loss: data.loss, 
+                avg: data.moving_avg_loss,
+                vram: data.vram_gb 
+              };
+              return [...prev, newPoint].slice(-20);
+            });
           }
-
-          document.getElementById('error-alert').classList.add('hidden');
+        } catch (err) {
+          setError(true);
+          setIsLive(false);
         }
-      } catch (e) {
-        document.getElementById('error-alert').classList.remove('hidden');
-        document.getElementById('status-dot').className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500";
-        document.getElementById('status-text').innerText = "Feed Disconnected";
-      }
-    }
+      };
 
-    function updateClock() {
-      const now = new Date();
-      const clockDisplay = document.getElementById('clock-display');
-      if (clockDisplay) clockDisplay.textContent = now.toLocaleTimeString('en-GB', { hour12: false });
-      
-      const dateStamp = document.getElementById('date-stamp');
-      if (dateStamp) {
-        dateStamp.textContent = now.toLocaleDateString('en-US', { 
-            month: 'long', day: 'numeric', year: 'numeric' 
-        }).toUpperCase();
-      }
-    }
+      useEffect(() => {
+        fetchData();
+        const interval = setInterval(fetchData, 5000);
+        return () => clearInterval(interval);
+      }, []);
 
-    // Polling interval
-    setInterval(fetchStats, 5000);
-    setInterval(updateClock, 1000);
-    
-    // Initial calls
-    fetchStats();
-    updateClock();
+      return (
+        <div className="max-w-screen-2xl mx-auto px-4 md:px-16 pt-6 md:pt-8">
+          {/* Header */}
+          <header>
+            <nav className="mb-4 md:mb-6">
+              <a href="#" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
+                <i className="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
+                <span>Network</span>
+              </a>
+            </nav>
+
+            <div className="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">
+              <div className="flex gap-4 md:gap-6"><span>Vol. 03</span><span>Issue 2.1B</span></div>
+              <div className="text-right italic uppercase">{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+            </div>
+            
+            <div className="py-6 md:py-10 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 md:gap-6">
+                <img src="https://avatars.githubusercontent.com/u/179893130?v=4" className="w-12 h-12 md:w-20 md:h-20 grayscale border-2 border-ink dark:border-zinc-700 p-1 bg-white"/>
+                <div className="leading-none">
+                  <h1 className="font-serif text-5xl md:text-9xl font-black uppercase tracking-tighter animate-word">OLM</h1>
+                  <p className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.4em] ml-1 opacity-50">Gemma-2B Architecture</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 self-start md:self-center mt-2 md:mt-0">
+                <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500'}`}></div>
+                <span className="text-[7px] md:text-[9px] font-black uppercase tracking-widest opacity-60">
+                  {isLive ? 'Feed Connected' : 'Feed Disconnected'}
+                </span>
+              </div>
+            </div>
+          </header>
+
+          <main className="py-6 md:py-10">
+            {/* Hero Section */}
+            <section className="grid grid-cols-1 lg:grid-cols-3 border-b-2 border-ink/10 dark:border-zinc-800 mb-8 md:mb-10">
+              <div className="lg:col-span-2 py-6 md:py-10 lg:pr-12 text-center lg:text-left flex flex-col items-center lg:items-start">
+                <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1 inline-block mb-4">CURRENT INSTANT LOSS</span>
+                <h2 className="font-serif text-[clamp(3.5rem,15vw,10vw)] lg:text-[clamp(4rem,12vw,12vw)] font-black italic leading-[0.8] tracking-tighter mb-6 md:mb-20 animate-word">
+                  {stats?.loss?.toFixed(4) || "0.0000"}
+                </h2>
+                <div className="max-w-2xl">
+                  <p className="text-lg md:text-2xl font-black leading-tight tracking-tight uppercase">
+                    AN OKEMO ENGINE BUILT ON THE PRINCIPLES OF <br/> 
+                    <span className="bg-ink dark:bg-zinc-700 text-paper dark:text-white px-2">THE 3Es</span>: EXPRESSIVE, EXPEDITIOUS, AND ECONOMICAL.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="py-8 md:py-10 lg:pl-12 lg:border-l border-ink/10 dark:border-zinc-800 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
+                <div className="mb-8">
+                   <a href="https://voidai.app" target="_blank" className="liquid-glass-smooth inline-flex items-center gap-3 p-2">
+                    <img src="https://voidai.app/voidai.png" className="w-10 h-10 md:w-14 md:h-14 object-contain"></img>
+                    <div className="flex flex-col pr-4 text-left">
+                      <span className="text-[7px] font-bold uppercase opacity-50">SPONSORED BY</span>
+                      <span className="text-sm md:text-lg font-black uppercase tracking-widest font-serif leading-none">voidai.app</span>
+                    </div>
+                   </a>
+                </div>
+                <span className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-2 block">Current Activity</span>
+                <p className="font-serif text-xl md:text-2xl font-black italic leading-none uppercase">
+                  {isLive ? 'Pre-training\nIn Progress' : 'Pre-training\nOffline'}
+                </p>
+              </div>
+            </section>
+
+            {/* Stats Bar */}
+            <section className="border-y-2 border-ink dark:border-zinc-800 mb-10">
+              <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-ink/10 dark:divide-white/10">
+                <StatBox label="Tokens" value={stats?.token_display?.toLocaleString() || "0"} icon="fa-chart-line" />
+                <StatBox label="Avg Loss" value={stats?.moving_avg_loss?.toFixed(4) || "0.0000"} icon="fa-wave-square" />
+                <StatBox label="VRAM" value={(stats?.vram_gb?.toFixed(2) || "0.00") + " GB"} icon="fa-database" />
+                <StatBox label="Elapsed" value={Math.floor((stats?.time_elapsed || 0) / 3600) + " Hours"} icon="fa-clock" />
+              </div>
+            </section>
+
+            {/* Charts Section */}
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-10">
+              <div className="border-t-2 border-ink pt-4">
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-accent-blue rounded-full"></span> Convergence Metric
+                </h3>
+                <div className="chart-container">
+                  <ResponsiveContainer>
+                    <AreaChart data={history}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ccc" />
+                      <XAxis dataKey="time" hide />
+                      <YAxis domain={['auto', 'auto']} fontSize={10} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={{background: '#f9f7f2', border: '2px solid #1a1a1a', fontFamily: 'serif'}} />
+                      <Area type="monotone" dataKey="avg" stroke="#1a1a1a" fill="#1e3a8a" fillOpacity={0.1} strokeWidth={2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="border-t-2 border-ink pt-4">
+                <h3 className="text-xs font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full"></span> VRAM Allocation
+                </h3>
+                <div className="chart-container">
+                  <ResponsiveContainer>
+                    <LineChart data={history}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ccc" />
+                      <XAxis dataKey="time" hide />
+                      <YAxis domain={[0, 24]} fontSize={10} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={{background: '#f9f7f2', border: '2px solid #1a1a1a', fontFamily: 'serif'}} />
+                      <Line type="stepAfter" dataKey="vram" stroke="#1a1a1a" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </section>
+          </main>
+
+          <footer className="border-t-[8px] border-double border-ink dark:border-zinc-800 py-8 flex flex-col md:flex-row justify-between items-center text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
+            <div>&copy; 2026 OKEMO CODE</div>
+            <div className="flex gap-6">
+              <span>Optimizer: PagedAdamW8bit</span>
+              <span>Precision: BFloat16</span>
+            </div>
+          </footer>
+        </div>
+      );
+    };
+
+    const StatBox = ({ label, value, icon }) => (
+      <div className="p-6 md:p-8 hover:bg-ink/5 transition-colors">
+        <div className="flex items-center gap-3 mb-4">
+          <i className={`fa-solid ${icon} text-xs opacity-60`}></i>
+          <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] opacity-60">{label}</span>
+        </div>
+        <div className="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">{value}</div>
+      </div>
+    );
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
