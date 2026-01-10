@@ -15,7 +15,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -26,6 +26,7 @@
             inter: ['Inter', 'sans-serif'],
             serif: ['Playfair Display', 'serif'],
             sans: ['Libre Franklin', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
             paper: '#f9f7f2',
@@ -33,6 +34,7 @@
             'accent-blue': '#1e3a8a',
             'dark-paper': '#121212',
             'dark-ink': '#e5e7eb',
+            'macos-dark': '#2d2d2d',
           }
         }
       }
@@ -49,57 +51,65 @@
       }
     }
 
-    @keyframes revealBlur {
-      0% { opacity: 0; transform: translateY(15px); filter: blur(10px); }
-      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-    .animate-word {
-      display: inline-block;
-      opacity: 0;
-      animation: revealBlur 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    /* macOS 9 Styled Terminal - Dark Mode Edition */
+    .macos-window {
+      background-color: #333333;
+      border: 1px solid #1a1a1a;
+      box-shadow: inset 1px 1px 0px #444444, 4px 4px 15px rgba(0,0,0,0.4);
     }
 
-    .liquid-glass-smooth {
-      border-radius: 0px;
-      transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
-                  transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6),
-                  background 0.4s ease,
-                  box-shadow 0.4s ease,
-                  border-color 0.4s ease,
-                  color 0.3s ease;
-      background: #f9f7f2; 
-      border: 3px solid #1a1a1a;
-      z-index: 110; 
+    .macos-title-bar {
+      background: #333333;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      border-bottom: 1px solid #1a1a1a;
       position: relative;
     }
-    
-    @media (prefers-color-scheme: dark) {
-      .liquid-glass-smooth {
-        background: hsl(0, 0%, 12%);
-        border-color: #3f3f46;
-        color: #e5e7eb;
-      }
+
+    .macos-stripes {
+      position: absolute;
+      top: 6px;
+      left: 32px;
+      right: 52px;
+      height: 12px;
+      background-image: linear-gradient(#444 1px, transparent 1px);
+      background-size: 100% 2px;
     }
 
-    .liquid-glass-smooth:hover {
-      border-radius: 100px !important;
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(30, 58, 138, 0.95) !important;
-      border-color: #3b82f6;
-      box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.6),
-                  inset 0 0 10px rgba(255, 255, 255, 0.1);
-      transform: translateY(-8px) scale(1.05);
-      color: #ffffff !important;
+    .macos-box {
+      width: 14px;
+      height: 14px;
+      background: #333333;
+      border: 1px solid #1a1a1a;
+      box-shadow: inset 1px 1px 0px #444444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
     }
 
-    html { scroll-behavior: smooth; }
-    ::selection { background: #1e3a8a; color: white; }
+    .macos-content-area {
+      background: #0a0a0a;
+      margin: 4px;
+      border: 1px solid #1a1a1a;
+      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.8);
+      padding: 12px;
+    }
 
     .chart-container {
       position: relative;
       height: 300px;
       width: 100%;
+    }
+
+    ::-webkit-scrollbar { width: 14px; }
+    ::-webkit-scrollbar-track { background: #2d2d2d; border-left: 1px solid #1a1a1a; }
+    ::-webkit-scrollbar-thumb { 
+      background: #444444; 
+      border: 1px solid #1a1a1a;
+      box-shadow: inset 1px 1px 0px #555555;
     }
   </style>
 </head>
@@ -138,7 +148,7 @@
 
   <main class="max-w-screen-2xl mx-auto px-4 md:px-16 py-6 md:py-10">
     
-    <!-- Hero Section -->
+    <!-- Hero Stats -->
     <section class="grid grid-cols-1 lg:grid-cols-3 border-b-2 border-ink/10 dark:border-zinc-800 mb-8 md:mb-10">
       <div class="lg:col-span-2 py-6 md:py-10 lg:pr-12 text-center lg:text-left flex flex-col items-center lg:items-start">
         <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1 inline-block mb-4">CURRENT INSTANT LOSS</span>
@@ -176,7 +186,6 @@
     <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 mb-8 md:mb-12">
       <div class="grid grid-cols-2 md:grid-cols-4">
         
-        <!-- Throughput (Total Tokens) -->
         <div class="p-6 md:p-8 border-r border-b border-ink/20 dark:border-white/20 md:border-b-0 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
@@ -190,35 +199,32 @@
           </div>
         </div>
 
-        <!-- Updates / Batch -->
         <div class="p-6 md:p-8 border-b border-ink/20 dark:border-white/20 md:border-b-0 md:border-r group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
               <i class="fa-solid fa-rotate text-xs md:text-base"></i>
             </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Session Updates</span>
+            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">Avg Loss</span>
           </div>
           <div class="flex flex-col">
-            <span id="val-updates" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Batch Size: <span id="val-batch">--</span></span>
+            <span id="val-avg-loss" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0.0000</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Update: <span id="val-update-id">--</span></span>
           </div>
         </div>
 
-        <!-- VRAM (Allocated GB) -->
         <div class="p-6 md:p-8 border-r border-ink/20 dark:border-white/20 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
               <i class="fa-solid fa-microchip text-xs md:text-base"></i>
             </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">VRAM GB</span>
+            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] opacity-60">VRAM Free</span>
           </div>
           <div class="flex flex-col">
-            <span id="val-vram" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0.00 GB</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Free: <span id="val-vram-free">--</span></span>
+            <span id="val-vram-free" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0.00 GB</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-1 md:mt-2 tracking-widest opacity-40">Available</span>
           </div>
         </div>
 
-        <!-- Runtime -->
         <div class="p-6 md:p-8 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
@@ -237,31 +243,58 @@
 
     <!-- Charts Section -->
     <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-      <!-- Instant Loss Rate -->
       <div class="border-2 border-ink dark:border-zinc-800 p-6 md:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-3">
             <i class="fa-solid fa-chart-line text-accent-blue"></i>
             <h3 class="font-black uppercase tracking-widest text-xs">Instant Loss Rate</h3>
           </div>
-          <span class="text-[8px] font-bold opacity-40">RAW DATA</span>
+          <span class="text-[8px] font-bold opacity-40">LIVE TELEMETRY</span>
         </div>
         <div class="chart-container">
           <canvas id="lossChart"></canvas>
         </div>
       </div>
 
-      <!-- VRAM Stability -->
       <div class="border-2 border-ink dark:border-zinc-800 p-6 md:p-8">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-3">
             <i class="fa-solid fa-server text-purple-600"></i>
-            <h3 class="font-black uppercase tracking-widest text-xs">Memory Stability</h3>
+            <h3 class="font-black uppercase tracking-widest text-xs">Token Accumulation</h3>
           </div>
-          <span class="text-[8px] font-bold opacity-40">VRAM GB</span>
+          <span class="text-[8px] font-bold opacity-40">TOTAL TOKENS</span>
         </div>
         <div class="chart-container">
-          <canvas id="vramChart"></canvas>
+          <canvas id="tokenChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- macOS 9 Styled Terminal - Dark/White Theme -->
+    <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 pt-8 mb-12">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fa-solid fa-terminal text-xs"></i>
+        <h3 class="font-black uppercase tracking-[0.3em] text-xs">System Console</h3>
+      </div>
+      
+      <div class="macos-window w-full mx-auto max-w-5xl">
+        <div class="macos-title-bar">
+          <div class="macos-box"></div>
+          <div class="macos-stripes"></div>
+          <!-- Title text removed per request -->
+          <div class="flex gap-1 absolute right-1.5">
+            <div class="macos-box">
+              <div class="w-1.5 h-1.5 border-t border-l border-white/20"></div>
+            </div>
+            <div class="macos-box">
+              <div class="w-1.5 h-1.5 border border-white/20"></div>
+            </div>
+          </div>
+        </div>
+        <div class="macos-content-area">
+          <div id="terminal-body" class="h-64 md:h-96 overflow-y-auto font-mono text-[10px] md:text-xs leading-relaxed text-white whitespace-pre-wrap selection:bg-accent-blue selection:text-white">
+            [SYSTEM] Initializing stream...
+          </div>
         </div>
       </div>
     </section>
@@ -288,16 +321,14 @@
   </footer>
 
   <script>
-    // Configuration
     const DATABASE_URL = "https://olmlive-4a343-default-rtdb.firebaseio.com/stats.json";
-    const STALE_THRESHOLD_SECONDS = 300; // 5 minutes inactivity trigger
+    const STALE_THRESHOLD_SECONDS = 300; 
     
     let history = []; 
-    let lastKnownUpdate = null; // Mapping 'update' key from your JSON
+    let lastKnownUpdate = null;
     let lastDataChangeTime = Date.now(); 
 
-    // Chart.js Instances
-    let lossChart, vramChart;
+    let lossChart, tokenChart;
 
     function initCharts() {
       const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -310,15 +341,14 @@
         data: {
           labels: [],
           datasets: [{
-            label: 'Instant Loss',
+            label: 'Loss',
             data: [],
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             fill: true,
             tension: 0.1,
             borderWidth: 2,
-            pointRadius: 2,
-            pointBackgroundColor: '#3b82f6'
+            pointRadius: 2
           }]
         },
         options: {
@@ -332,18 +362,18 @@
         }
       });
 
-      const ctxVram = document.getElementById('vramChart').getContext('2d');
-      vramChart = new Chart(ctxVram, {
+      const ctxTokens = document.getElementById('tokenChart').getContext('2d');
+      tokenChart = new Chart(ctxTokens, {
         type: 'line',
         data: {
           labels: [],
           datasets: [{
-            label: 'VRAM Usage',
+            label: 'Total Tokens',
             data: [],
             borderColor: '#a855f7',
             borderWidth: 2,
             pointRadius: 0,
-            stepped: true
+            fill: false
           }]
         },
         options: {
@@ -352,12 +382,7 @@
           plugins: { legend: { display: false } },
           scales: {
             x: { ticks: { color: textColor, font: { size: 9, family: 'Inter' } }, grid: { display: false } },
-            y: { 
-              min: 0, 
-              max: 24, 
-              ticks: { color: textColor, font: { size: 9, family: 'Inter' } }, 
-              grid: { color: gridColor } 
-            }
+            y: { ticks: { color: textColor, font: { size: 9, family: 'Inter' } }, grid: { color: gridColor } }
           }
         }
       });
@@ -368,9 +393,7 @@
       const h = Math.floor(seconds / 3600);
       const m = Math.floor((seconds % 3600) / 60);
       const s = Math.floor(seconds % 60);
-      if (h > 0) return `${h}H ${m}M`;
-      if (m > 0) return `${m}M ${s}S`;
-      return `${s}S`;
+      return h > 0 ? `${h}H ${m}M` : (m > 0 ? `${m}M ${s}S` : `${s}S`);
     }
 
     async function fetchStats() {
@@ -380,7 +403,6 @@
         const data = await response.json();
 
         if (data) {
-          // Heartbeat Tracking using 'update' key
           const currentUpdate = data.update;
           const now = Date.now();
           
@@ -392,32 +414,33 @@
           const secondsSinceUpdate = (now - lastDataChangeTime) / 1000;
           const isStale = secondsSinceUpdate >= STALE_THRESHOLD_SECONDS;
 
-          // Update Grid Stats mapping to your JSON keys
+          // Stats Update
           document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
+          document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
           document.getElementById('val-step').innerText = (data.total_tokens || 0).toLocaleString();
-          document.getElementById('val-updates').innerText = (data.update || 0).toLocaleString();
-          document.getElementById('val-batch').innerText = data.batch_size || "--";
-          document.getElementById('val-vram').innerText = (data.vram_gb || 0).toFixed(2) + " GB";
+          document.getElementById('val-update-id').innerText = data.update || "--";
           document.getElementById('val-vram-free').innerText = (data.vram_free || 0).toFixed(2) + " GB";
           document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
 
-          // Update History Object
-          const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          history.push({ 
-            time: timeLabel, 
-            loss: data.loss, 
-            vram: data.vram_gb 
-          });
-          if (history.length > 30) history.shift();
+          // Terminal Updates (Last 50 lines) - Fixed to White text
+          if (data.logs && Array.isArray(data.logs)) {
+            const terminal = document.getElementById('terminal-body');
+            terminal.innerText = data.logs.slice(-50).join('\n');
+            terminal.scrollTop = terminal.scrollHeight;
+          }
 
-          // Redraw Charts
+          // Chart Updates
+          const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          history.push({ time: timeLabel, loss: data.loss, tokens: data.total_tokens });
+          if (history.length > 50) history.shift();
+
           lossChart.data.labels = history.map(h => h.time);
           lossChart.data.datasets[0].data = history.map(h => h.loss);
           lossChart.update('none');
 
-          vramChart.data.labels = history.map(h => h.time);
-          vramChart.data.datasets[0].data = history.map(h => h.vram);
-          vramChart.update('none');
+          tokenChart.data.labels = history.map(h => h.time);
+          tokenChart.data.datasets[0].data = history.map(h => h.tokens);
+          tokenChart.update('none');
 
           // Status Management
           const dot = document.getElementById('status-dot');
@@ -442,7 +465,6 @@
       } catch (e) {
         console.error(e);
         document.getElementById('error-alert').classList.remove('hidden');
-        document.getElementById('error-message').innerText = "SYSTEM FAULT: DATA DISRUPTION DETECTED";
         document.getElementById('status-dot').className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500";
         document.getElementById('status-text').innerText = "Network Error";
       }
@@ -465,7 +487,6 @@
       initCharts();
       fetchStats();
       updateClock();
-      
       setInterval(fetchStats, 5000);
       setInterval(updateClock, 1000);
     };
