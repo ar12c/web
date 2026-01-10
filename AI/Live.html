@@ -394,7 +394,7 @@
 
           // Update DOM
           document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
-          document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
+          document.getElementById('val-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
           document.getElementById('val-target-loss').innerText = data.target_loss || "2.00";
           document.getElementById('val-step').innerText = (data.token_display || 0).toLocaleString();
           document.getElementById('val-vram').innerText = (data.vram_gb || 0).toFixed(2) + " GB";
