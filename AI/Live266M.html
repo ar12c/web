@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OLM226M LIVE</title>
+  <title>OLM266M LIVE</title>
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
   <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
@@ -359,7 +359,7 @@
   </footer>
 
   <script>
-    const DATABASE_URL = "https://olm266m-default-rtdb.firebaseio.com/";
+    const DATABASE_URL = "https://olm266m-default-rtdb.firebaseio.com/stats/stats.json";
     const STALE_THRESHOLD_SECONDS = 300; 
     
     let history = []; 
@@ -496,7 +496,7 @@
           } else {
             dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]";
             text.innerText = "Feed Connected";
-            activity.innerHTML = "Pre-training <br>In Progress";
+            activity.innerHTML = "Pre-training <br>M2 Max";
             alert.classList.add('hidden');
           }
         }

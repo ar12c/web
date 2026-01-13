@@ -109,7 +109,6 @@
       .col-divider { border-color: rgba(229, 231, 235, 0.1); }
     }
 
-    /* Custom highlight for VOID.AI span */
     .void-highlight::selection {
       background: #3b82f6;
       color: white;
@@ -138,7 +137,7 @@
         <span>Vol. 02</span>
         <span class="hidden sm:inline">Edition 1.4</span>
       </div>
-      <div id="date-stamp" class="text-right italic">JANUARY 7, 2026</div>
+      <div id="date-stamp" class="text-right italic text-[8px] sm:text-xs tracking-widest">JANUARY 13, 2026</div>
     </div>
     
     <div class="py-6 md:py-10 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -161,9 +160,8 @@
     
     <!-- HERO SECTION -->
     <section class="px-4 sm:px-8 md:px-16 py-8 md:py-16 border-b-2 border-ink/10 dark:border-zinc-800">
-      <div class="max-w-4xl">
+      <div class="max-w-5xl">
         
-        <!-- SPONSORED BADGE (Updated to Link) -->
         <a href="https://voidai.app" target="_blank" class="inline-block border border-ink dark:border-zinc-700 px-2 py-1 mb-4 md:mb-6 transition-all hover:border-accent-blue group">
           <p class="text-[8px] md:text-[9px] font-black uppercase tracking-[0.25em] opacity-70 group-hover:opacity-100 transition-opacity">
             Sponsored by <span class="void-highlight bg-ink text-paper dark:bg-zinc-700 dark:text-white px-1 group-hover:bg-accent-blue transition-colors">VOID.AI</span>
@@ -182,22 +180,35 @@
         </div>
 
         <!-- ACTION BUTTONS -->
-        <div class="grid grid-cols-2 sm:flex sm:flex-row flex-wrap gap-2 sm:gap-4 items-stretch sm:items-start mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-row gap-3 sm:gap-4 items-stretch lg:items-start mb-4">
+          
+          <!-- Chat Button -->
           <div class="relative group">
-            <a href="chat.html" id="initializeBtn" class="liquid-glass-smooth w-full sm:w-auto px-4 sm:px-10 py-5 font-black uppercase tracking-[0.1em] sm:tracking-[0.3em] text-[10px] sm:text-sm md:text-base flex justify-center items-center gap-2 sm:gap-4">
-              <span>Try it now</span>
+            <a href="chat.html" id="initializeBtn" class="liquid-glass-smooth w-full lg:w-auto px-6 lg:px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs md:text-base flex justify-center items-center gap-3">
+              <span>Try OLM 2</span>
               <i class="fa-solid fa-arrow-right text-[8px] sm:text-xs transition-transform group-hover:translate-x-1"></i>
             </a>
-            <p class="mt-3 text-center sm:text-left text-[8px] sm:text-[9px] font-black uppercase tracking-widest opacity-40">Ready for deployment.</p>
+            <p class="mt-3 text-center sm:text-left text-[8px] sm:text-[9px] font-black uppercase tracking-widest opacity-40">Main Interface.</p>
           </div>
 
+          <!-- Training Button (Default) -->
           <div class="relative group">
-            <a href="Live.html" id="liveTrainingBtn" class="liquid-glass-smooth w-full sm:w-auto px-4 sm:px-10 py-5 font-black uppercase tracking-[0.1em] sm:tracking-[0.3em] text-[10px] sm:text-sm md:text-base flex justify-center items-center gap-2 sm:gap-4">
+            <a href="Live.html" id="liveTrainingBtn" class="liquid-glass-smooth w-full lg:w-auto px-6 lg:px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs md:text-base flex justify-center items-center gap-3">
               <i class="fa-solid fa-circle text-[6px] sm:text-[8px] text-red-600 animate-blink-fast"></i>
               <span>Live Training</span>
             </a>
-            <p class="mt-3 text-center sm:text-left text-[8px] sm:text-[9px] font-black uppercase tracking-widest opacity-40">Active Stream.</p>
+            <p class="mt-3 text-center sm:text-left text-[8px] sm:text-[9px] font-black uppercase tracking-widest opacity-40">Base Weights.</p>
           </div>
+
+          <!-- NEW Training Button (266M) -->
+          <div class="relative group">
+            <a href="Live266M.html" id="live266MBtn" class="liquid-glass-smooth w-full lg:w-auto px-6 lg:px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] sm:text-xs md:text-base flex justify-center items-center gap-3">
+              <i class="fa-solid fa-microchip text-[10px] sm:text-sm text-accent-blue"></i>
+              <span>Live 266M</span>
+            </a>
+            <p class="mt-3 text-center sm:text-left text-[8px] sm:text-[9px] font-black uppercase tracking-widest opacity-40">Sub-Model Stream.</p>
+          </div>
+          
         </div>
       </div>
     </section>
