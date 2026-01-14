@@ -258,9 +258,6 @@
   .sticky {
     position: sticky;
   }
-  .inset-0 {
-    inset: calc(var(--spacing) * 0);
-  }
   .-top-5 {
     top: calc(var(--spacing) * -5);
   }
@@ -321,17 +318,11 @@
   .z-50 {
     z-index: 50;
   }
-  .z-\[60\] {
-    z-index: 60;
-  }
   .z-\[200\] {
     z-index: 200;
   }
   .m-0 {
     margin: calc(var(--spacing) * 0);
-  }
-  .mx-4 {
-    margin-inline: calc(var(--spacing) * 4);
   }
   .mx-10 {
     margin-inline: calc(var(--spacing) * 10);
@@ -967,9 +958,6 @@
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
   }
-  .py-3 {
-    padding-block: calc(var(--spacing) * 3);
-  }
   .py-4 {
     padding-block: calc(var(--spacing) * 4);
   }
@@ -1132,9 +1120,6 @@
   }
   .text-\[10vw\] {
     font-size: 10vw;
-  }
-  .text-\[11px\] {
-    font-size: 11px;
   }
   .text-\[clamp\(1\.8rem\,7\.5vw\,7\.5vw\)\] {
     font-size: clamp(1.8rem, 7.5vw, 7.5vw);
