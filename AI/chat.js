@@ -3,9 +3,9 @@ import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.m
 /* =======================
    MODEL CONFIG
 ======================= */
-const MODEL_CONFIG = {
-    BASE: { id: "ar12c/okemo2", name: "OLM 1", schema: "legacy" },
-    PRO:  { id: "ar12c/OkemoLLM", name: "OLM 2", schema: "structured" }
+const MODELS = {
+  OLM1: { id: "ar12c/okemo2", name: "OLM 1", schema: "legacy" },
+  OLM2: { id: "ar12c/OkemoLLM", name: "OLM 2", schema: "structured" }
 };
 
 const SYSTEM_PROMPT =
@@ -13,195 +13,249 @@ const SYSTEM_PROMPT =
 "Your goal is to provide detailed and well structured answers in a conversational tone. " +
 "CRITICAL ALWAYS wrap equations in $$ tags only. DO NOT under any circumstances use parentheses or square brackets for mathematical formulas.";
 
-let currentModel = MODEL_CONFIG.PRO;
-let gradioClient = null;
+const WEB_TOKEN = "<WEB>";
+const WEB_ICON = "🌐";
+
+let currentModel = MODELS.OLM2;
+let client = null;
 let history = [];
 let isGenerating = false;
 let webSearchEnabled = false;
 
-const WEB_TOKEN = "<WEB>";
-const WEB_ICON = "🌐";
+/* =======================
+   DOM
+======================= */
+const chatBox = document.getElementById("okemo-chat");
+const textarea = document.getElementById("okemo-input");
+const sendBtn = document.getElementById("okemo-send");
+const statusEl = document.getElementById("okemo-status");
+const emptyPrompt = document.getElementById("empty-chat-prompt");
 
 /* =======================
-   UTILITIES
+   HELPERS
 ======================= */
 function escapeHTML(s) {
-    return String(s ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+  return String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function setStatus(msg = "") {
+  if (!statusEl) return;
+  statusEl.textContent = msg;
+  if (msg) setTimeout(() => statusEl.textContent = "", 2500);
 }
 
 /* =======================
    HISTORY CONVERSION
 ======================= */
 function toStructuredHistory(pairs) {
-    const out = [];
-    for (const [u, a] of pairs) {
-        if (u) out.push({
-            role: "user",
-            content: [{ type: "text", text: u }],
-            metadata: null,
-            options: null
-        });
-        if (a) out.push({
-            role: "assistant",
-            content: [{ type: "text", text: a }],
-            metadata: null,
-            options: null
-        });
-    }
-    return out;
+  const out = [];
+  for (const [u, a] of pairs) {
+    if (u) out.push({
+      role: "user",
+      content: [{ type: "text", text: u }],
+      metadata: null,
+      options: null
+    });
+    if (a) out.push({
+      role: "assistant",
+      content: [{ type: "text", text: a }],
+      metadata: null,
+      options: null
+    });
+  }
+  return out;
 }
 
-function fromStructuredHistory(structured) {
-    const pairs = [];
-    for (let i = 0; i < structured.length; i += 2) {
-        const u = structured[i]?.content?.[0]?.text ?? "";
-        const a = structured[i + 1]?.content?.[0]?.text ?? null;
-        pairs.push([u, a]);
-    }
-    return pairs;
+function fromStructuredHistory(arr) {
+  const pairs = [];
+  for (let i = 0; i < arr.length; i += 2) {
+    const u = arr[i]?.content?.[0]?.text ?? "";
+    const a = arr[i + 1]?.content?.[0]?.text ?? null;
+    pairs.push([u, a]);
+  }
+  return pairs;
 }
 
 /* =======================
    CLIENT
 ======================= */
 async function ensureClient() {
-    if (!gradioClient) {
-        gradioClient = await Client.connect(currentModel.id);
-    }
-    return gradioClient;
+  if (!client) client = await Client.connect(currentModel.id);
+  return client;
 }
 
 /* =======================
-   SEND MESSAGE (AUTO SCHEMA)
+   SEND
 ======================= */
-async function sendMessage(rawInput) {
-    if (isGenerating || !rawInput.trim()) return;
+async function sendMessage(overrideText = null) {
+  if (isGenerating) return;
 
-    let message = rawInput.trim();
-    if (webSearchEnabled && !message.includes(WEB_TOKEN)) {
-        message += ` ${WEB_TOKEN}`;
-    }
+  let msg = overrideText ?? textarea.value.trim();
+  if (!msg) return;
 
-    history.push([message, null]);
-    renderChat();
-    isGenerating = true;
+  if (!overrideText) textarea.value = "";
 
-    const client = await ensureClient();
+  if (webSearchEnabled && !msg.includes(WEB_TOKEN)) {
+    msg += ` ${WEB_TOKEN}`;
+  }
 
+  history.push([msg, null]);
+  render();
+  isGenerating = true;
+
+  try {
+    const c = await ensureClient();
     let job;
 
     if (currentModel.schema === "legacy") {
-        /* ===== OLM 1 ===== */
-        job = client.submit("/on_submit", [
-            message,
-            history.map(([u, a]) => [u, a]),
-            null,
-            false
-        ]);
+      job = c.submit("/on_submit", [
+        msg,
+        history.map(([u, a]) => [u, a]),
+        null,
+        false
+      ]);
     } else {
-        /* ===== OLM 2 ===== */
-        job = client.submit("/on_submit", [
-            message,
-            toStructuredHistory(history),
-            SYSTEM_PROMPT,
-            512,
-            0.7,
-            0.9
-        ]);
+      job = c.submit("/on_submit", [
+        msg,
+        toStructuredHistory(history),
+        SYSTEM_PROMPT,
+        512,
+        0.7,
+        0.9
+      ]);
     }
 
-    try {
-        for await (const chunk of job) {
-            if (!chunk?.data) continue;
-
-            if (currentModel.schema === "legacy") {
-                history = chunk.data[0] ?? history;
-            } else {
-                history = fromStructuredHistory(chunk.data[0] ?? []);
-            }
-            renderChat();
-        }
-    } catch (e) {
-        history.at(-1)[1] = "⚠️ Connection error.";
-    } finally {
-        isGenerating = false;
-        renderChat();
+    for await (const chunk of job) {
+      if (!chunk?.data) continue;
+      history = currentModel.schema === "legacy"
+        ? chunk.data[0]
+        : fromStructuredHistory(chunk.data[0]);
+      render();
     }
+  } catch {
+    history.at(-1)[1] = "⚠️ Connection error.";
+  } finally {
+    isGenerating = false;
+    render();
+  }
 }
 
 /* =======================
-   REGENERATE
+   COPY / REGENERATE
 ======================= */
-async function regenerateTurn(index) {
-    const msg = history[index]?.[0];
-    if (!msg) return;
-
-    history[index][1] = null;
-    renderChat();
-    await sendMessage(msg);
+function copyResponse(idx) {
+  const text = history[idx]?.[1];
+  if (!text) return;
+  navigator.clipboard.writeText(text);
+  setStatus("Copied");
 }
 
-/* =======================
-   MODEL SWITCH
-======================= */
-async function switchModel(model) {
-    if (model.id === currentModel.id) return;
-    currentModel = model;
-    gradioClient = null;
-    history = [];
-    renderChat();
+function regenerate(idx) {
+  if (isGenerating) return;
+  const msg = history[idx]?.[0];
+  if (!msg) return;
+
+  history[idx][1] = null;
+  history = history.slice(0, idx + 1);
+  render();
+  sendMessage(msg);
 }
 
 /* =======================
    RENDER
 ======================= */
-function renderChat() {
-    const box = document.getElementById("okemo-chat");
-    if (!box) return;
-    box.innerHTML = "";
+function render() {
+  chatBox.innerHTML = "";
 
-    history.forEach(([u, a], idx) => {
-        box.innerHTML += `
-        <div class="text-right mb-6">
-            <div class="opacity-60 text-xs mb-1">USER</div>
-            <div>${escapeHTML(u.replace(WEB_TOKEN, WEB_ICON))}</div>
+  if (history.length === 0) {
+    emptyPrompt?.classList.remove("hidden");
+    return;
+  } else {
+    emptyPrompt?.classList.add("hidden");
+  }
+
+  history.forEach(([u, a], idx) => {
+    chatBox.insertAdjacentHTML("beforeend", `
+      <div class="text-right">
+        <div class="text-[10px] opacity-40 mb-1">USER</div>
+        <div class="font-bold">
+          ${escapeHTML(u.replace(WEB_TOKEN, WEB_ICON))}
         </div>
-        <div class="mb-10">
-            <div class="opacity-60 text-xs mb-1">${currentModel.name}</div>
-            <div>${a ? escapeHTML(a) : "<em>Thinking...</em>"}</div>
-            ${a ? `
-            <div class="mt-2">
-                <button onclick="regenerateTurn(${idx})">↻ Regenerate</button>
-            </div>` : ""}
-        </div>`;
-    });
+      </div>
 
-    box.scrollTop = box.scrollHeight;
+      <div>
+        <div class="text-[10px] opacity-40 mb-1">${currentModel.name}</div>
+        <div class="leading-relaxed">
+          ${a ? escapeHTML(a) : "<span class='typing-dots italic'>Thinking</span>"}
+        </div>
+
+        ${a ? `
+        <div class="flex gap-3 mt-2 text-[10px] font-black uppercase tracking-widest opacity-40">
+          <button class="hover:opacity-100 transition"
+            onclick="window.__okemoCopy(${idx})">
+            <i class="fa-regular fa-copy"></i> Copy
+          </button>
+          <button class="hover:opacity-100 transition"
+            onclick="window.__okemoRegen(${idx})">
+            <i class="fa-solid fa-rotate-right"></i> Regenerate
+          </button>
+        </div>` : ""}
+      </div>
+    `);
+  });
 }
 
 /* =======================
-   UI BINDINGS
+   MODEL SWITCH
 ======================= */
-window.sendOkemoMessage = () => {
-    const ta = document.getElementById("okemo-input");
-    sendMessage(ta.value);
-    ta.value = "";
-};
+function switchModel(model) {
+  if (model.id === currentModel.id) return;
+  currentModel = model;
+  client = null;
+  history = [];
+  render();
+  setStatus(`Switched to ${model.name}`);
+}
 
-window.regenerateTurn = regenerateTurn;
+/* =======================
+   EVENTS
+======================= */
+sendBtn?.addEventListener("click", () => sendMessage());
 
-window.addEventListener("DOMContentLoaded", async () => {
-    document.getElementById("model-select-base")
-        ?.addEventListener("click", () => switchModel(MODEL_CONFIG.BASE));
-
-    document.getElementById("model-select-pro")
-        ?.addEventListener("click", () => switchModel(MODEL_CONFIG.PRO));
-
-    document.getElementById("web-search-option")
-        ?.addEventListener("click", () => webSearchEnabled = !webSearchEnabled);
-
-    await ensureClient();
+textarea?.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 });
+
+document.getElementById("model-select-pro")
+  ?.addEventListener("click", () => switchModel(MODELS.OLM2));
+
+document.getElementById("model-select-base")
+  ?.addEventListener("click", () => switchModel(MODELS.OLM1));
+
+document.getElementById("web-search-option")
+  ?.addEventListener("click", () => {
+    webSearchEnabled = !webSearchEnabled;
+    setStatus(webSearchEnabled ? "Web Search On" : "Web Search Off");
+  });
+
+document.getElementById("new-chat-link-header")
+  ?.addEventListener("click", () => {
+    history = [];
+    render();
+    setStatus("Reset");
+  });
+
+/* expose for inline buttons */
+window.__okemoCopy = copyResponse;
+window.__okemoRegen = regenerate;
+
+/* =======================
+   INIT
+======================= */
+ensureClient().then(() => setStatus("Model Ready"));
