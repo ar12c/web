@@ -1,282 +1,767 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat OLM</title>
-  <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLM | Vail AI</title>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+    <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    
+    <!-- External Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Inter:wght@300;400;500;600;700;800&family=Libre+Franklin:wght@400;700;900&display=swap" rel="stylesheet">
 
-  <script>
-    tailwind.config = {
-      darkMode: 'media',
-      theme: {
-        extend: {
-          fontFamily: {
-            inter: ['Inter', 'sans-serif'],
-            serif: ['Playfair Display', 'serif'],
-            sans: ['Libre Franklin', 'sans-serif'],
-          },
-          colors: {
-            paper: '#f9f7f2',
-            ink: '#1a1a1a',
-            'accent-blue': '#1e3a8a',
-            'dark-paper': '#121212',
-            'dark-ink': '#e5e7eb',
-          }
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        header: ['Libre Franklin', 'sans-serif'],
+                    },
+                    colors: {
+                        paper: '#f9f7f2',
+                        ink: '#1a1a1a',
+                        accent: '#1e3a8a',
+                        'dark-paper': '#0d0d0d',
+                        'dark-ink': '#ececec',
+                    },
+                    animation: {
+                        'msg-in': 'msgIn 0.3s ease-out forwards',
+                        'float': 'float 5s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        msgIn: {
+                            '0%': { opacity: '0', transform: 'translateY(8px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
 
-  <style>
-    /* Newspaper Paper Effect */
-    .newspaper-texture {
-      background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.03'/%3E%3C/svg%3E");
-    }
-    @media (prefers-color-scheme: dark) {
-      .newspaper-texture {
-        background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E");
-      }
-    }
+    <style>
+        .newspaper-texture {
+            background-image: url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        }
 
-    .chat-scroll {
-      scrollbar-width: thin;
-      scrollbar-color: #1a1a1a transparent;
-    }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1a1a1a22; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #ffffff22; }
 
-    .gazette-border {
-      border: 3px solid #1e3a8a;
-    }
+        .prose p { margin-bottom: 1.25rem; line-height: 1.75; }
+        .prose code { font-weight: bold; color: #1e3a8a; background: rgba(30, 58, 138, 0.05); padding: 0.1rem 0.3rem; border-radius: 4px; }
+        .dark .prose code { color: #93c5fd; background: rgba(147, 197, 253, 0.1); }
+        
+        .ai-gradient {
+            background: linear-gradient(90deg, #3b82f6, #06b6d4, #3b82f6);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: textShine 4s linear infinite;
+        }
+        @keyframes textShine { to { background-position: 200% center; } }
 
-    .btn-newspaper {
-      background: #f9f7f2; 
-      border: 2px solid #1a1a1a;
-      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-    @media (prefers-color-scheme: dark) {
-      .btn-newspaper { background: #121212; border-color: #3f3f46; color: #e5e7eb; }
-    }
-    .btn-newspaper:hover {
-      background: #1e3a8a !important;
-      border-color: #1e3a8a;
-      color: #ffffff !important;
-      transform: translateY(-1px);
-      box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
-    }
+        .gazette-border {
+            border: 4px double #1a1a1a;
+            transition: all 0.3s ease;
+        }
+        .dark .gazette-border { border-color: #3f3f46; }
 
-    .typing-dots::after {
-      content: '';
-      animation: dots 1.5s infinite;
-    }
-    @keyframes dots {
-      0% { content: ''; }
-      33% { content: '.'; }
-      66% { content: '..'; }
-      100% { content: '...'; }
-    }
+        .message-row {
+            width: 100%;
+            display: flex;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+        .dark .message-row { border-color: rgba(255,255,255,0.03); }
 
-    .modal-paper {
-      background-color: #f9f7f2;
-      border: 8px double #1a1a1a;
-    }
-    @media (prefers-color-scheme: dark) {
-      .modal-paper { background-color: #121212; border-color: #3f3f46; }
-    }
+        .message-content {
+            max-width: 48rem;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            gap: 1rem;
+            padding: 0 1rem;
+        }
 
-    #input-model-dropdown, #input-dropdown, #okemo-dropdown {
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 900;
+            overflow: hidden;
+        }
 
-    html { scroll-behavior: smooth; }
-    ::selection { background: #1e3a8a; color: white; }
-  </style>
+        .user-avatar { background: #1a1a1a; color: #f9f7f2; }
+        .ai-avatar { background: transparent; border: none; }
+
+        .input-wrapper {
+            width: 100%;
+            max-width: 44rem;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        #sidebar { 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(0);
+        }
+
+        /* Responsive Layout Logic */
+        @media (min-width: 1024px) {
+            body.sidebar-open main { padding-left: 288px; }
+            body.sidebar-closed #sidebar { transform: translateX(-100%); }
+            body.sidebar-open #sidebar { transform: translateX(0); }
+        }
+        @media (max-width: 1023px) {
+            #sidebar { transform: translateX(-100%); }
+            body.sidebar-open #sidebar { transform: translateX(0); }
+        }
+
+        .history-item-active {
+            background: rgba(30, 58, 138, 0.1);
+            border-left: 3px solid #1e3a8a;
+        }
+        .dark .history-item-active {
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: #ececec;
+        }
+
+        .dropdown-menu {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+        }
+        .dropdown-menu.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .action-btn {
+            @apply flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-ink/40 dark:text-dark-ink/40 hover:text-ink dark:hover:text-dark-ink hover:bg-ink/5 dark:hover:bg-white/5 rounded transition-all;
+        }
+
+        #scroll-bottom-btn {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
 </head>
-<body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 min-h-screen flex flex-col overflow-x-hidden">
+<body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 h-screen flex overflow-hidden sidebar-open">
 
-  <!-- Ghost Elements -->
-  <div class="hidden">
-    <div id="menu-toggle"></div>
-    <div id="okemo-dropdown"></div>
-    <span id="model-display-number"></span>
-  </div>
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-ink/40 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm lg:hidden"></div>
 
-  <!-- Sticky Header -->
-  <header class="fixed top-0 left-0 right-0 bg-paper/95 dark:bg-dark-paper/95 backdrop-blur-sm z-50 border-b border-ink/10 dark:border-white/10">
-    <div class="w-full max-w-2xl mx-auto px-6 py-4">
-      <div class="flex justify-between items-center mb-2">
-        <nav>
-          <a href="/AI/OkemoLLM.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
-            <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
-            <span>Back</span>
-          </a>
-        </nav>
-        
-        <a id="new-chat-link-header" class="text-[10px] font-black uppercase tracking-widest px-3 py-1 border border-ink/20 dark:border-white/20 hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-all cursor-pointer">
-          <i class="fa-solid fa-arrow-rotate-left"></i> Reset
-        </a>
-      </div>
-
-      <div class="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] font-black uppercase tracking-[0.3em] relative">
-        <div class="flex items-center gap-2 relative">
-          <span id="okemo-title" class="italic">OLM</span>
-        </div>
-        <div id="date-stamp" class="italic text-right">JANUARY 6, 2026</div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content Area with Header/Footer Clearance - Increased pb-64 for larger margin -->
-  <main class="flex-1 flex flex-col w-full max-w-2xl mx-auto px-6 pt-32 pb-64 relative">
-    <div id="empty-chat-prompt" class="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full px-10 pointer-events-none transition-opacity duration-500">
-      <div class="inline-block border-4 border-double border-ink/10 dark:border-white/10 p-8 md:p-12">
-        <h2 class="font-serif text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
-          How can I help you <br><span class="italic text-accent-blue">today?</span>
-        </h2>
-      </div>
-    </div>
-
-    <div id="okemo-chat" class="chat-scroll flex-1 overflow-y-auto space-y-8">
-      <!-- Messages go here -->
-    </div>
-
-    <!-- Scroll button - Adjusted bottom-56 to match larger margin -->
-    <button id="scroll-bottom-btn" class="fixed bottom-56 left-1/2 -translate-x-1/2 btn-newspaper w-10 h-10 rounded-full flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 z-50 shadow-lg">
-      <i class="fa-solid fa-arrow-down"></i>
-    </button>
-  </main>
-
-  <!-- Fixed Bottom Input Bar - Made Smaller -->
-  <div class="fixed bottom-0 left-0 right-0 bg-paper/95 dark:bg-dark-paper/95 backdrop-blur-sm border-t-[8px] border-double border-ink dark:border-zinc-800 pt-3 pb-4 px-4 z-40">
-    <div class="max-w-lg mx-auto relative group">
-      <div id="okemo-status" class="absolute -top-5 left-0 text-[9px] font-black uppercase tracking-widest opacity-40 italic h-4"></div>
-      
-      <div id="file-preview-container" class="mb-2 hidden"></div>
-
-      <div class="gazette-border bg-paper dark:bg-zinc-900 flex flex-col p-2 transition-all shadow-sm">
-        <textarea id="okemo-input" placeholder="ASK ANYTHING..." rows="1" class="w-full py-1 px-1 text-sm font-bold tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:text-ink/20 dark:placeholder:text-white/20 resize-none max-h-40 overflow-hidden leading-relaxed"></textarea>
-        
-        <div class="flex justify-between items-center mt-2 pt-2 border-t border-ink/10 dark:border-white/10">
-          <div class="relative">
-             <button id="plus-menu-toggle" class="w-8 h-8 flex items-center justify-center hover:text-accent-blue transition-colors flex-shrink-0">
-                <i class="fa-solid fa-screwdriver-wrench text-xs"></i>
-             </button>
-             <div id="input-dropdown" class="absolute left-0 bottom-full mb-3 w-40 bg-paper dark:bg-dark-paper border-2 border-ink dark:border-zinc-700 shadow-xl p-1 hidden opacity-0 scale-y-0 origin-bottom-left">
-               <button id="web-search-option" class="w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">Web Search</button>
-             </div>
-          </div>
-
-          <div class="flex items-center gap-2 relative">
-            <div class="relative">
-              <button id="model-switch-btn" class="flex items-center gap-2 px-2 py-1 btn-newspaper text-[8px] font-black uppercase tracking-widest">
-                <span id="active-model-name">OLM 2</span>
-                <i class="fa-solid fa-caret-down text-[7px]"></i>
-              </button>
-              
-              <div id="input-model-dropdown" class="absolute right-0 bottom-full mb-3 w-40 bg-paper dark:bg-dark-paper border-2 border-ink dark:border-zinc-700 shadow-xl p-1 hidden opacity-0 scale-y-0 origin-bottom-right">
-                <button id="model-select-pro" data-model-id="ar12c/okemollm" data-model-name="OLM 2" class="model-opt w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">OLM 2</button>
-                <button id="model-select-base" data-model-id="ar12c/okemo2" data-model-name="OLM 1" class="model-opt w-full text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider hover:bg-ink hover:text-paper dark:hover:bg-white dark:hover:text-ink transition-colors">OLM 1</button>
-              </div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-paper dark:bg-dark-paper border-r border-ink/5 dark:border-white/5 z-50 flex flex-col shadow-2xl lg:shadow-none translate-x-0">
+        <div class="p-6 flex flex-col h-full">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="font-header text-2xl font-black uppercase italic tracking-tighter">
+                    V<span class="ai-gradient">AI</span>L
+                </h1>
+                <button id="close-sidebar-mobile" class="lg:hidden p-2 opacity-50 hover:opacity-100 cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
 
-            <button id="okemo-send" class="btn-newspaper w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <i class="fa-solid fa-paper-plane text-[10px]"></i>
+            <button id="new-chat-btn" class="w-full flex items-center gap-3 px-4 py-3 mb-6 border border-ink/10 dark:border-white/10 rounded-lg font-bold text-xs hover:bg-ink hover:text-white dark:hover:bg-white dark:hover:text-ink transition-all cursor-pointer">
+                <i class="fa-solid fa-plus"></i>
+                <span>New Chat</span>
             </button>
-          </div>
+
+            <div id="history-list" class="flex-1 overflow-y-auto custom-scrollbar space-y-1">
+                <!-- Archives -->
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-ink/5 dark:border-white/5 space-y-2">
+                <button id="web-search-toggle" class="w-full py-2.5 px-4 flex items-center gap-3 text-xs font-bold rounded-lg hover:bg-ink/5 dark:hover:bg-white/5 transition-all text-left cursor-pointer">
+                    <i class="fa-solid fa-globe"></i> Web Search <span id="web-status-tag" class="ml-auto text-[8px] opacity-40">OFF</span>
+                </button>
+                <button id="theme-toggle" class="w-full py-2.5 px-4 flex items-center gap-3 text-xs font-bold rounded-lg hover:bg-ink/5 dark:hover:bg-white/5 transition-all cursor-pointer">
+                    <i class="fa-solid fa-circle-half-stroke"></i> Appearance
+                </button>
+                <button id="clear-all-btn" class="w-full py-2.5 px-4 text-red-500/60 hover:text-red-500 text-[10px] font-bold uppercase tracking-widest text-left transition-all cursor-pointer">
+                    Clear History
+                </button>
+            </div>
         </div>
-      </div>
+    </aside>
 
-      <div class="flex justify-center mt-2">
-        <p class="text-[7px] font-black uppercase tracking-widest opacity-30">
-          OLM CHAT 0.2.1 | DATA MAY BE INACCURATE
-        </p>
-      </div>
-    </div>
-  </div>
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden transition-all duration-300">
+        <header class="h-14 flex items-center justify-between px-4 bg-paper/80 dark:bg-dark-paper/80 backdrop-blur-md z-40 border-b border-ink/5 dark:border-white/5">
+            <div class="flex items-center gap-2">
+                <button id="toggle-sidebar" class="p-2 hover:bg-ink/5 dark:hover:bg-white/5 transition-all rounded-lg cursor-pointer">
+                    <i class="fa-solid fa-bars-staggered text-sm"></i>
+                </button>
+                
+                <div class="relative">
+                    <button id="model-dropdown-btn" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-ink/5 dark:hover:bg-white/5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-all cursor-pointer">
+                        <span id="active-model-name">OLM 2</span>
+                        <i class="fa-solid fa-chevron-down text-[8px] opacity-40"></i>
+                    </button>
+                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 border border-ink/10 dark:border-white/10 shadow-2xl rounded-xl z-50 overflow-hidden">
+                        <button id="model-select-pro" class="w-full text-left px-4 py-3 text-[10px] font-bold uppercase hover:bg-accent hover:text-white transition-all border-b border-ink/5 cursor-pointer">OLM 2 (Flagship)</button>
+                        <button id="model-select-base" class="w-full text-left px-4 py-3 text-[10px] font-bold uppercase hover:bg-accent hover:text-white transition-all cursor-pointer">OLM 1 (Legacy)</button>
+                    </div>
+                </div>
+            </div>
 
-  <script type="module" src="chat.js"></script>
+            <div class="flex items-center gap-1">
+                <div id="api-status" class="hidden sm:flex text-[9px] font-bold uppercase tracking-widest opacity-30 items-center gap-2 mr-2">
+                    Standby
+                </div>
 
-  <script>
-    window.addEventListener('load', () => {
-      const modelBtn = document.getElementById('model-switch-btn');
-      const modelDropdown = document.getElementById('input-model-dropdown');
-      const activeName = document.getElementById('active-model-name');
-      const chatContainer = document.getElementById('okemo-chat');
-      const scrollBtn = document.getElementById('scroll-bottom-btn');
+                <div class="relative">
+                    <button id="settings-toggle" class="p-2 hover:bg-ink/5 transition-all rounded-lg text-sm opacity-40 cursor-pointer">
+                        <i class="fa-solid fa-sliders"></i>
+                    </button>
+                    <div id="settings-menu" class="dropdown-menu absolute right-0 top-full mt-2 w-64 bg-white dark:bg-zinc-900 gazette-border shadow-2xl z-50 p-5 rounded-lg">
+                        <h3 class="font-serif text-lg font-black italic mb-4 border-b border-ink/5 pb-2 text-ink dark:text-dark-ink">Settings</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest mb-3 text-ink/60 dark:text-dark-ink/60">
+                                    <span>Creativity Scale</span>
+                                    <span id="temp-val" class="text-accent dark:text-blue-400">0.7</span>
+                                </div>
+                                <input type="range" id="param-temp" min="0" max="1" step="0.1" value="0.7" class="w-full h-1 bg-ink/10 dark:bg-white/10 rounded-full appearance-none accent-ink dark:accent-white cursor-pointer">
+                            </div>
+                            <button id="save-settings" class="w-full py-2 bg-ink text-paper dark:bg-white dark:text-ink font-bold uppercase tracking-widest text-[9px] rounded shadow-md transition-all active:scale-95 cursor-pointer">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-      if (modelBtn && modelDropdown) {
-        modelBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const isHidden = modelDropdown.classList.contains('hidden');
-          if (isHidden) {
-            modelDropdown.classList.remove('hidden');
-            setTimeout(() => {
-              modelDropdown.classList.remove('opacity-0', 'scale-y-0');
-            }, 10);
-          } else {
-            closeModelDropdown();
+        <div id="chat-container" class="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+            <div id="chat-messages" class="w-full min-h-full flex flex-col justify-center">
+                <!-- Welcome view -->
+                <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center text-center animate-float px-6 pb-20 w-full">
+                    <h2 class="font-serif text-4xl md:text-5xl font-black italic mb-4">What's on your mind?</h2>
+                    <p class="font-header text-[11px] font-bold uppercase tracking-[0.5em] opacity-30">OLM 0.2.2 BETA</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="pb-4 sm:pb-6 pt-2 px-2 sm:px-4 bg-gradient-to-t from-paper dark:from-dark-paper via-paper/95 dark:via-dark-paper/95 to-transparent relative">
+            <div class="input-wrapper">
+                <!-- Scroll to Bottom Arrow - Left Aligned above input -->
+                <button id="scroll-bottom-btn" class="absolute -top-10 left-4 opacity-0 scale-90 invisible flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-zinc-800 border border-ink/10 dark:border-white/10 shadow-lg text-ink/60 dark:text-dark-ink/60 hover:text-ink dark:hover:text-dark-ink hover:scale-105 active:scale-95 transition-all z-50">
+                    <i class="fa-solid fa-arrow-down text-xs"></i>
+                </button>
+
+                <div class="gazette-border bg-paper dark:bg-zinc-900 p-2 shadow-lg flex flex-col gap-1 transition-all">
+                    <textarea 
+                        id="user-input" 
+                        placeholder="TYPE A MESSAGE..." 
+                        rows="1" 
+                        class="w-full bg-transparent px-2 sm:px-3 py-2 outline-none resize-none font-bold text-sm tracking-widest placeholder:opacity-20 text-ink dark:text-dark-ink max-h-40 leading-relaxed"
+                    ></textarea>
+                    
+                    <div class="flex justify-between items-center border-t border-ink/5 dark:border-white/5 pt-2 pb-1 px-1">
+                        <div class="flex items-center gap-3 text-[8px] font-black uppercase tracking-[0.3em] opacity-30 italic">
+                            <span id="api-status-footer" class="flex items-center gap-1.5">
+                                <span class="w-1 h-1 rounded-full bg-slate-400 animate-pulse"></span> Standby
+                            </span>
+                        </div>
+                        <button id="send-btn" class="px-4 py-1.5 bg-ink text-paper dark:bg-white dark:text-ink font-black text-[9px] uppercase tracking-[0.3em] hover:bg-accent hover:text-white transition-all active:scale-95 shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                            Send <i class="fa-solid fa-paper-plane text-[8px]"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script type="module">
+        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+        /* =======================
+           CONFIG
+        ======================= */
+        const MODELS = {
+          OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", schema: "legacy" },
+          OLM2: { id: "https://ar12c-okemollm.hf.space", name: "OLM 2", schema: "structured" }
+        };
+
+        const SYSTEM_PROMPT = "You are Okemo Language Model 2 OLM2 a highly helpful verbose and comprehensive AI assistant. Your goal is to provide detailed and well structured answers in a conversational tone. CRITICAL ALWAYS wrap equations in $$ tags only. DO NOT under any circumstances use parentheses or square brackets for mathematical formulas.";
+        const WEB_TOKEN = "<WEB>";
+        const WEB_ICON = "🌐";
+        const AI_LOGO = "/src/Vailailogo.svg";
+
+        /* =======================
+           STATE
+        ======================= */
+        let currentModel = MODELS.OLM2;
+        let client = null;
+        let history = []; 
+        let allChats = JSON.parse(localStorage.getItem('olm_archives_v3') || '{}');
+        let currentChatId = crypto.randomUUID();
+        let isGenerating = false;
+        let webSearchEnabled = false;
+        let settings = JSON.parse(localStorage.getItem('olm_settings_v3') || JSON.stringify({ temp: 0.7, tokens: 512 }));
+
+        const chatBoxContainer = document.getElementById("chat-container");
+        const chatBox = document.getElementById("chat-messages");
+        const textarea = document.getElementById("user-input");
+        const sendBtn = document.getElementById("send-btn");
+        const statusEl = document.getElementById("api-status");
+        const footerStatusEl = document.getElementById("api-status-footer");
+        const welcomeState = document.getElementById("welcome-state");
+        const historyList = document.getElementById("history-list");
+        const modelMenu = document.getElementById("model-menu");
+        const settingsMenu = document.getElementById("settings-menu");
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        const scrollBottomBtn = document.getElementById('scroll-bottom-btn');
+
+        /* =======================
+           HELPERS
+        ======================= */
+        function formatMarkdown(text) {
+            if (!text) return '';
+            return marked.parse(text);
+        }
+
+        function renderMath(container) {
+            const blockRegex = /\$\$([\s\S]+?)\$\$/g;
+            container.innerHTML = container.innerHTML.replace(blockRegex, (match, formula) => {
+                try {
+                    return `<div class="my-6 p-4 bg-white dark:bg-zinc-800 rounded-xl overflow-x-auto border border-ink/5 shadow-sm text-sm sm:text-base">` + 
+                           katex.renderToString(formula, { displayMode: true, throwOnError: false }) + 
+                           `</div>`;
+                } catch (e) { return match; }
+            });
+        }
+
+        function setStatus(msg = "", color = "green") {
+            if (!statusEl || !footerStatusEl) return;
+            const dot = footerStatusEl.querySelector('span');
+            if (dot) {
+                dot.className = `w-1 h-1 rounded-full animate-pulse bg-${color === 'green' ? 'green' : (color === 'red' ? 'red' : 'blue')}-500`;
+            }
+            statusEl.textContent = msg;
+            const statusLabel = footerStatusEl.lastChild;
+            if (statusLabel) statusLabel.textContent = " " + msg;
+        }
+
+        function toStructuredHistory(pairs) {
+          return pairs.flatMap(([u, a]) => {
+            const out = [];
+            if (u) out.push({ role: "user", content: [{ type: "text", text: `YOU: ${u}` }] });
+            if (a) out.push({ role: "assistant", content: [{ type: "text", text: `OLM: ${a}` }] });
+            return out;
+          });
+        }
+
+        function fromStructuredHistory(arr) {
+          const pairs = [];
+          for (let i = 0; i < arr.length; i += 2) {
+            const u = arr[i]?.content?.[0]?.text?.replace(/^YOU: /, "") ?? "";
+            const a = arr[i + 1]?.content?.[0]?.text?.replace(/^OLM: /, "") ?? null;
+            pairs.push([u, a]);
           }
-        });
-        document.addEventListener('click', () => closeModelDropdown());
-      }
-
-      function closeModelDropdown() {
-        if (!modelDropdown) return;
-        modelDropdown.classList.add('opacity-0', 'scale-y-0');
-        setTimeout(() => modelDropdown.classList.add('hidden'), 200);
-      }
-
-      document.querySelectorAll('.model-opt').forEach(opt => {
-        opt.addEventListener('click', (e) => {
-          if (activeName) activeName.textContent = opt.dataset.modelName;
-          closeModelDropdown();
-        });
-      });
-
-      let isAutoScrolling = true;
-      const scrollToBottom = () => {
-        if (!chatContainer) return;
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      };
-
-      const handleScroll = () => {
-        const { scrollTop, scrollHeight, clientHeight } = chatContainer;
-        const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-        isAutoScrolling = isNearBottom;
-
-        if (!isNearBottom && scrollHeight > clientHeight) {
-          scrollBtn.classList.replace('opacity-0', 'opacity-100');
-          scrollBtn.classList.remove('pointer-events-none');
-        } else {
-          scrollBtn.classList.replace('opacity-100', 'opacity-0');
-          scrollBtn.classList.add('pointer-events-none');
+          return pairs;
         }
-      };
 
-      const observer = new MutationObserver(() => {
-        if (isAutoScrolling) {
-          scrollToBottom();
-          setTimeout(scrollToBottom, 50);
+        async function ensureClient(retries = 5, delay = 1500) {
+            if (client) return client;
+            setStatus("Connecting...", "yellow");
+            for (let i = 0; i < retries; i++) {
+                try {
+                    client = await Client.connect(currentModel.id);
+                    setStatus("System Ready", "green");
+                    return client;
+                } catch (err) {
+                    console.error(`Attempt ${i + 1} failed:`, err);
+                    if (i === retries - 1) {
+                        setStatus("Connection Error", "red");
+                        throw err;
+                    }
+                    await new Promise(r => setTimeout(r, delay * Math.pow(1.5, i)));
+                }
+            }
         }
-      });
 
-      if (chatContainer) {
-        chatContainer.addEventListener('scroll', handleScroll);
-        observer.observe(chatContainer, { childList: true, subtree: true, characterData: true });
-        scrollBtn.addEventListener('click', () => {
-          isAutoScrolling = true;
-          chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        function saveToStorage(targetChatId) {
+            const idToSave = targetChatId || currentChatId;
+            if (history.length === 0) return;
+            
+            // Generate title from first user message
+            const firstMsg = history[0][0] || "New Chat";
+            const title = firstMsg.substring(0, 30) + (firstMsg.length > 30 ? '...' : '');
+            
+            allChats[idToSave] = { 
+                id: idToSave, 
+                title: title, 
+                history: [...history], // Clone history array
+                timestamp: Date.now() 
+            };
+            
+            localStorage.setItem('olm_archives_v3', JSON.stringify(allChats));
+            renderHistory();
+        }
+
+        /* =======================
+           CORE LOGIC
+        ======================= */
+        async function sendMessage(overrideText = null) {
+          if (isGenerating) return;
+          let msg = overrideText ?? textarea.value.trim();
+          if (!msg) return;
+
+          if (!overrideText) textarea.value = "";
+          textarea.style.height = "auto";
+          if (webSearchEnabled && !msg.includes(WEB_TOKEN)) msg += ` ${WEB_TOKEN}`;
+          
+          history.push([msg, null]);
+          
+          const processingChatId = currentChatId; // Snap ID for this turn
+          saveToStorage(processingChatId); // Save immediately so it hits the sidebar
+          
+          render();
+          isGenerating = true;
+          sendBtn.disabled = true;
+
+          try {
+            const c = await ensureClient();
+            let job;
+            if (currentModel.schema === "legacy") {
+              job = c.submit("/on_submit", [
+                msg, 
+                history.map(([u, a]) => [`YOU: ${u}`, a ? `OLM: ${a}` : null])
+              ]);
+            } else {
+              job = c.submit("/on_submit", [
+                msg, 
+                toStructuredHistory(history), 
+                SYSTEM_PROMPT, 
+                settings.tokens, 
+                settings.temp, 
+                0.9
+              ]);
+            }
+
+            for await (const chunk of job) {
+              if (!chunk?.data) continue;
+              const newHistory = currentModel.schema === "legacy"
+                ? chunk.data[0].map(([u, a]) => [u.replace(/^YOU: /, ""), a ? a.replace(/^OLM: /, "") : null])
+                : fromStructuredHistory(chunk.data[0]);
+              
+              const lastResponse = newHistory[newHistory.length - 1][1];
+              if (lastResponse) {
+                history[history.length - 1][1] = lastResponse;
+                updateLastResponseInUI(lastResponse);
+              }
+            }
+          } catch (e) {
+            console.error("API Error:", e);
+            history.at(-1)[1] = "⚠️ Transmission interrupted. Please check if the model space is available.";
+            render();
+          } finally {
+            isGenerating = false;
+            sendBtn.disabled = false;
+            saveToStorage(processingChatId); // Save complete log
+            render(); 
+            scrollToBottom();
+          }
+        }
+
+        function updateLastResponseInUI(text) {
+            const aiRows = chatBox.querySelectorAll('.message-row.bg-black\\/5');
+            if (aiRows.length === 0) return;
+            const lastRow = aiRows[aiRows.length - 1];
+            const proseDiv = lastRow.querySelector('.prose');
+            if (proseDiv) {
+                proseDiv.innerHTML = formatMarkdown(text);
+                renderMath(proseDiv);
+            }
+        }
+
+        /* =======================
+           ACTIONS
+        ======================= */
+        window.__okemoCopy = (idx) => {
+          const text = history[idx]?.[1];
+          if (!text) return;
+          try {
+            navigator.clipboard.writeText(text).then(() => setStatus("Copied", "blue"));
+          } catch(e) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            setStatus("Copied", "blue");
+          }
+        };
+
+        window.__okemoRegen = (idx) => {
+          if (isGenerating) return;
+          const msg = history[idx]?.[0];
+          if (!msg) return;
+          history = history.slice(0, idx);
+          render();
+          sendMessage(msg);
+        };
+
+        /* =======================
+           UI RENDERERS
+        ======================= */
+        function render() {
+          chatBox.innerHTML = "";
+          if (history.length === 0) {
+            welcomeState.style.display = "flex";
+            chatBox.classList.add('justify-center');
+            return;
+          } else {
+            welcomeState.style.display = "none";
+            chatBox.classList.remove('justify-center');
+          }
+
+          history.forEach(([u, a], idx) => {
+            // User Row
+            const userRow = document.createElement('div');
+            userRow.className = 'message-row animate-msg-in';
+            userRow.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar user-avatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="flex-1 overflow-hidden font-medium text-sm sm:text-[15px] leading-relaxed text-ink dark:text-dark-ink">
+                        ${formatMarkdown(u.replace(WEB_TOKEN, WEB_ICON))}
+                    </div>
+                </div>`;
+            chatBox.appendChild(userRow);
+
+            // AI Row
+            const aiRow = document.createElement('div');
+            aiRow.className = 'message-row bg-black/5 dark:bg-white/5 animate-msg-in';
+            aiRow.innerHTML = `
+                <div class="message-content">
+                    <div class="avatar ai-avatar">
+                        <img src="${AI_LOGO}" alt="Logo" class="w-full h-full object-contain dark:invert transition-all duration-300">
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <div class="prose dark:prose-invert max-w-none text-sm sm:text-[15px] leading-relaxed text-ink dark:text-dark-ink">${a ? formatMarkdown(a) : ""}</div>
+                        ${a ? `
+                        <div class="flex gap-4 mt-3">
+                            <button class="action-btn" onclick="window.__okemoCopy(${idx})">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                            <button class="action-btn" onclick="window.__okemoRegen(${idx})">
+                                <i class="fa-solid fa-rotate-right"></i> Regenerate
+                            </button>
+                        </div>` : ""}
+                    </div>
+                </div>`;
+            chatBox.appendChild(aiRow);
+            if (a) renderMath(aiRow.querySelector('.prose'));
+          });
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = "";
+            const sorted = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
+            sorted.forEach(chat => {
+                const item = document.createElement("button");
+                item.className = `w-full text-left px-4 py-3 rounded-lg text-xs font-bold transition-all truncate flex items-center justify-between group cursor-pointer ${chat.id === currentChatId ? 'history-item-active' : 'text-ink/50 dark:text-white/40 hover:bg-ink/5'}`;
+                item.innerHTML = `
+                    <span class="truncate pr-2"><i class="fa-solid fa-message mr-2 opacity-30 text-[10px]"></i> ${chat.title}</span>
+                    <i class="fa-solid fa-trash-can opacity-0 group-hover:opacity-40 hover:!opacity-100 p-1 text-[9px]" onclick="event.stopPropagation(); window.__okemoDeleteChat('${chat.id}')"></i>`;
+                item.addEventListener('click', () => { 
+                    currentChatId = chat.id; 
+                    history = chat.history; 
+                    render(); 
+                    renderHistory(); 
+                    if (window.innerWidth < 1024) toggleSidebar(false); 
+                });
+                historyList.appendChild(item);
+            });
+        }
+
+        /* =======================
+           UI CONTROLS
+        ======================= */
+        function resetChat() {
+            currentChatId = crypto.randomUUID();
+            history = [];
+            currentModel = MODELS.OLM2;
+            client = null;
+            document.getElementById('active-model-name').innerText = currentModel.name;
+            setStatus("New Session", "green");
+            ensureClient();
+            render();
+            renderHistory();
+            if (window.innerWidth < 1024) toggleSidebar(false);
+        }
+        window.resetChat = resetChat;
+
+        window.__okemoDeleteChat = (id) => {
+            if (confirm("Delete archive?")) {
+                delete allChats[id];
+                localStorage.setItem('olm_archives_v3', JSON.stringify(allChats));
+                if (currentChatId === id) resetChat();
+                else renderHistory();
+            }
+        };
+
+        function toggleSidebar(force = null) {
+            const body = document.body;
+            const isCurrentlyHidden = !body.classList.contains('sidebar-open');
+            const shouldShow = force === true || (force === null && isCurrentlyHidden);
+            
+            if (shouldShow) {
+                body.classList.add('sidebar-open');
+                body.classList.remove('sidebar-closed');
+                sidebar.classList.remove('-translate-x-full');
+                if (window.innerWidth < 1024) {
+                    sidebarBackdrop.classList.remove('hidden');
+                    setTimeout(() => sidebarBackdrop.classList.add('opacity-100'), 10);
+                }
+            } else {
+                body.classList.remove('sidebar-open');
+                body.classList.add('sidebar-closed');
+                sidebar.classList.add('-translate-x-full');
+                sidebarBackdrop.classList.add('hidden');
+                sidebarBackdrop.classList.remove('opacity-100');
+            }
+        }
+
+        function closeMenus() {
+            modelMenu.classList.remove('active');
+            settingsMenu.classList.remove('active');
+        }
+
+        function scrollToBottom() {
+          chatBoxContainer.scrollTo({ top: chatBoxContainer.scrollHeight, behavior: 'smooth' });
+        }
+
+        /* =======================
+           EVENT LISTENERS
+        ======================= */
+        sendBtn.addEventListener('click', () => sendMessage());
+        textarea.addEventListener('keydown', e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+        textarea.addEventListener('input', function() { 
+            this.style.height = 'auto'; 
+            this.style.height = this.scrollHeight + 'px'; 
         });
-        handleScroll();
-        scrollToBottom();
-      }
-    });
-  </script>
+
+        document.getElementById('toggle-sidebar').addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
+        document.getElementById('model-dropdown-btn').addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('active'); modelMenu.classList.toggle('active'); });
+        document.getElementById('settings-toggle').addEventListener('click', (e) => { e.stopPropagation(); modelMenu.classList.remove('active'); settingsMenu.classList.toggle('active'); });
+
+        window.addEventListener('click', (e) => {
+            if (!modelMenu.contains(e.target) && !settingsMenu.contains(e.target)) closeMenus();
+        });
+
+        document.getElementById('model-select-pro').addEventListener('click', () => { 
+            if (history.length > 0) resetChat();
+            currentModel = MODELS.OLM2; client = null; 
+            document.getElementById('active-model-name').innerText = "OLM 2"; 
+            setStatus("Connecting...", "yellow"); closeMenus(); 
+            ensureClient();
+        });
+        
+        document.getElementById('model-select-base').addEventListener('click', () => { 
+            if (history.length > 0) resetChat();
+            currentModel = MODELS.OLM1; client = null; 
+            document.getElementById('active-model-name').innerText = "OLM 1"; 
+            setStatus("Connecting...", "yellow"); closeMenus(); 
+            ensureClient();
+        });
+
+        document.getElementById('web-search-toggle').addEventListener('click', () => {
+            webSearchEnabled = !webSearchEnabled;
+            document.getElementById('web-status-tag').innerText = webSearchEnabled ? "ON" : "OFF";
+            document.getElementById('web-status-tag').className = webSearchEnabled ? "ml-auto text-[8px] text-green-500 font-black" : "ml-auto text-[8px] opacity-40";
+        });
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('vail_modern_theme_v3', isDark ? 'light' : 'dark');
+        });
+
+        document.getElementById('new-chat-btn').addEventListener('click', resetChat);
+        document.getElementById('close-sidebar-mobile').addEventListener('click', () => toggleSidebar(false));
+        sidebarBackdrop.addEventListener('click', () => toggleSidebar(false));
+
+        document.getElementById('save-settings').addEventListener('click', () => {
+            settings.temp = parseFloat(document.getElementById('param-temp').value);
+            localStorage.setItem('olm_settings_v3', JSON.stringify(settings));
+            closeMenus();
+            setStatus("Settings Saved", "blue");
+        });
+
+        document.getElementById('param-temp').addEventListener('input', (e) => { document.getElementById('temp-val').innerText = e.target.value; });
+
+        document.getElementById('clear-all-btn').addEventListener('click', () => {
+            if (confirm("Delete all archives?")) {
+                allChats = {};
+                localStorage.setItem('olm_archives_v3', '{}');
+                resetChat();
+            }
+        });
+
+        // Scroll logic for the arrow btn
+        chatBoxContainer.addEventListener('scroll', () => {
+            const threshold = 150;
+            const isScrolledUp = chatBoxContainer.scrollHeight - chatBoxContainer.scrollTop - chatBoxContainer.clientHeight > threshold;
+            if (isScrolledUp) {
+                scrollBottomBtn.classList.remove('opacity-0', 'invisible', 'scale-90');
+                scrollBottomBtn.classList.add('opacity-100', 'visible', 'scale-100');
+            } else {
+                scrollBottomBtn.classList.add('opacity-0', 'invisible', 'scale-90');
+                scrollBottomBtn.classList.remove('opacity-100', 'visible', 'scale-100');
+            }
+        });
+
+        scrollBottomBtn.addEventListener('click', scrollToBottom);
+
+        /* =======================
+           INITIALIZATION
+        ======================= */
+        function initApp() {
+            const savedTheme = localStorage.getItem('vail_modern_theme_v3');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+            if (window.innerWidth < 1024) {
+                document.body.classList.remove('sidebar-open');
+                document.body.classList.add('sidebar-closed');
+                sidebar.classList.add('-translate-x-full');
+            }
+            document.getElementById('param-temp').value = settings.temp;
+            const tempVal = document.getElementById('temp-val');
+            if (tempVal) tempVal.innerText = settings.temp;
+
+            renderHistory();
+            render();
+            ensureClient().catch(() => setStatus("Offline", "red"));
+        }
+        
+        initApp();
+    </script>
 </body>
 </html>
