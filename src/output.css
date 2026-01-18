@@ -33,7 +33,6 @@
     --color-neutral-500: oklch(55.6% 0 0);
     --color-neutral-600: oklch(43.9% 0 0);
     --color-neutral-700: oklch(37.1% 0 0);
-    --color-neutral-800: oklch(26.9% 0 0);
     --color-neutral-950: oklch(14.5% 0 0);
     --color-black: #000;
     --color-white: #fff;
@@ -42,7 +41,6 @@
     --container-xs: 20rem;
     --container-sm: 24rem;
     --container-md: 28rem;
-    --container-lg: 32rem;
     --container-xl: 36rem;
     --container-2xl: 42rem;
     --container-4xl: 56rem;
@@ -71,7 +69,6 @@
     --text-8xl: 6rem;
     --text-8xl--line-height: 1;
     --font-weight-medium: 500;
-    --font-weight-semibold: 600;
     --font-weight-bold: 700;
     --font-weight-black: 900;
     --tracking-tighter: -0.05em;
@@ -931,6 +928,9 @@
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-neutral-300) 40%, transparent);
     }
+  }
+  .bg-orange-500 {
+    background-color: var(--color-orange-500);
   }
   .bg-red-500 {
     background-color: var(--color-red-500);
