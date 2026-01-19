@@ -154,7 +154,7 @@
 
   <header class="max-w-screen-2xl mx-auto px-4 md:px-16 pt-6 md:pt-8">
     <nav class="mb-4 md:mb-6">
-      <a href="OkemoLLM.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
+      <a href="#" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
         <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
         <span>Back</span>
       </a>
@@ -212,8 +212,8 @@
                </a>
             </div>
 
-            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest opacity-40 block mb-2">Current Activity</span>
-            <p id="activity-text" class="font-serif text-xl md:text-2xl font-black italic leading-none uppercase">Pre-training <br>Standby</p>
+            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest opacity-40 block mb-2">Current Status</span>
+            <p id="activity-text" class="font-serif text-xl md:text-2xl font-black italic leading-none uppercase">Initializing...</p>
           </div>
         </div>
       </div>
@@ -254,11 +254,11 @@
             <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
               <i class="fa-solid fa-microchip text-xs md:text-base"></i>
             </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest opacity-60">VRAM Free</span>
+            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest opacity-60">System</span>
           </div>
           <div class="flex flex-col">
-            <span id="val-vram-free" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0.00 GB</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Available</span>
+            <span id="val-status" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter uppercase">IDLE</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Process State</span>
           </div>
         </div>
 
@@ -329,7 +329,7 @@
         </div>
         <div class="macos-content-area">
           <div id="terminal-body" class="h-64 md:h-96 overflow-y-auto font-mono text-[10px] md:text-xs leading-relaxed text-white whitespace-pre-wrap selection:bg-accent-blue selection:text-white">
-            [SYSTEM] Establishing uplink to Firebase...
+            [SYSTEM] Establishing uplink...
           </div>
         </div>
       </div>
@@ -357,9 +357,9 @@
   </footer>
 
   <script>
-    // Targeted Firebase URL
+    // Targeted Firebase URL - Matches provided flat format
     const DATABASE_URL = "https://olmlive-4a343-default-rtdb.firebaseio.com/stats.json";
-    const STALE_THRESHOLD_MS = 60000; // 1 minute stale warning
+    const STALE_THRESHOLD_MS = 60000; 
     
     let history = []; 
     let lastKnownUpdate = null;
@@ -383,9 +383,9 @@
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             fill: true,
-            tension: 0.1,
+            tension: 0.2,
             borderWidth: 2,
-            pointRadius: 2
+            pointRadius: 1
           }]
         },
         options: {
@@ -440,12 +440,11 @@
         const response = await fetch(DATABASE_URL);
         if (!response.ok) throw new Error("Fetch failed");
         
-        // Structure: { stats: { ... } }
-        const rawData = await response.json();
-        const stats = rawData.stats;
+        // Root object contains the keys directly as per user format
+        const data = await response.json();
 
-        if (stats) {
-          const currentUpdate = stats.update;
+        if (data) {
+          const currentUpdate = data.update;
           const now = Date.now();
           
           if (currentUpdate !== lastKnownUpdate) {
@@ -456,59 +455,57 @@
           const msSinceUpdate = (now - lastDataChangeTime);
           const isStale = msSinceUpdate >= STALE_THRESHOLD_MS;
 
-          // Update UI Elements using stats.key
-          document.getElementById('val-loss').innerText = (stats.loss || 0).toFixed(4);
-          document.getElementById('val-avg-loss').innerText = (stats.moving_avg_loss || 0).toFixed(4);
-          document.getElementById('val-step').innerText = (stats.total_tokens || 0).toLocaleString();
-          document.getElementById('val-update-id').innerText = stats.update || "--";
-          document.getElementById('val-vram-free').innerText = (stats.vram_free || 0).toFixed(2) + " GB";
-          document.getElementById('val-elapsed').innerText = formatTime(stats.time_elapsed);
+          // Update UI Mapping
+          document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
+          document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
+          document.getElementById('val-step').innerText = (data.total_tokens || 0).toLocaleString();
+          document.getElementById('val-update-id').innerText = data.update || "--";
+          document.getElementById('val-status').innerText = data.status || "IDLE";
+          document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
 
-          // Update Console Logs
-          if (stats.logs && Array.isArray(stats.logs)) {
+          // Logs
+          if (data.logs && Array.isArray(data.logs)) {
             const terminal = document.getElementById('terminal-body');
-            terminal.innerText = stats.logs.slice(-100).join('\n');
+            terminal.innerText = data.logs.slice(-100).join('\n');
             terminal.scrollTop = terminal.scrollHeight;
           }
 
-          // Update Chart Data
+          // Charts
           const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          history.push({ time: timeLabel, loss: stats.loss, tokens: stats.total_tokens });
-          if (history.length > 50) history.shift();
+          if (history.length === 0 || history[history.length-1].update !== data.update) {
+            history.push({ time: timeLabel, loss: data.loss, tokens: data.total_tokens, update: data.update });
+            if (history.length > 50) history.shift();
 
-          lossChart.data.labels = history.map(h => h.time);
-          lossChart.data.datasets[0].data = history.map(h => h.loss);
-          lossChart.update('none');
+            lossChart.data.labels = history.map(h => h.time);
+            lossChart.data.datasets[0].data = history.map(h => h.loss);
+            lossChart.update('none');
 
-          tokenChart.data.labels = history.map(h => h.time);
-          tokenChart.data.datasets[0].data = history.map(h => h.tokens);
-          tokenChart.update('none');
+            tokenChart.data.labels = history.map(h => h.time);
+            tokenChart.data.datasets[0].data = history.map(h => h.tokens);
+            tokenChart.update('none');
+          }
 
-          // Status Indicators
+          // Indicators
           const dot = document.getElementById('status-dot');
           const text = document.getElementById('status-text');
           const activity = document.getElementById('activity-text');
-          const alert = document.getElementById('error-alert');
-          const errMsg = document.getElementById('error-message');
           
           if (isStale) {
             dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-orange-500 animate-pulse";
             text.innerText = "Connection Stalled";
-            activity.innerHTML = "Telemetry Stalled <br>Waiting for Update";
-            alert.classList.add('hidden'); // Not a hard error yet
+            activity.innerHTML = "Process Idle <br>Awaiting Data";
           } else {
             dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]";
             text.innerText = "Feed Connected";
-            activity.innerHTML = "Pre-training <br>NVIDIA A10-24G";
-            alert.classList.add('hidden');
+            activity.innerHTML = `State: ${data.status || 'Active'} <br> NVIDIA A10-24G`;
           }
+          document.getElementById('error-alert').classList.add('hidden');
         }
       } catch (e) {
-        console.error("Firebase Error:", e);
+        console.error("Uplink Error:", e);
         document.getElementById('error-alert').classList.remove('hidden');
         document.getElementById('status-dot').className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500";
         document.getElementById('status-text').innerText = "Network Error";
-        document.getElementById('error-message').innerText = "Uplink Error: Cannot reach database.";
       }
     }
 
@@ -529,11 +526,9 @@
       initCharts();
       fetchStats();
       updateClock();
-      // Poll every 5 seconds
       setInterval(fetchStats, 5000);
       setInterval(updateClock, 1000);
     };
   </script>
 </body>
 </html>
-
