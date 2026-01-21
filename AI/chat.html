@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>OLM | Vail AI</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
-    
     <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -35,16 +34,11 @@
                     },
                     animation: {
                         'msg-in': 'msgIn 0.3s ease-out forwards',
-                        'float': 'float 5s ease-in-out infinite',
                     },
                     keyframes: {
                         msgIn: {
                             '0%': { opacity: '0', transform: 'translateY(8px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
                         }
                     }
                 }
@@ -85,9 +79,10 @@
         .message-row {
             width: 100%;
             display: flex;
-            padding: 1.5rem 0;
+            padding: 1.25rem 0;
             border-bottom: 1px solid rgba(0,0,0,0.03);
         }
+        @media (min-width: 640px) { .message-row { padding: 1.5rem 0; } }
         .dark .message-row { border-color: rgba(255,255,255,0.03); }
 
         .message-content {
@@ -95,22 +90,24 @@
             margin: 0 auto;
             width: 100%;
             display: flex;
-            gap: 1rem;
-            padding: 0 1rem;
+            gap: 0.75rem;
+            padding: 0 1.25rem;
         }
+        @media (min-width: 640px) { .message-content { gap: 1rem; padding: 0 1.5rem; } }
 
         .avatar {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 900;
             overflow: hidden;
         }
+        @media (min-width: 640px) { .avatar { width: 28px; height: 28px; font-size: 11px; } }
 
         .user-avatar { background: #1a1a1a; color: #f9f7f2; }
         .ai-avatar { background: transparent; border: none; }
@@ -123,19 +120,38 @@
         }
 
         #sidebar { 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateX(0);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease, opacity 0.3s ease;
+            z-index: 50;
         }
 
-        /* Responsive Layout Logic */
-        @media (min-width: 1024px) {
-            body.sidebar-open main { padding-left: 288px; }
-            body.sidebar-closed #sidebar { transform: translateX(-100%); }
-            body.sidebar-open #sidebar { transform: translateX(0); }
-        }
         @media (max-width: 1023px) {
-            #sidebar { transform: translateX(-100%); }
+            #sidebar { 
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                transform: translateX(-100%); 
+            }
             body.sidebar-open #sidebar { transform: translateX(0); }
+            body.sidebar-open main { pointer-events: none; opacity: 0.4; transform: scale(0.98); }
+        }
+
+        @media (min-width: 1024px) {
+            #sidebar {
+                position: static;
+                transform: none !important;
+            }
+            body.sidebar-closed #sidebar { 
+                width: 0; 
+                opacity: 0; 
+                pointer-events: none;
+                overflow: hidden;
+                border-right-width: 0;
+            }
+            body.sidebar-open #sidebar { 
+                width: 288px; 
+                opacity: 1; 
+            }
         }
 
         .history-item-active {
@@ -161,23 +177,26 @@
             pointer-events: auto;
         }
 
-        .action-btn {
-            @apply flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-ink/40 dark:text-dark-ink/40 hover:text-ink dark:hover:text-dark-ink hover:bg-ink/5 dark:hover:bg-white/5 rounded transition-all;
+        .icon-action-btn {
+            @apply flex items-center justify-center w-9 h-9 rounded-lg bg-ink/5 dark:bg-white/5 text-ink/60 dark:text-dark-ink/60 hover:text-ink dark:hover:text-dark-ink hover:bg-ink/10 dark:hover:bg-white/10 transition-all cursor-pointer border border-ink/5 dark:border-white/5 active:scale-90 shadow-sm;
         }
 
         #scroll-bottom-btn {
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
+        .typing-area-footer {
+            padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+        }
     </style>
 </head>
 <body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 h-screen flex overflow-hidden sidebar-open">
 
-    <!-- Mobile Sidebar Backdrop -->
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-ink/40 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm lg:hidden"></div>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-ink/40 z-[45] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm lg:hidden"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-paper dark:bg-dark-paper border-r border-ink/5 dark:border-white/5 z-50 flex flex-col shadow-2xl lg:shadow-none translate-x-0">
-        <div class="p-6 flex flex-col h-full">
-            <div class="flex items-center justify-between mb-8">
+    <aside id="sidebar" class="w-72 bg-paper dark:bg-dark-paper border-r border-ink/5 dark:border-white/5 flex flex-col shadow-2xl lg:shadow-none">
+        <div class="p-6 flex flex-col h-full overflow-hidden">
+            <div class="flex items-center justify-between mb-8 flex-shrink-0">
                 <h1 class="font-header text-2xl font-black uppercase italic tracking-tighter">
                     V<span class="ai-gradient">AI</span>L
                 </h1>
@@ -186,7 +205,7 @@
                 </button>
             </div>
 
-            <button id="new-chat-btn" class="w-full flex items-center gap-3 px-4 py-3 mb-6 border border-ink/10 dark:border-white/10 rounded-lg font-bold text-xs hover:bg-ink hover:text-white dark:hover:bg-white dark:hover:text-ink transition-all cursor-pointer">
+            <button id="new-chat-btn" class="w-full flex items-center gap-3 px-4 py-3 mb-6 border border-ink/10 dark:border-white/10 rounded-lg font-bold text-xs hover:bg-ink hover:text-white dark:hover:bg-white dark:hover:text-ink transition-all cursor-pointer flex-shrink-0">
                 <i class="fa-solid fa-plus"></i>
                 <span>New Chat</span>
             </button>
@@ -195,7 +214,7 @@
                 <!-- Archives -->
             </div>
 
-            <div class="mt-6 pt-6 border-t border-ink/5 dark:border-white/5 space-y-2">
+            <div class="mt-6 pt-6 border-t border-ink/5 dark:border-white/5 space-y-2 flex-shrink-0">
                 <button id="web-search-toggle" class="w-full py-2.5 px-4 flex items-center gap-3 text-xs font-bold rounded-lg hover:bg-ink/5 dark:hover:bg-white/5 transition-all text-left cursor-pointer">
                     <i class="fa-solid fa-globe"></i> Web Search <span id="web-status-tag" class="ml-auto text-[8px] opacity-40">OFF</span>
                 </button>
@@ -210,19 +229,19 @@
     </aside>
 
     <main class="flex-1 flex flex-col h-full relative overflow-hidden transition-all duration-300">
-        <header class="h-14 flex items-center justify-between px-4 bg-paper/80 dark:bg-dark-paper/80 backdrop-blur-md z-40 border-b border-ink/5 dark:border-white/5">
+        <header class="h-14 flex items-center justify-between px-4 bg-paper/80 dark:bg-dark-paper/80 backdrop-blur-md z-40 border-b border-ink/5 dark:border-white/5 flex-shrink-0">
             <div class="flex items-center gap-2">
                 <button id="toggle-sidebar" class="p-2 hover:bg-ink/5 dark:hover:bg-white/5 transition-all rounded-lg cursor-pointer">
                     <i class="fa-solid fa-bars-staggered text-sm"></i>
                 </button>
                 
                 <div class="relative">
-                    <button id="model-dropdown-btn" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-ink/5 dark:hover:bg-white/5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-all cursor-pointer">
-                        <span id="active-model-name">OLM 2</span>
+                    <button id="model-dropdown-btn" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-ink/5 dark:hover:bg-white/5 text-[9px] sm:text-[11px] font-bold uppercase tracking-widest transition-all cursor-pointer">
+                        <span id="active-model-name">OLM North Star (BETA)</span>
                         <i class="fa-solid fa-chevron-down text-[8px] opacity-40"></i>
                     </button>
                     <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 border border-ink/10 dark:border-white/10 shadow-2xl rounded-xl z-50 overflow-hidden">
-                        <button id="model-select-pro" class="w-full text-left px-4 py-3 text-[10px] font-bold uppercase hover:bg-accent hover:text-white transition-all border-b border-ink/5 cursor-pointer">OLM 2 (Flagship)</button>
+                        <button id="model-select-pro" class="w-full text-left px-4 py-3 text-[10px] font-bold uppercase hover:bg-accent hover:text-white transition-all border-b border-ink/5 cursor-pointer">OLM North Star</button>
                         <button id="model-select-base" class="w-full text-left px-4 py-3 text-[10px] font-bold uppercase hover:bg-accent hover:text-white transition-all cursor-pointer">OLM 1 (Legacy)</button>
                     </div>
                 </div>
@@ -242,50 +261,50 @@
                         <div class="space-y-6">
                             <div>
                                 <div class="flex justify-between text-[10px] font-bold uppercase tracking-widest mb-3 text-ink/60 dark:text-dark-ink/60">
-                                    <span>Creativity Scale</span>
+                                    <span>Creativity</span>
                                     <span id="temp-val" class="text-accent dark:text-blue-400">0.7</span>
                                 </div>
                                 <input type="range" id="param-temp" min="0" max="1" step="0.1" value="0.7" class="w-full h-1 bg-ink/10 dark:bg-white/10 rounded-full appearance-none accent-ink dark:accent-white cursor-pointer">
                             </div>
-                            <button id="save-settings" class="w-full py-2 bg-ink text-paper dark:bg-white dark:text-ink font-bold uppercase tracking-widest text-[9px] rounded shadow-md transition-all active:scale-95 cursor-pointer">Save Changes</button>
+                            <button id="save-settings" class="w-full py-2 bg-ink text-paper dark:bg-white dark:text-ink font-bold uppercase tracking-widest text-[9px] rounded shadow-md transition-all active:scale-95 cursor-pointer">Save</button>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <div id="chat-container" class="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
-            <div id="chat-messages" class="w-full min-h-full flex flex-col justify-center">
-                <!-- Welcome view -->
-                <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center text-center animate-float px-6 pb-20 w-full">
-                    <h2 class="font-serif text-4xl md:text-5xl font-black italic mb-4">What's on your mind?</h2>
-                    <p class="font-header text-[11px] font-bold uppercase tracking-[0.5em] opacity-30">OLM 0.2.2 BETA</p>
-                </div>
+        <div id="chat-container" class="flex-1 overflow-y-auto custom-scrollbar flex flex-col relative">
+            <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center text-center px-6 pb-20 w-full">
+                <h2 class="font-serif text-3xl md:text-5xl font-black italic mb-4 text-ink dark:text-dark-ink">What's on your mind?</h2>
+                <p class="font-header text-[10px] font-bold uppercase tracking-[0.4em] opacity-30 text-ink dark:text-dark-ink">OLM Chat 0.3.1</p>
+            </div>
+            <div id="chat-messages" class="w-full flex flex-col pb-[32rem]">
+                <!-- Messages render here -->
             </div>
         </div>
 
-        <footer class="pb-4 sm:pb-6 pt-2 px-2 sm:px-4 bg-gradient-to-t from-paper dark:from-dark-paper via-paper/95 dark:via-dark-paper/95 to-transparent relative">
+        <!-- Position absolute within relative main container to shift with sidebar -->
+        <footer class="typing-area-footer pt-2 px-2 sm:px-4 bg-gradient-to-t from-paper dark:from-dark-paper via-paper/95 dark:via-dark-paper/95 to-transparent absolute bottom-0 left-0 w-full z-40 transition-all duration-300">
             <div class="input-wrapper">
-                <!-- Scroll to Bottom Arrow - Left Aligned above input -->
-                <button id="scroll-bottom-btn" class="absolute -top-10 left-4 opacity-0 scale-90 invisible flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-zinc-800 border border-ink/10 dark:border-white/10 shadow-lg text-ink/60 dark:text-dark-ink/60 hover:text-ink dark:hover:text-dark-ink hover:scale-105 active:scale-95 transition-all z-50">
-                    <i class="fa-solid fa-arrow-down text-xs"></i>
+                <button id="scroll-bottom-btn" class="absolute -top-14 left-1/2 -translate-x-1/2 opacity-0 scale-90 invisible flex items-center justify-center w-10 h-10 bg-paper dark:bg-zinc-900 gazette-border shadow-2xl text-ink dark:text-dark-ink hover:bg-ink hover:text-white dark:hover:bg-white dark:hover:text-ink transition-all z-50 cursor-pointer">
+                    <i class="fa-solid fa-arrow-down text-sm"></i>
                 </button>
 
-                <div class="gazette-border bg-paper dark:bg-zinc-900 p-2 shadow-lg flex flex-col gap-1 transition-all">
+                <div class="gazette-border bg-paper dark:bg-zinc-900 p-2 shadow-xl flex flex-col gap-1 transition-all rounded-lg sm:rounded-none">
                     <textarea 
                         id="user-input" 
                         placeholder="TYPE A MESSAGE..." 
                         rows="1" 
-                        class="w-full bg-transparent px-2 sm:px-3 py-2 outline-none resize-none font-bold text-sm tracking-widest placeholder:opacity-20 text-ink dark:text-dark-ink max-h-40 leading-relaxed"
+                        class="w-full bg-transparent px-2 sm:px-3 py-2 outline-none resize-none font-bold text-sm tracking-widest placeholder:opacity-20 text-ink dark:text-dark-ink max-h-32 sm:max-h-48 leading-relaxed custom-scrollbar"
                     ></textarea>
                     
                     <div class="flex justify-between items-center border-t border-ink/5 dark:border-white/5 pt-2 pb-1 px-1">
-                        <div class="flex items-center gap-3 text-[8px] font-black uppercase tracking-[0.3em] opacity-30 italic">
+                        <div class="flex items-center gap-3 text-[7px] sm:text-[8px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] opacity-30 italic">
                             <span id="api-status-footer" class="flex items-center gap-1.5">
                                 <span class="w-1 h-1 rounded-full bg-slate-400 animate-pulse"></span> Standby
                             </span>
                         </div>
-                        <button id="send-btn" class="px-4 py-1.5 bg-ink text-paper dark:bg-white dark:text-ink font-black text-[9px] uppercase tracking-[0.3em] hover:bg-accent hover:text-white transition-all active:scale-95 shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                        <button id="send-btn" class="px-3 sm:px-4 py-1.5 bg-ink text-paper dark:bg-white dark:text-ink font-black text-[9px] uppercase tracking-[0.3em] hover:bg-accent hover:text-white transition-all active:scale-95 shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-30">
                             Send <i class="fa-solid fa-paper-plane text-[8px]"></i>
                         </button>
                     </div>
@@ -297,30 +316,24 @@
     <script type="module">
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-        /* =======================
-           CONFIG
-        ======================= */
         const MODELS = {
           OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", schema: "legacy" },
-          OLM2: { id: "https://ar12c-okemollm.hf.space", name: "OLM 2", schema: "structured" }
+          OLM2: { id: "https://ar12c-okemollm.hf.space", name: "OLM North Star", schema: "structured" }
         };
 
-        const SYSTEM_PROMPT = "You are Okemo Language Model 2 OLM2 a highly helpful verbose and comprehensive AI assistant. Your goal is to provide detailed and well structured answers in a conversational tone. CRITICAL ALWAYS wrap equations in $$ tags only. DO NOT under any circumstances use parentheses or square brackets for mathematical formulas.";
+        const SYSTEM_PROMPT = "You are Okemo Language Model North Star (OLM North Star), a highly helpful verbose and comprehensive AI assistant. Your goal is to provide detailed and well structured answers in a conversational tone. CRITICAL ALWAYS wrap equations in $$ tags only. DO NOT under any circumstances use parentheses or square brackets for mathematical formulas.";
         const WEB_TOKEN = "<WEB>";
         const WEB_ICON = "🌐";
         const AI_LOGO = "/src/Vailailogo.svg";
 
-        /* =======================
-           STATE
-        ======================= */
         let currentModel = MODELS.OLM2;
         let client = null;
         let history = []; 
-        let allChats = JSON.parse(localStorage.getItem('olm_archives_v3') || '{}');
+        let allChats = JSON.parse(localStorage.getItem('olm_archives_v4') || '{}');
         let currentChatId = crypto.randomUUID();
         let isGenerating = false;
         let webSearchEnabled = false;
-        let settings = JSON.parse(localStorage.getItem('olm_settings_v3') || JSON.stringify({ temp: 0.7, tokens: 512 }));
+        let settings = JSON.parse(localStorage.getItem('olm_settings_v4') || JSON.stringify({ temp: 0.7, tokens: 512 }));
 
         const chatBoxContainer = document.getElementById("chat-container");
         const chatBox = document.getElementById("chat-messages");
@@ -336,9 +349,6 @@
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         const scrollBottomBtn = document.getElementById('scroll-bottom-btn');
 
-        /* =======================
-           HELPERS
-        ======================= */
         function formatMarkdown(text) {
             if (!text) return '';
             return marked.parse(text);
@@ -394,9 +404,8 @@
                     setStatus("System Ready", "green");
                     return client;
                 } catch (err) {
-                    console.error(`Attempt ${i + 1} failed:`, err);
                     if (i === retries - 1) {
-                        setStatus("Connection Error", "red");
+                        setStatus("Offline", "red");
                         throw err;
                     }
                     await new Promise(r => setTimeout(r, delay * Math.pow(1.5, i)));
@@ -404,28 +413,25 @@
             }
         }
 
-        function saveToStorage(targetChatId) {
+        function saveToStorage(targetChatId, targetHistory) {
             const idToSave = targetChatId || currentChatId;
-            if (history.length === 0) return;
+            const historyToSave = targetHistory || history;
+            if (!historyToSave || historyToSave.length === 0) return;
             
-            // Generate title from first user message
-            const firstMsg = history[0][0] || "New Chat";
+            const firstMsg = historyToSave[0][0] || "New Chat";
             const title = firstMsg.substring(0, 30) + (firstMsg.length > 30 ? '...' : '');
             
             allChats[idToSave] = { 
                 id: idToSave, 
                 title: title, 
-                history: [...history], // Clone history array
+                history: JSON.parse(JSON.stringify(historyToSave)),
                 timestamp: Date.now() 
             };
             
-            localStorage.setItem('olm_archives_v3', JSON.stringify(allChats));
+            localStorage.setItem('olm_archives_v4', JSON.stringify(allChats));
             renderHistory();
         }
 
-        /* =======================
-           CORE LOGIC
-        ======================= */
         async function sendMessage(overrideText = null) {
           if (isGenerating) return;
           let msg = overrideText ?? textarea.value.trim();
@@ -436,9 +442,9 @@
           if (webSearchEnabled && !msg.includes(WEB_TOKEN)) msg += ` ${WEB_TOKEN}`;
           
           history.push([msg, null]);
-          
-          const processingChatId = currentChatId; // Snap ID for this turn
-          saveToStorage(processingChatId); // Save immediately so it hits the sidebar
+          const processingChatId = currentChatId; 
+          const activeHistory = history; 
+          saveToStorage(processingChatId, activeHistory); 
           
           render();
           isGenerating = true;
@@ -450,12 +456,12 @@
             if (currentModel.schema === "legacy") {
               job = c.submit("/on_submit", [
                 msg, 
-                history.map(([u, a]) => [`YOU: ${u}`, a ? `OLM: ${a}` : null])
+                activeHistory.map(([u, a]) => [`YOU: ${u}`, a ? `OLM: ${a}` : null])
               ]);
             } else {
               job = c.submit("/on_submit", [
                 msg, 
-                toStructuredHistory(history), 
+                toStructuredHistory(activeHistory), 
                 SYSTEM_PROMPT, 
                 settings.tokens, 
                 settings.temp, 
@@ -471,20 +477,24 @@
               
               const lastResponse = newHistory[newHistory.length - 1][1];
               if (lastResponse) {
-                history[history.length - 1][1] = lastResponse;
-                updateLastResponseInUI(lastResponse);
+                activeHistory[activeHistory.length - 1][1] = lastResponse;
+                if (currentChatId === processingChatId) {
+                    updateLastResponseInUI(lastResponse);
+                }
               }
             }
           } catch (e) {
             console.error("API Error:", e);
-            history.at(-1)[1] = "⚠️ Transmission interrupted. Please check if the model space is available.";
-            render();
+            activeHistory.at(-1)[1] = "⚠️ Transmission interrupted. Ong fix your wifi or its my shit code idk";
+            if (currentChatId === processingChatId) render();
           } finally {
             isGenerating = false;
             sendBtn.disabled = false;
-            saveToStorage(processingChatId); // Save complete log
-            render(); 
-            scrollToBottom();
+            saveToStorage(processingChatId, activeHistory); 
+            if (currentChatId === processingChatId) {
+                render(); 
+                scrollToBottom();
+            }
           }
         }
 
@@ -497,24 +507,25 @@
                 proseDiv.innerHTML = formatMarkdown(text);
                 renderMath(proseDiv);
             }
+            const actionContainer = lastRow.querySelector('.action-icons-container');
+            if (actionContainer) {
+                actionContainer.classList.remove('hidden');
+            }
         }
 
-        /* =======================
-           ACTIONS
-        ======================= */
         window.__okemoCopy = (idx) => {
           const text = history[idx]?.[1];
           if (!text) return;
           try {
-            navigator.clipboard.writeText(text).then(() => setStatus("Copied", "blue"));
-          } catch(e) {
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            setStatus("Copied", "blue");
+              navigator.clipboard.writeText(text).then(() => setStatus("Copied", "blue"));
+          } catch (e) {
+              const el = document.createElement('textarea');
+              el.value = text;
+              document.body.appendChild(el);
+              el.select();
+              document.execCommand('copy');
+              document.body.removeChild(el);
+              setStatus("Copied", "blue");
           }
         };
 
@@ -527,22 +538,19 @@
           sendMessage(msg);
         };
 
-        /* =======================
-           UI RENDERERS
-        ======================= */
         function render() {
-          chatBox.innerHTML = "";
           if (history.length === 0) {
             welcomeState.style.display = "flex";
-            chatBox.classList.add('justify-center');
+            chatBox.style.display = "none";
+            chatBox.innerHTML = "";
             return;
           } else {
             welcomeState.style.display = "none";
-            chatBox.classList.remove('justify-center');
+            chatBox.style.display = "flex";
           }
 
+          chatBox.innerHTML = "";
           history.forEach(([u, a], idx) => {
-            // User Row
             const userRow = document.createElement('div');
             userRow.className = 'message-row animate-msg-in';
             userRow.innerHTML = `
@@ -554,7 +562,6 @@
                 </div>`;
             chatBox.appendChild(userRow);
 
-            // AI Row
             const aiRow = document.createElement('div');
             aiRow.className = 'message-row bg-black/5 dark:bg-white/5 animate-msg-in';
             aiRow.innerHTML = `
@@ -563,16 +570,15 @@
                         <img src="${AI_LOGO}" alt="Logo" class="w-full h-full object-contain dark:invert transition-all duration-300">
                     </div>
                     <div class="flex-1 overflow-hidden">
-                        <div class="prose dark:prose-invert max-w-none text-sm sm:text-[15px] leading-relaxed text-ink dark:text-dark-ink">${a ? formatMarkdown(a) : ""}</div>
-                        ${a ? `
-                        <div class="flex gap-4 mt-3">
-                            <button class="action-btn" onclick="window.__okemoCopy(${idx})">
-                                <i class="fa-regular fa-copy"></i> Copy
+                        <div class="prose dark:prose-invert max-w-none text-sm sm:text-[15px] leading-relaxed text-ink dark:text-dark-ink">${a ? formatMarkdown(a) : "..."}</div>
+                        <div class="action-icons-container flex gap-2 mt-4 ${!a ? 'hidden' : ''}">
+                            <button class="icon-action-btn" onclick="window.__okemoCopy(${idx})" title="Copy">
+                                <i class="fa-regular fa-copy text-xs"></i>
                             </button>
-                            <button class="action-btn" onclick="window.__okemoRegen(${idx})">
-                                <i class="fa-solid fa-rotate-right"></i> Regenerate
+                            <button class="icon-action-btn" onclick="window.__okemoRegen(${idx})" title="Regenerate">
+                                <i class="fa-solid fa-rotate-right text-xs"></i>
                             </button>
-                        </div>` : ""}
+                        </div>
                     </div>
                 </div>`;
             chatBox.appendChild(aiRow);
@@ -585,32 +591,31 @@
             const sorted = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
             sorted.forEach(chat => {
                 const item = document.createElement("button");
-                item.className = `w-full text-left px-4 py-3 rounded-lg text-xs font-bold transition-all truncate flex items-center justify-between group cursor-pointer ${chat.id === currentChatId ? 'history-item-active' : 'text-ink/50 dark:text-white/40 hover:bg-ink/5'}`;
+                const isActive = chat.id === currentChatId;
+                item.className = `w-full text-left px-4 py-3 rounded-lg text-xs font-bold transition-all truncate flex items-center justify-between group cursor-pointer ${isActive ? 'history-item-active' : 'text-ink/50 dark:text-white/40 hover:bg-ink/5'}`;
                 item.innerHTML = `
-                    <span class="truncate pr-2"><i class="fa-solid fa-message mr-2 opacity-30 text-[10px]"></i> ${chat.title}</span>
+                    <span class="truncate pr-2 pointer-events-none"><i class="fa-solid fa-message mr-2 opacity-30 text-[10px]"></i> ${chat.title}</span>
                     <i class="fa-solid fa-trash-can opacity-0 group-hover:opacity-40 hover:!opacity-100 p-1 text-[9px]" onclick="event.stopPropagation(); window.__okemoDeleteChat('${chat.id}')"></i>`;
-                item.addEventListener('click', () => { 
+                
+                item.onclick = () => {
                     currentChatId = chat.id; 
-                    history = chat.history; 
+                    history = JSON.parse(JSON.stringify(chat.history)); 
+                    isGenerating = false; 
                     render(); 
                     renderHistory(); 
-                    if (window.innerWidth < 1024) toggleSidebar(false); 
-                });
+                    if (window.innerWidth < 1024) toggleSidebar(false);
+                };
                 historyList.appendChild(item);
             });
         }
 
-        /* =======================
-           UI CONTROLS
-        ======================= */
         function resetChat() {
             currentChatId = crypto.randomUUID();
             history = [];
+            isGenerating = false;
             currentModel = MODELS.OLM2;
-            client = null;
             document.getElementById('active-model-name').innerText = currentModel.name;
             setStatus("New Session", "green");
-            ensureClient();
             render();
             renderHistory();
             if (window.innerWidth < 1024) toggleSidebar(false);
@@ -618,12 +623,10 @@
         window.resetChat = resetChat;
 
         window.__okemoDeleteChat = (id) => {
-            if (confirm("Delete archive?")) {
-                delete allChats[id];
-                localStorage.setItem('olm_archives_v3', JSON.stringify(allChats));
-                if (currentChatId === id) resetChat();
-                else renderHistory();
-            }
+            delete allChats[id];
+            localStorage.setItem('olm_archives_v4', JSON.stringify(allChats));
+            if (currentChatId === id) resetChat();
+            else renderHistory();
         };
 
         function toggleSidebar(force = null) {
@@ -634,7 +637,6 @@
             if (shouldShow) {
                 body.classList.add('sidebar-open');
                 body.classList.remove('sidebar-closed');
-                sidebar.classList.remove('-translate-x-full');
                 if (window.innerWidth < 1024) {
                     sidebarBackdrop.classList.remove('hidden');
                     setTimeout(() => sidebarBackdrop.classList.add('opacity-100'), 10);
@@ -642,29 +644,20 @@
             } else {
                 body.classList.remove('sidebar-open');
                 body.classList.add('sidebar-closed');
-                sidebar.classList.add('-translate-x-full');
                 sidebarBackdrop.classList.add('hidden');
                 sidebarBackdrop.classList.remove('opacity-100');
             }
-        }
-
-        function closeMenus() {
-            modelMenu.classList.remove('active');
-            settingsMenu.classList.remove('active');
         }
 
         function scrollToBottom() {
           chatBoxContainer.scrollTo({ top: chatBoxContainer.scrollHeight, behavior: 'smooth' });
         }
 
-        /* =======================
-           EVENT LISTENERS
-        ======================= */
         sendBtn.addEventListener('click', () => sendMessage());
         textarea.addEventListener('keydown', e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
         textarea.addEventListener('input', function() { 
             this.style.height = 'auto'; 
-            this.style.height = this.scrollHeight + 'px'; 
+            this.style.height = (this.scrollHeight > 192 ? 192 : this.scrollHeight) + 'px'; 
         });
 
         document.getElementById('toggle-sidebar').addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
@@ -672,22 +665,25 @@
         document.getElementById('settings-toggle').addEventListener('click', (e) => { e.stopPropagation(); modelMenu.classList.remove('active'); settingsMenu.classList.toggle('active'); });
 
         window.addEventListener('click', (e) => {
-            if (!modelMenu.contains(e.target) && !settingsMenu.contains(e.target)) closeMenus();
+            if (!modelMenu.contains(e.target) && !settingsMenu.contains(e.target)) {
+                modelMenu.classList.remove('active');
+                settingsMenu.classList.remove('active');
+            }
         });
 
         document.getElementById('model-select-pro').addEventListener('click', () => { 
             if (history.length > 0) resetChat();
             currentModel = MODELS.OLM2; client = null; 
-            document.getElementById('active-model-name').innerText = "OLM 2"; 
-            setStatus("Connecting...", "yellow"); closeMenus(); 
+            document.getElementById('active-model-name').innerText = MODELS.OLM2.name; 
+            modelMenu.classList.remove('active');
             ensureClient();
         });
         
         document.getElementById('model-select-base').addEventListener('click', () => { 
             if (history.length > 0) resetChat();
             currentModel = MODELS.OLM1; client = null; 
-            document.getElementById('active-model-name').innerText = "OLM 1"; 
-            setStatus("Connecting...", "yellow"); closeMenus(); 
+            document.getElementById('active-model-name').innerText = MODELS.OLM1.name; 
+            modelMenu.classList.remove('active');
             ensureClient();
         });
 
@@ -709,22 +705,19 @@
 
         document.getElementById('save-settings').addEventListener('click', () => {
             settings.temp = parseFloat(document.getElementById('param-temp').value);
-            localStorage.setItem('olm_settings_v3', JSON.stringify(settings));
-            closeMenus();
-            setStatus("Settings Saved", "blue");
+            localStorage.setItem('olm_settings_v4', JSON.stringify(settings));
+            settingsMenu.classList.remove('active');
+            setStatus("Saved", "blue");
         });
 
         document.getElementById('param-temp').addEventListener('input', (e) => { document.getElementById('temp-val').innerText = e.target.value; });
 
         document.getElementById('clear-all-btn').addEventListener('click', () => {
-            if (confirm("Delete all archives?")) {
-                allChats = {};
-                localStorage.setItem('olm_archives_v3', '{}');
-                resetChat();
-            }
+            allChats = {};
+            localStorage.setItem('olm_archives_v4', '{}');
+            resetChat();
         });
 
-        // Scroll logic for the arrow btn
         chatBoxContainer.addEventListener('scroll', () => {
             const threshold = 150;
             const isScrolledUp = chatBoxContainer.scrollHeight - chatBoxContainer.scrollTop - chatBoxContainer.clientHeight > threshold;
@@ -739,9 +732,6 @@
 
         scrollBottomBtn.addEventListener('click', scrollToBottom);
 
-        /* =======================
-           INITIALIZATION
-        ======================= */
         function initApp() {
             const savedTheme = localStorage.getItem('vail_modern_theme_v3');
             if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -750,11 +740,9 @@
             if (window.innerWidth < 1024) {
                 document.body.classList.remove('sidebar-open');
                 document.body.classList.add('sidebar-closed');
-                sidebar.classList.add('-translate-x-full');
             }
             document.getElementById('param-temp').value = settings.temp;
-            const tempVal = document.getElementById('temp-val');
-            if (tempVal) tempVal.innerText = settings.temp;
+            document.getElementById('temp-val').innerText = settings.temp;
 
             renderHistory();
             render();
