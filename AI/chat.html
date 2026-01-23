@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>OLM ENDPOINT</title>
-      <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+    <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
     
     <!-- External Resources -->
@@ -99,7 +99,8 @@
 
         .user-msg-bubble {
             background-color: rgba(0,0,0,0.05);
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1.25rem;
+            margin-left: 1.5rem; /* Protection margin against left edge */
             border-radius: 1.25rem;
             max-width: 90%;
             animation: fadeIn 0.3s ease-out forwards;
@@ -112,6 +113,7 @@
         
         /* Reactive Syntax Highlighting Blocks */
         .prose pre { 
+            position: relative;
             background: #f4f4f5; 
             color: #18181b;
             padding: 1rem; 
@@ -126,6 +128,33 @@
             color: #f4f4f5;
             border: 1px solid #27272a; 
         }
+
+        /* Code Copy Button */
+        .code-copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0,0,0,0.05);
+            color: var(--accent-color);
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease, background 0.2s ease;
+            z-index: 10;
+        }
+        .prose pre:hover .code-copy-btn { opacity: 1; }
+        .code-copy-btn:hover { background: #ffffff; }
+        .dark .code-copy-btn {
+            background: rgba(39, 39, 42, 0.8);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .dark .code-copy-btn:hover { background: #27272a; }
 
         /* Reactive Inline Code */
         .prose code { 
@@ -241,7 +270,17 @@
                                     <span class="text-[10px] text-zinc-400">Instant synthesis</span>
                                 </div>
                             </div>
-                            <i class="fa-solid fa-check text-[10px]" style="color: var(--accent-color)"></i>
+                            <i id="check-pro" class="fa-solid fa-check text-[10px]" style="color: var(--accent-color)"></i>
+                        </button>
+                        <button onclick="window.selectModel('OLM1')" class="w-full text-left px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group border-t border-zinc-100 dark:border-zinc-800/50">
+                            <div class="flex items-center gap-3">
+                                <div id="icon-stargaze-menu" class="w-4 h-4 text-zinc-400"></div>
+                                <div>
+                                    <span class="block font-bold text-xs">OLM Stargaze</span>
+                                    <span class="text-[10px] text-zinc-400">Legacy reasoning</span>
+                                </div>
+                            </div>
+                            <i id="check-stargaze" class="fa-solid fa-check text-[10px] hidden" style="color: var(--accent-color)"></i>
                         </button>
                     </div>
                 </div>
@@ -255,11 +294,12 @@
                     <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Terminal Log</h3>
                     <div class="space-y-4 text-xs">
                         <div class="border-l-2 border-blue-500 pl-3">
-                            <p class="font-bold text-[11px] mb-1">v0.7.1 - Interactive Content</p>
+                            <p class="font-bold text-[11px] mb-1">v0.7.6 - Interaction Polish</p>
                             <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                                <li>Links in AI responses now underline on hover</li>
-                                <li>Themed link colors based on current accent</li>
-                                <li>Code blocks and syntax remain reactive</li>
+                                <li>Tick feedback added to message Copy and Regen buttons</li>
+                                <li>Optimized left margin on mobile user bubbles</li>
+                                <li>Refined input area padding for mobile alignment</li>
+                                <li>Persistent checkmark logic for clipboard actions</li>
                             </ul>
                         </div>
                     </div>
@@ -359,10 +399,14 @@
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
         const SVG = {
-            NORTH: `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`
+            NORTH: `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`,
+            STAR: `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`
         };
 
-        const MODELS = { OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: SVG.NORTH } };
+        const MODELS = { 
+            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", icon: SVG.STAR },
+            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: SVG.NORTH } 
+        };
 
         let client = null, history = [], isGenerating = false, webSearch = false, currentJob = null;
         let currentModel = MODELS.OLM2;
@@ -420,7 +464,14 @@
             els.logoAi.classList.toggle('gradient-mode', isAuto);
             updateUI();
             renderHistory();
-            render(); // Rerender messages to apply new accent color to Copy/Regen
+            render(); 
+        };
+
+        window.selectModel = (key) => {
+            currentModel = MODELS[key];
+            client = null; // Clear existing connection
+            updateUI();
+            window.closeAllMenus();
         };
 
         window.toggleSidebar = () => {
@@ -531,7 +582,7 @@
                         const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                         if (lastProse) {
                             lastProse.innerHTML = marked.parse(history[history.length - 1][1]);
-                            renderMath(lastProse);
+                            applyContentFeatures(lastProse);
                         }
                         scrollToBottom();
                     }
@@ -549,8 +600,26 @@
             }
         };
 
-        const renderMath = (el) => {
+        const applyContentFeatures = (el) => {
+            // 1. Render Math
             el.innerHTML = el.innerHTML.replace(/\$\$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
+            
+            // 2. Add Code Copy Buttons
+            el.querySelectorAll('pre').forEach(pre => {
+                if (pre.querySelector('.code-copy-btn')) return;
+                const btn = document.createElement('button');
+                btn.className = 'code-copy-btn';
+                btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                btn.title = 'Copy code';
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const code = pre.querySelector('code')?.innerText || pre.innerText;
+                    navigator.clipboard.writeText(code);
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy"></i>', 2000);
+                };
+                pre.appendChild(btn);
+            });
         };
 
         const save = () => {
@@ -561,16 +630,29 @@
             renderHistory();
         };
 
-        window.copyMsg = (idx) => {
+        window.copyMsg = (e, idx) => {
+            const btn = e.currentTarget;
+            const icon = btn.querySelector('i');
             const text = history[idx][1] || '';
             navigator.clipboard.writeText(text);
+            
+            icon.className = 'fa-solid fa-check text-sm';
+            setTimeout(() => {
+                icon.className = 'fa-regular fa-copy text-sm';
+            }, 2000);
         };
 
-        window.regenMsg = (idx) => {
+        window.regenMsg = (e, idx) => {
             if (isGenerating) return;
+            const btn = e.currentTarget;
+            const icon = btn.querySelector('i');
             const msg = history[idx][0];
-            history = history.slice(0, idx);
-            window.sendMessage(msg);
+            
+            icon.className = 'fa-solid fa-check text-sm';
+            setTimeout(() => {
+                history = history.slice(0, idx);
+                window.sendMessage(msg);
+            }, 500);
         };
 
         const render = () => {
@@ -589,18 +671,18 @@
                         </div>
                         ${a ? `
                         <div class="flex items-center gap-4 mt-4">
-                            <button onclick="window.copyMsg(${i})" class="text-[10px] uppercase font-bold tracking-widest opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)">
-                                <i class="fa-regular fa-copy mr-1"></i> Copy
+                            <button onclick="window.copyMsg(event, ${i})" class="opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)" title="Copy Message">
+                                <i class="fa-regular fa-copy text-sm"></i>
                             </button>
-                            <button onclick="window.regenMsg(${i})" class="text-[10px] uppercase font-bold tracking-widest opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)">
-                                <i class="fa-solid fa-rotate-right mr-1"></i> Regen
+                            <button onclick="window.regenMsg(event, ${i})" class="opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)" title="Regenerate">
+                                <i class="fa-solid fa-rotate-right text-sm"></i>
                             </button>
                         </div>
                         ` : ''}
                     </div>
                 </div>
             `).join('');
-            els.chatMsgs.querySelectorAll('.prose-target').forEach(renderMath);
+            els.chatMsgs.querySelectorAll('.prose-target').forEach(applyContentFeatures);
         };
 
         const updateUI = () => {
@@ -610,21 +692,35 @@
             if (isGenerating) {
                 els.icon.className = "fa-solid fa-square text-[10px]";
                 els.send.style.opacity = "1";
-            } else if (hasText) {
-                els.icon.className = "fa-solid fa-arrow-up text-[10px]";
-                els.send.style.opacity = "1";
             } else {
                 els.icon.className = "fa-solid fa-arrow-up text-[10px]";
-                els.send.style.opacity = "0.3";
+                els.send.style.opacity = hasText ? "1" : "0.3";
             }
+
+            els.actIcon.innerHTML = currentModel.icon;
+            els.actIcon.style.color = 'var(--accent-color)';
+            document.getElementById('active-model-name').innerText = currentModel.name;
+
+            const iconPro = document.getElementById('icon-pro-menu');
+            const iconStargaze = document.getElementById('icon-stargaze-menu');
+            const checkPro = document.getElementById('check-pro');
+            const checkStargaze = document.getElementById('check-stargaze');
+
+            if (iconPro) {
+                iconPro.innerHTML = MODELS.OLM2.icon;
+                iconPro.style.color = currentModel === MODELS.OLM2 ? 'var(--accent-color)' : '';
+            }
+            if (iconStargaze) {
+                iconStargaze.innerHTML = MODELS.OLM1.icon;
+                iconStargaze.style.color = currentModel === MODELS.OLM1 ? 'var(--accent-color)' : '';
+            }
+            
+            if (checkPro) checkPro.classList.toggle('hidden', currentModel !== MODELS.OLM2);
+            if (checkStargaze) checkStargaze.classList.toggle('hidden', currentModel !== MODELS.OLM1);
 
             els.searchBtn.className = `flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-[9px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
             els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
             els.searchBtn.style.color = webSearch ? 'var(--accent-contrast)' : '';
-
-            els.actIcon.innerHTML = currentModel.icon;
-            document.getElementById('icon-pro-menu').innerHTML = currentModel.icon;
-            document.getElementById('icon-pro-menu').style.color = 'var(--accent-color)';
         };
 
         window.delChat = (id) => {
@@ -727,3 +823,4 @@
     </script>
 </body>
 </html>
+
