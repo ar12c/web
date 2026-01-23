@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Vail AI</title>
-    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-    <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+    <title>OLM ENDPOINT</title>
+      <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
+    
     <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -14,6 +15,17 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style id="dynamic-accent-styles">
+        :root {
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --accent-tint: rgba(59, 130, 246, 0.10);
+            --sidebar-tint: rgba(59, 130, 246, 0.07);
+            --accent-contrast: #ffffff;
+            --fade-color: #ffffff;
+        }
+    </style>
 
     <script>
         tailwind.config = {
@@ -25,27 +37,16 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        chatbg: {
-                            light: '#ffffff',
-                            dark: '#0d0d0d'
-                        },
-                        sidebar: {
-                            light: '#f9f9f9',
-                            dark: '#141414'
-                        }
+                        chatbg: { light: '#ffffff', dark: '#0d0d0d' },
+                        sidebar: { light: '#f9f9f9', dark: '#141414' }
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.2s ease-out forwards',
-                        'slide-up': 'slideUp 0.3s cubic-bezier(0, 0, 0.2, 1) forwards',
-                        'shimmer': 'shimmer 2s linear infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
                         slideUp: { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        shimmer: {
-                            '0%': { backgroundPosition: '200% 0' },
-                            '100%': { backgroundPosition: '-200% 0' }
-                        }
                     }
                 }
             }
@@ -53,147 +54,165 @@
     </script>
 
     <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #8883; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #8885; }
-
-        .prose { max-width: 100%; color: inherit; }
-        .prose p { margin-bottom: 1.25rem; line-height: 1.7; }
-        .prose pre { background: #1a1a1a; padding: 1.25rem; border-radius: 12px; overflow-x: auto; margin: 1rem 0; border: 1px solid rgba(255,255,255,0.05); }
-        .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; padding: 0.2em 0.4em; border-radius: 4px; background: #8882; }
-        .dark .prose pre { background: #000; border: 1px solid #222; }
-
-        #sidebar { 
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
-        }
-        
-        body.sidebar-collapsed #sidebar {
-            width: 0;
-            transform: translateX(-100%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .history-item-active {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6 !important;
-            border-left: 3px solid #3b82f6;
-        }
-
-        .dropdown-menu { display: none; opacity: 0; transform: translateY(5px); transition: 0.2s ease; }
-        .dropdown-menu.active { display: block; opacity: 1; transform: translateY(0); }
-
-        .katex-display {
-            margin: 1.5rem 0 !important;
-            padding: 1.25rem;
-            background: rgba(59, 130, 246, 0.03);
-            border-radius: 12px;
-            overflow-x: auto;
-            border: 1px solid rgba(59, 130, 246, 0.1);
-        }
-
-        /* Modern Input Container (ChatGPT/Grok style) */
-        .input-box-wrap {
-            max-width: 48rem;
-            margin: 0 auto;
-            background: #f4f4f4;
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 26px;
-            transition: all 0.25s ease;
-        }
-        .dark .input-box-wrap {
-            background: #1e1e1e;
-            border-color: rgba(255,255,255,0.05);
-        }
-        .input-box-wrap:focus-within {
-            background: #ffffff;
-            border-color: rgba(0,0,0,0.15);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-        .dark .input-box-wrap:focus-within {
-            background: #252525;
-            border-color: rgba(255,255,255,0.1);
-            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-        }
-
-        .user-msg-bubble { 
-            background: #f4f4f4; 
-            border-radius: 1.5rem; 
-            padding: 0.85rem 1.25rem; 
-            display: inline-block; 
-            max-width: 85%; 
-            color: #1a1a1a;
-        }
-        .dark .user-msg-bubble { background: #2f2f2f; color: #ececec; }
-
-        /* Apple Intelligence Style Loader */
-        .apple-loader {
-            height: 3px;
-            width: 140px;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #4285f4, #9b51e0, #e91e63, #4285f4);
-            background-size: 400% 100%;
-            animation: shimmer 2.5s linear infinite;
-        }
-        
-        .history-section-title {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #71717a;
-            padding: 1.5rem 0.75rem 0.5rem;
-        }
-
+        * { transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        .footer-padding {
-            padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-color: var(--accent-tint);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        #chat-messages {
-            scroll-behavior: smooth;
+        aside { position: relative; z-index: 200; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        aside::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: var(--sidebar-tint);
+            pointer-events: none;
+            z-index: -1;
         }
+
+        body.sidebar-collapsed aside {
+            width: 0;
+            transform: translateX(-100%);
+            overflow: hidden;
+        }
+
+        .vail-logo-ai { color: var(--accent-color); }
+        .vail-logo-ai.gradient-mode {
+            background: linear-gradient(-45deg, #3b82f6, #22c55e, #a855f7, #ef4444, #3b82f6);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-icon-bubble {
+            background-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-glow);
+            color: var(--accent-contrast);
+        }
+
+        .user-msg-bubble {
+            background-color: rgba(0,0,0,0.05);
+            padding: 0.75rem 1rem;
+            border-radius: 1.25rem;
+            max-width: 90%;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .dark .user-msg-bubble { background-color: rgba(255,255,255,0.05); }
+
+        .prose { max-width: 100%; color: inherit; font-size: 0.95rem; line-height: 1.6; }
+        .prose a { color: var(--accent-color); text-decoration: none; transition: text-decoration 0.2s ease; }
+        .prose a:hover { text-decoration: underline; }
+        
+        /* Reactive Syntax Highlighting Blocks */
+        .prose pre { 
+            background: #f4f4f5; 
+            color: #18181b;
+            padding: 1rem; 
+            border-radius: 12px; 
+            overflow-x: auto; 
+            margin: 1.25rem 0; 
+            border: 1px solid rgba(0,0,0,0.05);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .dark .prose pre { 
+            background: #000000; 
+            color: #f4f4f5;
+            border: 1px solid #27272a; 
+        }
+
+        /* Reactive Inline Code */
+        .prose code { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.85em; 
+            background: rgba(0,0,0,0.05); 
+            color: #27272a;
+            padding: 0.15rem 0.35rem; 
+            border-radius: 4px; 
+        }
+        .dark .prose code { 
+            background: rgba(255,255,255,0.1); 
+            color: #f4f4f5;
+        }
+
+        .katex-display {
+            margin: 1rem 0 !important; padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.02); border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .history-item-active { background: rgba(0, 0, 0, 0.06); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent-color); }
+        .dark .history-item-active { background: rgba(255, 255, 255, 0.05); }
+
+        .dropdown-menu { display: none; opacity: 0; z-index: 250; position: absolute; }
+        .dropdown-menu.active { display: block; opacity: 1; }
+
+        .accent-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
+        .accent-dot.active { border-color: currentColor; }
+        
+        #custom-color-input { width: 1.8rem; height: 1.8rem; padding: 0; border: 1px solid rgba(0,0,0,0.1); background: none; cursor: pointer; border-radius: 9999px; overflow: hidden; }
+
+        .input-box-wrap {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            position: relative;
+            z-index: 40;
+        }
+        .dark .input-box-wrap { background-color: rgba(20, 20, 20, 0.85); }
+        
+        .aether-loader {
+            width: 14px; height: 14px; border: 2px solid currentColor; border-bottom-color: transparent;
+            border-radius: 50%; display: inline-block; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        #bottom-fade {
+            background: linear-gradient(to top, var(--fade-color) 0%, var(--fade-color) 40%, transparent 100%);
+        }
+        
+        .history-btn-container { display: flex; align-items: center; width: 100%; gap: 4px; padding: 0 4px; }
+        .history-action-btn { flex-shrink: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 10px; opacity: 0.6; }
+        .history-action-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+        .dark .history-action-btn:hover { background: rgba(255,255,255,0.05); }
     </style>
 </head>
-<body class="bg-chatbg-light dark:bg-chatbg-dark text-zinc-900 dark:text-zinc-100 font-sans transition-colors duration-300 h-screen flex overflow-hidden">
+<body class="bg-chatbg-light dark:bg-chatbg-dark text-zinc-900 dark:text-zinc-200 font-sans h-full flex overflow-hidden">
 
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/30 dark:bg-black/70 z-[45] hidden opacity-0 transition-opacity duration-300 lg:hidden" onclick="toggleSidebar()"></div>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 dark:bg-black/60 z-[190] hidden opacity-0 transition-opacity duration-300" onclick="window.toggleSidebar()"></div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800 flex flex-col z-50 transform lg:translate-x-0">
-        <div class="p-5 flex flex-col h-full text-zinc-900 dark:text-zinc-100">
-            <!-- Branding Header -->
-            <div class="mb-8 px-2 pt-2 flex items-center justify-between">
-                <h1 class="font-extrabold text-2xl tracking-tighter uppercase italic">
-                    V<span class="text-blue-500">AI</span>L
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none -translate-x-full lg:translate-x-0">
+        <div class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
+            <div class="mb-6 px-2 flex items-center justify-between">
+                <h1 class="select-none font-black italic text-lg tracking-tight text-zinc-900 dark:text-white uppercase">
+                    V<span class="vail-logo-ai gradient-mode" id="logo-ai-core">AI</span>L
                 </h1>
-                <button class="lg:hidden p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100" onclick="toggleSidebar()">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
+                <button class="lg:hidden p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" onclick="window.toggleSidebar()">
+                    <i class="fa-solid fa-chevron-left"></i>
                 </button>
             </div>
 
-            <div class="mb-6">
-                <button id="new-chat-btn" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 text-sm font-bold rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-xl transition-all active:scale-[0.96]">
-                    <i class="fa-solid fa-plus text-xs"></i>
-                    <span>New Chat</span>
-                </button>
-            </div>
+            <button id="new-chat-btn" onclick="window.resetChat()" class="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all mb-4 shadow-lg hover:brightness-110 active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                <span>New Session</span>
+                <i class="fa-solid fa-plus text-[10px]"></i>
+            </button>
 
-            <div class="flex-1 overflow-y-auto space-y-1 mb-4 custom-scrollbar" id="history-list">
-                <!-- History Items -->
-            </div>
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-1" id="history-list"></div>
 
-            <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
-                <button id="theme-toggle" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
-                    <i class="fa-solid fa-circle-half-stroke text-zinc-500"></i>
+            <div class="pt-4 mt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
+                <button onclick="window.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
+                    <i class="fa-solid fa-circle-half-stroke text-zinc-400"></i>
                     <span>Appearance</span>
                 </button>
-                <button id="clear-all-btn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500/80 rounded-xl hover:bg-red-500/10 transition-colors">
+                <button onclick="window.clearAll()" class="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold text-red-500/80 rounded-xl hover:bg-red-500/5 transition-all active:bg-red-500/10">
                     <i class="fa-solid fa-trash-can"></i>
-                    <span>Clear All</span>
+                    <span>Delete all chats</span>
                 </button>
             </div>
         </div>
@@ -201,474 +220,510 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full relative overflow-hidden">
-        <!-- Top Nav -->
-        <header class="h-16 flex items-center justify-between px-4 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md z-40">
-            <div class="flex items-center gap-2">
-                <button id="toggle-sidebar" class="p-2.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" onclick="toggleSidebar()">
-                    <i class="fa-solid fa-bars-staggered"></i>
+        <header class="h-12 lg:h-12 flex items-center justify-between px-4 lg:px-6 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl z-50 border-b border-zinc-100 dark:border-zinc-900/50">
+            <div class="flex items-center gap-1 lg:gap-2">
+                <button onclick="window.toggleSidebar()" class="p-2 -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
+                    <i class="fa-solid fa-bars-staggered text-sm"></i>
                 </button>
                 
-                <div class="relative text-zinc-900 dark:text-zinc-100">
-                    <button id="model-dropdown-btn" class="flex items-center gap-2.5 px-3 py-2 text-sm font-bold rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
-                        <div id="active-model-icon" class="w-4 h-4 text-zinc-700 dark:text-zinc-300"></div>
-                        <span id="active-model-name">OLM North Star</span>
-                        <i class="fa-solid fa-chevron-down text-[10px] opacity-40"></i>
+                <div class="relative">
+                    <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-2.5 py-1 text-sm font-bold rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                        <div id="active-model-icon" class="w-3.5 h-3.5" style="color: var(--accent-color)"></div>
+                        <span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-sm">OLM North Star</span>
+                        <i class="fa-solid fa-chevron-down text-[7px] opacity-30"></i>
                     </button>
-                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl z-50 overflow-hidden">
-                        <button id="model-select-pro" class="group w-full text-left px-5 py-4 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 border-b border-zinc-100 dark:border-zinc-800 transition-colors">
-                            <div class="flex items-center gap-4">
-                                <div class="w-5 h-5 text-blue-500" id="icon-pro-menu"></div>
+                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl overflow-hidden py-1.5">
+                        <button onclick="window.selectModel('OLM2')" class="w-full text-left px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group">
+                            <div class="flex items-center gap-3">
+                                <div id="icon-pro-menu" class="w-4 h-4"></div>
                                 <div>
-                                    <span class="block font-bold">OLM North Star</span>
-                                    <span class="text-xs text-zinc-500">Fast replies</span>
+                                    <span class="block font-bold text-xs">OLM North Star</span>
+                                    <span class="text-[10px] text-zinc-400">Instant synthesis</span>
                                 </div>
                             </div>
-                        </button>
-                        <button id="model-select-base" class="group w-full text-left px-5 py-4 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
-                            <div class="flex items-center gap-4">
-                                <div class="w-5 h-5 text-zinc-500" id="icon-base-menu"></div>
-                                <div>
-                                    <span class="block font-bold">OLM Stargaze</span>
-                                    <span class="text-xs text-zinc-500">Best model</span>
-                                </div>
-                            </div>
+                            <i class="fa-solid fa-check text-[10px]" style="color: var(--accent-color)"></i>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1">
-                <div id="api-status" class="hidden md:flex text-[10px] font-bold text-zinc-400 gap-2 items-center mr-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span> Standby
-                </div>
-                <button id="settings-toggle" class="p-2.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
-                    <i class="fa-solid fa-sliders text-lg"></i>
+            <div class="flex items-center gap-1 lg:gap-2">
+                <button onclick="window.toggleMenu(event, 'notes-menu')" class="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
+                    <i class="fa-solid fa-clipboard-list text-xs"></i>
                 </button>
-                <div id="settings-menu" class="dropdown-menu absolute right-4 top-16 w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl p-6 z-50 text-zinc-900 dark:text-zinc-100">
-                    <h3 class="font-bold text-base mb-5">Parameters</h3>
+                <div id="notes-menu" class="dropdown-menu absolute right-12 lg:right-16 top-12 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-2xl rounded-2xl p-6 overflow-y-auto max-h-[70vh]">
+                    <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Terminal Log</h3>
+                    <div class="space-y-4 text-xs">
+                        <div class="border-l-2 border-blue-500 pl-3">
+                            <p class="font-bold text-[11px] mb-1">v0.7.1 - Interactive Content</p>
+                            <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
+                                <li>Links in AI responses now underline on hover</li>
+                                <li>Themed link colors based on current accent</li>
+                                <li>Code blocks and syntax remain reactive</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="window.toggleMenu(event, 'settings-menu')" class="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
+                    <i class="fa-solid fa-sliders text-xs"></i>
+                </button>
+                <div id="settings-menu" class="dropdown-menu absolute right-4 top-12 w-[calc(100vw-2rem)] sm:w-72 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-2xl rounded-2xl p-5">
+                    <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Synthesis Config</h3>
                     <div class="space-y-6">
                         <div>
-                            <div class="flex justify-between text-xs font-bold mb-3 uppercase tracking-wider opacity-60">
-                                <span>Entropy</span>
-                                <span id="temp-val" class="font-mono text-blue-500">0.4</span>
+                            <div class="flex justify-between text-[10px] font-black mb-2 uppercase">
+                                <span>Temperature</span>
+                                <span id="temp-val" class="font-mono" style="color: var(--accent-color)">0.70</span>
                             </div>
-                            <input type="range" id="param-temp" min="0" max="1" step="0.05" value="0.4" class="w-full h-2 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                            <input type="range" id="param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-900 dark:accent-zinc-100" oninput="window.updateTemp(this.value)">
                         </div>
-                        <button id="save-settings" class="w-full py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-black uppercase tracking-widest rounded-xl shadow-lg transition-transform active:scale-95">Sync Configuration</button>
+                        
+                        <div>
+                            <div class="text-[10px] font-black mb-3 uppercase">System Accent</div>
+                            <div class="flex flex-wrap items-center gap-3" id="accent-picker">
+                                <div class="accent-dot bg-zinc-900 dark:bg-zinc-100" data-color="auto" onclick="window.updateAccent('auto')"></div>
+                                <div class="accent-dot bg-blue-500" data-color="#3b82f6" onclick="window.updateAccent('#3b82f6')"></div>
+                                <div class="accent-dot bg-emerald-500" data-color="#10b981" onclick="window.updateAccent('#10b981')"></div>
+                                <div class="accent-dot bg-purple-500" data-color="#a855f7" onclick="window.updateAccent('#a855f7')"></div>
+                                <div class="accent-dot bg-rose-500" data-color="#f43f5e" onclick="window.updateAccent('#f43f5e')"></div>
+                                <input type="color" id="custom-color-input" oninput="window.updateAccent(this.value)">
+                            </div>
+                        </div>
+
+                        <button onclick="window.closeAllMenus()" class="w-full py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-black uppercase rounded-xl transition-all">Sync Memory</button>
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Chat messages area -->
-        <div id="chat-container" class="flex-1 overflow-y-auto custom-scrollbar flex flex-col bg-chatbg-light dark:bg-chatbg-dark">
-            <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center p-6 text-center animate-fade-in">
-                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight text-zinc-900 dark:text-zinc-100">How can I help?</h2>
-                <p class="text-zinc-400 text-base md:text-lg mb-10 max-w-sm font-medium">The OLM engine is ready for dispatch.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
-                    <button class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 text-left bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all shadow-sm active:scale-[0.98] text-zinc-900 dark:text-zinc-100" onclick="sendMessage('Technical breakdown of quantum encryption protocols.')">
-                        <span class="text-xs font-black uppercase tracking-widest block mb-2 text-blue-500 opacity-80">Research</span>
-                        <span class="text-sm font-semibold opacity-70">Technical Analysis</span>
+        <!-- Chat Container -->
+        <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col">
+            <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center animate-fade-in">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 sm:mb-10 tracking-tight text-zinc-900 dark:text-white">How can I help you today?</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl">
+                    <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Write a break-up letter from a toaster to a piece of bread.')">
+                        <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
+                            <i class="fa-solid fa-bread-slice text-orange-400 text-xs"></i>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Drama</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">A toaster's heartbreak.</span>
                     </button>
-                    <button class="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 text-left bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all shadow-sm active:scale-[0.98] text-zinc-900 dark:text-zinc-100" onclick="sendMessage('Help me brainstorm a brand identity for a new technology startup.')">
-                        <span class="text-xs font-black uppercase tracking-widest block mb-2 text-purple-500 opacity-80">Creative</span>
-                        <span class="text-sm font-semibold opacity-70">Strategic Strategy</span>
+                    <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Convince me that the moon is actually a giant block of Swiss cheese.')">
+                        <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
+                            <i class="fa-solid fa-moon text-yellow-500 text-xs"></i>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Conspiracy</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">The lunar cheese theory.</span>
+                    </button>
+                    <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Explain the plot of Inception using only emojis.')">
+                        <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
+                            <i class="fa-solid fa-face-smile text-emerald-500 text-xs"></i>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Visuals</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">Inception in emoji form.</span>
+                    </button>
+                    <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Write a recipe for a cake, but in the style of a film noir detective.')">
+                        <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
+                            <i class="fa-solid fa-user-secret text-zinc-500 text-xs"></i>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Thriller</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">The Case of the Red Velvet.</span>
                     </button>
                 </div>
             </div>
-            <div id="chat-messages" class="w-full flex flex-col pt-8 pb-56 px-4 text-zinc-900 dark:text-zinc-100"></div>
+            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 sm:px-5 relative gap-8"></div>
         </div>
 
-        <!-- Floating Footer -->
-        <div class="absolute bottom-0 left-0 w-full footer-padding px-4 md:px-6 bg-gradient-to-t from-white dark:from-chatbg-dark via-white/95 dark:via-chatbg-dark/95 to-transparent z-30">
-            <div class="input-box-wrap px-2 pt-2 pb-2 mb-2 md:mb-4">
-                <textarea 
-                    id="user-input" 
-                    placeholder="Message OLM..." 
-                    rows="1" 
-                    class="w-full bg-transparent px-4 py-3 outline-none resize-none text-[16px] md:text-base max-h-60 custom-scrollbar leading-relaxed text-zinc-900 dark:text-zinc-100"
-                ></textarea>
+        <!-- Input Area Fade and Box -->
+        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-8 z-40 pb-6 lg:pb-8 pt-10">
+            <div class="input-box-wrap p-1.5 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden max-w-2xl mx-auto transition-all duration-300">
+                <textarea id="user-input" placeholder="Message OLM..." rows="1" class="w-full bg-transparent px-4 py-2 sm:py-2.5 outline-none resize-none text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
                 
-                <div class="flex items-center justify-between px-3 pb-1 mt-1 pointer-events-none">
-                    <div class="flex items-center gap-2 pointer-events-auto">
-                        <button id="input-search-toggle" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-[11px] font-bold uppercase tracking-wider text-zinc-500 hover:bg-white dark:hover:bg-zinc-800 transition-all active:scale-95 shadow-sm">
-                            <i class="fa-solid fa-magnifying-glass text-[10px]"></i>
-                            <span>Search</span>
+                <div class="flex items-center justify-between px-2 pb-1">
+                    <div class="flex items-center gap-1.5">
+                        <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-100 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50 active:bg-zinc-200 dark:active:bg-zinc-700">
+                            <i class="fa-solid fa-globe"></i>
+                            <span class="hidden sm:inline">Search</span>
                         </button>
                     </div>
-                    <div class="flex gap-2 pointer-events-auto">
-                        <button id="send-btn" class="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-black hover:opacity-85 disabled:opacity-20 transition-all shadow-md active:scale-90">
-                            <i class="fa-solid fa-arrow-up text-sm"></i>
-                        </button>
-                    </div>
+                    <button id="send-btn" disabled onclick="window.handleAction()" class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full transition-all shadow-lg active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                        <i id="send-btn-icon" class="fa-solid fa-arrow-up text-[10px]"></i>
+                    </button>
                 </div>
             </div>
-            <p class="text-[9px] font-bold tracking-[0.2em] uppercase text-center text-zinc-400 mt-2 opacity-40">Intelligence Terminal v0.3.1</p>
         </div>
-
-        <!-- Scroll Bottom -->
-        <button id="scroll-bottom-btn" class="absolute bottom-44 right-6 md:right-10 w-11 h-11 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-xl flex items-center justify-center opacity-0 invisible translate-y-4 transition-all z-10 active:scale-90 text-zinc-500">
-            <i class="fa-solid fa-arrow-down"></i>
-        </button>
     </main>
 
     <script type="module">
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-        // North Star Icon
-        const NORTH_STAR_SVG = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
-        
-        // Stargaze Icon
-        const STARGAZE_SVG = `<svg class="w-full h-full stroke-[3px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L13.5 10.5L22 12L13.5 13.5L12 22L10.5 13.5L2 12L10.5 10.5L12 2Z" /></svg>`;
-
-        const MODELS = {
-            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", schema: "legacy", icon: STARGAZE_SVG },
-            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", schema: "modern", icon: NORTH_STAR_SVG }
+        const SVG = {
+            NORTH: `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`
         };
 
-        const SYSTEM_PROMPT = "You are Vail AI, an elite intelligence engine. Provide precise and comprehensive responses. CRITICAL: ALWAYS wrap equations in $$ tags only and DO NOT under any circumstances give parentheses or square brackets.";
-        const WEB_TOKEN = "<WEB>";
+        const MODELS = { OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: SVG.NORTH } };
 
+        let client = null, history = [], isGenerating = false, webSearch = false, currentJob = null;
         let currentModel = MODELS.OLM2;
-        let client = null;
-        let history = []; 
-        let allChats = JSON.parse(localStorage.getItem('olm_archives_v5') || '{}');
+        let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
         let currentChatId = crypto.randomUUID();
-        let isGenerating = false;
-        let webSearchEnabled = false;
-        let settings = JSON.parse(localStorage.getItem('olm_settings_v4') || JSON.stringify({ temp: 0.4, tokens: 1024, top_p: 0.85, penalty: 1.2 }));
+        let settings = JSON.parse(localStorage.getItem('vail_settings_v4') || JSON.stringify({ temp: 0.7, accent: 'auto' }));
 
-        const chatBoxContainer = document.getElementById("chat-container");
-        const chatBox = document.getElementById("chat-messages");
-        const textarea = document.getElementById("user-input");
-        const sendBtn = document.getElementById("send-btn");
-        const statusEl = document.getElementById("api-status");
-        const welcomeState = document.getElementById("welcome-state");
-        const historyList = document.getElementById("history-list");
-        const modelMenu = document.getElementById("model-menu");
-        const settingsMenu = document.getElementById("settings-menu");
-        const scrollBottomBtn = document.getElementById('scroll-bottom-btn');
-        const inputSearchToggle = document.getElementById('input-search-toggle');
-        const activeModelIcon = document.getElementById('active-model-icon');
+        const els = {
+            chatCont: document.getElementById("chat-container"),
+            chatMsgs: document.getElementById("chat-messages"),
+            input: document.getElementById("user-input"),
+            send: document.getElementById("send-btn"),
+            icon: document.getElementById("send-btn-icon"),
+            welcome: document.getElementById("welcome-state"),
+            hist: document.getElementById("history-list"),
+            modMenu: document.getElementById("model-menu"),
+            setMenu: document.getElementById("settings-menu"),
+            noteMenu: document.getElementById("notes-menu"),
+            searchBtn: document.getElementById("search-btn"),
+            actIcon: document.getElementById('active-model-icon'),
+            sidebar: document.getElementById('sidebar'),
+            backdrop: document.getElementById('sidebar-backdrop'),
+            logoAi: document.getElementById('logo-ai-core')
+        };
 
-        function formatMarkdown(input) {
-            if (input === null || input === undefined) return '';
-            let textToParse = '';
+        const hexToRgba = (hex, alpha) => {
+            if (hex.startsWith('rgba')) return hex;
+            const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+
+        window.updateAccent = (color) => {
+            let isAuto = color === 'auto';
+            let isDark = document.documentElement.classList.contains('dark');
+            let finalColor = isAuto ? (isDark ? '#ffffff' : '#000000') : color;
+            let glow = hexToRgba(finalColor, 0.4);
+            let tintMain = hexToRgba(finalColor, isAuto ? 0.02 : 0.10);
+            let tintSide = hexToRgba(finalColor, isAuto ? 0.01 : 0.07);
+            let contrast = isAuto ? (isDark ? '#000000' : '#ffffff') : '#ffffff';
+
+            settings.accent = color;
+            localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
+
+            document.getElementById('dynamic-accent-styles').innerHTML = `
+                :root {
+                    --accent-color: ${finalColor};
+                    --accent-glow: ${glow};
+                    --accent-tint: ${tintMain};
+                    --sidebar-tint: ${tintSide};
+                    --accent-contrast: ${contrast};
+                    --fade-color: ${isDark ? '#0d0d0d' : '#ffffff'};
+                }
+            `;
             
-            if (typeof input === 'string') {
-                textToParse = input;
-            } else if (Array.isArray(input)) {
-                const lastEntry = input[input.length - 1];
-                textToParse = String(Array.isArray(lastEntry) ? (lastEntry[1] || '') : (lastEntry || ''));
-            } else if (typeof input === 'object') {
-                if (input.type === 'update') return ''; 
-                textToParse = String(input.message || input.text || input.data || "");
-            }
-            
-            if (!textToParse || textToParse === "[object Object]") return "";
-            return marked.parse(textToParse);
-        }
-
-        function renderMath(container) {
-            const blockRegex = /\$\$([\s\S]+?)\$\$/g;
-            container.innerHTML = container.innerHTML.replace(blockRegex, (match, formula) => {
-                try {
-                    return `<div class="katex-display">` + 
-                           katex.renderToString(formula, { displayMode: true, throwOnError: false }) + 
-                           `</div>`;
-                } catch (e) { return match; }
-            });
-        }
-
-        function setStatus(msg = "", color = "green") {
-            if (!statusEl) return;
-            const colorClassMap = { 'green': 'bg-emerald-500', 'red': 'bg-red-500', 'yellow': 'bg-amber-500', 'blue': 'bg-blue-500' };
-            statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${colorClassMap[color] || 'bg-zinc-300'}"></span> ${msg}`;
-        }
-
-        function updateTopNavIcon() {
-            if (activeModelIcon) activeModelIcon.innerHTML = currentModel.icon;
-            document.getElementById('icon-pro-menu').innerHTML = MODELS.OLM2.icon;
-            document.getElementById('icon-base-menu').innerHTML = MODELS.OLM1.icon;
-        }
-
-        function toggleSearch(force) {
-            webSearchEnabled = force !== undefined ? force : !webSearchEnabled;
-            inputSearchToggle.className = `flex items-center gap-2 px-3.5 py-1.5 rounded-full border transition-all text-[11px] font-bold uppercase tracking-wider ${webSearchEnabled ? 'bg-blue-500 border-blue-500 text-white shadow-lg' : 'border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:bg-white dark:hover:bg-zinc-800'}`;
-        }
-
-        async function ensureClient() {
-            if (client) return client;
-            setStatus("Connecting...", "yellow");
-            try {
-                client = await Client.connect(currentModel.id);
-                setStatus("Standby", "green");
-                return client;
-            } catch (err) {
-                setStatus("Offline", "red");
-                throw err;
-            }
-        }
-
-        function saveToStorage(targetChatId, targetHistory) {
-            const idToSave = targetChatId || currentChatId;
-            const historyToSave = targetHistory || history;
-            if (!historyToSave || historyToSave.length === 0) return;
-            const firstMsgItem = historyToSave[0][0];
-            const firstMsg = typeof firstMsgItem === 'string' ? firstMsgItem : "New Chat";
-            const title = firstMsg.substring(0, 30) + (firstMsg.length > 30 ? '...' : '');
-            const existingPinned = allChats[idToSave]?.pinned || false;
-            allChats[idToSave] = { id: idToSave, title: title, history: JSON.parse(JSON.stringify(historyToSave)), pinned: existingPinned, timestamp: Date.now() };
-            localStorage.setItem('olm_archives_v5', JSON.stringify(allChats));
+            els.logoAi.classList.toggle('gradient-mode', isAuto);
+            updateUI();
             renderHistory();
+            render(); // Rerender messages to apply new accent color to Copy/Regen
+        };
+
+        window.toggleSidebar = () => {
+            if (window.innerWidth < 1024) {
+                const isHidden = els.sidebar.classList.contains('-translate-x-full');
+                if (isHidden) {
+                    els.sidebar.classList.remove('-translate-x-full');
+                    els.backdrop.classList.remove('hidden');
+                    setTimeout(() => els.backdrop.style.opacity = '1', 10);
+                } else {
+                    els.sidebar.classList.add('-translate-x-full');
+                    els.backdrop.style.opacity = '0';
+                    setTimeout(() => els.backdrop.classList.add('hidden'), 300);
+                }
+            } else {
+                document.body.classList.toggle('sidebar-collapsed');
+            }
+        };
+
+        window.toggleTheme = () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('vail_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            window.updateAccent(settings.accent);
+        };
+
+        window.toggleMenu = (e, id) => {
+            e.stopPropagation();
+            [els.modMenu, els.setMenu, els.noteMenu].forEach(m => {
+                if (m.id === id) m.classList.toggle('active');
+                else m.classList.remove('active');
+            });
+        };
+
+        window.closeAllMenus = () => [els.modMenu, els.setMenu, els.noteMenu].forEach(m => m.classList.remove('active'));
+
+        window.updateTemp = (val) => {
+            settings.temp = parseFloat(val);
+            document.getElementById('temp-val').innerText = settings.temp.toFixed(2);
+            localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
+        };
+
+        window.toggleSearch = () => {
+            webSearch = !webSearch;
+            updateUI();
+        };
+
+        window.resetChat = () => {
+            if (isGenerating && currentJob) currentJob.cancel();
+            currentChatId = crypto.randomUUID();
+            history = [];
+            isGenerating = false;
+            render();
+            updateUI();
+            if (window.innerWidth < 1024 && !els.sidebar.classList.contains('-translate-x-full')) window.toggleSidebar();
+        };
+
+        window.clearAll = () => {
+            allChats = {};
+            localStorage.setItem('vail_history_v4', '{}');
+            window.resetChat();
+        };
+
+        async function getClient() {
+            if (client) return client;
+            client = await Client.connect(currentModel.id);
+            return client;
         }
 
-        async function sendMessage(overrideText = null) {
+        window.handleAction = () => {
+            if (isGenerating) {
+                if (currentJob) currentJob.cancel();
+                isGenerating = false;
+                updateUI();
+                save();
+            } else {
+                window.sendMessage();
+            }
+        };
+
+        window.sendMessage = async (txt = null) => {
             if (isGenerating) return;
-            let msg = overrideText ?? textarea.value.trim();
+            const msg = txt || els.input.value.trim();
             if (!msg) return;
 
-            if (!overrideText) textarea.value = "";
-            textarea.style.height = "auto";
-            if (webSearchEnabled && !msg.includes(WEB_TOKEN)) msg += ` ${WEB_TOKEN}`;
+            els.input.value = "";
+            els.input.style.height = "auto";
             
             history.push([msg, null]);
-            const processingChatId = currentChatId; 
-            const activeHistory = history; 
-            
             render();
             scrollToBottom();
+            
             isGenerating = true;
-            sendBtn.disabled = true;
+            updateUI();
 
             try {
-                const c = await ensureClient();
-                let job;
-                
-                if (currentModel.schema === "legacy") {
-                    job = c.submit(0, [msg, activeHistory.map(([u, a]) => [u, a])]);
-                } else {
-                    job = c.submit(0, [
-                        msg, 
-                        activeHistory.slice(0, -1), 
-                        settings.temp, 
-                        settings.top_p, 
-                        settings.penalty, 
-                        settings.tokens
-                    ]);
-                }
+                const c = await getClient();
+                const job = c.submit(0, [
+                    msg + (webSearch ? " <WEB>" : ""), 
+                    history.slice(0, -1), 
+                    settings.temp, 0.85, 1.2, 2048
+                ]);
+                currentJob = job;
 
                 for await (const chunk of job) {
-                    if (!chunk?.data || chunk.data.length === 0) continue;
-                    
-                    let responseText = "";
-                    const rawData = chunk.data[0];
-
-                    if (typeof rawData === 'object' && rawData !== null && rawData.type === 'update') continue;
-
-                    if (currentModel.schema === "legacy") {
-                        const lastPair = rawData[rawData.length - 1];
-                        responseText = String(lastPair[1] || "");
-                    } else {
-                        if (typeof rawData === 'string') responseText = rawData;
-                        else if (Array.isArray(rawData)) {
-                            const last = rawData[rawData.length - 1];
-                            responseText = String(Array.isArray(last) ? (last[1] || '') : (last || ''));
-                        } else if (rawData && typeof rawData === 'object') {
-                            responseText = String(rawData.message || rawData.text || "");
+                    if (chunk?.data?.[0]) {
+                        const output = chunk.data[0];
+                        history[history.length - 1][1] = typeof output === 'string' ? output : output.text;
+                        const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
+                        if (lastProse) {
+                            lastProse.innerHTML = marked.parse(history[history.length - 1][1]);
+                            renderMath(lastProse);
                         }
-                    }
-                    
-                    if (responseText && responseText !== "[object Object]") {
-                        activeHistory[activeHistory.length - 1][1] = responseText;
-                        if (currentChatId === processingChatId) updateLastResponseInUI(responseText);
+                        scrollToBottom();
                     }
                 }
             } catch (e) {
-                console.error("API Failure:", e);
-                const hexCode = Math.floor(Math.random()*16777215).toString(16).toUpperCase();
-                activeHistory.at(-1)[1] = `⚠️ **[ERR_SYNTHESIS_FAILURE]** 0x${hexCode}: Trace aborted. (Native: ${e.message || "null"})`;
-                if (currentChatId === processingChatId) render();
+                if (e.message !== "The user cancelled the request.") {
+                    history[history.length - 1][1] = `⚠️ Interface error: ${e.message}`;
+                    render();
+                }
             } finally {
                 isGenerating = false;
-                sendBtn.disabled = false;
-                saveToStorage(processingChatId, activeHistory); 
-                if (currentChatId === processingChatId) { render(); scrollToBottom(); }
+                currentJob = null;
+                updateUI();
+                save();
             }
-        }
+        };
 
-        window.sendMessage = sendMessage;
+        const renderMath = (el) => {
+            el.innerHTML = el.innerHTML.replace(/\$\$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
+        };
 
-        function updateLastResponseInUI(text) {
-            const aiRows = chatBox.querySelectorAll('.ai-row');
-            if (aiRows.length === 0) return;
-            const lastRow = aiRows[aiRows.length - 1];
-            const proseDiv = lastRow.querySelector('.prose');
-            if (proseDiv) {
-                const html = formatMarkdown(text);
-                if (html) {
-                    proseDiv.innerHTML = html;
-                    renderMath(proseDiv);
+        const save = () => {
+            if (!history.length) return;
+            const title = history[0][0].substring(0, 30) + (history[0][0].length > 30 ? '...' : '');
+            allChats[currentChatId] = { id: currentChatId, title, history, timestamp: Date.now(), pinned: allChats[currentChatId]?.pinned || false };
+            localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+            renderHistory();
+        };
+
+        window.copyMsg = (idx) => {
+            const text = history[idx][1] || '';
+            navigator.clipboard.writeText(text);
+        };
+
+        window.regenMsg = (idx) => {
+            if (isGenerating) return;
+            const msg = history[idx][0];
+            history = history.slice(0, idx);
+            window.sendMessage(msg);
+        };
+
+        const render = () => {
+            els.welcome.style.display = history.length ? 'none' : 'flex';
+            els.chatMsgs.innerHTML = history.map(([u, a], i) => `
+                <div class="user-row flex flex-col items-end">
+                    <div class="user-msg-bubble prose dark:prose-invert">${marked.parse(u)}</div>
+                </div>
+                <div class="ai-row flex items-start gap-3 sm:gap-4 animate-slide-up">
+                    <div class="w-8 h-8 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1">
+                        <div class="w-4 h-4">${currentModel.icon}</div>
+                    </div>
+                    <div class="flex-1 min-w-0 pt-2">
+                        <div class="prose dark:prose-invert prose-target w-full">
+                            ${a ? marked.parse(a) : '<div class="flex items-center h-6"><span class="aether-loader"></span></div>'}
+                        </div>
+                        ${a ? `
+                        <div class="flex items-center gap-4 mt-4">
+                            <button onclick="window.copyMsg(${i})" class="text-[10px] uppercase font-bold tracking-widest opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)">
+                                <i class="fa-regular fa-copy mr-1"></i> Copy
+                            </button>
+                            <button onclick="window.regenMsg(${i})" class="text-[10px] uppercase font-bold tracking-widest opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)">
+                                <i class="fa-solid fa-rotate-right mr-1"></i> Regen
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+            els.chatMsgs.querySelectorAll('.prose-target').forEach(renderMath);
+        };
+
+        const updateUI = () => {
+            const hasText = els.input.value.trim().length > 0;
+            els.send.disabled = !hasText && !isGenerating;
+            
+            if (isGenerating) {
+                els.icon.className = "fa-solid fa-square text-[10px]";
+                els.send.style.opacity = "1";
+            } else if (hasText) {
+                els.icon.className = "fa-solid fa-arrow-up text-[10px]";
+                els.send.style.opacity = "1";
+            } else {
+                els.icon.className = "fa-solid fa-arrow-up text-[10px]";
+                els.send.style.opacity = "0.3";
+            }
+
+            els.searchBtn.className = `flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-[9px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
+            els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
+            els.searchBtn.style.color = webSearch ? 'var(--accent-contrast)' : '';
+
+            els.actIcon.innerHTML = currentModel.icon;
+            document.getElementById('icon-pro-menu').innerHTML = currentModel.icon;
+            document.getElementById('icon-pro-menu').style.color = 'var(--accent-color)';
+        };
+
+        window.delChat = (id) => {
+            delete allChats[id];
+            localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+            if (id === currentChatId) window.resetChat();
+            renderHistory();
+        };
+
+        window.pinChat = (id) => {
+            allChats[id].pinned = !allChats[id].pinned;
+            localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+            renderHistory();
+        };
+
+        const renderHistory = () => {
+            const chats = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
+            
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const yesterdayStart = todayStart - 24 * 60 * 60 * 1000;
+            const lastWeekStart = todayStart - 7 * 24 * 60 * 60 * 1000;
+
+            const sections = {
+                pinned: chats.filter(c => c.pinned),
+                today: chats.filter(c => !c.pinned && c.timestamp >= todayStart),
+                yesterday: chats.filter(c => !c.pinned && c.timestamp >= yesterdayStart && c.timestamp < todayStart),
+                lastWeek: chats.filter(c => !c.pinned && c.timestamp >= lastWeekStart && c.timestamp < yesterdayStart),
+                dust: chats.filter(c => !c.pinned && c.timestamp < lastWeekStart)
+            };
+
+            const labels = {
+                pinned: "Pinned",
+                today: "Today",
+                yesterday: "Yesterday",
+                lastWeek: "Last Week",
+                dust: "Dust collecting"
+            };
+
+            let html = '';
+            for (const key in sections) {
+                const group = sections[key];
+                if (group.length > 0) {
+                    html += `<div class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-400 px-4 mt-6 mb-2 opacity-60">${labels[key]}</div>`;
+                    html += group.map(c => `
+                        <div class="history-btn-container ${c.id === currentChatId ? 'history-item-active' : ''} rounded-xl group">
+                            <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-3 rounded-xl text-[13px] font-medium transition-all truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">
+                                ${c.title}
+                            </button>
+                            <div class="flex items-center gap-1 pr-1">
+                                <button onclick="event.stopPropagation(); window.pinChat('${c.id}')" class="history-action-btn ${c.pinned ? 'text-blue-500 opacity-100' : ''}">
+                                    <i class="fa-solid fa-thumbtack"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
                 }
             }
-        }
 
-        window.__okemoCopy = (idx) => {
-            const text = history[idx]?.[1];
-            if (!text) return;
-            navigator.clipboard.writeText(String(text)).then(() => setStatus("Inscribed", "blue"));
+            els.hist.innerHTML = html || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">Archive Empty</div>`;
         };
 
-        window.__okemoRegen = (idx) => {
-            if (isGenerating) return;
-            const msg = history[idx]?.[0];
-            if (!msg) return;
-            history = history.slice(0, idx);
+        window.loadChat = (id) => {
+            currentChatId = id;
+            history = allChats[id].history;
             render();
-            sendMessage(msg);
+            updateUI();
+            renderHistory();
+            if (window.innerWidth < 1024) window.toggleSidebar();
         };
 
-        window.__okemoDeleteChat = (id) => {
-            delete allChats[id];
-            localStorage.setItem('olm_archives_v5', JSON.stringify(allChats));
-            if (currentChatId === id) resetChat();
-            else renderHistory();
-        };
-        
-        window.__okemoTogglePin = (id) => {
-            if (allChats[id]) {
-                allChats[id].pinned = !allChats[id].pinned;
-                localStorage.setItem('olm_archives_v5', JSON.stringify(allChats));
-                renderHistory();
-            }
-        };
+        const scrollToBottom = () => els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
 
-        function render() {
-            if (history.length === 0) {
-                welcomeState.style.display = "flex";
-                chatBox.style.display = "none";
-                chatBox.innerHTML = "";
-                return;
-            } else {
-                welcomeState.style.display = "none";
-                chatBox.style.display = "flex";
-            }
+        const init = () => {
+            if (localStorage.getItem('vail_theme') === 'dark') document.documentElement.classList.add('dark');
+            window.updateAccent(settings.accent);
+            window.updateTemp(settings.temp);
+            
+            els.input.oninput = () => {
+                els.input.style.height = 'auto';
+                els.input.style.height = Math.min(els.input.scrollHeight, 160) + 'px';
+                updateUI();
+            };
+            
+            els.input.onkeydown = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    window.handleAction();
+                }
+            };
 
-            chatBox.innerHTML = "";
-            history.forEach(([u, a], idx) => {
-                const uDiv = document.createElement('div');
-                uDiv.className = "mb-8 flex flex-col items-end animate-slide-up";
-                uDiv.innerHTML = `
-                    <div class="message-content flex flex-col items-end">
-                        <div class="user-msg-bubble mr-2 md:mr-4">
-                            <div class="text-[15px] leading-relaxed">${marked.parse(String(u))}</div>
-                        </div>
-                    </div>`;
-                chatBox.appendChild(uDiv);
-
-                const aiDiv = document.createElement('div');
-                aiDiv.className = "ai-row mb-12 animate-slide-up group";
-                aiDiv.innerHTML = `
-                    <div class="message-content flex gap-5">
-                        <div class="w-10 h-10 p-2 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 shadow-sm text-zinc-800 dark:text-zinc-100">
-                             ${currentModel.icon}
-                        </div>
-                        <div class="flex-1 overflow-hidden pt-1.5">
-                            <div class="prose dark:prose-invert">
-                                ${a ? formatMarkdown(a) : '<div class="apple-loader mt-4"></div>'}
-                            </div>
-                            ${a ? `
-                            <div class="flex gap-4 mt-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="window.__okemoCopy(${idx})" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><i class="fa-regular fa-copy text-sm"></i></button>
-                                <button onclick="window.__okemoRegen(${idx})" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"><i class="fa-solid fa-rotate-right text-sm"></i></button>
-                            </div>` : ''}
-                        </div>
-                    </div>`;
-                chatBox.appendChild(aiDiv);
-                if (a) renderMath(aiDiv.querySelector('.prose'));
-            });
-        }
-
-        function createHistoryItem(chat) {
-            const isActive = chat.id === currentChatId;
-            const item = document.createElement("button");
-            item.className = `w-full text-left px-4 py-3 rounded-2xl text-[13px] font-semibold transition-all truncate flex items-center justify-between group ${isActive ? 'history-item-active' : 'text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800'}`;
-            const pinClass = chat.pinned ? 'text-blue-500 opacity-100' : 'opacity-0 lg:group-hover:opacity-40 hover:!opacity-100';
-            const trashClass = 'opacity-0 lg:group-hover:opacity-40 hover:!opacity-100';
-            item.innerHTML = `<span class="truncate pointer-events-none">${chat.title}</span><div class="flex items-center gap-1 text-zinc-400"><button class="p-1 transition-all ${pinClass}" onclick="event.stopPropagation(); window.__okemoTogglePin('${chat.id}')"><i class="fa-solid fa-thumbtack text-[11px]"></i></button><button class="p-1 transition-all ${trashClass}" onclick="event.stopPropagation(); window.__okemoDeleteChat('${chat.id}')"><i class="fa-solid fa-trash-can text-[11px]"></i></button></div>`;
-            item.onclick = () => { currentChatId = chat.id; history = JSON.parse(JSON.stringify(chat.history)); isGenerating = false; render(); renderHistory(); if (window.innerWidth < 1024) toggleSidebar(); };
-            return item;
-        }
-
-        function renderHistory() {
-            historyList.innerHTML = "";
-            const chats = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
-            const pinned = chats.filter(c => c.pinned);
-            const recent = chats.filter(c => !c.pinned);
-            if (pinned.length > 0) {
-                const title = document.createElement("div"); title.className = "history-section-title"; title.innerText = "Pinned"; historyList.appendChild(title);
-                pinned.forEach(chat => historyList.appendChild(createHistoryItem(chat)));
-            }
-            if (recent.length > 0) {
-                const title = document.createElement("div"); title.className = "history-section-title"; title.innerText = "Recent"; historyList.appendChild(title);
-                recent.forEach(chat => historyList.appendChild(createHistoryItem(chat)));
-            }
-        }
-
-        function resetChat() { currentChatId = crypto.randomUUID(); history = []; isGenerating = false; document.getElementById('active-model-name').innerText = currentModel.name; updateTopNavIcon(); setStatus("Ready", "green"); render(); renderHistory(); if (window.innerWidth < 1024) toggleSidebar(); }
-
-        window.toggleSidebar = () => {
-            const body = document.body;
-            const isDesktop = window.innerWidth >= 1024;
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
-            if (isDesktop) body.classList.toggle('sidebar-collapsed');
-            else {
-                const isHidden = sidebar.classList.contains('-translate-x-full');
-                if (isHidden) { sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); setTimeout(() => backdrop.style.opacity = '1', 10); }
-                else { sidebar.classList.add('-translate-x-full'); backdrop.style.opacity = '0'; setTimeout(() => backdrop.classList.add('hidden'), 300); }
-            }
+            window.onclick = () => window.closeAllMenus();
+            renderHistory();
         };
 
-        function scrollToBottom() { chatBoxContainer.scrollTo({ top: chatBoxContainer.scrollHeight, behavior: 'smooth' }); }
-
-        function initEventListeners() {
-            sendBtn.addEventListener('click', () => sendMessage());
-            textarea.addEventListener('keydown', e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-            textarea.addEventListener('input', function() { 
-                this.style.height = 'auto'; 
-                this.style.height = (this.scrollHeight > 240 ? 240 : this.scrollHeight) + 'px'; 
-            });
-            document.getElementById('model-dropdown-btn').addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('active'); modelMenu.classList.toggle('active'); });
-            document.getElementById('settings-toggle').addEventListener('click', (e) => { e.stopPropagation(); modelMenu.classList.remove('active'); settingsMenu.classList.toggle('active'); });
-            window.addEventListener('click', (e) => { if (!modelMenu.contains(e.target) && !settingsMenu.contains(e.target)) { modelMenu.classList.remove('active'); settingsMenu.classList.remove('active'); } });
-            document.getElementById('model-select-pro').addEventListener('click', () => { if (history.length > 0) resetChat(); currentModel = MODELS.OLM2; client = null; document.getElementById('active-model-name').innerText = MODELS.OLM2.name; updateTopNavIcon(); modelMenu.classList.remove('active'); ensureClient(); });
-            document.getElementById('model-select-base').addEventListener('click', () => { if (history.length > 0) resetChat(); currentModel = MODELS.OLM1; client = null; document.getElementById('active-model-name').innerText = MODELS.OLM1.name; updateTopNavIcon(); modelMenu.classList.remove('active'); ensureClient(); });
-            inputSearchToggle.addEventListener('click', () => toggleSearch());
-            document.getElementById('theme-toggle').addEventListener('click', () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('vail_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); });
-            document.getElementById('new-chat-btn').addEventListener('click', resetChat);
-            document.getElementById('save-settings').addEventListener('click', () => { settings.temp = parseFloat(document.getElementById('param-temp').value); localStorage.setItem('olm_settings_v4', JSON.stringify(settings)); settingsMenu.classList.remove('active'); setStatus("Syncing...", "blue"); setTimeout(() => setStatus("Standby", "green"), 500); });
-            document.getElementById('param-temp').addEventListener('input', (e) => { document.getElementById('temp-val').innerText = e.target.value; });
-            document.getElementById('clear-all-btn').addEventListener('click', () => { allChats = {}; localStorage.setItem('olm_archives_v5', '{}'); resetChat(); });
-            chatBoxContainer.addEventListener('scroll', () => {
-                const threshold = 300;
-                const isScrolledUp = chatBoxContainer.scrollHeight - chatBoxContainer.scrollTop - chatBoxContainer.clientHeight > threshold;
-                if (isScrolledUp) { scrollBottomBtn.classList.remove('opacity-0', 'invisible', 'translate-y-4'); scrollBottomBtn.classList.add('opacity-100', 'visible', 'translate-y-0'); }
-                else { scrollBottomBtn.classList.add('opacity-0', 'invisible', 'translate-y-4'); scrollBottomBtn.classList.remove('opacity-100', 'visible', 'translate-y-0'); }
-            });
-            scrollBottomBtn.addEventListener('click', scrollToBottom);
-        }
-
-        function initApp() {
-            const savedTheme = localStorage.getItem('vail_theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
-            if (window.innerWidth < 1024) document.getElementById('sidebar').classList.add('-translate-x-full');
-            const tempInput = document.getElementById('param-temp');
-            if (tempInput) { tempInput.value = settings.temp; document.getElementById('temp-val').innerText = settings.temp; }
-            initEventListeners(); updateTopNavIcon(); renderHistory(); render(); ensureClient().catch(() => setStatus("Offline", "red"));
-        }
-        initApp();
+        init();
     </script>
 </body>
 </html>
-
