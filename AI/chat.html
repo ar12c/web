@@ -722,7 +722,7 @@
         window.handleAction = () => {
             if (isGenerating) {
                 if (currentJob) currentJob.cancel(); isGenerating = false;
-                if (history.length > 0) history[history.length - 1][1] = (history[history.length - 1][1] || "") + "\n\n<span class='opacity-40 text-[11px] block mt-4 italic'>Session stopped</span>";
+                if (history.length > 0) history[history.length - 1][1] = (history[history.length - 1][1] || "") + "\n\n<span class='opacity-40 text-[11px] block mt-4 italic'>You stopped this response</span>";
                 render(); updateUI(); save();
             } else window.sendMessage();
         };
