@@ -1,21 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OLM Project North Star</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>VAIL | North Star Analytics</title>
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-
-  <!-- Scripts -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
-
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
   <script>
     tailwind.config = {
@@ -23,17 +19,34 @@
       theme: {
         extend: {
           fontFamily: {
-            inter: ['Inter', 'sans-serif'],
-            serif: ['Playfair Display', 'serif'],
-            sans: ['Libre Franklin', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            paper: '#f9f7f2',
-            ink: '#1a1a1a',
-            'accent-blue': '#1e3a8a',
-            'dark-paper': '#121212',
-            'dark-ink': '#e5e7eb',
+            brand: {
+              red: '#ef4444',
+              purple: '#a855f7',
+            }
+          },
+          animation: {
+            'gradient-flow': 'gradientFlow 8s ease infinite',
+            'fade-in-up': 'fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'pulse-glow': 'pulseGlow 6s ease-in-out infinite',
+          },
+          keyframes: {
+            gradientFlow: {
+              '0%': { 'background-position': '0% 50%' },
+              '50%': { 'background-position': '100% 50%' },
+              '100%': { 'background-position': '0% 50%' },
+            },
+            pulseGlow: {
+              '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.3))' },
+              '50%': { filter: 'drop-shadow(0 0 35px rgba(168, 85, 247, 0.5))' },
+            },
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
           }
         }
       }
@@ -41,388 +54,346 @@
   </script>
 
   <style>
-    .newspaper-texture {
-      background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.03'/%3E%3C/svg%3E");
-    }
-    @media (prefers-color-scheme: dark) {
-      .newspaper-texture {
-        background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E");
-      }
-    }
-
-    /* Liquid Glass Style for Sponsor Button */
-    .liquid-glass-smooth {
-      border-radius: 0px;
-      transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
-                  transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6),
-                  background 0.4s ease,
-                  box-shadow 0.4s ease,
-                  border-color 0.4s ease,
-                  color 0.3s ease;
-      background: #f9f7f2; 
-      border: 3px solid #1a1a1a;
-      z-index: 10; 
-      position: relative;
+    :root {
+      --bg-color: #fbfbfd;
+      --text-color: #1d1d1f;
+      --nav-bg: rgba(255, 255, 255, 0.2);
+      --card-bg: rgba(255, 255, 255, 0.4);
+      --card-border: rgba(0, 0, 0, 0.08);
     }
 
     @media (prefers-color-scheme: dark) {
-      .liquid-glass-smooth {
-        background: hsl(0, 0%, 12%);
-        border-color: #3f3f46;
-        color: #e5e7eb;
+      :root {
+        --bg-color: #000000;
+        --text-color: #f5f5f7;
+        --nav-bg: rgba(0, 0, 0, 0.2);
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --card-border: rgba(255, 255, 255, 0.05);
       }
     }
 
-    .liquid-glass-smooth:hover {
-      border-radius: 100px !important;
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(30, 58, 138, 0.95) !important;
-      border-color: #3b82f6;
-      box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.6),
-                  inset 0 0 10px rgba(255, 255, 255, 0.1);
-      transform: translateY(-8px) scale(1.02);
-      color: #ffffff !important;
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      transition: background-color 0.8s ease, color 0.8s ease;
     }
 
-    /* macOS 9 Styled Terminal - Dark Edition */
-    .macos-window {
-      background-color: #333333;
-      border: 1px solid #1a1a1a;
-      box-shadow: inset 1px 1px 0px #444444, 4px 4px 15px rgba(0,0,0,0.4);
-    }
-    .macos-title-bar {
-      background: #333333;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      padding: 0 6px;
-      border-bottom: 1px solid #1a1a1a;
-      position: relative;
-    }
-    .macos-stripes {
-      position: absolute;
-      top: 6px;
-      left: 32px;
-      right: 52px;
-      height: 12px;
-      background-image: linear-gradient(#444 1px, transparent 1px);
-      background-size: 100% 2px;
-    }
-    .macos-box {
-      width: 14px;
-      height: 14px;
-      background: #333333;
-      border: 1px solid #1a1a1a;
-      box-shadow: inset 1px 1px 0px #444444;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .macos-content-area {
-      background: #0a0a0a;
-      margin: 4px;
-      border: 1px solid #1a1a1a;
-      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.8);
-      padding: 12px;
+    #space-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -10;
+      pointer-events: none;
     }
 
-    @keyframes revealBlur {
-      0% { opacity: 0; transform: translateY(15px); filter: blur(10px); }
-      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-    .animate-word {
+    .intel-gradient {
       display: inline-block;
-      opacity: 0;
-      animation: revealBlur 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      background: linear-gradient(90deg, #ef4444, #a855f7, #ec4899, #ef4444);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientFlow 6s linear infinite;
+    }
+
+    .glass-nav {
+      backdrop-filter: saturate(180%) blur(40px);
+      -webkit-backdrop-filter: saturate(180%) blur(40px);
+      background: var(--nav-bg);
+      border-bottom: 0.5px solid var(--card-border);
+      z-index: 100;
+      transition: background-color 0.5s ease;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: 24px;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .macos-content-area {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      padding: 16px;
     }
 
     .chart-container {
       position: relative;
-      height: 300px;
+      height: 240px;
       width: 100%;
     }
 
-    ::-webkit-scrollbar { width: 14px; }
-    ::-webkit-scrollbar-track { background: #2d2d2d; border-left: 1px solid #1a1a1a; }
-    ::-webkit-scrollbar-thumb { 
-      background: #444444; 
-      border: 1px solid #1a1a1a;
-      box-shadow: inset 1px 1px 0px #555555;
+    .blur-division {
+      height: 120px;
+      width: 100%;
+      background: linear-gradient(to bottom, transparent, var(--bg-color));
+      backdrop-filter: blur(12px);
+      margin-top: -60px;
+      position: relative;
+      z-index: 30;
     }
   </style>
 </head>
-<body class="bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink font-sans newspaper-texture transition-colors duration-500 overflow-x-hidden">
+<body class="font-sans">
 
-  <header class="max-w-screen-2xl mx-auto px-4 md:px-16 pt-6 md:pt-8">
-    <nav class="mb-4 md:mb-6">
-      <a href="OkemoLLM.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] hover:text-accent-blue transition-colors group">
-        <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
-        <span>Back</span>
-      </a>
-    </nav>
+  <canvas id="space-canvas"></canvas>
 
-    <div class="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">
-      <div class="flex gap-4 md:gap-6">
-        <span>Vol. 03</span>
-      </div>
-      <div id="date-stamp" class="text-right italic uppercase">JANUARY 10, 2026</div>
-    </div>
-    
-    <div class="py-6 md:py-10 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-4 md:gap-6">
-        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OLM logo" class="w-12 h-12 md:w-16 md:h-16 grayscale border-2 border-ink dark:border-zinc-700 p-1 bg-white flex-shrink-0"/>
-        <div class="leading-none">
-          <h1 class="font-serif text-5xl md:text-8xl font-black uppercase tracking-tighter animate-word" style="animation-delay: 0.1s">OLM</h1>
-          <p class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] ml-1 opacity-50">Training OLM Project North Star</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-1.5 self-start md:self-center mt-2 md:mt-0">
-        <div id="status-dot" class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500"></div>
-        <span id="status-text" class="text-[7px] md:text-[9px] font-black uppercase tracking-widest opacity-60 whitespace-nowrap">Feed Disconnected</span>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-screen-2xl mx-auto px-4 md:px-16 py-6 md:py-10">
-    
-    <!-- Hero Section -->
-    <section class="grid grid-cols-1 lg:grid-cols-3 border-b-2 border-ink/10 dark:border-zinc-800 mb-8 md:mb-10">
-      <div class="lg:col-span-2 py-6 md:py-10 lg:pr-12 text-center lg:text-left flex flex-col items-center lg:items-start">
-        <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-ink text-paper dark:bg-zinc-700 px-2 py-1 inline-block mb-4">CURRENT INSTANT LOSS</span>
-        <h2 id="val-loss" class="font-serif text-[clamp(3.5rem,15vw,10vw)] lg:text-[clamp(4rem,12vw,12vw)] font-black italic leading-[0.8] tracking-tighter mb-6 md:mb-20 animate-word" style="animation-delay: 0.3s">
-          0.0000
-        </h2>
-        <div class="max-w-2xl mx-auto lg:mx-0">
-          <p class="text-lg md:text-2xl font-black leading-tight tracking-tight uppercase">
-            AN OKEMO ENGINE BUILT ON THE PRINCIPLES OF <br class="hidden md:block"> <span class="bg-ink dark:bg-zinc-700 text-paper dark:text-white px-2">THE 3Es</span>: EXPRESSIVE, EXPEDITIOUS, AND ECONOMICAL.
-          </p>
-        </div>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full glass-nav">
+    <div class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <a href="OkemoLLM.html" class="opacity-40 hover:opacity-100 transition-opacity">
+          <i class="fa-solid fa-arrow-left text-xs"></i>
+        </a>
+        <span class="font-black italic text-xl tracking-tight select-none">
+          V<span class="intel-gradient italic">AI</span>L
+        </span>
       </div>
       
-      <div class="py-8 md:py-10 lg:pl-12 lg:border-l border-ink/10 dark:border-zinc-800 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
-        <div class="space-y-6 w-full max-w-sm lg:max-w-none">
-          <div class="flex flex-col items-center lg:items-start">
-            <div class="mb-6 md:mb-8">
-               <a href="https://voidai.app" target="_blank" class="liquid-glass-smooth flex items-center gap-3 !p-1.5 w-fit">
-                <img src="https://voidai.app/voidai.png" alt="VoidAI" class="w-10 h-10 md:w-14 md:h-14 object-contain flex-shrink-0">
-                <div class="flex flex-col pr-2 md:pr-4">
-                  <span class="text-[6px] md:text-[7px] font-bold opacity-50 mb-0.5">SPONSORED BY</span>
-                  <span class="text-sm md:text-lg font-black uppercase tracking-widest font-serif leading-none">voidai.app</span>
-                </div>
-               </a>
-            </div>
-
-            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest opacity-40 block mb-2">Current Activity</span>
-            <p id="activity-text" class="font-serif text-xl md:text-2xl font-black italic leading-none uppercase">Pre-training <br>Standby</p>
-          </div>
-        </div>
+      <div class="flex items-center gap-3">
+        <div id="status-dot" class="w-2 h-2 rounded-full bg-red-500"></div>
+        <span id="status-text" class="text-[9px] font-bold uppercase tracking-[0.2em] opacity-40">Uplink Pending</span>
       </div>
-    </section>
+    </div>
+  </nav>
 
-    <!-- Stat Grid -->
-    <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 mb-8 md:mb-12">
-      <div class="grid grid-cols-2 md:grid-cols-4">
+  <!-- Dashboard Hero -->
+  <section class="relative min-h-[70vh] flex flex-col items-center justify-center text-center px-6 pb-12 overflow-hidden">
+    <div class="max-w-7xl w-full animate-fade-in-up">
+      <div class="flex flex-col items-center gap-2 mb-6">
+        <h2 class="text-[9px] md:text-xs font-bold opacity-30 tracking-[0.4em] uppercase">Compute Analytics</h2>
+        <span class="text-[10px] font-bold uppercase tracking-widest opacity-30 mt-8 block">Project North Star Efficiency</span>
+      </div>
+
+      <div class="flex flex-col items-center justify-center">
+        <h1 id="val-loss" class="text-7xl md:text-[10vw] font-extrabold tracking-tighter leading-[0.8] mb-8 intel-gradient">
+          0.0000
+        </h1>
         
-        <div class="p-6 md:p-8 border-r border-b border-ink/20 dark:border-white/20 md:border-b-0 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-bolt-lightning text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest opacity-60">Throughput</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-step" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Total Tokens</span>
-          </div>
+        <div class="flex flex-col items-center mb-8">
+            <a href="https://voidai.app" target="_blank" class="flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity group">
+                <img src="https://voidai.app/voidai.png" alt="VoidAI" class="w-6 h-6 grayscale group-hover:grayscale-0 transition-all">
+                <div class="text-left border-l border-white/20 pl-3">
+                    <span class="text-[8px] font-black uppercase tracking-[0.3em]">Powered by VOID.AI</span>
+                </div>
+            </a>
         </div>
 
-        <div class="p-6 md:p-8 border-b border-ink/20 dark:border-white/20 md:border-b-0 md:border-r group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-rotate text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest opacity-60">Avg Loss</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-avg-loss" class="font-serif text-2xl md:text-3xl font-black italic tracking-tighter">0.0000</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Update: <span id="val-update-id">--</span></span>
-          </div>
-        </div>
-
-        <div class="p-6 md:p-8 border-r border-ink/20 dark:border-white/20 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-microchip text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest opacity-60">VRAM Free</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-vram-free" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter">0.00 GB</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Available</span>
-          </div>
-        </div>
-
-        <div class="p-6 md:p-8 group hover:bg-ink/5 dark:hover:bg-white/5 transition-colors flex flex-col items-center md:items-start text-center md:text-left">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-8 md:w-10 md:h-10 border border-ink dark:border-zinc-700 flex items-center justify-center group-hover:bg-ink group-hover:text-paper transition-all">
-              <i class="fa-solid fa-stopwatch text-xs md:text-base"></i>
-            </div>
-            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest opacity-60">Runtime</span>
-          </div>
-          <div class="flex flex-col">
-            <span id="val-elapsed" class="font-serif text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">0s</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase mt-2 tracking-widest opacity-40">Elapsed</span>
-          </div>
-        </div>
-
+        <p id="activity-text" class="text-sm md:text-lg opacity-40 font-medium uppercase tracking-widest">Initialising Remote Protocol...</p>
       </div>
-    </section>
+    </div>
+  </section>
+
+  <!-- Live Stats Bento -->
+  <main class="max-w-7xl mx-auto px-6 pb-32 relative z-20">
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="feature-card p-6 flex flex-col items-center text-center">
+        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">Compute Velocity</span>
+        <span id="val-step" class="text-2xl md:text-3xl font-bold tracking-tighter block">0</span>
+        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Tokens Processed</span>
+      </div>
+
+      <div class="feature-card p-6 flex flex-col items-center text-center">
+        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">Model Stability</span>
+        <span id="val-avg-loss" class="text-2xl md:text-3xl font-bold tracking-tighter block">0.0000</span>
+        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Cycle: <span id="val-update-id">--</span></span>
+      </div>
+
+      <div class="feature-card p-6 flex flex-col items-center text-center">
+        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">VRAM Usage</span>
+        <span id="val-vram" class="text-2xl md:text-3xl font-bold tracking-tighter block uppercase">0.00 GB</span>
+        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Available Buffer</span>
+      </div>
+
+      <div class="feature-card p-6 flex flex-col items-center text-center">
+        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">Uptime</span>
+        <span id="val-elapsed" class="text-2xl md:text-3xl font-bold tracking-tighter block uppercase">0s</span>
+        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Elapsed Runtime</span>
+      </div>
+    </div>
 
     <!-- Charts -->
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-      <div class="border-2 border-ink dark:border-zinc-800 p-6 md:p-8">
-        <div class="flex items-center justify-between mb-8">
-          <div class="flex items-center gap-3">
-            <i class="fa-solid fa-chart-line text-accent-blue"></i>
-            <h3 class="font-black uppercase tracking-widest text-xs">Instant Loss Rate</h3>
-          </div>
-          <span class="text-[8px] font-bold opacity-40 uppercase">Live Telemetry</span>
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div class="feature-card p-8">
+        <div class="flex justify-between items-center mb-8">
+          <span class="text-[10px] font-bold uppercase tracking-widest opacity-30">Loss Curves</span>
+          <i class="fa-solid fa-chart-line text-brand-red opacity-30"></i>
         </div>
         <div class="chart-container">
           <canvas id="lossChart"></canvas>
         </div>
       </div>
 
-      <div class="border-2 border-ink dark:border-zinc-800 p-6 md:p-8">
-        <div class="flex items-center justify-between mb-8">
-          <div class="flex items-center gap-3">
-            <i class="fa-solid fa-server text-purple-600"></i>
-            <h3 class="font-black uppercase tracking-widest text-xs">Token Accumulation</h3>
-          </div>
-          <span class="text-[8px] font-bold opacity-40 uppercase">Total Tokens</span>
+      <div class="feature-card p-8">
+        <div class="flex justify-between items-center mb-8">
+          <span class="text-[10px] font-bold uppercase tracking-widest opacity-30">Accumulation</span>
+          <i class="fa-solid fa-server text-brand-purple opacity-30"></i>
         </div>
         <div class="chart-container">
           <canvas id="tokenChart"></canvas>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Console -->
-    <section class="border-t-[8px] md:border-t-[12px] border-double border-ink dark:border-zinc-800 pt-8 mb-12">
-      <div class="flex items-center gap-3 mb-6">
-        <i class="fa-solid fa-terminal text-xs"></i>
-        <h3 class="font-black uppercase tracking-[0.3em] text-xs">System Console</h3>
-      </div>
-      
-      <div class="macos-window w-full mx-auto max-w-5xl">
-        <div class="macos-title-bar">
-          <div class="macos-box"></div>
-          <div class="macos-stripes"></div>
-          <div class="flex gap-1 absolute right-1.5">
-            <div class="macos-box">
-              <div class="w-1.5 h-1.5 border-t border-l border-white/20"></div>
-            </div>
-            <div class="macos-box">
-              <div class="w-1.5 h-1.5 border border-white/20"></div>
-            </div>
-          </div>
-        </div>
-        <div class="macos-content-area">
-          <div id="terminal-body" class="h-64 md:h-96 overflow-y-auto font-mono text-[10px] md:text-xs leading-relaxed text-white whitespace-pre-wrap selection:bg-accent-blue selection:text-white">
-            [SYSTEM] Connecting to stream...
-          </div>
+    <!-- Terminal -->
+    <div class="feature-card p-8">
+      <div class="flex justify-between items-center mb-6">
+        <span class="text-[10px] font-bold uppercase tracking-widest opacity-30">Node Console</span>
+        <div class="flex gap-1.5">
+          <div class="w-2 h-2 rounded-full bg-brand-red opacity-30"></div>
+          <div class="w-2 h-2 rounded-full bg-brand-purple opacity-30"></div>
         </div>
       </div>
-    </section>
+      <div class="macos-content-area">
+        <div id="terminal-body" class="h-64 overflow-y-auto font-mono text-[11px] leading-relaxed text-zinc-400 whitespace-pre-wrap selection:bg-brand-purple selection:text-white">
+          [SYSTEM] Initialising encrypted stream...
+          [SYSTEM] V*AI*L North Star 266M Online.
+        </div>
+      </div>
+    </div>
 
   </main>
 
-  <!-- Alert -->
-  <div id="error-alert" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-red-600 text-white px-8 py-4 flex items-center gap-4 font-black uppercase tracking-widest text-xs shadow-2xl">
+  <!-- Error Notification -->
+  <div id="error-alert" class="hidden fixed bottom-12 left-1/2 -translate-x-1/2 z-[200] feature-card !bg-brand-red/90 !border-none px-8 py-4 flex items-center gap-4 text-white shadow-2xl">
     <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
-    <span id="error-message">System Fault: Data Disruption Detected</span>
+    <span id="error-message">Network Disruption Detected</span>
   </div>
 
-  <footer class="px-4 md:px-16 py-8 md:py-12 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6 md:gap-8 border-t border-ink/5 dark:border-white/5 mt-6 md:mt-10">
-    <div class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-      &copy; 2026 OKEMO CODE
-    </div>
-    <div class="flex gap-8 text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-      <span>OPTIMIZER: PAGEDADAMW8BIT</span>
-      <span>PRECISION: BFLOAT16</span>
-    </div>
-    <div class="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">
-      SYSTEM CLOCK: <span id="clock-display" class="font-mono">00:00:00</span>
+  <div class="blur-division"></div>
+
+  <footer class="py-20 backdrop-blur-3xl px-6 relative z-40 border-t border-black/5 dark:border-white/10">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[9px] font-bold opacity-30 uppercase tracking-[0.3em] gap-8">
+      <div class="flex gap-12">
+        <span>© 2026 Personal Intelligence Project</span>
+        <span>Precision: Bfloat16</span>
+      </div>
+      <div class="flex gap-8">
+        <span>Cycle Clock: <span id="clock-display">00:00:00</span></span>
+        <span>Node 02</span>
+      </div>
     </div>
   </footer>
 
   <script>
+    // Reveal Observer
+    const observerOptions = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, observerOptions);
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+    // Three.js Space Background
+    let scene, camera, renderer, stars, starGeo, mouseX = 0, mouseY = 0, scrollY = 0;
+
+    function initSpace() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.z = 1;
+      camera.rotation.x = Math.PI / 2;
+
+      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), antialias: true, alpha: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      starGeo = new THREE.BufferGeometry();
+      let starCoords = [];
+      for(let i=0; i<8000; i++) {
+        starCoords.push(Math.random() * 800 - 400, Math.random() * 800 - 400, Math.random() * 800 - 400);
+      }
+      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      let starMaterial = new THREE.PointsMaterial({
+        color: isDark ? 0xffffff : 0x333333,
+        size: 0.6,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      stars = new THREE.Points(starGeo, starMaterial);
+      scene.add(stars);
+
+      let nsGeom = new THREE.SphereGeometry(1.2, 32, 32);
+      let nsMat = new THREE.MeshBasicMaterial({ color: isDark ? 0xffffff : 0x333333 });
+      let northStar = new THREE.Mesh(nsGeom, nsMat);
+      northStar.name = 'northStar';
+      northStar.position.set(30, 200, -80);
+      scene.add(northStar);
+
+      window.addEventListener('mousemove', e => {
+        mouseX = (e.clientX - window.innerWidth / 2) / 150;
+        mouseY = (event.clientY - window.innerHeight / 2) / 150;
+      });
+      window.addEventListener('scroll', () => scrollY = window.scrollY);
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+      
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      stars.rotation.y += 0.0003;
+      stars.position.y = scrollY * 0.05;
+      camera.rotation.z = scrollY * 0.0001;
+      camera.position.x += (mouseX - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY + 1 - camera.position.y) * 0.05;
+      camera.lookAt(0, stars.position.y, 0);
+      renderer.render(scene, camera);
+    }
+
+    // Telemetry Logic
     const DATABASE_URL = "https://olm266m-default-rtdb.firebaseio.com/stats/stats.json";
     const STALE_THRESHOLD_SECONDS = 300; 
-    
-    let history = []; 
+    let telemetryHistory = []; 
     let lastKnownUpdate = null;
     let lastDataChangeTime = Date.now(); 
-
     let lossChart, tokenChart;
 
     function initCharts() {
       const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const textColor = isDark ? '#a1a1aa' : '#1a1a1a';
+      const textColor = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
       const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
 
-      const ctxLoss = document.getElementById('lossChart').getContext('2d');
-      lossChart = new Chart(ctxLoss, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Loss',
-            data: [],
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            fill: true,
-            tension: 0.1,
-            borderWidth: 2,
-            pointRadius: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: textColor, font: { size: 9, family: 'Inter' } }, grid: { display: false } },
-            y: { ticks: { color: textColor, font: { size: 9, family: 'Inter' } }, grid: { color: gridColor } }
-          }
+      const commonOptions = {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: textColor, font: { size: 8 } }, grid: { display: false } },
+          y: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } }
         }
+      };
+
+      lossChart = new Chart(document.getElementById('lossChart').getContext('2d'), {
+        type: 'line',
+        data: { labels: [], datasets: [{ data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 0 }] },
+        options: commonOptions
       });
 
-      const ctxTokens = document.getElementById('tokenChart').getContext('2d');
-      tokenChart = new Chart(ctxTokens, {
+      tokenChart = new Chart(document.getElementById('tokenChart').getContext('2d'), {
         type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Total Tokens',
-            data: [],
-            borderColor: '#a855f7',
-            borderWidth: 2,
-            pointRadius: 0,
-            fill: false
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: textColor, font: { size: 9, family: 'Inter' } }, grid: { display: false } },
-            y: { ticks: { color: textColor, font: { size: 9, family: 'Inter' } }, grid: { color: gridColor } }
-          }
-        }
+        data: { labels: [], datasets: [{ data: [], borderColor: '#a855f7', fill: false, tension: 0.1, borderWidth: 2, pointRadius: 0 }] },
+        options: commonOptions
       });
     }
 
@@ -437,95 +408,80 @@
     async function fetchStats() {
       try {
         const response = await fetch(DATABASE_URL);
-        if (!response.ok) throw new Error("Fetch failed");
+        if (!response.ok) throw new Error();
         const data = await response.json();
+        if (!data) return;
 
-        if (data) {
-          const currentUpdate = data.update;
-          const now = Date.now();
-          
-          if (currentUpdate !== lastKnownUpdate) {
-            lastDataChangeTime = now;
-            lastKnownUpdate = currentUpdate;
-          }
+        const now = Date.now();
+        if (data.update !== lastKnownUpdate) {
+          lastDataChangeTime = now;
+          lastKnownUpdate = data.update;
+        }
 
-          const secondsSinceUpdate = (now - lastDataChangeTime) / 2000;
-          const isStale = secondsSinceUpdate >= STALE_THRESHOLD_SECONDS;
+        const secondsSinceUpdate = (now - lastDataChangeTime) / 2000;
+        const isStale = secondsSinceUpdate >= STALE_THRESHOLD_SECONDS;
 
-          // Stats
-          document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
-          document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
-          document.getElementById('val-step').innerText = (data.total_tokens || 0).toLocaleString();
-          document.getElementById('val-update-id').innerText = data.update || "--";
-          document.getElementById('val-vram-free').innerText = (data.vram_free || 0).toFixed(2) + " GB";
-          document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
+        // UI Updates
+        document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
+        document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
+        document.getElementById('val-step').innerText = (data.total_tokens || 0).toLocaleString();
+        document.getElementById('val-update-id').innerText = data.update || "--";
+        document.getElementById('val-vram').innerText = (data.vram_free || 0).toFixed(2) + " GB";
+        document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
 
-          // Logs
-          if (data.logs && Array.isArray(data.logs)) {
-            const terminal = document.getElementById('terminal-body');
-            terminal.innerText = data.logs.slice(-50).join('\n');
-            terminal.scrollTop = terminal.scrollHeight;
-          }
+        if (data.logs) {
+          const term = document.getElementById('terminal-body');
+          term.innerText = data.logs.slice(-50).join('\n');
+          term.scrollTop = term.scrollHeight;
+        }
 
-          // Charts
-          const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-          history.push({ time: timeLabel, loss: data.loss, tokens: data.total_tokens });
-          if (history.length > 50) history.shift();
+        const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (telemetryHistory.length === 0 || telemetryHistory[telemetryHistory.length-1].update !== data.update) {
+          telemetryHistory.push({ time: timeLabel, loss: data.loss, tokens: data.total_tokens, update: data.update });
+          if (telemetryHistory.length > 50) telemetryHistory.shift();
 
-          lossChart.data.labels = history.map(h => h.time);
-          lossChart.data.datasets[0].data = history.map(h => h.loss);
+          lossChart.data.labels = telemetryHistory.map(h => h.time);
+          lossChart.data.datasets[0].data = telemetryHistory.map(h => h.loss);
           lossChart.update('none');
 
-          tokenChart.data.labels = history.map(h => h.time);
-          tokenChart.data.datasets[0].data = history.map(h => h.tokens);
+          tokenChart.data.labels = telemetryHistory.map(h => h.time);
+          tokenChart.data.datasets[0].data = telemetryHistory.map(h => h.tokens);
           tokenChart.update('none');
+        }
 
-          // Status
-          const dot = document.getElementById('status-dot');
-          const text = document.getElementById('status-text');
-          const activity = document.getElementById('activity-text');
-          const alert = document.getElementById('error-alert');
-          const errMsg = document.getElementById('error-message');
-          
-          if (isStale) {
-            dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-600";
-            text.innerText = "Server Down";
-            activity.innerHTML = "Telemetry Stalled <br>Server Offline";
-            alert.classList.remove('hidden');
-            errMsg.innerText = "CRITICAL: SERVER DOWN - NO DATA UPDATE IN 5 MINUTES";
-          } else {
-            dot.className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]";
-            text.innerText = "Feed Connected";
-            activity.innerHTML = "Pre-training <br>M2 Max";
-            alert.classList.add('hidden');
-          }
+        const dot = document.getElementById('status-dot');
+        const stext = document.getElementById('status-text');
+        const atext = document.getElementById('activity-text');
+        const alert = document.getElementById('error-alert');
+        const errMsg = document.getElementById('error-message');
+        
+        if (isStale) {
+          dot.className = "w-2 h-2 rounded-full bg-red-600";
+          stext.innerText = "Sync Failed";
+          atext.innerText = "Node Synchronization Interrupted";
+          alert.classList.remove('hidden');
+          errMsg.innerText = "CRITICAL: NODE DISCONNECTED";
+        } else {
+          dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+          stext.innerText = "Uplink Active";
+          atext.innerText = "Active Sync: M2 Max Node";
+          alert.classList.add('hidden');
         }
       } catch (e) {
-        console.error(e);
         document.getElementById('error-alert').classList.remove('hidden');
-        document.getElementById('status-dot').className = "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-red-500";
-        document.getElementById('status-text').innerText = "Network Error";
       }
     }
 
     function updateClock() {
-      const now = new Date();
-      const clockDisplay = document.getElementById('clock-display');
-      if (clockDisplay) clockDisplay.textContent = now.toLocaleTimeString('en-GB', { hour12: false });
-      
-      const dateStamp = document.getElementById('date-stamp');
-      if (dateStamp) {
-        dateStamp.textContent = now.toLocaleDateString('en-US', { 
-            month: 'long', day: 'numeric', year: 'numeric' 
-        }).toUpperCase();
-      }
+      document.getElementById('clock-display').textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
     }
 
-    window.onload = function() {
+    window.onload = () => {
+      initSpace();
       initCharts();
       fetchStats();
       updateClock();
-      setInterval(fetchStats, 5000);
+      setInterval(fetchStats, 1000); 
       setInterval(updateClock, 1000);
     };
   </script>

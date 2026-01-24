@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OkemoVail</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>OkemoVail | Personal Portfolio</title>
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Libre+Franklin:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
@@ -21,16 +19,40 @@
       theme: {
         extend: {
           fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
             inter: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            paper: '#f9f7f2',
-            ink: '#1a1a1a',
-            'desktop-teal': '#55aaaa',
-            'accent-blue': '#1e3a8a',
-            'dark-paper': '#121212',
-            'dark-ink': '#e5e7eb',
-            'dark-desk': '#0f172a',
+            brand: {
+              red: '#ef4444',
+              purple: '#a855f7',
+            }
+          },
+          animation: {
+            'gradient-flow': 'gradientFlow 8s ease infinite',
+            'fade-in-up': 'fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'pulse-glow': 'pulseGlow 6s ease-in-out infinite',
+          },
+          keyframes: {
+            gradientFlow: {
+              '0%': { 'background-position': '0% 50%' },
+              '50%': { 'background-position': '100% 50%' },
+              '100%': { 'background-position': '0% 50%' },
+            },
+            pulseGlow: {
+              '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.3))' },
+              '50%': { filter: 'drop-shadow(0 0 35px rgba(168, 85, 247, 0.5))' },
+            },
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+              '33%': { transform: 'translate(5vw, 5vh) rotate(2deg)' },
+              '66%': { transform: 'translate(-2vw, 8vh) rotate(-1deg)' },
+            }
           }
         }
       }
@@ -38,680 +60,601 @@
   </script>
 
   <style>
-    /* Newspaper Paper Effect */
-    .mac-window {
-      background: #ccc;
-      border-top: 2px solid #fff;
-      border-left: 2px solid #fff;
-      border-right: 2px solid #666;
-      border-bottom: 2px solid #666;
-      box-shadow: 8px 8px 0px rgba(0,0,0,0.3);
-      padding: 2px;
-      transition: all 0.5s ease;
-    }
-
-    .mac-title-bar {
-      background: repeating-linear-gradient(
-        to bottom,
-        #ccc,
-        #ccc 2px,
-        #eee 2px,
-        #eee 4px
-      );
-      border: 2px solid #000;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .mac-title-text {
-      background: #ccc;
-      padding: 0 10px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 800;
-      font-size: 11px;
-      color: #000;
-      z-index: 2;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .mac-control {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      background: #ccc;
-      border: 2px solid #000;
-      box-shadow: inset 1px 1px 0px #fff;
-    }
-    .mac-close { left: 6px; }
-    .mac-zoom { right: 6px; }
-
-    .mac-content-area {
-      background: #fff;
-      border: 2px solid #000;
-      margin-top: 2px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Dark Mode Mac Windows */
-    @media (prefers-color-scheme: dark) {
-      .mac-window {
-        background: #2d2d2d;
-        border-top-color: #444;
-        border-left-color: #444;
-        border-right-color: #111;
-        border-bottom-color: #111;
-        box-shadow: 8px 8px 0px rgba(0,0,0,0.6);
-      }
-      .mac-title-bar {
-        background: repeating-linear-gradient(
-          to bottom,
-          #2d2d2d,
-          #2d2d2d 2px,
-          #3d3d3d 2px,
-          #3d3d3d 4px
-        );
-        border-color: #000;
-      }
-      .mac-title-text {
-        background: #2d2d2d;
-        color: #e5e7eb;
-      }
-      .mac-control {
-        background: #2d2d2d;
-        border-color: #000;
-        box-shadow: inset 1px 1px 0px #444;
-      }
-      .mac-content-area {
-        background: #121212;
-        border-color: #000;
-      }
-    }
-
-    /* Custom System 9 Scrollbars */
-    .mac-scroll::-webkit-scrollbar {
-      width: 16px;
-    }
-    .mac-scroll::-webkit-scrollbar-track {
-      background: #eee;
-      background-image: radial-gradient(#aaa 15%, transparent 16%);
-      background-size: 4px 4px;
-    }
-    .mac-scroll::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border: 2px solid #000;
-      box-shadow: inset 1px 1px 0px #fff;
+    :root {
+      --bg-color: #fbfbfd;
+      --text-color: #1d1d1f;
+      --nav-bg: rgba(255, 255, 255, 0.2);
+      --card-bg: rgba(255, 255, 255, 0.4);
+      --card-border: rgba(0, 0, 0, 0.08);
+      --star-color: 0x333333;
+      --accent-color: #ef4444;
+      --mock-win-bg: #ffffff;
+      --mock-side-bg: #f9f9f9;
+      --mock-msg-user: rgba(0,0,0,0.05);
+      --mock-border: rgba(0,0,0,0.1);
     }
 
     @media (prefers-color-scheme: dark) {
-      .mac-scroll::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        background-image: radial-gradient(#333 15%, transparent 16%);
-      }
-      .mac-scroll::-webkit-scrollbar-thumb {
-        background: #2d2d2d;
-        border-color: #000;
-        box-shadow: inset 1px 1px 0px #444;
-      }
-    }
-
-    /* Gazete/Newspaper Components inside Window */
-    .gazette-border {
-      border: 3px solid #1a1a1a;
-    }
-    
-    .newspaper-texture {
-      background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23000' fill-opacity='0.03'/%3E%3C/svg%3E");
-      transition: background-color 0.5s ease, color 0.5s ease;
-    }
-    @media (prefers-color-scheme: dark) {
-      .newspaper-texture {
-        background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23fff' fill-opacity='0.05'/%3E%3C/svg%3E");
+      :root {
+        --bg-color: #000000;
+        --text-color: #f5f5f7;
+        --nav-bg: rgba(0, 0, 0, 0.2);
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --card-border: rgba(255, 255, 255, 0.05);
+        --star-color: 0xffffff;
+        --mock-win-bg: #0d0d0d;
+        --mock-side-bg: #141414;
+        --mock-msg-user: rgba(255,255,255,0.05);
+        --mock-border: rgba(255,255,255,0.1);
       }
     }
 
-    /* CUSTOM ANIMATIONS */
-    @keyframes reveal-name {
-      0% { transform: translateY(40px); opacity: 0; filter: blur(12px); }
-      100% { transform: translateY(0); opacity: 1; filter: blur(0); }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      transition: background-color 0.8s ease, color 0.8s ease;
     }
 
-    @keyframes shine {
-      to { background-position: 200% center; }
-    }
-
-    .animate-reveal {
-      animation: reveal-name 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-    }
-
-    .gradient-name {
-      background: linear-gradient(to right, #1e3a8a 20%, #3b82f6 40%, #60a5fa 60%, #1e3a8a 80%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: shine 6s linear infinite;
-    }
-
-    /* Opaque Liquid Glass */
-    .liquid-glass-smooth {
-      border-radius: 0px;
-      transition: border-radius 0.5s cubic-bezier(0.68, 1, 0.32, 1),
-                  transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6),
-                  background 0.4s ease,
-                  box-shadow 0.4s ease,
-                  border-color 0.4s ease,
-                  color 0.3s ease;
-      background: #f9f7f2; 
-      border: 3px solid #1a1a1a;
-      z-index: 110; 
-      position: relative;
-    }
-    
-    @media (prefers-color-scheme: dark) {
-      .liquid-glass-smooth {
-        background: hsl(0, 0%, 12%);
-        border-color: #3f3f46;
-        color: #e5e7eb;
-      }
-    }
-
-    .liquid-glass-smooth:hover {
-      border-radius: 100px !important;
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(30, 58, 138, 0.95) !important;
-      border-color: #3b82f6;
-      box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.6),
-                  inset 0 0 10px rgba(255, 255, 255, 0.1);
-      transform: translateY(-8px) scale(1.05);
-      color: #ffffff !important;
-    }
-
-    #side-menu {
-      width: 350px;
-      height: 100vh;
+    #space-canvas {
       position: fixed;
       top: 0;
       left: 0;
-      transform: translateX(-100%);
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.5s ease, border-color 0.5s ease;
-      z-index: 200;
-    }
-
-    .menu-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(4px);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-      z-index: 150;
-    }
-
-    .menu-open .menu-backdrop {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .menu-open #side-menu {
-      transform: translateX(0);
-    }
-
-    body.menu-open {
-      overflow: hidden;
-    }
-
-    #site-wrapper {
-      transition: background-color 0.5s ease;
       width: 100%;
-      overflow-x: hidden;
+      height: 100%;
+      z-index: -10;
+      pointer-events: none;
     }
 
-    @media (max-width: 768px) {
-      #side-menu { width: 90%; }
+    .intel-gradient {
+      display: inline-block;
+      background: linear-gradient(
+        90deg, 
+        #ef4444, 
+        #a855f7,
+        #ec4899,
+        #ef4444
+      );
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientFlow 6s linear infinite;
+      padding: 0.25em 0;
+      margin: -0.25em 0;
     }
 
-    ::selection {
-      background: #1e3a8a;
-      color: white;
+    .glass-nav {
+      backdrop-filter: saturate(180%) blur(40px);
+      -webkit-backdrop-filter: saturate(180%) blur(40px);
+      background: var(--nav-bg);
+      border-bottom: 0.5px solid var(--card-border);
+      z-index: 100;
+      transition: background-color 0.5s ease;
     }
-    @media (prefers-color-scheme: dark) {
-      ::selection {
-        background: #3b82f6;
-        color: black;
-      }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: 24px;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .cta-apple {
+      background: var(--text-color);
+      color: var(--bg-color);
+      padding: 12px 36px;
+      border-radius: 980px;
+      font-weight: 700;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 11px;
+    }
+
+    .cta-apple:hover {
+      background: var(--text-color);
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(168, 85, 247, 0.2);
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .blur-division {
+        height: 120px;
+        width: 100%;
+        background: linear-gradient(to bottom, transparent, var(--bg-color));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        margin-top: -60px;
+        position: relative;
+        z-index: 30;
+    }
+
+    /* Endpoint Refined Mock Design */
+    .mock-endpoint-win {
+      background: var(--mock-win-bg);
+      border: 1px solid var(--mock-border);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      position: relative;
+    }
+    
+    .mock-sidebar {
+      background: var(--mock-side-bg);
+      border-right: 1px solid var(--mock-border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .mock-header {
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--mock-border);
+      padding: 0 20px;
+      background: rgba(128, 128, 128, 0.02);
+      backdrop-filter: blur(20px);
+      z-index: 10;
+    }
+
+    .mock-header-pill {
+      background: var(--mock-msg-user);
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .mock-chat-area {
+      flex: 1;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      max-height: 400px;
+    }
+
+    .mock-msg {
+      max-width: 85%;
+      padding: 12px 18px;
+      border-radius: 18px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .mock-msg.user {
+      align-self: flex-end;
+      background: var(--mock-msg-user);
+      border-bottom-right-radius: 4px;
+    }
+
+    .mock-msg.ai {
+      align-self: flex-start;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      max-width: 90%;
+    }
+
+    .ai-bubble-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #a855f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .mock-input-wrap {
+      padding: 24px;
+      background: transparent;
+      position: relative;
+    }
+
+    .mock-input-bar {
+      background: var(--mock-msg-user);
+      border: 1px solid var(--mock-border);
+      border-radius: 20px;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(20px);
+    }
+    
+    .mock-sidebar-item {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 10px;
+        border-radius: 8px;
+        opacity: 0.4;
+        transition: all 0.3s ease;
+    }
+
+    .mock-sidebar-item.active {
+        background: var(--mock-msg-user);
+        opacity: 1;
     }
   </style>
 </head>
-<body class="bg-desktop-teal dark:bg-dark-desk font-['Libre_Franklin',sans-serif] m-0 p-0 overflow-x-hidden transition-colors duration-500">
+<body class="font-sans">
 
-  <div class="menu-backdrop" onclick="toggleMenu()"></div>
+  <canvas id="space-canvas"></canvas>
 
-  <aside id="side-menu" class="bg-paper dark:bg-dark-paper border-r-8 border-double border-ink dark:border-zinc-700 shadow-2xl flex flex-col p-10 overflow-y-auto text-left">
-    <div class="flex flex-col items-start mb-10">
-      <button onclick="toggleMenu()" class="mb-8 text-2xl text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors">
-        <i class="fa-solid fa-arrow-left-long"></i>
-      </button>
-      <div class="border-y-2 border-ink dark:border-zinc-700 py-2 px-6 w-full text-center">
-        <h2 class="font-['Playfair_Display',serif] text-2xl font-black italic uppercase tracking-widest text-ink dark:text-dark-ink">MENU</h2>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full glass-nav">
+    <div class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="w-6 h-6 rounded-sm grayscale border border-current opacity-80" />
+        <span class="font-black italic text-sm tracking-tight select-none">
+          OkemoVail
+        </span>
+      </div>
+      
+      <div class="hidden md:flex items-center gap-10">
+        <a href="#hero" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">Intro</a>
+        <a href="#olm-section" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">North Star</a>
+        <a href="#philosophy" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">The 3Es</a>
+        <a href="#foundry" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">Technical</a>
+      </div>
+
+      <a href="chat.html" class="text-[9px] font-bold bg-brand-purple text-white dark:bg-white dark:text-black px-4 py-1.5 rounded-full hover:opacity-80 transition-all uppercase tracking-widest" style="background-color: #a855f7;">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero" class="relative min-h-screen flex flex-col justify-end px-6 md:px-20 pb-20 md:pb-24 overflow-hidden text-left">
+    <div class="max-w-7xl w-full animate-fade-in-up">
+      <div class="flex items-center gap-4 mb-6">
+        <h2 class="text-[9px] md:text-xs font-bold opacity-30 tracking-[0.4em] uppercase text-left">Portfolio</h2>
+      </div>
+
+      <h1 class="text-4xl md:text-[6.5vw] font-extrabold tracking-tighter leading-[1.1] mb-8 max-w-5xl">
+        Hi, I'm <span class="italic">OkemoVail.</span>
+      </h1>
+      
+      <div class="flex flex-col items-start gap-8 mt-4 w-full">
+        <p class="text-sm md:text-lg opacity-40 max-w-xl mb-4 font-medium leading-relaxed">
+          A personal labor of love in language modeling. Built from scratch on the <span class="font-bold opacity-80 italic">3E Engine</span>: Expressive, Expeditious, and Economical. 
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-6 md:gap-8 mt-8">
+        <a href="#olm-section" class="cta-apple">
+          More
+        </a>
       </div>
     </div>
-    
-    <div class="space-y-12">
-      <div class="group text-left">
-        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">Starter</h3>
-        <a href="#hero" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-2">
-          <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">Introduction</span>
+  </section>
+
+  <!-- OLM North Star & Preview Section -->
+  <section id="olm-section" class="py-32 px-6 max-w-7xl mx-auto relative z-20">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div class="space-y-8 scroll-reveal">
+        <h2 class="text-5xl md:text-7xl font-extrabold tracking-tighter uppercase">OLM <span class="italic">North Star</span></h2>
+        <p class="text-2xl md:text-3xl font-bold leading-tight tracking-tight">
+          Refining the <span class="intel-gradient italic">Okemo Engine</span> through iterative evolution.
+        </p>
+        <p class="opacity-40 text-lg leading-relaxed max-w-md text-left">
+          Built from the ground up to merge complex reasoning with a lightweight architecture. VAIL <span class="italic">North Star</span> represents a significant step in autonomous personal intelligence.
+        </p>
+        <a href="chat.html" class="feature-card !p-6 inline-flex items-center gap-4 group">
+          <span class="text-sm font-bold uppercase tracking-widest">Initialise Session</span>
+          <i class="fa-solid fa-terminal opacity-30 group-hover:opacity-100 transition-opacity"></i>
         </a>
       </div>
 
-      <div class="group text-left">
-        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">Entrées</h3>
-        <div class="space-y-4 flex flex-col">
-          <a href="#olm-section" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
-            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">OLM 2</span>
-          </a>
-          <a href="#philosophy" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
-            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">Philosophy</span>
-          </a>
-          <a href="#foundry" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
-            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">The Technical</span>
-          </a>
+      <!-- Website Mockup with Open Sidebar -->
+      <div class="mock-endpoint-win w-full h-[580px] scroll-reveal" style="transition-delay: 0.2s;">
+        
+        <!-- Mock Sidebar -->
+        <div class="mock-sidebar">
+            <div class="mb-4">
+                <span class="font-black italic text-sm tracking-tight text-zinc-900 dark:text-white uppercase">V<span class="text-brand-purple italic">AI</span>L</span>
+            </div>
+            <div class="bg-brand-purple/90 text-white rounded-xl py-2 px-3 text-[10px] font-bold text-center mb-6">
+                New Session
+            </div>
+            <div class="space-y-1">
+                <div class="mock-sidebar-item active">Smoothing the Debate</div>
+                <div class="mock-sidebar-item">3E Engine Logic</div>
+                <div class="mock-sidebar-item">Token Latency Stats</div>
+            </div>
+        </div>
+
+        <div class="flex flex-col flex-1">
+            <div class="mock-header">
+                <div class="mock-header-pill">
+                    <i class="fa-solid fa-compass text-brand-purple"></i>
+                    <span>OLM <span class="italic">North Star</span> // Endpoint</span>
+                </div>
+            </div>
+            
+            <div class="mock-chat-area">
+                <div class="mock-msg user font-inter">
+                    Since a tomato is a fruit, technically speaking, is ketchup a smoothie?
+                </div>
+
+                <div class="mock-msg ai">
+                    <div class="flex gap-4">
+                        <div class="ai-bubble-icon">
+                            <i class="fa-solid fa-sparkles text-[10px] text-white"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[9px] font-bold uppercase tracking-widest opacity-30">VAIL Intelligence</span>
+                            <p class="text-sm leading-relaxed opacity-80">Botanically, you are standing on solid ground. Culinary-wise, however, my Expressive engine suggests that calling ketchup a 'smoothie' at a party is a fast-track way to never being invited back. It’s more of a savory jam. Or, as I like to call it: 'Aggressive Tomato Reduction'.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mock-input-wrap">
+                <div class="mock-input-bar">
+                    <div class="flex items-center gap-4 opacity-30">
+                        <i class="fa-solid fa-globe text-xs"></i>
+                        <span class="text-[10px] font-inter font-medium">Message OLM North Star...</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-brand-purple flex items-center justify-center text-white text-xs opacity-40">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="group text-left">
-        <h3 class="font-['Playfair_Display',serif] text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-ink/40 dark:text-dark-ink/40 border-b border-ink/10 dark:border-white/10 pb-1">Dessert</h3>
-        <div class="space-y-4 flex flex-col">
-          <a href="#contact" class="js-nav-link text-ink dark:text-dark-ink hover:text-accent-blue dark:hover:text-blue-400 transition-colors block py-1">
-            <span class="font-['Playfair_Display',serif] text-3xl font-bold italic">Contact</span>
-          </a>
-        </div>
-      </div>
+  <!-- The 3Es Section -->
+  <section id="philosophy" class="py-32 px-6 max-w-7xl mx-auto relative z-20">
+    <div class="mb-24 scroll-reveal">
+        <h2 class="text-4xl md:text-6xl font-bold tracking-tight mb-8 text-left">The <span class="intel-gradient italic">3E</span> Standard.</h2>
+        <p class="text-lg opacity-40 max-w-2xl text-left">A focused exploration of speed and transparency in synthetic intelligence architecture.</p>
     </div>
 
-    <div class="mt-auto border-t-2 border-black/10 dark:border-white/10 pt-6 opacity-40 text-ink dark:text-dark-ink text-[9px] font-bold uppercase leading-relaxed text-left">
-      OKEMOMENU 0.1<br>
-      <i class="fa-solid fa-code"></i> OkemoVail Code
-    </div>
-  </aside>
-
-  <div id="site-wrapper" class="relative">
-    
-    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
-      <button onclick="toggleMenu()" class="liquid-glass-smooth w-[60px] h-[60px] flex items-center justify-center group" aria-label="Toggle Menu">
-        <div class="flex flex-col gap-1 w-5">
-          <div class="h-[2px] w-full bg-current transition-all group-hover:w-1/2"></div>
-          <div class="h-[2px] w-full bg-current"></div>
-          <div class="h-[2px] w-full bg-current transition-all group-hover:w-3/4"></div>
-        </div>
-      </button>
-    </div>
-
-    <div class="newspaper-texture bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink min-h-screen w-full">
-      
-      <section id="hero" class="min-h-screen flex flex-col justify-between px-6 md:px-16 lg:px-24 py-8 md:py-12 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden text-left">
-        <div class="flex justify-between items-end border-b-2 border-ink dark:border-zinc-700 pb-2 text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">
-          <div>HONG KONG // 香港</div>
-          <div id="date-stamp" class="text-right">MARCH 21, 1920</div>
-        </div>
-
-        <div class="flex-grow flex flex-col items-start justify-center text-left py-12">
-          <div class="w-full flex flex-col md:flex-row justify-between items-start gap-12">
-            
-            <div class="max-w-4xl">
-              <div class="md:hidden mb-10">
-                 <div class="inline-block border-2 border-black dark:border-zinc-700 bg-black dark:bg-zinc-800 p-[1px] shadow-[4px_4px_0px_#1e3a8a] -rotate-[1.5deg]">
-                    <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-32 h-32 object-cover grayscale brightness-110 contrast-125 border-2 border-white dark:border-dark-paper transition-all duration-500 hover:grayscale-0 cursor-pointer" alt="OkemoVail">
-                 </div>
-              </div>
-
-              <h1 class="font-['Playfair_Display',serif] text-[clamp(1.8rem,7.5vw,7.5vw)] font-black uppercase tracking-tighter leading-[0.9] mb-8 w-full text-left select-none break-words text-ink dark:text-dark-ink">
-                Hi, I'm <br>
-                <span class="gradient-name animate-reveal italic inline-block pb-2">OkemoVail.</span>
-              </h1>
-
-              <div class="flex flex-col items-start gap-8 md:gap-12 mt-4 w-full">
-                <p class="text-2xl sm:text-3xl md:text-5xl font-black leading-[1.4] md:leading-[1.7] tracking-tighter max-w-2xl text-left text-ink dark:text-dark-ink">
-                  Design
-                  <span class="bg-black dark:bg-blue-600 text-white px-2 py-0 inline-block shadow-[6px_6px_0px_#1e3a8a]">Matters</span>
-                </p>
-                
-                <div class="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start justify-start pb-10">
-                  <span id="hero-cta" class="liquid-glass-smooth px-10 md:px-12 py-4 md:py-5 text-[10px] md:text-sm font-black uppercase tracking-widest cursor-pointer whitespace-nowrap text-left">
-                    Scroll down <i class="fa-solid fa-arrow-down"></i>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="hidden md:block flex-shrink-0">
-               <div class="inline-block border-[4px] border-black dark:border-zinc-700 bg-black dark:bg-zinc-800 p-1 shadow-[12px_12px_0px_#1e3a8a] -rotate-[2deg] transition-all duration-500 hover:rotate-0 hover:scale-105">
-                  <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-[20vw] max-w-[380px] h-auto object-cover grayscale brightness-110 contrast-125 border-2 border-white dark:border-dark-paper transition-all duration-500 hover:grayscale-0 cursor-pointer" alt="OkemoVail">
-               </div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="pt-4 border-t border-black/10 dark:border-white/10 flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-40 text-ink dark:text-dark-ink">
-          <span>* Page 01 // Section A *</span>
-          <span>Local Time: <span id="clock-display">00:00:00</span></span>
-        </div>
-      </section>
-
-      <section id="olm-section" class="min-h-screen flex flex-col justify-center px-6 md:px-16 py-20 max-w-screen-2xl mx-auto border-b-8 border-double border-ink dark:border-zinc-800">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div class="space-y-8 flex flex-col items-start">
-            <h2 class="font-serif text-5xl md:text-8xl font-black italic uppercase tracking-tighter">OLM 2</h2>
-            <p class="text-2xl md:text-3xl font-black leading-tight tracking-tighter">
-              REFINING THE <span class="text-accent-blue dark:text-blue-500">OKEMO ENGINE</span> THROUGH ITERATIVE EVOLUTION.
-            </p>
-            <div class="h-1 w-24 bg-accent-blue"></div>
-            <p class="opacity-70 text-lg leading-relaxed max-w-md">
-              OLM 2 is the next stepping stone in Okemo Language Model's capability, merging a lot of impossible tasks while being extremely lightweight. With full human speech capabilities. OLM may not be world class, but its a step in the right direction.
-            </p>
-            
-            <!-- NEW TRY BUTTON -->
-<a href="/AI/OkemoLLM.html" 
-   id="try-olm-btn" 
-   class="liquid-glass-smooth px-12 py-5 text-[10px] md:text-sm font-black uppercase tracking-widest cursor-pointer whitespace-nowrap text-left mt-4 group">
-  Try OLM 2 
-  <i class="fa-solid fa-terminal ml-2 group-hover:translate-x-1 transition-transform"></i>
-</a>
-          </div>
-
-          <!-- REPLICATED CHAT WINDOW -->
-          <div id="olm-chat-window" class="mac-window w-full max-w-xl mx-auto flex flex-col h-[650px] transition-all duration-500">
-            <div class="mac-title-bar">
-              <div class="mac-control mac-close"></div>
-              <div class="mac-title-text">OLM Chat Application</div>
-              <div class="mac-control mac-zoom"></div>
-            </div>
-            
-            <div class="mac-content-area flex flex-col h-full newspaper-texture bg-paper dark:bg-dark-paper">
-              
-              <!-- Chat Header Ported from chat.html -->
-              <div class="w-full px-4 pt-4 border-b border-ink dark:border-zinc-700 pb-2 mb-2">
-                <div class="flex justify-between items-end text-[8px] font-black uppercase tracking-[0.2em] opacity-60">
-                  <div class="flex items-center gap-1 cursor-pointer hover:text-accent-blue transition-colors">
-                    <span>OLM <span class="model-num">2</span></span>
-                    <i class="fa-solid fa-caret-down text-[6px]"></i>
-                  </div>
-                  <div class="date-stamp-dynamic italic">JANUARY 6, 2026</div>
-                </div>
-              </div>
-
-              <!-- Chat Content Area -->
-              <div class="flex-1 flex flex-col relative px-4 overflow-hidden">
-                
-                <!-- Empty Prompt Ported from chat.html -->
-                <div id="window-empty-prompt" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full px-6 pointer-events-none transition-opacity duration-500">
-                  <h2 class="font-serif text-2xl md:text-3xl font-black uppercase tracking-tighter leading-none mb-4">
-                    How can I help you <br><span class="italic text-accent-blue">today?</span>
-                  </h2>
-                </div>
-
-                <div class="flex-1 overflow-y-auto space-y-6 mac-scroll pb-24 pt-4">
-                  <!-- Messages would render here -->
-                </div>
-
-                <!-- Sticky Input Bar Ported from chat.html -->
-                <div class="absolute bottom-0 left-0 right-0 bg-paper dark:bg-dark-paper border-t-4 border-double border-ink dark:border-zinc-800 py-4 px-4 z-40">
-                   <div id="window-status" class="text-[7px] font-black uppercase tracking-widest opacity-40 italic mb-2">READY // PROTOCOL 0.2.1</div>
-                   <div class="gazette-border bg-paper dark:bg-zinc-900 shadow-[4px_4px_0px_#1e3a8a] p-1 flex items-center gap-2">
-                      <button class="w-8 h-8 flex items-center justify-center hover:text-accent-blue transition-colors">
-                        <i class="fa-solid fa-plus text-sm"></i>
-                      </button>
-                      <input id="olm-chat-input" type="text" placeholder="ENTER PROMPT..." class="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest outline-none bg-transparent text-ink dark:text-white placeholder:opacity-20">
-                      <button class="btn-newspaper w-8 h-8 flex items-center justify-center">
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                      </button>
-                   </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="philosophy" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink transition-all duration-700 text-left">
-        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10">
-          <div class="flex flex-col md:flex-row items-end justify-between border-b-2 border-ink/10 dark:border-white/20 pb-8 mb-16 text-left">
-            <h2 class="font-['Playfair_Display',serif] text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-ink dark:text-dark-ink">THE 3Es</h2>
-            <p class="font-black text-xs md:text-sm uppercase tracking-[0.5em] opacity-50 md:pb-4 text-ink dark:text-dark-ink">The Okemo Standard</p>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20">
-            <div class="space-y-6 group">
-              <div class="flex items-baseline gap-4">
-                <span class="font-['Playfair_Display',serif] text-7xl font-black italic opacity-20 group-hover:opacity-100 group-hover:text-accent-blue transition-all">E1</span>
-                <h3 class="text-3xl font-black uppercase tracking-tighter text-ink dark:text-dark-ink">Expressive</h3>
-              </div>
-              <div class="h-1 w-12 bg-ink/10 dark:bg-white/10 group-hover:w-full group-hover:bg-accent-blue transition-all duration-500"></div>
-              <p class="text-lg leading-relaxed opacity-70 text-ink dark:text-dark-ink">
+    <div class="grid md:grid-cols-3 gap-6">
+        <div class="feature-card p-10 scroll-reveal text-left">
+            <span class="text-5xl font-black italic opacity-10 block mb-6">E1</span>
+            <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter italic">Expressive</h3>
+            <p class="opacity-40 text-sm leading-relaxed">
                 Design that communicates. Every pixel and interaction should tell a story, turning cold code into a digital narrative that resonates with the human experience.
-              </p>
-            </div>
-
-            <div class="space-y-6 group">
-              <div class="flex items-baseline gap-4">
-                <span class="font-['Playfair_Display',serif] text-7xl font-black italic opacity-20 group-hover:opacity-100 group-hover:text-blue-500 transition-all">E2</span>
-                <h3 class="text-3xl font-black uppercase tracking-tighter text-ink dark:text-dark-ink">Expeditious</h3>
-              </div>
-              <div class="h-1 w-12 bg-ink/10 dark:bg-white/10 group-hover:w-full group-hover:bg-blue-500 transition-all duration-500"></div>
-              <p class="text-lg leading-relaxed opacity-70 text-ink dark:text-dark-ink">
-                Velocity without compromise. Engineering designed for immediate deployment and rapid scaling, ensuring that dreams reach reality at the speed of thought.
-              </p>
-            </div>
-
-            <div class="space-y-6 group">
-              <div class="flex items-baseline gap-4">
-                <span class="font-['Playfair_Display',serif] text-7xl font-black italic opacity-20 group-hover:opacity-100 group-hover:text-desktop-teal transition-all">E3</span>
-                <h3 class="text-3xl font-black uppercase tracking-tighter text-ink dark:text-dark-ink">Economical</h3>
-              </div>
-              <div class="h-1 w-12 bg-ink/10 dark:bg-white/10 group-hover:w-full group-hover:bg-desktop-teal transition-all duration-500"></div>
-              <p class="text-lg leading-relaxed opacity-70 text-ink dark:text-dark-ink">
-                Lean precision. Maximizing digital impact while minimizing technical debt and resource overhead. Efficiency is the ultimate form of sophistication.
-              </p>
-            </div>
-          </div>
+            </p>
         </div>
-      </section>
 
-      <section id="foundry" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden text-left bg-paper dark:bg-dark-paper transition-all duration-700">
-        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10 transition-all duration-1000 ease-out text-left">
-          <div class="flex items-center gap-4 md:gap-6 mb-12 md:mb-16 text-left">
-            <h2 class="bg-black dark:bg-blue-600 text-white px-4 md:px-8 py-2 md:py-3 text-xl md:text-4xl font-black uppercase tracking-tighter shadow-[6px_6px_0px_#1e3a8a] text-left">
-              The Technical 
-            </h2>
-            <div class="h-1 md:h-2 flex-grow bg-black/10 dark:bg-white/10"></div>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 lg:border-b-2 lg:border-black lg:dark:border-zinc-700">
-            <div class="flex flex-col h-full mb-16 lg:mb-0 lg:pr-12 lg:pb-12 lg:border-r lg:border-black/10 lg:dark:border-white/10 group text-left">
-              <div class="mb-2">
-                <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-accent-blue dark:text-blue-400 text-left">Engineering</h3>
-                <p class="italic font-bold text-base md:text-lg leading-tight opacity-90 text-left text-ink dark:text-dark-ink">"Logic is the ink, code is the paper."</p>
-              </div>
-              <div class="grid grid-cols-1 gap-4 font-black text-xs md:text-base tracking-tighter mt-4 text-left">
-                <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 group/item py-2 border-b border-ink/5 dark:border-white/5 text-left text-ink dark:text-dark-ink">
-                  <i class="devicon-javascript-plain text-xl md:text-3xl text-yellow-500"></i> 
-                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">JAVASCRIPT</span>
-                </a>
-                <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 group/item py-2 border-b border-ink/5 dark:border-white/5 text-left text-ink dark:text-dark-ink">
-                  <i class="devicon-python-plain text-xl md:text-3xl text-blue-500"></i> 
-                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">PYTHON</span>
-                </a>
-                <div class="flex items-center gap-4 group/item py-2 border-b border-ink/5 dark:border-white/5 text-left text-ink dark:text-dark-ink">
-                  <i class="devicon-html5-plain text-xl md:text-3xl text-orange-500"></i> 
-                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">HTML / CSS</span>
-                </div>
-                <div class="flex items-center gap-4 group/item py-2 text-left text-ink dark:text-dark-ink">
-                  <i class="devicon-lua-plain text-xl md:text-3xl text-blue-400"></i> 
-                  <span class="group-hover/item:text-accent-blue dark:group-hover/item:text-blue-400 transition-colors">LUA</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex flex-col h-full mb-16 lg:mb-0 lg:px-12 lg:pb-12 lg:border-r lg:border-black/10 lg:dark:border-white/10 group text-left">
-              <div class="mb-2">
-                <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-ink dark:text-dark-ink text-left">Visual Language</h3>
-                <p class="leading-snug text-base md:text-lg text-left text-justify opacity-90 text-ink dark:text-dark-ink">
-                  Focused on the intersection of <strong>Material You</strong> and <strong>Apple Design</strong>. Turning constraints into clarity through color theory.
-                </p>
-              </div>
-              <div class="mt-4">
-                <div class="border-4 border-black dark:border-zinc-700 p-1 bg-white dark:bg-zinc-800 relative overflow-hidden group transition-colors">
-                  <img src="/images/materialyou.png" 
-                       class="h-40 w-full object-cover grayscale transition-all duration-500 hover:grayscale-0" 
-                       alt="UI Language">
-                </div>
-                <p class="text-[10px] uppercase font-black tracking-widest text-accent-blue dark:text-blue-400 mt-6 border-t border-black/10 dark:border-white/10 pt-4 text-left">UI Engineering</p>
-              </div>
-            </div>
-
-            <div id="spatial" class="flex flex-col h-full mb-16 lg:mb-0 lg:pl-12 lg:pb-12 group text-left">
-              <div class="mb-2 text-left">
-                <h3 class="text-2xl md:text-4xl font-black mb-6 uppercase text-accent-blue dark:text-blue-400 text-left">DEPTH Design</h3>
-                <p class="leading-snug text-base md:text-lg text-left text-justify opacity-90 text-ink dark:text-dark-ink">
-                  Crafting environments with digital precision in <strong>Blender</strong>. Exploring the three-dimensional web through optimized mesh flow.
-                </p>
-              </div>
-              <div class="mt-4 text-left">
-                <div class="border-4 border-black dark:border-zinc-700 p-1 bg-white dark:bg-zinc-800 relative overflow-hidden group transition-colors">
-                  <img src="/images/kiwi.png" 
-                       class="h-40 w-full object-cover grayscale transition-all duration-500 hover:grayscale-0" 
-                       alt="Depth Design">
-                </div>
-                <p class="text-[10px] uppercase font-black tracking-widest text-accent-blue dark:text-blue-400 mt-6 border-t border-black/10 dark:border-white/10 pt-4 text-left">Spatial Architecture</p>
-              </div>
-            </div>
-          </div>
+        <div class="feature-card p-10 scroll-reveal text-left" style="transition-delay: 0.1s;">
+            <span class="text-5xl font-black italic opacity-10 block mb-6">E2</span>
+            <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter italic">Expeditious</h3>
+            <p class="opacity-40 text-sm leading-relaxed">
+                Velocity without compromise. Engineering designed for immediate deployment and scaling, ensuring that dreams reach reality at the speed of thought.
+            </p>
         </div>
-      </section>
 
-      <section id="contact" class="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 py-12 md:py-20 border-b-[8px] md:border-b-[12px] border-double border-ink dark:border-zinc-800 max-w-screen-2xl mx-auto overflow-hidden bg-paper dark:bg-dark-paper text-ink dark:text-dark-ink transition-all duration-700 text-left">
-        <div class="max-w-6xl w-full mx-auto fade-in opacity-0 translate-y-10 text-left">
-          <div class="flex flex-col md:flex-row items-end justify-between border-b-2 border-ink/10 dark:border-white/20 pb-8 mb-16 text-left">
-            <h2 class="font-['Playfair_Display',serif] text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-ink dark:text-dark-ink">Stay in touch</h2>
-            <p class="font-black text-xs md:text-sm uppercase tracking-[0.5em] opacity-50 md:pb-4 text-ink dark:text-dark-ink">Socials</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-12 text-left">
-            <div class="md:col-span-3 text-left">
-              <div class="flex flex-wrap gap-3 md:gap-6 font-black uppercase text-[10px] md:text-xs tracking-[0.1em] mb-10 md:mb-12 justify-start items-center text-left">
-                <a href="https://github.com/ar12c" target="_blank" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3 text-left">GitHub</a>
-                <a href="https://www.youtube.com/@SochiVail" target="_blank" class="liquid-glass-smooth px-6 md:px-8 py-2 md:py-3 text-left">YouTube</a>
-              </div>
-              <p class="text-xl sm:text-2xl md:text-5xl font-black italic font-serif leading-none tracking-tighter text-ink dark:text-dark-ink mb-12 text-left">
-                "Shit works when shit-works."
-              </p>
-              <div class="flex justify-between items-end border-t border-black/10 dark:border-white/10 pt-6 text-left text-ink dark:text-dark-ink">
-                <div class="font-black text-[9px] md:text-[10px] uppercase opacity-40 tracking-widest text-left">
-                  &copy; 2024-2026 OKEMO CODE
-                </div>
-              </div>
-            </div>
-            <div class="hidden md:block md:col-span-1">
-              <div class="bg-black dark:bg-zinc-800 p-1 shadow-[8px_8px_0px_#1e3a8a] transition-colors duration-500">
-                <img src="https://avatars.githubusercontent.com/u/179893130?v=4" class="w-full grayscale brightness-110 contrast-150 border-2 border-white dark:border-dark-paper transition-all duration-500 hover:grayscale-0 cursor-pointer" alt="Avatar">
-              </div>
-            </div>
-          </div>
+        <div class="feature-card p-10 scroll-reveal text-left" style="transition-delay: 0.2s;">
+            <span class="text-5xl font-black italic opacity-10 block mb-6">E3</span>
+            <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter italic">Economical</h3>
+            <p class="opacity-40 text-sm leading-relaxed">
+                Lean precision. Maximizing digital impact while minimizing technical debt. Efficiency is the ultimate form of sophistication.
+            </p>
         </div>
-      </section>
-
     </div>
-  </div>
+  </section>
+
+  <!-- Foundry Section -->
+  <section id="foundry" class="py-32 px-6 max-w-7xl mx-auto relative z-20">
+    <div class="feature-card p-12 scroll-reveal">
+        <div class="flex items-center gap-4 mb-16 text-left">
+            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tighter uppercase italic">The Technical</h2>
+            <div class="h-px flex-grow bg-white/10"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 text-left">
+            <div class="space-y-6">
+                <h3 class="text-xl font-bold uppercase tracking-widest opacity-30">Engineering</h3>
+                <div class="space-y-4 font-mono text-xs">
+                    <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 opacity-60 hover:opacity-100 hover:text-brand-red transition-all">
+                        <i class="devicon-javascript-plain text-yellow-500 text-xl"></i> <span>JAVASCRIPT</span>
+                    </a>
+                    <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 opacity-60 hover:opacity-100 hover:text-brand-purple transition-all">
+                        <i class="devicon-python-plain text-blue-500 text-xl"></i> <span>PYTHON / TORCH</span>
+                    </a>
+                    <div class="flex items-center gap-4 opacity-60">
+                        <i class="devicon-html5-plain text-orange-500 text-xl"></i> <span>HTML5 / CSS3</span>
+                    </div>
+                    <div class="flex items-center gap-4 opacity-60">
+                        <i class="devicon-lua-plain text-blue-400 text-xl"></i> <span>LUA</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-xl font-bold uppercase tracking-widest opacity-30">Visual Language</h3>
+                <p class="opacity-40 text-sm leading-relaxed">
+                    Focused on the intersection of Material You and Apple Design. Turning hardware constraints into visual clarity through deep color theory.
+                </p>
+                <div class="h-24 bg-black/20 rounded-xl flex items-center justify-center border border-white/5 italic opacity-30 text-[10px] tracking-widest uppercase">
+                    UI_ENGINEERING_ACTIVE
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-xl font-bold uppercase tracking-widest opacity-30">Spatial Depth</h3>
+                <p class="opacity-40 text-sm leading-relaxed">
+                    Crafting environments with digital precision in Blender. Exploring three-dimensional web through optimized mesh flow and real-time lighting.
+                </p>
+                <div class="flex gap-2">
+                    <span class="w-8 h-8 rounded-full bg-brand-purple/20 flex items-center justify-center"><i class="fa-solid fa-cube text-[10px] text-brand-purple"></i></span>
+                    <span class="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center"><i class="fa-solid fa-vector-square text-[10px] text-brand-red"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- Blur Division -->
+  <div class="blur-division"></div>
+
+  <!-- Footer -->
+  <footer id="footer" class="py-20 bg-white/5 dark:bg-black/20 backdrop-blur-3xl px-6 relative z-40 border-t border-black/5 dark:border-white/10">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 text-left">
+      <div class="flex flex-col items-start text-left max-w-md">
+        <div class="flex items-center gap-3 mb-4">
+          <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="w-6 h-6 rounded-sm grayscale border border-current opacity-80" />
+          <span class="font-black italic text-xl tracking-tight select-none">
+            OkemoVail
+          </span>
+        </div>
+        <p class="opacity-40 text-[11px] leading-relaxed uppercase tracking-[0.15em] font-bold">
+          A personal project dedicated to high-speed, expressive, and economical intelligence.
+        </p>
+      </div>
+      
+      <div class="flex gap-16 md:gap-24 text-left">
+        <div class="flex flex-col gap-4">
+            <h4 class="text-[9px] font-bold uppercase tracking-[0.3em] mb-2 opacity-20">Connect</h4>
+            <a href="https://github.com/OkemoVail" target="_blank" class="cta-secondary text-center">GitHub</a>
+            <a href="https://www.youtube.com/@SochiVail" target="_blank" class="cta-secondary text-center">YouTube</a>
+        </div>
+        <div>
+            <h4 class="text-[9px] font-bold uppercase tracking-[0.3em] mb-6 opacity-20 text-left">Network</h4>
+            <ul class="space-y-4 text-[10px] opacity-40 font-bold uppercase tracking-widest text-left">
+                <li><a href="https://voidai.app" target="_blank" class="hover:text-brand-purple transition-colors" style="color: #a855f7;">Partner</a></li>
+            </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto mt-20 pt-8 flex flex-col md:flex-row justify-between items-center text-[9px] font-bold opacity-20 uppercase tracking-[0.3em] gap-4">
+      <div class="flex flex-col md:flex-row gap-4 md:gap-8 items-center">
+          <span>© 2024-2026 OKEMO CODE</span>
+      </div>
+      <div class="flex gap-8">
+        <span class="tracking-[0.4em]">Node 00 // v1.4</span>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    function toggleMenu() {
-      document.body.classList.toggle('menu-open');
-    }
-
-    // Navigation and Scrolling
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href^="#"], .js-nav-link');
-      if (link) {
-        const href = link.getAttribute('href');
-        if (href && href.startsWith('#')) {
-          e.preventDefault();
-          const targetId = href.substring(1);
-          const targetElement = document.getElementById(targetId);
-          if (targetElement) {
-            if (document.body.classList.contains('menu-open')) {
-              toggleMenu();
-            }
-            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }
-      }
-    });
-
-    // Hero CTA behavior
-    const heroCta = document.getElementById('hero-cta');
-    if (heroCta) {
-      heroCta.addEventListener('click', () => {
-        const nextSection = document.getElementById('olm-section');
-        if (nextSection) {
-          nextSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    }
-
-    // Try Button Behavior: Scroll and Focus Chat
-    const tryOlmBtn = document.getElementById('try-olm-btn');
-    const olmChatWindow = document.getElementById('olm-chat-window');
-    const olmChatInput = document.getElementById('olm-chat-input');
-
-    if (tryOlmBtn && olmChatWindow) {
-      tryOlmBtn.addEventListener('click', () => {
-        olmChatWindow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Visual feedback
-        olmChatWindow.classList.add('scale-[1.02]');
-        setTimeout(() => {
-          olmChatWindow.classList.remove('scale-[1.02]');
-          if (olmChatInput) olmChatInput.focus();
-        }, 500);
-      });
-    }
-
-    // Clock and Date updates
-    function updateClock() {
-      const now = new Date();
-      
-      const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
-      const dateStamp = document.getElementById('date-stamp');
-      if (dateStamp) dateStamp.textContent = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
-      
-      const timeOptions = { timeZone: 'Asia/Hong_Kong', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-      const hktTime = new Intl.DateTimeFormat('en-GB', timeOptions).format(now);
-      const clockDisplay = document.getElementById('clock-display');
-      if (clockDisplay) clockDisplay.textContent = hktTime;
-    }
-    
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // Fade-in animations on scroll
+    // Reveal Observer
+    const observerOptions = { threshold: 0.1 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
+        if (entry.isIntersecting) entry.target.classList.add('visible');
       });
-    }, { threshold: 0.05 });
-    
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+    // Three.js Space Background
+    let scene, camera, renderer, stars, starGeo;
+    let mouseX = 0, mouseY = 0;
+    let scrollY = 0;
+
+    function initSpace() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.z = 1;
+      camera.rotation.x = Math.PI / 2;
+
+      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), antialias: true, alpha: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // Starfield
+      starGeo = new THREE.BufferGeometry();
+      let starCoords = [];
+      for(let i=0; i<8000; i++) {
+        starCoords.push(
+          Math.random() * 800 - 400,
+          Math.random() * 800 - 400,
+          Math.random() * 800 - 400
+        );
+      }
+      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      let starMaterial = new THREE.PointsMaterial({
+        color: isDark ? 0xffffff : 0x333333,
+        size: 0.6,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      stars = new THREE.Points(starGeo, starMaterial);
+      scene.add(stars);
+
+      // North Star
+      let nsGeom = new THREE.SphereGeometry(1.2, 32, 32);
+      let nsMat = new THREE.MeshBasicMaterial({ color: isDark ? 0xffffff : 0x333333 });
+      let northStar = new THREE.Mesh(nsGeom, nsMat);
+      northStar.name = 'northStar';
+      northStar.position.set(30, 200, -80);
+      scene.add(northStar);
+
+      window.addEventListener('mousemove', e => {
+        mouseX = (e.clientX - window.innerWidth / 2) / 150;
+        mouseY = (event.clientY - window.innerHeight / 2) / 150;
+      });
+      window.addEventListener('scroll', () => scrollY = window.scrollY);
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+      
+      // Theme Change Listener
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const dark = e.matches;
+        stars.material.color.setHex(dark ? 0xffffff : 0x333333);
+        const ns = scene.getObjectByName('northStar');
+        if (ns) ns.material.color.setHex(dark ? 0xffffff : 0x333333);
+      });
+      
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      stars.rotation.y += 0.0003;
+      stars.position.y = scrollY * 0.05;
+      camera.rotation.z = scrollY * 0.0001;
+      camera.position.x += (mouseX - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY + 1 - camera.position.y) * 0.05;
+      camera.lookAt(0, stars.position.y, 0);
+      renderer.render(scene, camera);
+    }
+
+    window.onload = initSpace;
   </script>
 </body>
 </html>
