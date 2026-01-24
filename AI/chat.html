@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>OLM ENDPOINT</title>
+    <title>VAIL ENDPOINT</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
@@ -22,6 +22,8 @@
             --accent-tint: rgba(59, 130, 246, 0.10);
             --sidebar-tint: rgba(59, 130, 246, 0.07);
             --accent-contrast: #ffffff;
+            --fade-color: #ffffff;
+            --fade-gradient-stop: #ffffff;
         }
     </style>
 
@@ -39,22 +41,12 @@
                         sidebar: { light: '#f9f9f9', dark: '#141414' }
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
-                        'gradient-flow': 'gradientFlow 6s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { opacity: '0', transform: 'translateY(8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        pulseGlow: {
-                            '0%, 100%': { filter: 'drop-shadow(0 0 6px var(--accent-glow))' },
-                            '50%': { filter: 'drop-shadow(0 0 14px var(--accent-glow))' }
-                        },
-                        gradientFlow: {
-                            '0%, 100%': { 'background-position': '0% 50%' },
-                            '50%': { 'background-position': '100% 50%' }
-                        }
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
                     }
                 }
             }
@@ -65,7 +57,6 @@
         * { transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Atmospheric UI Tint - Placed behind UI */
         body::before {
             content: "";
             position: fixed;
@@ -75,11 +66,7 @@
             z-index: 0;
         }
 
-        /* Sidebar Tint */
-        aside {
-            position: relative;
-            z-index: 50;
-        }
+        aside { position: relative; z-index: 500; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         aside::before {
             content: "";
             position: absolute;
@@ -89,278 +76,330 @@
             z-index: -1;
         }
 
-        .vail-logo-ai {
-            color: var(--accent-color);
-            animation: pulseGlow 3s ease-in-out infinite;
+        body.sidebar-collapsed aside {
+            width: 0;
+            transform: translateX(-100%);
+            overflow: hidden;
         }
 
+        .vail-logo-ai { color: var(--accent-color); }
         .vail-logo-ai.gradient-mode {
             background: linear-gradient(-45deg, #3b82f6, #22c55e, #a855f7, #ef4444, #3b82f6);
-            background-size: 400% 400%;
+            background-size: 120% 120%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: gradientFlow 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 8px var(--accent-glow));
         }
 
         .ai-icon-bubble {
             background-color: var(--accent-color);
             box-shadow: 0 0 15px var(--accent-glow);
             color: var(--accent-contrast);
-            border: none !important;
         }
 
-        .prose { max-width: 100%; color: inherit; font-size: 0.95rem; line-height: 1.7; white-space: normal; overflow-wrap: break-word; }
-        .prose b, .prose strong { font-weight: 700; color: currentColor; }
-        .prose h1, .prose h2, .prose h3 { font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.75rem; color: currentColor; }
-        .prose ul, .prose ol { margin-left: 1.25rem; margin-bottom: 1rem; }
-        .prose li { margin-bottom: 0.4rem; }
-        .prose li::marker { color: var(--accent-color); font-weight: bold; }
+        .user-msg-bubble {
+            background-color: rgba(0,0,0,0.05);
+            padding: 0.75rem 1.25rem;
+            margin-left: 1.5rem;
+            border-radius: 1.25rem;
+            max-width: 90%;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .dark .user-msg-bubble { background-color: rgba(255,255,255,0.05); }
 
+        .prose { max-width: 100%; color: inherit; font-size: 0.95rem; line-height: 1.6; }
+        .prose a { color: var(--accent-color); text-decoration: none; }
+        
         .prose pre { 
-            background: #1a1a1a; padding: 1rem; border-radius: 12px; 
-            overflow-x: auto; margin: 1.25rem 0; border: 1px solid rgba(255,255,255,0.05); 
-            max-width: 100%; position: relative;
+            position: relative;
+            background: #f4f4f5; 
+            color: #18181b;
+            padding: 1rem; 
+            border-radius: 12px; 
+            overflow-x: auto; 
+            margin: 1.25rem 0; 
+            border: 1px solid rgba(0,0,0,0.05);
+            font-family: 'JetBrains Mono', monospace;
         }
-        .dark .prose pre { background: #000; border: 1px solid #222; }
-        .prose code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: rgba(0,0,0,0.05); padding: 0.15rem 0.35rem; border-radius: 4px; }
-        .dark .prose code { background: rgba(255,255,255,0.1); }
-
-        .katex-display {
-            margin: 1rem 0 !important; padding: 1rem;
-            background: rgba(0, 0, 0, 0.02); border-radius: 12px;
-            overflow-x: auto; max-width: 100%;
+        .dark .prose pre { 
+            background: #000000; 
+            color: #f4f4f5;
+            border: 1px solid #27272a; 
         }
-        .dark .katex-display { background: rgba(255, 255, 255, 0.02); }
 
-        #sidebar { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease; }
-        body.sidebar-collapsed #sidebar { width: 0 !important; transform: translateX(-100%); opacity: 0; }
+        .code-copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0,0,0,0.05);
+            color: var(--accent-color);
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease, background 0.2s ease;
+            z-index: 10;
+        }
+        .prose pre:hover .code-copy-btn { opacity: 1; }
+        .dark .code-copy-btn { background: rgba(39, 39, 42, 0.8); border-color: rgba(255,255,255,0.1); }
+
+        .katex-display { margin: 1rem 0 !important; padding: 0.75rem; background: rgba(0, 0, 0, 0.02); border-radius: 12px; overflow-x: auto; }
 
         .history-item-active { background: rgba(0, 0, 0, 0.06); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent-color); }
         .dark .history-item-active { background: rgba(255, 255, 255, 0.05); }
 
-        .dropdown-menu { display: none; opacity: 0; transform: translateY(8px) scale(0.99); transition: all 0.15s ease-out; z-index: 100; position: absolute; }
-        .dropdown-menu.active { display: block; opacity: 1; transform: translateY(0) scale(1); }
+        .dropdown-menu { display: none; opacity: 0; z-index: 600; position: absolute; }
+        .dropdown-menu.active { display: block; opacity: 1; }
 
         .accent-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
-        .accent-dot.active { border-color: currentColor; transform: scale(1.1); }
+        .accent-dot.active { border-color: currentColor; }
         
-        #custom-color-input { width: 1.8rem; height: 1.8rem; padding: 0; border: 1px solid rgba(0,0,0,0.1); background: none; cursor: pointer; border-radius: 9999px; overflow: hidden; }
-
-        .input-box-wrap {
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-blur: 16px;
-            position: relative;
-            z-index: 40;
-        }
-        .dark .input-box-wrap { background-color: rgba(20, 20, 20, 0.9); }
+        .input-box-wrap { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); position: relative; z-index: 40; pointer-events: auto; }
+        .dark .input-box-wrap { background-color: rgba(20, 20, 20, 0.85); }
         
-        /* Subtle additional tinting for input */
-        .input-box-wrap::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-color: var(--sidebar-tint);
-            pointer-events: none;
-            z-index: -1;
-            border-radius: 24px;
+        #bottom-fade { background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 30%, transparent 100%); pointer-events: none; }
+        
+        .history-btn-container { display: flex; align-items: center; width: 100%; gap: 4px; padding: 0 4px; }
+        .history-action-btn { flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 14px; opacity: 0.6; }
+        .history-action-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+        .dark .history-action-btn:hover { background: rgba(255,255,255,0.05); }
+
+        .history-section-header { font-size: 10px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em; padding: 1.25rem 0.75rem 0.5rem; }
+
+        /* Onboarding Styles */
+        #onboarding-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(40px); display: flex; align-items: center; justify-content: center; animation: fadeIn 0.4s ease-out; transition: opacity 0.4s ease, visibility 0.4s ease; }
+        .dark #onboarding-overlay { background: rgba(13, 13, 13, 0.85); }
+        #onboarding-overlay.hidden { display: none !important; }
+        
+        .onboarding-card { width: 100%; max-width: 400px; padding: 2rem 2.5rem; border-radius: 1.5rem; background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .dark .onboarding-card { background: #141414; border-color: rgba(255,255,255,0.05); }
+
+        #onboarding-pfp-preview { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #f4f4f5; border: 2px dashed #e4e4e7; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
+        .dark #onboarding-pfp-preview { background: #1e1e1e; border-color: #27272a; }
+
+        /* User Profile Section */
+        #user-profile-section { padding: 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 0.5rem; }
+        .dark #user-profile-section { border-top-color: rgba(255,255,255,0.05); }
+        
+        #user-avatar-display { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--accent-color); color: var(--accent-contrast); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+        
+        /* Settings Panel Logic - Fullscreen on Mobile */
+        #settings-panel {
+            position: fixed; z-index: 1100; background: white; border: 1px solid rgba(0,0,0,0.1);
+            display: none; flex-direction: column; overflow: hidden;
+            left: 50%; top: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 420px; height: auto; border-radius: 1.5rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+        .dark #settings-panel { background: #141414; border-color: #27272a; }
+        #settings-panel.active { display: flex; }
+
+        @media (max-width: 1023px) {
+            #settings-panel.active {
+                left: 0 !important; top: 0 !important; transform: none !important;
+                width: 100vw !important; height: 100vh !important; max-width: 100vw !important;
+                border-radius: 0 !important; border: none !important;
+                z-index: 2000;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            #settings-panel { left: 1rem; bottom: 5rem; top: auto; transform: none; width: 340px; }
         }
 
-        main { position: relative; z-index: 10; }
-        header { position: relative; z-index: 50; }
+        /* PFP Workspace */
+        #pfp-workspace { width: 100%; aspect-ratio: 1; background: #000; border-radius: 1rem; position: relative; overflow: hidden; touch-action: none; background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0); background-size: 20px 20px; }
+        #pfp-movable-img { position: absolute; max-width: none; pointer-events: none; user-select: none; transition: none; height: 300px; width: auto; }
+        #pfp-mask { position: absolute; inset: 0; border: 4px solid var(--accent-color); border-radius: 50%; pointer-events: none; box-shadow: 0 0 0 999px rgba(0,0,0,0.5); }
+
+        #search-btn:active, #send-btn:active, #new-chat-btn:active { transform: scale(0.96); }
+        
+        #sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 450; display: none; }
+        .dark #sidebar-overlay { background: rgba(0,0,0,0.6); }
     </style>
 </head>
 <body class="bg-chatbg-light dark:bg-chatbg-dark text-zinc-900 dark:text-zinc-200 font-sans h-full flex overflow-hidden">
 
-    <!-- Mobile Sidebar Backdrop -->
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/20 dark:bg-black/60 z-[45] hidden opacity-0 transition-opacity duration-300" onclick="toggleSidebar()"></div>
+    <div id="sidebar-overlay" onclick="window.toggleSidebar()"></div>
+
+    <!-- Onboarding Overlay -->
+    <div id="onboarding-overlay" class="hidden">
+        <div class="onboarding-card">
+            <div class="text-center mb-6">
+                <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2">Welcome</p>
+                <h1 class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">V<span class="vail-logo-ai gradient-mode">AI</span>L</h1>
+                <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Profile Setup</p>
+            </div>
+            <div class="space-y-5">
+                <div class="flex flex-col items-center">
+                    <div class="relative group cursor-pointer" onclick="document.getElementById('onboarding-pfp-input').click()">
+                        <div id="onboarding-pfp-preview"><i class="fa-solid fa-camera text-zinc-400 text-xl"></i></div>
+                        <div class="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[12px] border-2 border-white dark:border-[#141414] shadow-md"><i class="fa-solid fa-plus"></i></div>
+                    </div>
+                    <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*" onchange="window.handleOnboardingPfp(event)">
+                    <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-3 text-center">Identity Visual</p>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1">Display Name</label>
+                    <input type="text" id="onboarding-name" placeholder="Enter your name" class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-4 text-sm focus:border-blue-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1">Appearance</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.setTheme('light')" class="flex items-center justify-center gap-3 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i class="fa-solid fa-sun"></i> Light</button>
+                        <button onclick="window.setTheme('dark')" class="flex items-center justify-center gap-3 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i class="fa-solid fa-moon"></i> Dark</button>
+                    </div>
+                </div>
+                <button onclick="window.completeOnboarding()" class="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Settings Panel -->
+    <div id="settings-panel" class="animate-slide-up">
+        <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-white dark:bg-zinc-900 sticky top-0 z-20">
+            <h3 class="font-bold text-[11px] uppercase tracking-widest text-zinc-400">Settings</h3>
+            <button onclick="window.toggleSettingsPanel()" class="w-12 h-12 flex items-center justify-center rounded-full bg-zinc-50 dark:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg lg:text-sm"></i></button>
+        </div>
+        
+        <div class="p-6 flex-1 overflow-y-auto space-y-8 no-scrollbar">
+            <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Profile Identity</label>
+                    <button onclick="document.getElementById('profile-upload').click()" class="text-[11px] font-bold text-blue-500 uppercase tracking-widest py-2">Update Photo</button>
+                </div>
+                <div id="pfp-workspace" onpointerdown="window.pfpDragStart(event)"><img id="pfp-movable-img" src=""><div id="pfp-mask"></div></div>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-[9px] font-black uppercase text-zinc-400"><span>Zoom Level</span><span id="scale-val" class="font-mono text-blue-500">1.0x</span></div>
+                    <input type="range" id="pfp-scale-slider" min="0.2" max="4" step="0.01" value="1" class="w-full h-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updatePfpScale(this.value)">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Display Name</label>
+                    <input type="text" id="settings-name-input" class="w-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700/50 rounded-xl px-4 py-4 text-sm focus:border-blue-500 outline-none" onchange="window.updateSettingsFromPanel()">
+                </div>
+                <input type="file" id="profile-upload" class="hidden" accept="image/*" onchange="window.handleProfilePicUpload(event)">
+            </section>
+
+            <section class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <div>
+                    <div class="flex justify-between text-[10px] font-black mb-2 uppercase text-zinc-400 tracking-widest"><span>Creativity</span><span id="settings-temp-val" class="font-mono text-blue-500">0.70</span></div>
+                    <input type="range" id="settings-param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updateTempFromPanel(this.value)">
+                </div>
+                <div>
+                    <div class="text-[10px] font-black mb-3 uppercase text-zinc-400 tracking-widest">System Accent</div>
+                    <div class="flex flex-wrap items-center gap-3.5">
+                        <div class="accent-dot bg-zinc-900 dark:bg-zinc-100 !w-7 !h-7" data-color="auto" onclick="window.updateAccent('auto')"></div>
+                        <div class="accent-dot bg-blue-500 !w-7 !h-7" data-color="#3b82f6" onclick="window.updateAccent('#3b82f6')"></div>
+                        <div class="accent-dot bg-emerald-500 !w-7 !h-7" data-color="#10b981" onclick="window.updateAccent('#10b981')"></div>
+                        <div class="accent-dot bg-purple-500 !w-7 !h-7" data-color="#a855f7" onclick="window.updateAccent('#a855f7')"></div>
+                        <div class="accent-dot bg-rose-500 !w-7 !h-7" data-color="#f43f5e" onclick="window.updateAccent('#f43f5e')"></div>
+                        <div class="accent-dot bg-orange-500 !w-7 !h-7" data-color="#f97316" onclick="window.updateAccent('#f97316')"></div>
+                        <input type="color" id="custom-color-input-v2" class="!w-8 !h-8 rounded-full border-none cursor-pointer p-0 bg-transparent" oninput="window.updateAccent(this.value)">
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-8 pb-10 border-t border-zinc-100 dark:border-zinc-800">
+                <button onclick="window.factoryReset()" class="w-full py-5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl text-[11px] font-black uppercase transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-trash-can"></i> Erase all local content
+                </button>
+            </section>
+        </div>
+    </div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col transform -translate-x-full lg:translate-x-0 shadow-xl lg:shadow-none">
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none -translate-x-full lg:translate-x-0 transition-all duration-300">
         <div class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
             <div class="mb-6 px-2 flex items-center justify-between">
-                <!-- Branding: Italic V and L theme-aware, AI is gradient or solid pulse -->
-                <h1 class="select-none font-black italic text-lg tracking-tight text-zinc-900 dark:text-white uppercase">
-                    V<span class="vail-logo-ai gradient-mode" id="logo-ai-core">AI</span>L
-                </h1>
-                <button class="lg:hidden p-2 text-zinc-400" onclick="toggleSidebar()">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
+                <h1 class="select-none font-black italic text-lg tracking-tight text-zinc-900 dark:text-white uppercase">V<span class="vail-logo-ai gradient-mode" id="logo-ai-core">AI</span>L</h1>
+                <button class="lg:hidden w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" onclick="window.toggleSidebar()"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-
-            <!-- New Session Button with Dynamic Contrast -->
-            <button id="new-chat-btn" class="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all active:scale-[0.98] mb-4 shadow-lg" style="background-color: var(--accent-color); color: var(--accent-contrast)">
-                <span>New Session</span>
-                <i class="fa-solid fa-plus text-[10px]"></i>
-            </button>
-
+            <button id="new-chat-btn" onclick="window.resetChat()" class="w-full flex items-center justify-between gap-3 px-4 py-4 text-sm font-bold rounded-xl transition-all mb-4 shadow-lg hover:brightness-110 active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)"><span>New Chat</span><i class="fa-solid fa-plus text-[10px]"></i></button>
             <div class="flex-1 overflow-y-auto no-scrollbar space-y-1" id="history-list"></div>
-
-            <div class="pt-4 mt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
-                <button id="theme-toggle" class="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all">
-                    <i class="fa-solid fa-circle-half-stroke text-zinc-400"></i>
-                    <span>Appearance</span>
-                </button>
-                <button id="clear-all-btn" class="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold text-red-500/80 rounded-xl hover:bg-red-500/5 transition-all">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <span>Purge Node</span>
-                </button>
+            <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
+                <button onclick="window.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-3.5 text-xs font-semibold rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all"><i class="fa-solid fa-circle-half-stroke text-zinc-400"></i><span>Appearance</span></button>
+                <button onclick="window.clearAll()" class="w-full flex items-center gap-3 px-3 py-3.5 text-xs font-semibold text-red-500/80 rounded-xl hover:bg-red-500/5 transition-all"><i class="fa-solid fa-trash-can"></i><span>Clear All Chats</span></button>
+            </div>
+            <div id="user-profile-section">
+                <div class="flex items-center justify-between group">
+                    <div class="flex items-center gap-3"><div id="user-avatar-container"><div id="user-avatar-display">U</div></div><div class="flex flex-col min-w-0"><span id="sidebar-user-name" class="text-xs font-bold truncate text-zinc-900 dark:text-white">Profile</span></div></div>
+                    <button onclick="window.toggleSettingsPanel()" class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"><i class="fa-solid fa-gear text-base lg:text-sm"></i></button>
+                </div>
             </div>
         </div>
     </aside>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full relative overflow-hidden">
-        <!-- Top Nav -->
         <header class="h-14 lg:h-12 flex items-center justify-between px-4 lg:px-6 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl z-50 border-b border-zinc-100 dark:border-zinc-900/50">
             <div class="flex items-center gap-1 lg:gap-2">
-                <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="p-2 -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 active:scale-90">
-                    <i class="fa-solid fa-bars-staggered text-sm"></i>
-                </button>
-                
+                <button id="menu-toggle-btn" onclick="window.toggleSidebar()" class="w-12 h-12 flex items-center justify-center -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden"><i class="fa-solid fa-bars text-base"></i></button>
                 <div class="relative">
-                    <button id="model-dropdown-btn" class="flex items-center gap-2 px-2.5 py-1 text-sm font-bold rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:scale-95">
-                        <div id="active-model-icon" class="w-3.5 h-3.5" style="color: var(--accent-color)"></div>
-                        <span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-sm">OLM North Star</span>
-                        <i class="fa-solid fa-chevron-down text-[7px] opacity-30"></i>
-                    </button>
-                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl overflow-hidden py-1.5">
-                        <button id="model-select-pro" class="w-full text-left px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group">
-                            <div class="flex items-center gap-3">
-                                <div id="icon-pro-menu" class="w-4 h-4"></div>
-                                <div>
-                                    <span class="block font-bold text-xs">OLM North Star</span>
-                                    <span class="text-[10px] text-zinc-400">Instant synthesis</span>
-                                </div>
-                            </div>
-                            <i class="fa-solid fa-check text-[10px]" style="color: var(--accent-color)" id="check-pro"></i>
+                    <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-3 py-2 text-sm font-bold rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"><div id="active-model-icon" class="w-4 h-4" style="color: var(--accent-color)"></div><span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-sm">VAIL North Star</span><i class="fa-solid fa-chevron-down text-[8px] opacity-30"></i></button>
+                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl overflow-hidden py-2">
+                        <button onclick="window.selectModel('OLM2')" class="w-full text-left px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group">
+                            <div class="flex items-center gap-3"><div id="icon-pro-menu" class="w-5 h-5"></div><div><span class="block font-bold text-xs">VAIL North Star</span><span class="text-[10px] text-zinc-400">High Performance</span></div></div><i id="check-pro" class="fa-solid fa-check text-[11px]" style="color: var(--accent-color)"></i>
                         </button>
-                        <button id="model-select-base" disabled class="w-full text-left px-4 py-3 flex items-center justify-between group opacity-40 cursor-not-allowed">
-                            <div class="flex items-center gap-3">
-                                <div id="icon-base-menu" class="w-4 h-4 text-zinc-400"></div>
-                                <div>
-                                    <span class="block font-bold text-xs">OLM Stargaze</span>
-                                    <span class="text-[10px] text-zinc-500 font-medium">Coming Soon</span>
-                                </div>
-                            </div>
-                            <i class="fa-solid fa-lock text-[9px] text-zinc-400"></i>
+                        <button onclick="window.selectModel('OLM1')" class="w-full text-left px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group border-t border-zinc-100 dark:border-zinc-800/50">
+                            <div class="flex items-center gap-3"><div id="icon-stargaze-menu" class="w-5 h-5 text-zinc-400"></div><div><span class="block font-bold text-xs">VAIL Stargaze</span><span class="text-[10px] text-zinc-400">Reasoning Engine</span></div></div><i id="check-stargaze" class="fa-solid fa-check text-[11px] hidden" style="color: var(--accent-color)"></i>
                         </button>
                     </div>
                 </div>
             </div>
-
-            <div class="flex items-center gap-1 lg:gap-2">
-                <button id="notes-toggle" class="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
-                    <i class="fa-solid fa-clipboard-list text-xs"></i>
-                </button>
-                <div id="notes-menu" class="dropdown-menu absolute right-12 lg:right-16 top-14 w-80 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-2xl rounded-2xl p-6 overflow-y-auto max-h-[70vh]">
-                    <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Terminal Log</h3>
-                    <div class="space-y-4 text-xs">
-                        <div class="border-l-2 border-blue-500 pl-3">
-                            <p class="font-bold text-[11px] mb-1">v0.6.1 - Deep Atmosphere</p>
-                            <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                                <li>Global atmosphere tint deepened to 10%</li>
-                                <li>Sidebar atmosphere tint set to 7%</li>
-                                <li>Default mode restores rainbow branding</li>
-                                <li>Improved contrast logic for custom session actions</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <button id="settings-toggle" class="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
-                    <i class="fa-solid fa-sliders text-xs"></i>
-                </button>
-                <div id="settings-menu" class="dropdown-menu absolute right-4 top-14 w-72 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-2xl rounded-2xl p-5">
-                    <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Synthesis Config</h3>
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between text-[10px] font-black mb-2 uppercase">
-                                <span>Temperature</span>
-                                <span id="temp-val" class="font-mono" style="color: var(--accent-color)">0.70</span>
-                            </div>
-                            <input type="range" id="param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-900 dark:accent-zinc-100">
-                        </div>
-                        
-                        <div>
-                            <div class="text-[10px] font-black mb-3 uppercase">System Accent</div>
-                            <div class="flex flex-wrap items-center gap-3" id="accent-picker">
-                                <div class="accent-dot bg-zinc-900 dark:bg-zinc-100" data-color="auto" title="Default Rainbow"></div>
-                                <div class="accent-dot bg-blue-500" data-color="#3b82f6" data-glow="rgba(59, 130, 246, 0.4)"></div>
-                                <div class="accent-dot bg-emerald-500" data-color="#10b981" data-glow="rgba(16, 185, 129, 0.4)"></div>
-                                <div class="accent-dot bg-purple-500" data-color="#a855f7" data-glow="rgba(168, 85, 247, 0.4)"></div>
-                                <div class="accent-dot bg-rose-500" data-color="#f43f5e" data-glow="rgba(244, 63, 94, 0.4)"></div>
-                                <div class="flex items-center gap-2">
-                                    <input type="color" id="custom-color-input" title="Custom Color">
-                                </div>
-                            </div>
-                        </div>
-
-                        <button id="save-settings" class="w-full py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-black uppercase rounded-xl active:scale-95 transition-all">Sync Memory</button>
+            <button onclick="window.toggleMenu(event, 'notes-menu')" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><i class="fa-solid fa-info-circle text-lg lg:text-sm"></i></button>
+            <div id="notes-menu" class="dropdown-menu absolute right-4 lg:right-6 top-14 lg:top-12 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-2xl p-6 overflow-y-auto max-h-[70vh]">
+                <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Terminal Log</h3>
+                <div class="space-y-4 text-xs">
+                    <div class="border-l-2 border-blue-500 pl-3">
+                        <p class="font-bold text-[11px] mb-1">Status: Operational</p>
+                        <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
+                            <li>Mobile Fullscreen Preferences enabled</li>
+                            <li>Enhanced touch targets for small screens</li>
+                            <li>VAIL-first terminology update</li>
+                            <li>Equation support via $$ tag constraints</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Chat Container -->
-        <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col">
-            <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center p-6 lg:p-8 text-center animate-fade-in relative">
-                <h2 class="text-2xl lg:text-4xl font-semibold mb-10 lg:mb-12 tracking-tight text-zinc-900 dark:text-white">How can OLM help you, Vail?</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl">
-                    <button class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 active:scale-[0.98] group shadow-sm" onclick="sendMessage('Write a short story about a time traveler who accidentally invents the internet in the middle ages.')">
-                        <div class="flex items-center gap-2.5 mb-2">
-                            <i class="fa-solid fa-pen-nib text-orange-500 text-xs"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">Creative Story</span>
-                        </div>
-                        <span class="text-sm font-medium opacity-60 truncate block">Write a short story about a time traveler in the middle ages.</span>
+        <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col relative">
+            <div id="welcome-state" class="absolute inset-0 flex flex-col items-center justify-center p-6 sm:p-6 text-center animate-fade-in z-0">
+                <h2 id="welcome-greeting" class="text-3xl sm:text-3xl lg:text-4xl font-bold mb-8 sm:mb-10 tracking-tight text-zinc-900 dark:text-white">Hello, how can I help?</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
+                    <button class="p-5 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Write a short, professional greeting message.')">
+                        <div class="flex items-center gap-2.5 mb-2"><i class="fa-solid fa-pen text-blue-400 text-xs"></i><span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Ideation</span></div>
+                        <span class="text-sm font-medium opacity-60 truncate block">Creative Writing</span>
                     </button>
-                    <button class="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 active:scale-[0.98] group shadow-sm" onclick="window.triggerSampleSearch('Is ketchup considered a smoothie?')">
-                        <div class="flex items-center gap-2.5 mb-2">
-                            <i class="fa-solid fa-globe text-blue-400 text-xs"></i>
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">Global Inquiry</span>
-                        </div>
-                        <span class="text-sm font-medium opacity-60 truncate block">Is ketchup considered a smoothie?</span>
+                    <button class="p-5 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Summarize the benefits of clean code practices.')">
+                        <div class="flex items-center gap-2.5 mb-2"><i class="fa-solid fa-code text-emerald-500 text-xs"></i><span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Development</span></div>
+                        <span class="text-sm font-medium opacity-60 truncate block">Logic Summary</span>
                     </button>
                 </div>
             </div>
-            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 lg:pb-40 px-5 lg:px-6 relative"></div>
+            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 sm:px-5 relative gap-8 z-10"></div>
         </div>
 
         <!-- Input Area -->
-        <div class="absolute bottom-0 left-0 w-full px-4 md:px-8 bg-gradient-to-t from-white dark:from-chatbg-dark via-white dark:via-chatbg-dark/95 to-transparent z-40 pb-6 lg:pb-8">
-            <div class="input-box-wrap p-1.5 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden">
-                <textarea 
-                    id="user-input" 
-                    placeholder="Prompt OLM..." 
-                    rows="1" 
-                    class="w-full bg-transparent px-4 py-3 outline-none resize-none text-base lg:text-base max-h-56 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"
-                ></textarea>
-                
-                <div class="flex items-center justify-between px-2 pb-1.5">
-                    <div class="flex items-center gap-1.5">
-                        <button id="think-toggle" class="flex items-center gap-2 px-3 py-2 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-400 opacity-40 cursor-not-allowed">
-                            <i class="fa-regular fa-lightbulb"></i>
-                            <span class="hidden sm:inline">Think</span>
-                        </button>
-                        <button id="input-search-toggle" class="flex items-center gap-2 px-3 py-2 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-500 active:scale-95">
-                            <i class="fa-solid fa-globe"></i>
-                            <span class="hidden sm:inline">Search</span>
-                        </button>
-                    </div>
-                    <div id="send-btn-wrapper">
-                        <button id="send-btn" disabled class="w-10 h-10 lg:w-9 lg:h-9 flex items-center justify-center rounded-full active:scale-90 transition-all opacity-50">
-                            <i class="fa-solid fa-arrow-up text-[11px]"></i>
-                        </button>
-                    </div>
+        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-8 z-40 pb-6 lg:pb-8 pt-12">
+            <div class="input-box-wrap p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden max-w-2xl mx-auto transition-all duration-300">
+                <textarea id="user-input" placeholder="Message VAIL..." rows="1" class="w-full bg-transparent px-5 py-4 outline-none resize-none text-base sm:text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
+                <div class="flex items-center justify-between pl-3 pr-1.5 pb-2 pt-1">
+                    <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-4 py-3 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50 active:bg-zinc-200 dark:active:bg-zinc-700">
+                        <i class="fa-solid fa-magnifying-glass"></i><span class="hidden sm:inline">Search</span>
+                    </button>
+                    <button id="send-btn" disabled onclick="window.handleAction()" class="w-12 h-12 flex items-center justify-center rounded-full transition-all shadow-lg active:brightness-90 shrink-0" style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                        <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm"></i>
+                    </button>
                 </div>
             </div>
-            <p class="text-[9px] font-bold tracking-[0.2em] text-center text-zinc-400 mt-4 opacity-40 uppercase select-none">OLM ENDPOINT RC 0.6.1</p>
         </div>
-
-        <button id="scroll-bottom-btn" class="fixed bottom-40 right-4 lg:right-10 w-11 h-11 rounded-full bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 shadow-2xl flex items-center justify-center transition-all z-40 active:scale-90 text-zinc-500 opacity-0 invisible translate-y-4">
-            <i class="fa-solid fa-chevron-down text-xs"></i>
-        </button>
     </main>
 
     <script type="module">
@@ -368,376 +407,364 @@
 
         const SVG = {
             NORTH: `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`,
-            STAR: `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L13.5 10.5L22 12L13.5 13.5L12 22L10.5 13.5L2 12L10.5 10.5L12 2Z" /></svg>`
+            STAR: `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`
         };
 
-        const MODELS = {
-            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", schema: "legacy", icon: SVG.STAR },
-            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", schema: "modern", icon: SVG.NORTH }
+        const MODELS = { 
+            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "VAIL Stargaze", icon: SVG.STAR },
+            OLM2: { id: "ar12c/OkemoLLM", name: "VAIL North Star", icon: SVG.NORTH } 
         };
 
-        let client = null, history = [], isGenerating = false, webSearch = false, thinking = false;
+        let client = null, history = [], isGenerating = false, webSearch = false, currentJob = null;
         let currentModel = MODELS.OLM2;
-        let currentJob = null; 
-        let allChats = JSON.parse(localStorage.getItem('vail_v3_history') || '{}');
+        let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
         let currentChatId = crypto.randomUUID();
-        let settings = JSON.parse(localStorage.getItem('vail_v3_settings') || JSON.stringify({ temp: 0.7, tokens: 2048, top_p: 0.85, penalty: 1.2, accent: 'auto', accentGlow: '' }));
+        
+        let settings = JSON.parse(localStorage.getItem('vail_settings_v4') || JSON.stringify({ 
+            temp: 0.7, accent: 'auto', userName: '', userPic: '',
+            pfpX: 0, pfpY: 0, pfpScale: 1.0,
+            systemPrompt: 'You are VAIL, a helpful assistant. Provide clear and relevant answers. ALWAYS use $$ for ALL math formulas and equations without exception. Never echo training steps.'
+        }));
 
         const els = {
             chatCont: document.getElementById("chat-container"),
             chatMsgs: document.getElementById("chat-messages"),
             input: document.getElementById("user-input"),
             send: document.getElementById("send-btn"),
-            status: document.getElementById("api-status"),
+            icon: document.getElementById("send-btn-icon"),
             welcome: document.getElementById("welcome-state"),
             hist: document.getElementById("history-list"),
             modMenu: document.getElementById("model-menu"),
-            setMenu: document.getElementById("settings-menu"),
             noteMenu: document.getElementById("notes-menu"),
-            scroll: document.getElementById('scroll-bottom-btn'),
-            search: document.getElementById('input-search-toggle'),
-            think: document.getElementById('think-toggle'),
+            searchBtn: document.getElementById("search-btn"),
             actIcon: document.getElementById('active-model-icon'),
-            backdrop: document.getElementById('sidebar-backdrop'),
-            newBtn: document.getElementById('new-chat-btn'),
-            logoAi: document.getElementById('logo-ai-core')
+            sidebar: document.getElementById('sidebar'),
+            sidebarOverlay: document.getElementById('sidebar-overlay'),
+            logoAi: document.getElementById('logo-ai-core'),
+            greeting: document.getElementById('welcome-greeting'),
+            onboarding: document.getElementById('onboarding-overlay'),
+            settingsPanel: document.getElementById('settings-panel'),
+            sidebarName: document.getElementById('sidebar-user-name'),
+            avatarDisplay: document.getElementById('user-avatar-display'),
+            pfpMovableImg: document.getElementById('pfp-movable-img'),
+            pfpWorkspace: document.getElementById('pfp-workspace')
         };
 
         const hexToRgba = (hex, alpha) => {
+            if (hex.startsWith('rgba')) return hex;
             const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         };
 
-        const getLuminance = (hex) => {
-            const r = parseInt(hex.slice(1, 3), 16) / 255;
-            const g = parseInt(hex.slice(3, 5), 16) / 255;
-            const b = parseInt(hex.slice(5, 7), 16) / 255;
-            const a = [r, g, b].map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
-            return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
-        };
+        window.updateAccent = (color) => {
+            let isAuto = color === 'auto', isDark = document.documentElement.classList.contains('dark');
+            let finalColor = isAuto ? (isDark ? '#ffffff' : '#000000') : color;
+            settings.accent = color; saveSettings();
+            const bgBase = isDark ? [13, 13, 13] : [255, 255, 255];
+            const accRgb = isAuto ? (isDark ? [255,255,255] : [0,0,0]) : [parseInt(finalColor.slice(1,3), 16), parseInt(finalColor.slice(3,5), 16), parseInt(finalColor.slice(5,7), 16)];
+            const alpha = isAuto ? 0.02 : 0.10;
+            const blended = accRgb.map((c, i) => Math.round(c * alpha + bgBase[i] * (1 - alpha)));
+            const fadeGradientStop = `rgb(${blended[0]}, ${blended[1]}, ${blended[2]})`;
 
-        const updateAccent = (color, glow) => {
-            let isNeutral = false;
-            if (color === 'auto') {
-                isNeutral = true;
-                color = document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000';
-                glow = hexToRgba(color, 0.2);
-            }
-            
-            settings.accent = isNeutral ? 'auto' : color;
-            settings.accentGlow = glow;
-            localStorage.setItem('vail_v3_settings', JSON.stringify(settings));
-            
-            // Tint levels: 10% for global atmosphere, 7% for sidebar
-            const tintMain = hexToRgba(color, isNeutral ? 0 : 0.10);
-            const tintSide = hexToRgba(color, isNeutral ? 0 : 0.07);
-            const contrast = getLuminance(color) > 0.5 ? '#1a1a1a' : '#ffffff';
-            
             document.getElementById('dynamic-accent-styles').innerHTML = `
                 :root {
-                    --accent-color: ${color};
-                    --accent-glow: ${glow};
-                    --accent-tint: ${tintMain};
-                    --sidebar-tint: ${tintSide};
-                    --accent-contrast: ${contrast};
+                    --accent-color: ${finalColor};
+                    --accent-glow: ${hexToRgba(finalColor, 0.4)};
+                    --accent-tint: ${hexToRgba(finalColor, isAuto ? 0.02 : 0.10)};
+                    --sidebar-tint: ${hexToRgba(finalColor, isAuto ? 0.01 : 0.07)};
+                    --accent-contrast: ${isAuto ? (isDark ? '#000000' : '#ffffff') : '#ffffff'};
+                    --fade-color: ${isDark ? '#0d0d0d' : '#ffffff'};
+                    --fade-gradient-stop: ${fadeGradientStop};
                 }
             `;
-            
-            if (els.logoAi) {
-                els.logoAi.classList.toggle('gradient-mode', isNeutral);
+            els.logoAi.classList.toggle('gradient-mode', isAuto);
+            updateUI(); renderHistory();
+        };
+
+        window.toggleSidebar = () => {
+            const isMobile = window.innerWidth < 1024;
+            if (isMobile) {
+                const isHidden = els.sidebar.classList.contains('-translate-x-full');
+                if (isHidden) {
+                    els.sidebar.classList.remove('-translate-x-full');
+                    els.sidebarOverlay.style.display = 'block';
+                } else {
+                    els.sidebar.classList.add('-translate-x-full');
+                    els.sidebarOverlay.style.display = 'none';
+                }
+            } else {
+                document.body.classList.toggle('sidebar-collapsed');
             }
+        };
 
-            updateNav();
-            renderHistory();
-            updateSearchUI();
-            updateSendBtnState();
+        window.setTheme = (mode) => {
+            document.documentElement.classList.toggle('dark', mode === 'dark');
+            localStorage.setItem('vail_theme', mode);
+            window.updateAccent(settings.accent);
+        };
 
-            document.querySelectorAll('.accent-dot').forEach(d => {
-                const isActive = (isNeutral && d.dataset.color === 'auto') || (d.dataset.color === color);
-                d.classList.toggle('active', isActive);
+        window.toggleTheme = () => {
+            const current = localStorage.getItem('vail_theme') === 'dark' ? 'light' : 'dark';
+            window.setTheme(current);
+        };
+
+        window.toggleSettingsPanel = () => {
+            const isActive = els.settingsPanel.classList.toggle('active');
+            if (isActive) {
+                document.getElementById('settings-name-input').value = settings.userName;
+                document.getElementById('settings-param-temp').value = settings.temp;
+                document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+                els.pfpMovableImg.src = settings.userPic || '';
+                applyMovableStyles();
+            }
+        };
+
+        const applyMovableStyles = () => {
+            els.pfpMovableImg.style.transform = `translate(${settings.pfpX}px, ${settings.pfpY}px) scale(${settings.pfpScale})`;
+        };
+
+        window.pfpDragStart = (e) => {
+            let startX = e.clientX - (settings.pfpX || 0), startY = e.clientY - (settings.pfpY || 0);
+            els.pfpWorkspace.setPointerCapture(e.pointerId);
+            const onPointerMove = (ev) => {
+                settings.pfpX = ev.clientX - startX; settings.pfpY = ev.clientY - startY;
+                applyMovableStyles(); updateProfileUI();
+            };
+            const onPointerUp = () => {
+                els.pfpWorkspace.removeEventListener('pointermove', onPointerMove);
+                els.pfpWorkspace.removeEventListener('pointerup', onPointerUp);
+                saveSettings();
+            };
+            els.pfpWorkspace.addEventListener('pointermove', onPointerMove);
+            els.pfpWorkspace.addEventListener('pointerup', onPointerUp);
+        };
+
+        window.updatePfpScale = (val) => {
+            settings.pfpScale = parseFloat(val);
+            document.getElementById('scale-val').innerText = settings.pfpScale.toFixed(1) + 'x';
+            applyMovableStyles(); saveSettings(); updateProfileUI();
+        };
+
+        window.handleProfilePicUpload = (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                settings.userPic = event.target.result;
+                settings.pfpX = 0; settings.pfpY = 0; settings.pfpScale = 1.0;
+                saveSettings(); els.pfpMovableImg.src = settings.userPic;
+                applyMovableStyles(); updateProfileUI();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.handleOnboardingPfp = (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                settings.userPic = ev.target.result;
+                document.getElementById('onboarding-pfp-preview').innerHTML = `<img src="${settings.userPic}" class="w-full h-full object-cover">`;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.updateSettingsFromPanel = () => {
+            settings.userName = document.getElementById('settings-name-input').value.trim();
+            saveSettings(); updateProfileUI(); render();
+        };
+
+        window.updateTempFromPanel = (val) => {
+            settings.temp = parseFloat(val);
+            document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+            saveSettings();
+        };
+
+        const saveSettings = () => localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
+
+        window.completeOnboarding = () => {
+            const name = document.getElementById('onboarding-name').value.trim();
+            if (!name) return;
+            settings.userName = name; saveSettings();
+            els.onboarding.style.opacity = '0';
+            setTimeout(() => { els.onboarding.classList.add('hidden'); updateProfileUI(); render(); }, 400);
+        };
+
+        const updateProfileUI = () => {
+            els.sidebarName.innerText = settings.userName || "Profile";
+            if (settings.userPic) {
+                const ratio = 32 / 300, scale = settings.pfpScale || 1.0;
+                const tx = (settings.pfpX || 0) * ratio, ty = (settings.pfpY || 0) * ratio;
+                els.avatarDisplay.innerHTML = `<div class="w-full h-full relative overflow-hidden rounded-full pointer-events-none"><img src="${settings.userPic}" class="absolute" style="max-width:none; width:auto; height:32px; transform: translate(${tx}px, ${ty}px) scale(${scale}); transform-origin: center center;"></div>`;
+            } else els.avatarDisplay.innerText = settings.userName ? settings.userName[0].toUpperCase() : 'U';
+        };
+
+        window.toggleMenu = (e, id) => {
+            e.stopPropagation();
+            [els.modMenu, els.noteMenu].forEach(m => m.id === id ? m.classList.toggle('active') : m.classList.remove('active'));
+        };
+
+        window.closeAllMenus = () => {
+            [els.modMenu, els.noteMenu].forEach(m => m.classList.remove('active'));
+            els.settingsPanel.classList.remove('active');
+            if (window.innerWidth < 1024) {
+                els.sidebar.classList.add('-translate-x-full');
+                els.sidebarOverlay.style.display = 'none';
+            }
+        };
+
+        window.selectModel = (key) => {
+            currentModel = MODELS[key]; client = null; updateUI(); window.closeAllMenus();
+        };
+
+        window.resetChat = () => {
+            if (isGenerating && currentJob) currentJob.cancel();
+            currentChatId = crypto.randomUUID(); history = []; isGenerating = false;
+            render(); updateUI(); if (window.innerWidth < 1024) { els.sidebar.classList.add('-translate-x-full'); els.sidebarOverlay.style.display = 'none'; }
+        };
+
+        window.clearAll = () => { allChats = {}; localStorage.setItem('vail_history_v4', '{}'); window.resetChat(); };
+
+        async function getClient() { if (client) return client; client = await Client.connect(currentModel.id); return client; }
+
+        window.handleAction = () => {
+            if (isGenerating) {
+                if (currentJob) currentJob.cancel(); isGenerating = false;
+                if (history.length > 0) history[history.length - 1][1] = (history[history.length - 1][1] || "") + "\n\n<span class='opacity-40 text-[11px] block mt-4 italic'>Session stopped</span>";
+                render(); updateUI(); save();
+            } else window.sendMessage();
+        };
+
+        window.sendMessage = async (txt = null) => {
+            if (isGenerating) return;
+            const msg = txt || els.input.value.trim(); if (!msg) return;
+            els.input.value = ""; els.input.style.height = "auto";
+            history.push([msg, null]); render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+            isGenerating = true; updateUI();
+            try {
+                const c = await getClient();
+                const job = c.submit(0, [msg + (webSearch ? " <SEARCH_MODE>" : ""), history.slice(0, -1), settings.temp, 0.85, 1.2, 4096]);
+                currentJob = job;
+                for await (const chunk of job) {
+                    if (chunk?.data?.[0]) {
+                        const content = chunk.data[0]; if (content === "model_stop") break;
+                        history[history.length - 1][1] = content;
+                        const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
+                        if (lastProse) { lastProse.innerHTML = marked.parse(content); applyContentFeatures(lastProse); }
+                        els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+                    }
+                }
+            } catch (e) { if (e.message !== "The user cancelled the request.") history[history.length - 1][1] = `⚠️ Service error: ${e.message}`; }
+            finally { isGenerating = false; updateUI(); save(); render(); }
+        };
+
+        const applyContentFeatures = (el) => {
+            el.innerHTML = el.innerHTML.replace(/\$\$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
+            el.querySelectorAll('pre').forEach(pre => {
+                const btn = document.createElement('button'); btn.className = 'code-copy-btn'; btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                btn.onclick = () => { navigator.clipboard.writeText(pre.innerText); btn.innerHTML = '<i class="fa-solid fa-check"></i>'; setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy"></i>', 2000); };
+                pre.appendChild(btn);
             });
         };
-
-        const updateNav = () => {
-            if (els.actIcon) {
-                els.actIcon.innerHTML = currentModel.icon;
-                els.actIcon.style.color = 'var(--accent-color)';
-            }
-            const proMenu = document.getElementById('icon-pro-menu');
-            if (proMenu) {
-                proMenu.innerHTML = MODELS.OLM2.icon;
-                proMenu.style.color = 'var(--accent-color)';
-            }
-            const modelName = document.getElementById('active-model-name');
-            if (modelName) modelName.innerText = currentModel.name;
-        };
-
-        const updateSendBtnState = () => {
-            const hasText = els.input.value.trim().length > 0;
-            if (isGenerating) {
-                els.send.disabled = false;
-                els.send.innerHTML = `<i class="fa-solid fa-stop text-[11px]"></i>`;
-                els.send.className = "w-10 h-10 lg:w-9 lg:h-9 flex items-center justify-center rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 active:scale-90 transition-all cursor-pointer shadow-md";
-                els.send.style.backgroundColor = ''; 
-                els.send.style.color = '';
-                els.send.onclick = stopGeneration;
-            } else {
-                els.send.innerHTML = `<i class="fa-solid fa-arrow-up text-[11px]"></i>`;
-                els.send.onclick = () => sendMessage();
-                if (hasText) {
-                    els.send.disabled = false;
-                    els.send.className = "w-10 h-10 lg:w-9 lg:h-9 flex items-center justify-center rounded-full active:scale-90 transition-all shadow-md cursor-pointer";
-                    els.send.style.backgroundColor = 'var(--accent-color)';
-                    els.send.style.color = 'var(--accent-contrast)';
-                } else {
-                    els.send.disabled = true;
-                    els.send.className = "w-10 h-10 lg:w-9 lg:h-9 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed opacity-50";
-                    els.send.style.backgroundColor = '';
-                    els.send.style.color = '';
-                }
-            }
-        };
-
-        const updateSearchUI = () => {
-            els.search.className = `flex items-center gap-2 px-3 py-2 rounded-full border transition-all text-[10px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
-            els.search.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
-            els.search.style.color = webSearch ? 'var(--accent-contrast)' : '';
-        };
-
-        const stopGeneration = () => {
-            if (currentJob) { currentJob.cancel(); currentJob = null; }
-            isGenerating = false; 
-            updateSendBtnState(); 
-            save(); 
-            render();
-        };
-
-        async function getClient() {
-            if (client) return client;
-            try { client = await Client.connect(currentModel.id); return client; }
-            catch (e) { throw e; }
-        }
 
         const save = () => {
             if (!history.length) return;
-            const first = String(history[0][0]).replace("<THINK>", "").replace("<WEB>", "").trim();
-            const title = first.substring(0, 30) + (first.length > 30 ? '...' : '');
-            const existingPin = allChats[currentChatId]?.pinned || false;
-            allChats[currentChatId] = { 
-                id: currentChatId, 
-                title, 
-                history: JSON.parse(JSON.stringify(history)), 
-                timestamp: Date.now(), 
-                pinned: existingPin 
-            };
-            localStorage.setItem('vail_v3_history', JSON.stringify(allChats));
-            renderHistory();
+            allChats[currentChatId] = { id: currentChatId, title: history[0][0].substring(0, 30), history, timestamp: Date.now(), pinned: allChats[currentChatId]?.pinned || false };
+            localStorage.setItem('vail_history_v4', JSON.stringify(allChats)); renderHistory();
         };
 
-        async function sendMessage(txt = null) {
-            if (isGenerating) return;
-            let msg = txt ?? els.input.value.trim();
-            if (!msg) return;
+        window.copyMsg = (idx) => navigator.clipboard.writeText(history[idx][1] || '');
+        window.regenMsg = (idx) => { if (!isGenerating) { const msg = history[idx][0]; history = history.slice(0, idx); window.sendMessage(msg); } };
 
-            if (!txt) els.input.value = "";
-            els.input.style.height = "auto";
-            
-            if (webSearch) msg += ` <WEB>`;
-            if (thinking) msg = `<THINK> ${msg}`;
-            
-            history.push([msg, null]);
-            render(); scrollToBottom();
-            isGenerating = true; 
-            updateSendBtnState();
-
-            try {
-                const c = await getClient();
-                const finalPrompt = msg + "\n\nCRITICAL: ALWAYS wrap equations in $$ tags only. No parentheses or square brackets. You are OLM, speaking to Vail. Format using Markdown rich lists and titles.";
-                const job = currentModel.schema === "legacy" ? c.submit(0, [finalPrompt, history.map(([u, a]) => [u, a])]) : c.submit(0, [finalPrompt, history.slice(0, -1), settings.temp, settings.top_p, settings.penalty, settings.tokens]);
-                currentJob = job;
-                
-                let cumulativeText = "";
-                for await (const chunk of job) {
-                    if (!chunk?.data) continue;
-                    const rawData = chunk.data[0];
-                    if (rawData?.type === 'update') continue;
-                    let streamText = (currentModel.schema === "legacy") ? String(rawData[rawData.length - 1][1] || "") : (typeof rawData === 'string' ? rawData : (rawData.text || String(rawData || "")));
-                    if (streamText) {
-                        cumulativeText = streamText;
-                        history[history.length - 1][1] = cumulativeText;
-                        const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose');
-                        if (lastProse) { 
-                            lastProse.innerHTML = marked.parse(cumulativeText); 
-                            renderMath(lastProse); 
-                        }
-                        scrollToBottom();
-                    }
-                }
-            } catch (e) {
-                if (e.message !== "The user cancelled the request.") {
-                    history[history.length - 1][1] = (history[history.length - 1][1] || "") + `\n\n⚠️ OLM interrupt: ${e.message}`;
-                    render();
-                }
-            } finally {
-                isGenerating = false; 
-                currentJob = null; 
-                save(); 
-                render(); 
-                scrollToBottom(); 
-                updateSendBtnState();
-            }
-        }
-
-        const renderMath = (el) => {
-            el.innerHTML = el.innerHTML.replace(/\$\$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
-        };
-
-        const render = () => {
-            const hasHistory = history.length > 0;
-            els.welcome.style.display = hasHistory ? "none" : "flex";
-            els.chatMsgs.style.display = hasHistory ? "flex" : "none";
-            if (!hasHistory) return;
-            els.chatMsgs.innerHTML = history.map(([u, a], i) => `
-                <div class="user-row flex flex-col items-end animate-slide-up" style="animation-delay:${i*0.02}s">
-                    <div class="user-msg-bubble">${marked.parse(String(u).replace("<THINK>", "").replace("<WEB>", ""))}</div>
+        const renderHistoryItem = (c) => `
+            <div class="history-btn-container ${c.id === currentChatId ? 'history-item-active' : ''} rounded-xl group">
+                <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-4 rounded-xl text-[13px] font-medium truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">${c.title}</button>
+                <div class="flex items-center gap-1 pr-1">
+                    <button onclick="event.stopPropagation(); window.pinChat('${c.id}')" class="history-action-btn ${c.pinned ? 'text-blue-500 opacity-100' : ''}"><i class="fa-solid fa-thumbtack"></i></button>
+                    <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
-                <div class="ai-row flex gap-3 lg:gap-4 animate-slide-up group" style="animation-delay:${(i*0.02)+0.04}s">
-                    <div class="w-8 h-8 rounded-full ai-icon-bubble flex items-center justify-center shrink-0">
-                         <div class="w-4 h-4">${currentModel.icon}</div>
-                    </div>
-                    <div class="flex-1 min-w-0 pt-0.5 overflow-hidden">
-                        <div class="prose dark:prose-invert">${a ? marked.parse(a) : '<div class="aether-loader"></div>'}</div>
-                        ${a ? `<div class="flex gap-4 mt-6 opacity-60">
-                            <button onclick="window.__vailCopy(${i})" class="hover:text-blue-500"><i class="fa-regular fa-copy text-xs"></i></button>
-                            <button onclick="window.__vailRegen(${i})" class="hover:text-blue-500"><i class="fa-solid fa-rotate-right text-xs"></i></button>
-                        </div>` : ''}
-                    </div>
-                </div>`).join('');
-            els.chatMsgs.querySelectorAll('.prose').forEach(renderMath);
-        };
+            </div>`;
 
         const renderHistory = () => {
             const chats = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
-            const pinned = chats.filter(c => c.pinned), archive = chats.filter(c => !c.pinned);
-            const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-            const yesterday = today - 86400000, last7Days = today - (7 * 86400000);
-            let html = "";
-            if (pinned.length > 0) {
-                html += `<div class="text-[10px] font-bold uppercase tracking-widest px-3.5 mb-2 mt-4 opacity-70" style="color: var(--accent-color)">Pinned</div>`;
-                html += pinned.map(c => renderHistoryButton(c)).join('');
+            const today = new Date().setHours(0, 0, 0, 0), yesterday = today - 86400000;
+            const pinned = chats.filter(c => c.pinned), tChats = chats.filter(c => !c.pinned && c.timestamp >= today);
+            const yChats = chats.filter(c => !c.pinned && c.timestamp >= yesterday && c.timestamp < today), oChats = chats.filter(c => !c.pinned && c.timestamp < yesterday);
+            let html = '';
+            if (pinned.length) html += '<div class="history-section-header">Pinned</div>' + pinned.map(renderHistoryItem).join('');
+            if (tChats.length) html += '<div class="history-section-header">Today</div>' + tChats.map(renderHistoryItem).join('');
+            if (yChats.length) html += '<div class="history-section-header">Yesterday</div>' + yChats.map(renderHistoryItem).join('');
+            if (oChats.length) html += '<div class="history-section-header">Dust collecting</div>' + oChats.map(renderHistoryItem).join('');
+            els.hist.innerHTML = html || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">No history</div>`;
+        };
+
+        window.loadChat = (id) => {
+            currentChatId = id; history = allChats[id].history; render(); updateUI(); renderHistory();
+            if (window.innerWidth < 1024) window.toggleSidebar();
+        };
+
+        window.delChat = (id) => {
+            delete allChats[id]; localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+            if (id === currentChatId) window.resetChat(); renderHistory();
+        };
+
+        window.pinChat = (id) => {
+            allChats[id].pinned = !allChats[id].pinned; localStorage.setItem('vail_history_v4', JSON.stringify(allChats)); renderHistory();
+        };
+
+        const render = () => {
+            const isWelcome = history.length === 0;
+            els.welcome.style.display = isWelcome ? 'flex' : 'none';
+            els.chatMsgs.style.display = isWelcome ? 'none' : 'flex';
+            if (isWelcome && settings.userName) els.greeting.innerText = `Hello, ${settings.userName}`;
+            if (!isWelcome) {
+                els.chatMsgs.innerHTML = history.map(([u, a], i) => `
+                    <div class="user-row flex flex-col items-end"><div class="user-msg-bubble prose dark:prose-invert">${marked.parse(u)}</div></div>
+                    <div class="ai-row flex items-start gap-4 animate-slide-up">
+                        <div class="w-8 h-8 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1"><div class="w-4 h-4">${currentModel.icon}</div></div>
+                        <div class="flex-1 min-w-0 pt-2">
+                            <div class="prose dark:prose-invert prose-target w-full">${a ? marked.parse(a) : '<div class="flex h-6"><span class="aether-loader"></span></div>'}</div>
+                            ${a && !isGenerating ? `<div class="flex items-center gap-5 mt-5">
+                                <button onclick="window.copyMsg(${i})" class="w-10 h-10 flex items-center justify-center opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i class="fa-regular fa-copy text-base"></i></button>
+                                <button onclick="window.regenMsg(${i})" class="w-10 h-10 flex items-center justify-center opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i class="fa-solid fa-rotate-right text-base"></i></button>
+                            </div>` : ''}
+                        </div>
+                    </div>`).join('');
+                els.chatMsgs.querySelectorAll('.prose-target').forEach(applyContentFeatures);
             }
-            const groups = [{ name: "Today", filter: c => c.timestamp >= today }, { name: "Yesterday", filter: c => c.timestamp >= yesterday && c.timestamp < today }, { name: "Previous 7 Days", filter: c => c.timestamp >= last7Days && c.timestamp < yesterday }, { name: "Older", filter: c => c.timestamp < last7Days }];
-            groups.forEach(group => {
-                const groupChats = archive.filter(group.filter);
-                if (groupChats.length > 0) {
-                    html += `<div class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 px-3.5 mb-1.5 mt-5 opacity-40">${group.name}</div>`;
-                    html += groupChats.map(c => renderHistoryButton(c)).join('');
+        };
+
+        window.toggleSearch = () => { webSearch = !webSearch; updateUI(); };
+
+        const updateUI = () => {
+            const hasText = els.input.value.trim().length > 0;
+            els.send.disabled = !hasText && !isGenerating;
+            els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-sm";
+            els.actIcon.innerHTML = currentModel.icon;
+            document.getElementById('active-model-name').innerText = currentModel.name;
+            document.getElementById('icon-pro-menu').innerHTML = MODELS.OLM2.icon;
+            document.getElementById('icon-stargaze-menu').innerHTML = MODELS.OLM1.icon;
+            document.getElementById('check-pro').classList.toggle('hidden', currentModel !== MODELS.OLM2);
+            document.getElementById('check-stargaze').classList.toggle('hidden', currentModel !== MODELS.OLM1);
+            els.searchBtn.className = `flex items-center gap-2 px-4 py-3 rounded-full border transition-all text-[10px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg text-white' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
+            els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
+        };
+
+        window.factoryReset = () => { localStorage.clear(); window.location.reload(); };
+
+        const init = () => {
+            if (!settings.userName) els.onboarding.classList.remove('hidden');
+            if (localStorage.getItem('vail_theme') === 'dark') document.documentElement.classList.add('dark');
+            window.updateAccent(settings.accent); updateProfileUI();
+            els.input.oninput = () => { els.input.style.height = 'auto'; els.input.style.height = Math.min(els.input.scrollHeight, 160) + 'px'; updateUI(); };
+            els.input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.handleAction(); } };
+            window.onclick = (e) => {
+                const modelBtn = document.getElementById('model-dropdown-btn'), menuToggle = document.getElementById('menu-toggle-btn');
+                if (!els.settingsPanel.contains(e.target) && !modelBtn.contains(e.target) && !menuToggle.contains(e.target) && !els.sidebar.contains(e.target)) {
+                    window.closeAllMenus();
                 }
-            });
-            els.hist.innerHTML = html || `<div class="p-8 text-center text-[10px] font-bold uppercase tracking-widest text-zinc-400 opacity-20 mt-10">Empty archive</div>`;
+            };
+            renderHistory(); render(); updateUI();
         };
 
-        const renderHistoryButton = (c) => {
-            const isActive = c.id === currentChatId;
-            return `
-                <div class="relative group flex items-center gap-1 px-1 mb-0.5">
-                    <button onclick="window.__vailLoad('${c.id}')" class="flex-1 text-left px-3 py-3 rounded-xl text-[13px] font-medium transition-all truncate ${isActive ? 'history-item-active' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">
-                        <span class="truncate block pr-16">${c.title}</span>
-                    </button>
-                    <div class="flex items-center gap-1 shrink-0">
-                        <button onclick="event.stopPropagation(); window.__vailTogglePin('${c.id}')" class="w-8 h-8 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all shadow-sm">
-                            <i class="fa-solid fa-thumbtack text-[10px] ${c.pinned ? 'text-blue-500' : 'text-zinc-400 hover:text-blue-400'}"></i>
-                        </button>
-                        <button onclick="event.stopPropagation(); window.__vailDel('${c.id}')" class="w-8 h-8 flex items-center justify-center border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shadow-sm">
-                            <i class="fa-solid fa-trash-can text-[10px] text-zinc-400 hover:text-red-500"></i>
-                        </button>
-                    </div>
-                </div>`;
-        };
-
-        window.__vailLoad = (id) => { currentChatId = id; history = allChats[id].history; render(); renderHistory(); if (window.innerWidth < 1024) toggleSidebar(); updateSendBtnState(); };
-        window.__vailDel = (id) => { delete allChats[id]; localStorage.setItem('vail_v3_history', JSON.stringify(allChats)); if (currentChatId === id) reset(); renderHistory(); };
-        window.__vailCopy = (i) => navigator.clipboard.writeText(history[i][1]);
-        window.__vailRegen = (i) => { if (isGenerating) return; const m = history[i][0]; history = history.slice(0, i); render(); sendMessage(m); };
-        window.__vailTogglePin = (id) => { if (allChats[id]) { allChats[id].pinned = !allChats[id].pinned; localStorage.setItem('vail_v3_history', JSON.stringify(allChats)); renderHistory(); } };
-
-        window.triggerSampleSearch = (text) => {
-            if (!webSearch) { webSearch = true; updateSearchUI(); }
-            sendMessage(text);
-        };
-
-        const reset = () => { currentChatId = crypto.randomUUID(); history = []; isGenerating = false; currentJob = null; render(); renderHistory(); if (window.innerWidth < 1024) toggleSidebar(); updateSendBtnState(); };
-        
-        window.toggleSidebar = () => {
-            const s = document.getElementById('sidebar'), b = els.backdrop;
-            const isHidden = s.classList.contains('-translate-x-full');
-            if (isHidden) { 
-                s.classList.remove('-translate-x-full'); 
-                b.classList.remove('hidden'); 
-                setTimeout(() => b.style.opacity = '1', 10); 
-            } else { 
-                s.classList.add('-translate-x-full'); 
-                b.style.opacity = '0'; 
-                setTimeout(() => b.classList.add('hidden'), 300); 
-            }
-        };
-
-        const scrollToBottom = () => els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
-
-        function init() {
-            if (localStorage.getItem('vail_theme') === 'dark' || (!localStorage.getItem('vail_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
-            
-            updateAccent(settings.accent, settings.accentGlow);
-            
-            els.input.onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if(!els.send.disabled) els.send.click(); } };
-            els.input.oninput = function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 256) + 'px'; updateSendBtnState(); };
-            
-            document.getElementById('notes-toggle').onclick = e => { e.stopPropagation(); els.modMenu.classList.remove('active'); els.setMenu.classList.remove('active'); els.noteMenu.classList.toggle('active'); };
-            document.getElementById('model-dropdown-btn').onclick = e => { e.stopPropagation(); els.setMenu.classList.remove('active'); els.noteMenu.classList.remove('active'); els.modMenu.classList.toggle('active'); };
-            document.getElementById('settings-toggle').onclick = e => { e.stopPropagation(); els.modMenu.classList.remove('active'); els.noteMenu.classList.remove('active'); els.setMenu.classList.toggle('active'); };
-            window.onclick = () => { els.modMenu.classList.remove('active'); els.setMenu.classList.remove('active'); els.noteMenu.classList.remove('active'); };
-            
-            document.getElementById('model-select-pro').onclick = () => { currentModel = MODELS.OLM2; client = null; reset(); updateNav(); };
-            els.search.onclick = () => { webSearch = !webSearch; updateSearchUI(); };
-
-            document.querySelectorAll('.accent-dot').forEach(dot => {
-                dot.onclick = () => {
-                    const color = dot.getAttribute('data-color');
-                    const glow = dot.getAttribute('data-glow');
-                    updateAccent(color, glow);
-                };
-            });
-
-            document.getElementById('custom-color-input').oninput = (e) => {
-                const color = e.target.value;
-                updateAccent(color, hexToRgba(color, 0.4));
-            };
-            
-            document.getElementById('theme-toggle').onclick = () => { 
-                document.documentElement.classList.toggle('dark'); 
-                localStorage.setItem('vail_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-                if (settings.accent === 'auto' || settings.accent === '#fff' || settings.accent === '#000') updateAccent('auto', '');
-            };
-            document.getElementById('new-chat-btn').onclick = reset;
-            document.getElementById('save-settings').onclick = () => { 
-                settings.temp = parseFloat(document.getElementById('param-temp').value); 
-                localStorage.setItem('vail_v3_settings', JSON.stringify(settings)); 
-                els.setMenu.classList.remove('active'); 
-            };
-            document.getElementById('param-temp').oninput = e => { document.getElementById('temp-val').innerText = parseFloat(e.target.value).toFixed(2); };
-            document.getElementById('clear-all-btn').onclick = () => { allChats = {}; localStorage.setItem('vail_v3_history', '{}'); reset(); };
-            
-            els.chatCont.onscroll = () => {
-                const s = els.chatCont.scrollHeight - els.chatCont.scrollTop - els.chatCont.clientHeight > 300;
-                els.scroll.className = `fixed bottom-40 right-4 lg:right-10 w-11 h-11 rounded-full bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 shadow-2xl flex items-center justify-center transition-all z-40 active:scale-90 text-zinc-500 ${s ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-4'}`;
-            };
-            els.scroll.onclick = scrollToBottom;
-            
-            updateNav(); renderHistory(); render(); getClient().catch(() => setStatus("Offline", true));
-            updateSendBtnState();
-            updateSearchUI();
-            window.sendMessage = sendMessage;
-        }
         init();
     </script>
 </body>
