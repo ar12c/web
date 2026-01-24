@@ -110,14 +110,19 @@
         .prose { max-width: 100%; color: inherit; font-size: 0.95rem; line-height: 1.6; }
         .prose a { color: var(--accent-color); text-decoration: none; }
         
+        /* Compact prose for desktop */
+        @media (min-width: 1024px) {
+            .prose { font-size: 0.9rem; line-height: 1.5; }
+        }
+
         .prose pre { 
             position: relative;
             background: #f4f4f5; 
             color: #18181b;
-            padding: 1rem; 
-            border-radius: 12px; 
+            padding: 0.75rem; 
+            border-radius: 10px; 
             overflow-x: auto; 
-            margin: 1.25rem 0; 
+            margin: 1rem 0; 
             border: 1px solid rgba(0,0,0,0.05);
             font-family: 'JetBrains Mono', monospace;
         }
@@ -165,11 +170,11 @@
         #bottom-fade { background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 30%, transparent 100%); pointer-events: none; }
         
         .history-btn-container { display: flex; align-items: center; width: 100%; gap: 4px; padding: 0 4px; }
-        .history-action-btn { flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 14px; opacity: 0.6; }
+        .history-action-btn { flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; opacity: 0.6; }
         .history-action-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
         .dark .history-action-btn:hover { background: rgba(255,255,255,0.05); }
 
-        .history-section-header { font-size: 10px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em; padding: 1.25rem 0.75rem 0.5rem; }
+        .history-section-header { font-size: 9px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em; padding: 1rem 0.75rem 0.4rem; }
 
         /* Onboarding Styles */
         #onboarding-overlay { 
@@ -182,7 +187,7 @@
         #onboarding-overlay.hidden { display: none !important; }
         
         .onboarding-card { 
-            width: 100%; max-width: 400px; padding: 2rem 2.5rem; border-radius: 1rem; 
+            width: 100%; max-width: 400px; padding: 2rem 2.5rem; border-radius: 1.25rem; 
             background: white; border: 1px solid rgba(0,0,0,0.05); 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); 
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
@@ -193,20 +198,21 @@
         .dark #onboarding-pfp-preview { background: #1e1e1e; border-color: #27272a; }
 
         /* User Profile Section */
-        #user-profile-section { padding: 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 0.5rem; }
+        #user-profile-section { padding: 0.6rem 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 0.4rem; }
         .dark #user-profile-section { border-top-color: rgba(255,255,255,0.05); }
         
         #user-avatar-display { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--accent-color); color: var(--accent-contrast); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
         
-        /* Settings Panel Logic - Fullscreen on Mobile */
+        /* Settings Panel Logic - Fullscreen on Mobile, Compact on Desktop */
         #settings-panel {
-            position: fixed; z-index: 1100; background: white; border: 1px solid rgba(0,0,0,0.1);
+            position: fixed; z-index: 1100; background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(25px); border: 1px solid rgba(0,0,0,0.1);
             display: none; flex-direction: column; overflow: hidden;
             left: 50%; top: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 420px; height: auto; border-radius: 1rem;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            width: 90%; max-width: 420px; height: auto; border-radius: 1.25rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
         }
-        .dark #settings-panel { background: #141414; border-color: #27272a; }
+        .dark #settings-panel { background: rgba(20, 20, 20, 0.92); border-color: rgba(255,255,255,0.1); }
         #settings-panel.active { display: flex; }
 
         @media (max-width: 1023px) {
@@ -214,24 +220,55 @@
                 left: 0 !important; top: 0 !important; transform: none !important;
                 width: 100vw !important; height: 100vh !important; max-width: 100vw !important;
                 border-radius: 0 !important; border: none !important;
-                z-index: 2500;
+                z-index: 2500; background: white !important;
             }
+            .dark #settings-panel.active { background: #0d0d0d !important; }
         }
         
         @media (min-width: 1024px) {
-            #settings-panel { left: 1rem; bottom: 5rem; top: auto; transform: none; width: 340px; }
+            #settings-panel { 
+                left: 1rem; bottom: 5rem; top: auto; transform: none; width: 280px; 
+                max-height: calc(100vh - 8rem);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+                border-radius: 1rem;
+            }
+            #settings-panel .p-5 { padding: 1.25rem; }
         }
 
         /* PFP Workspace */
-        #pfp-workspace { width: 100%; aspect-ratio: 1; background: #000; border-radius: 0.75rem; position: relative; overflow: hidden; touch-action: none; background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0); background-size: 20px 20px; }
-        #pfp-movable-img { position: absolute; max-width: none; pointer-events: none; user-select: none; transition: none; height: 300px; width: auto; }
-        #pfp-mask { position: absolute; inset: 0; border: 4px solid var(--accent-color); border-radius: 50%; pointer-events: none; box-shadow: 0 0 0 999px rgba(0,0,0,0.5); }
+        #pfp-workspace { width: 100%; aspect-ratio: 1; background: #000; border-radius: 0.75rem; position: relative; overflow: hidden; touch-action: none; background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0); background-size: 20px 20px; cursor: move; }
+        #pfp-movable-img { position: absolute; max-width: none; pointer-events: none; user-select: none; transition: none; height: 280px; width: auto; left: 50%; top: 50%; }
+        #pfp-mask { position: absolute; inset: 0; border: 3px solid var(--accent-color); border-radius: 50%; pointer-events: none; box-shadow: 0 0 0 999px rgba(0,0,0,0.5); }
+
+        /* Thinking Animation */
+        .thinking-dot { 
+            width: 4px; 
+            height: 4px; 
+            border-radius: 50%; 
+            background-color: currentColor; 
+            animation: thinking-pulse 1.4s infinite ease-in-out; 
+        }
+        .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes thinking-pulse { 
+            0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 
+            40% { opacity: 1; transform: scale(1); } 
+        }
 
         button, a { touch-action: manipulation; }
         #search-btn:active, #send-btn:active, #new-chat-btn:active, #onboarding-btn:active { transform: scale(0.96); }
         
         #sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 450; display: none; }
         .dark #sidebar-overlay { background: rgba(0,0,0,0.6); }
+
+        /* Compact Desktop Overrides */
+        @media (min-width: 1024px) {
+            header { height: 3.5rem; }
+            aside .p-4 { padding: 1rem; }
+            #history-list .py-4 { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+            #new-chat-btn { padding-top: 0.75rem; padding-bottom: 0.75rem; font-size: 0.8rem; }
+            #welcome-greeting { font-size: 2.25rem; }
+        }
     </style>
 </head>
 <body class="bg-chatbg-light dark:bg-chatbg-dark text-zinc-900 dark:text-zinc-200 font-sans h-full flex overflow-hidden">
@@ -241,10 +278,10 @@
     <!-- Onboarding Overlay -->
     <div id="onboarding-overlay" class="hidden">
         <div class="onboarding-card">
-            <div class="text-center mb-6">
+            <div class="text-center mb-8">
                 <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2">Welcome</p>
                 <h1 class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">V<span class="vail-logo-ai gradient-mode">AI</span>L</h1>
-                <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Profile Setup</p>
+                <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Setup Protocol</p>
             </div>
             <div class="space-y-6">
                 <div class="flex flex-col items-center">
@@ -277,73 +314,86 @@
 
     <!-- User Settings Panel -->
     <div id="settings-panel" class="animate-slide-up">
-        <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-white dark:bg-zinc-900 sticky top-0 z-20">
-            <h3 class="font-bold text-[11px] uppercase tracking-widest text-zinc-400">Settings</h3>
-            <button onclick="window.toggleSettingsPanel()" class="w-12 h-12 flex items-center justify-center rounded-full bg-zinc-50 dark:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg lg:text-sm"></i></button>
+        <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl sticky top-0 z-20">
+            <h3 class="font-bold text-[10px] uppercase tracking-widest text-zinc-400">Settings</h3>
+            <button onclick="window.toggleSettingsPanel()" class="w-9 h-9 lg:w-7 lg:h-7 flex items-center justify-center rounded-full bg-zinc-50 dark:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"><i class="fa-solid fa-xmark text-lg lg:text-xs"></i></button>
         </div>
         
-        <div class="p-6 flex-1 overflow-y-auto space-y-8 no-scrollbar">
-            <section class="space-y-4">
+        <div class="p-5 flex-1 overflow-y-auto space-y-8 lg:space-y-6 no-scrollbar">
+            <section class="space-y-4 lg:space-y-3">
                 <div class="flex items-center justify-between">
-                    <label class="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Profile Identity</label>
-                    <button onclick="document.getElementById('profile-upload').click()" class="text-[11px] font-bold text-blue-500 uppercase tracking-widest py-2">Update Photo</button>
+                    <label class="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Photo</label>
+                    <button onclick="document.getElementById('profile-upload').click()" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest py-1">Update</button>
                 </div>
                 <div id="pfp-workspace" onpointerdown="window.pfpDragStart(event)"><img id="pfp-movable-img" src=""><div id="pfp-mask"></div></div>
                 <div class="space-y-2">
-                    <div class="flex justify-between text-[9px] font-black uppercase text-zinc-400"><span>Zoom Level</span><span id="scale-val" class="font-mono text-blue-500">1.0x</span></div>
-                    <input type="range" id="pfp-scale-slider" min="0.2" max="4" step="0.01" value="1" class="w-full h-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updatePfpScale(this.value)">
+                    <div class="flex justify-between text-[9px] font-black uppercase text-zinc-400"><span>Zoom</span><span id="scale-val" class="font-mono text-blue-500 text-[10px]">1.0x</span></div>
+                    <input type="range" id="pfp-scale-slider" min="0.1" max="5" step="0.01" value="1" class="w-full h-1.5 lg:h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updatePfpScale(this.value)">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Display Name</label>
-                    <input type="text" id="settings-name-input" class="w-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700/50 rounded-xl px-4 py-4 text-sm focus:border-blue-500 outline-none" onchange="window.updateSettingsFromPanel()">
+                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2 lg:mb-1">Display Name</label>
+                    <input type="text" id="settings-name-input" class="w-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700/50 rounded-lg px-4 py-3 lg:py-2 text-sm lg:text-xs focus:border-blue-500 outline-none" onchange="window.updateSettingsFromPanel()">
                 </div>
                 <input type="file" id="profile-upload" class="hidden" accept="image/*" onchange="window.handleProfilePicUpload(event)">
             </section>
 
-            <section class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <section class="space-y-4 lg:space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
                 <div>
-                    <div class="flex justify-between text-[10px] font-black mb-2 uppercase text-zinc-400 tracking-widest"><span>Creativity</span><span id="settings-temp-val" class="font-mono text-blue-500">0.70</span></div>
-                    <input type="range" id="settings-param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updateTempFromPanel(this.value)">
+                    <div class="flex justify-between text-[10px] font-black mb-2 lg:mb-1 uppercase text-zinc-400 tracking-widest"><span>Creativity</span><span id="settings-temp-val" class="font-mono text-blue-500 text-[10px]">0.70</span></div>
+                    <input type="range" id="settings-param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-1.5 lg:h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updateTempFromPanel(this.value)">
                 </div>
                 <div>
-                    <div class="text-[10px] font-black mb-3 uppercase text-zinc-400 tracking-widest">Appearance</div>
-                    <div class="flex flex-wrap items-center gap-3.5">
-                        <div class="accent-dot bg-zinc-900 dark:bg-zinc-100 !w-7 !h-7" data-color="auto" onclick="window.updateAccent('auto')"></div>
-                        <div class="accent-dot bg-blue-500 !w-7 !h-7" data-color="#3b82f6" onclick="window.updateAccent('#3b82f6')"></div>
-                        <div class="accent-dot bg-emerald-500 !w-7 !h-7" data-color="#10b981" onclick="window.updateAccent('#10b981')"></div>
-                        <div class="accent-dot bg-purple-500 !w-7 !h-7" data-color="#a855f7" onclick="window.updateAccent('#a855f7')"></div>
-                        <div class="accent-dot bg-rose-500 !w-7 !h-7" data-color="#f43f5e" onclick="window.updateAccent('#f43f5e')"></div>
-                        <div class="accent-dot bg-orange-500 !w-7 !h-7" data-color="#f97316" onclick="window.updateAccent('#f97316')"></div>
-                        <input type="color" id="custom-color-input-v2" class="!w-8 !h-8 rounded-full border-none cursor-pointer p-0 bg-transparent" oninput="window.updateAccent(this.value)">
+                    <div class="text-[10px] font-black mb-3 lg:mb-2 uppercase text-zinc-400 tracking-widest">Accent</div>
+                    <div class="flex flex-wrap items-center gap-3 lg:gap-2">
+                        <div class="accent-dot bg-zinc-900 dark:bg-zinc-100 !w-6 !h-6 lg:!w-5 lg:!h-5" data-color="auto" onclick="window.updateAccent('auto')"></div>
+                        <div class="accent-dot bg-blue-500 !w-6 !h-6 lg:!w-5 lg:!h-5" data-color="#3b82f6" onclick="window.updateAccent('#3b82f6')"></div>
+                        <div class="accent-dot bg-emerald-500 !w-6 !h-6 lg:!w-5 lg:!h-5" data-color="#10b981" onclick="window.updateAccent('#10b981')"></div>
+                        <div class="accent-dot bg-purple-500 !w-6 !h-6 lg:!w-5 lg:!h-5" data-color="#a855f7" onclick="window.updateAccent('#a855f7')"></div>
+                        <div class="accent-dot bg-rose-500 !w-6 !h-6 lg:!w-5 lg:!h-5" data-color="#f43f5e" onclick="window.updateAccent('#f43f5e')"></div>
+                        <div class="accent-dot bg-orange-500 !w-6 !h-6 lg:!w-5 lg:!h-5" data-color="#f97316" onclick="window.updateAccent('#f97316')"></div>
+                        <input type="color" id="custom-color-input-v2" class="!w-7 !h-7 lg:!w-6 lg:!h-6 rounded-full border-none cursor-pointer p-0 bg-transparent" oninput="window.updateAccent(this.value)">
                     </div>
                 </div>
             </section>
 
-            <section class="pt-8 pb-10 border-t border-zinc-100 dark:border-zinc-800">
-                <button onclick="window.factoryReset()" class="w-full py-5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl text-[11px] font-black uppercase transition-all flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-trash-can"></i> Erase local data
+            <section class="pt-6 pb-4 border-t border-zinc-100 dark:border-zinc-800 text-center">
+                <button onclick="window.factoryReset()" class="w-full py-4 lg:py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-trash-can"></i> Erase data
                 </button>
             </section>
         </div>
     </div>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none -translate-x-full lg:translate-x-0 transition-all duration-300">
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-60 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none -translate-x-full lg:translate-x-0 transition-all duration-300">
         <div class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
-            <div class="mb-6 px-2 flex items-center justify-between">
+            <div class="mb-6 lg:mb-4 px-2 flex items-center justify-between">
                 <h1 class="select-none font-black italic text-lg tracking-tight text-zinc-900 dark:text-white uppercase">V<span class="vail-logo-ai gradient-mode" id="logo-ai-core">AI</span>L</h1>
-                <button class="lg:hidden w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" onclick="window.toggleSidebar()"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button class="lg:hidden w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" onclick="window.toggleSidebar()"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <button id="new-chat-btn" onclick="window.resetChat()" class="w-full flex items-center justify-between gap-3 px-4 py-4 text-sm font-bold rounded-xl transition-all mb-4 shadow-lg hover:brightness-110 active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)"><span>New Chat</span><i class="fa-solid fa-plus text-[10px]"></i></button>
-            <div class="flex-1 overflow-y-auto no-scrollbar space-y-1" id="history-list"></div>
-            <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
-                <button onclick="window.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-3.5 text-xs font-semibold rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all"><i class="fa-solid fa-circle-half-stroke text-zinc-400"></i><span>Appearance</span></button>
-                <button onclick="window.clearAll()" class="w-full flex items-center gap-3 px-3 py-3.5 text-xs font-semibold text-red-500/80 rounded-xl hover:bg-red-500/5 transition-all"><i class="fa-solid fa-trash-can"></i><span>Clear All</span></button>
+            <button id="new-chat-btn" onclick="window.resetChat()" class="w-full flex items-center justify-between gap-3 px-4 py-4 lg:py-3 text-sm lg:text-xs font-bold rounded-xl transition-all mb-4 lg:mb-3 shadow-lg hover:brightness-110 active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)"><span>New Conversation</span><i class="fa-solid fa-plus text-[10px]"></i></button>
+            <div class="flex-1 overflow-y-auto no-scrollbar space-y-1 lg:space-y-0.5" id="history-list"></div>
+            <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 space-y-1 lg:space-y-0.5">
+                <button onclick="window.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold rounded-xl lg:rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
+                    <i class="fa-solid fa-circle-half-stroke text-zinc-400 text-xs"></i>
+                    <span>Appearance</span>
+                </button>
+                <button onclick="window.clearAll()" class="w-full flex items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold text-red-500/80 rounded-xl lg:rounded-lg hover:bg-red-500/5 transition-all active:bg-red-500/10">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                    <span>Clear chats</span>
+                </button>
             </div>
             <div id="user-profile-section">
                 <div class="flex items-center justify-between group">
-                    <div class="flex items-center gap-3"><div id="user-avatar-container"><div id="user-avatar-display">U</div></div><div class="flex flex-col min-w-0"><span id="sidebar-user-name" class="text-xs font-bold truncate text-zinc-900 dark:text-white">Profile</span></div></div>
-                    <button onclick="window.toggleSettingsPanel()" class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"><i class="fa-solid fa-gear text-base lg:text-sm"></i></button>
+                    <div class="flex items-center gap-3 lg:gap-2">
+                        <div id="user-avatar-container"><div id="user-avatar-display">U</div></div>
+                        <div class="flex flex-col min-w-0">
+                            <span id="sidebar-user-name" class="text-xs font-bold truncate text-zinc-900 dark:text-white">Profile</span>
+                        </div>
+                    </div>
+                    <button onclick="window.toggleSettingsPanel()" class="w-10 h-10 lg:w-8 lg:h-8 flex items-center justify-center rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
+                        <i class="fa-solid fa-gear text-sm lg:text-xs"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -353,30 +403,44 @@
     <main class="flex-1 flex flex-col h-full relative overflow-hidden">
         <header class="h-14 lg:h-12 flex items-center justify-between px-4 lg:px-6 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl z-50 border-b border-zinc-100 dark:border-zinc-900/50">
             <div class="flex items-center gap-1 lg:gap-2">
-                <button id="menu-toggle-btn" onclick="window.toggleSidebar()" class="w-12 h-12 flex items-center justify-center -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden"><i class="fa-solid fa-bars text-base"></i></button>
+                <button id="menu-toggle-btn" onclick="window.toggleSidebar()" class="w-12 h-12 flex items-center justify-center -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden"><i class="fa-solid fa-bars-staggered text-base"></i></button>
                 <div class="relative">
-                    <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-3 py-2 text-sm font-bold rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"><div id="active-model-icon" class="w-4 h-4" style="color: var(--accent-color)"></div><span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-sm">VAIL North Star</span><i class="fa-solid fa-chevron-down text-[8px] opacity-30"></i></button>
-                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-xl overflow-hidden py-2">
-                        <button onclick="window.selectModel('OLM2')" class="w-full text-left px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group">
-                            <div class="flex items-center gap-3"><div id="icon-pro-menu" class="w-5 h-5"></div><div><span class="block font-bold text-xs">VAIL North Star</span><span class="text-[10px] text-zinc-400">High Performance</span></div></div><i id="check-pro" class="fa-solid fa-check text-[11px]" style="color: var(--accent-color)"></i>
+                    <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-3 py-2 text-sm font-bold rounded-lg lg:rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"><div id="active-model-icon" class="w-4 h-4 lg:w-3.5 lg:h-3.5" style="color: var(--accent-color)"></div><span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-[13px]">VAIL North Star</span><i class="fa-solid fa-chevron-down text-[8px] opacity-30"></i></button>
+                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-72 lg:w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-xl overflow-hidden py-2">
+                        <button onclick="window.selectModel('OLM2')" class="w-full text-left px-5 py-4 lg:px-4 lg:py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group">
+                            <div class="flex items-center gap-3 lg:gap-2">
+                                <div id="icon-pro-menu" class="w-5 h-5 lg:w-4 lg:h-4"></div>
+                                <div>
+                                    <span class="block font-bold text-xs">VAIL North Star</span>
+                                    <span class="text-[10px] text-zinc-400">Fast synthesis</span>
+                                </div>
+                            </div>
+                            <i id="check-pro" class="fa-solid fa-check text-[11px] lg:text-[10px]" style="color: var(--accent-color)"></i>
                         </button>
-                        <button onclick="window.selectModel('OLM1')" class="w-full text-left px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group border-t border-zinc-100 dark:border-zinc-800/50">
-                            <div class="flex items-center gap-3"><div id="icon-stargaze-menu" class="w-5 h-5 text-zinc-400"></div><div><span class="block font-bold text-xs">VAIL Stargaze</span><span class="text-[10px] text-zinc-400">Reasoning Engine</span></div></div><i id="check-stargaze" class="fa-solid fa-check text-[11px] hidden" style="color: var(--accent-color)"></i>
+                        <button onclick="window.selectModel('OLM1')" class="w-full text-left px-5 py-4 lg:px-4 lg:py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group border-t border-zinc-100 dark:border-zinc-800/50">
+                            <div class="flex items-center gap-3 lg:gap-2">
+                                <div id="icon-stargaze-menu" class="w-5 h-5 lg:w-4 lg:h-4 text-zinc-400"></div>
+                                <div>
+                                    <span class="block font-bold text-xs">VAIL Stargaze</span>
+                                    <span class="text-[10px] text-zinc-400">Deep reasoning</span>
+                                </div>
+                            </div>
+                            <i id="check-stargaze" class="fa-solid fa-check text-[11px] lg:text-[10px] hidden" style="color: var(--accent-color)"></i>
                         </button>
                     </div>
                 </div>
             </div>
-            <button onclick="window.toggleMenu(event, 'notes-menu')" class="w-12 h-12 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><i class="fa-solid fa-info-circle text-lg lg:text-sm"></i></button>
+            <button onclick="window.toggleMenu(event, 'notes-menu')" class="w-12 h-12 lg:w-8 lg:h-8 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><i class="fa-solid fa-info-circle text-sm lg:text-xs"></i></button>
             <div id="notes-menu" class="dropdown-menu absolute right-4 lg:right-6 top-14 lg:top-12 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-xl p-6 overflow-y-auto max-h-[70vh]">
-                <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Information</h3>
+                <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Protocol Stats</h3>
                 <div class="space-y-4 text-xs">
                     <div class="border-l-2 border-blue-500 pl-3">
-                        <p class="font-bold text-[11px] mb-1">Session Operational</p>
+                        <p class="font-bold text-[11px] mb-1">UI Optimization</p>
                         <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                            <li>Mobile Fullscreen Preferences enabled</li>
-                            <li>Added Skip option to Onboarding</li>
-                            <li>VAIL-first human terminology</li>
-                            <li>Equation support strictly using $$ delimiters</li>
+                            <li>GPT-style thinking synthesis animation</li>
+                            <li>Compact desktop layout for mouse precision</li>
+                            <li>Context-aware welcome greeting synthesis</li>
+                            <li>Equation support strictly via $$ delimeters</li>
                         </ul>
                     </div>
                 </div>
@@ -386,31 +450,31 @@
         <!-- Chat Container -->
         <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col relative">
             <div id="welcome-state" class="absolute inset-0 flex flex-col items-center justify-center p-6 sm:p-6 text-center animate-fade-in z-0">
-                <h2 id="welcome-greeting" class="text-3xl sm:text-3xl lg:text-4xl font-bold mb-8 sm:mb-10 tracking-tight text-zinc-900 dark:text-white">How can I help?</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
-                    <button class="p-5 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Write a short, professional greeting message.')">
-                        <div class="flex items-center gap-2.5 mb-2"><i class="fa-solid fa-pen text-blue-400 text-xs"></i><span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Creative</span></div>
-                        <span class="text-sm font-medium opacity-60 truncate block">Writing Help</span>
+                <h2 id="welcome-greeting" class="text-3xl lg:text-3xl font-bold mb-8 sm:mb-10 tracking-tight text-zinc-900 dark:text-white">How can I help you today?</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl lg:max-w-lg">
+                    <button class="p-5 lg:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Write a professional greeting message.')">
+                        <div class="flex items-center gap-2 mb-1.5"><i class="fa-solid fa-pen text-blue-400 text-[10px]"></i><span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Creative</span></div>
+                        <span class="text-sm lg:text-xs font-medium opacity-60 truncate block">Writing Help</span>
                     </button>
-                    <button class="p-5 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Explain the plot of Inception using only emojis.')">
-                        <div class="flex items-center gap-2.5 mb-2"><i class="fa-solid fa-face-smile text-emerald-500 text-xs"></i><span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Visual</span></div>
-                        <span class="text-sm font-medium opacity-60 truncate block">Summary</span>
+                    <button class="p-5 lg:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Explain the plot of Inception using emojis.')">
+                        <div class="flex items-center gap-2 mb-1.5"><i class="fa-solid fa-face-smile text-emerald-500 text-[10px]"></i><span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Visual</span></div>
+                        <span class="text-sm lg:text-xs font-medium opacity-60 truncate block">Quick Summary</span>
                     </button>
                 </div>
             </div>
-            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 sm:px-5 relative gap-8 z-10"></div>
+            <div id="chat-messages" class="w-full max-w-3xl lg:max-w-2xl mx-auto flex flex-col pt-4 pb-48 px-4 sm:px-5 relative gap-8 lg:gap-6 z-10"></div>
         </div>
 
         <!-- Input Area -->
-        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-8 z-40 pb-6 lg:pb-8 pt-12">
-            <div class="input-box-wrap p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden max-w-2xl mx-auto transition-all duration-300">
-                <textarea id="user-input" placeholder="Message VAIL..." rows="1" class="w-full bg-transparent px-5 py-4 outline-none resize-none text-base sm:text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
-                <div class="flex items-center justify-between pl-3 pr-1.5 pb-2 pt-1">
-                    <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-4 py-3 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50 active:bg-zinc-200 dark:active:bg-zinc-700">
+        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-8 z-40 pb-6 lg:pb-6 pt-12">
+            <div class="input-box-wrap p-2 lg:p-1.5 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl lg:rounded-2xl overflow-hidden max-w-2xl lg:max-w-xl mx-auto transition-all duration-300">
+                <textarea id="user-input" placeholder="Message VAIL..." rows="1" class="w-full bg-transparent px-5 py-4 lg:px-4 lg:py-2.5 outline-none resize-none text-base sm:text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
+                <div class="flex items-center justify-between pl-3 pr-1.5 pb-2 pt-1 lg:pb-1 lg:pt-0.5">
+                    <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-4 py-3 lg:px-3 lg:py-1.5 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] lg:text-[9px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50 active:bg-zinc-200 dark:active:bg-zinc-700">
                         <i class="fa-solid fa-magnifying-glass"></i><span class="hidden sm:inline">Search</span>
                     </button>
-                    <button id="send-btn" disabled onclick="window.handleAction()" class="w-12 h-12 flex items-center justify-center rounded-full transition-all shadow-lg active:brightness-90 shrink-0" style="background-color: var(--accent-color); color: var(--accent-contrast)">
-                        <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm"></i>
+                    <button id="send-btn" disabled onclick="window.handleAction()" class="w-12 h-12 lg:w-9 lg:h-9 flex items-center justify-center rounded-full transition-all shadow-lg active:brightness-90 shrink-0" style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                        <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-xs"></i>
                     </button>
                 </div>
             </div>
@@ -535,7 +599,7 @@
         };
 
         const applyMovableStyles = () => {
-            els.pfpMovableImg.style.transform = `translate(${settings.pfpX}px, ${settings.pfpY}px) scale(${settings.pfpScale})`;
+            els.pfpMovableImg.style.transform = `translate(-50%, -50%) translate(${settings.pfpX}px, ${settings.pfpY}px) scale(${settings.pfpScale})`;
         };
 
         window.pfpDragStart = (e) => {
@@ -607,8 +671,7 @@
         window.completeOnboarding = () => {
             const name = document.getElementById('onboarding-name').value.trim();
             if (!name) return;
-            settings.userName = name; 
-            saveSettings();
+            settings.userName = name; saveSettings();
             closeOnboardingModal();
         };
 
@@ -619,12 +682,13 @@
         };
 
         const updateProfileUI = () => {
-            els.sidebarName.innerText = settings.userName || "Guest";
+            const name = settings.userName || "Guest";
+            els.sidebarName.innerText = name;
             if (settings.userPic) {
-                const ratio = 32 / 300, scale = settings.pfpScale || 1.0;
+                const ratio = 32 / 280, scale = settings.pfpScale || 1.0;
                 const tx = (settings.pfpX || 0) * ratio, ty = (settings.pfpY || 0) * ratio;
-                els.avatarDisplay.innerHTML = `<div class="w-full h-full relative overflow-hidden rounded-full pointer-events-none"><img src="${settings.userPic}" class="absolute" style="max-width:none; width:auto; height:32px; transform: translate(${tx}px, ${ty}px) scale(${scale}); transform-origin: center center;"></div>`;
-            } else els.avatarDisplay.innerText = settings.userName ? settings.userName[0].toUpperCase() : 'G';
+                els.avatarDisplay.innerHTML = `<div class="w-full h-full relative overflow-hidden rounded-full pointer-events-none bg-black"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; width:auto; height:32px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale}); transform-origin: center center;"></div>`;
+            } else els.avatarDisplay.innerText = name[0].toUpperCase();
         };
 
         window.toggleMenu = (e, id) => {
@@ -706,7 +770,7 @@
 
         const renderHistoryItem = (c) => `
             <div class="history-btn-container ${c.id === currentChatId ? 'history-item-active' : ''} rounded-xl group">
-                <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-4 rounded-xl text-[13px] font-medium truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">${c.title}</button>
+                <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-4 lg:py-2.5 rounded-xl lg:rounded-lg text-[13px] lg:text-[12px] font-medium truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">${c.title}</button>
                 <div class="flex items-center gap-1 pr-1">
                     <button onclick="event.stopPropagation(); window.pinChat('${c.id}')" class="history-action-btn ${c.pinned ? 'text-blue-500 opacity-100' : ''}"><i class="fa-solid fa-thumbtack"></i></button>
                     <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500"><i class="fa-solid fa-trash-can"></i></button>
@@ -744,17 +808,31 @@
             const isWelcome = history.length === 0;
             els.welcome.style.display = isWelcome ? 'flex' : 'none';
             els.chatMsgs.style.display = isWelcome ? 'none' : 'flex';
-            if (isWelcome && settings.userName) els.greeting.innerText = `Hello, ${settings.userName}`;
+            if (isWelcome) {
+                const name = settings.userName;
+                els.greeting.innerText = (name && name !== "Guest") ? `How can I help you today, ${name}?` : "How can I help you today?";
+            }
             if (!isWelcome) {
                 els.chatMsgs.innerHTML = history.map(([u, a], i) => `
-                    <div class="user-row flex flex-col items-end"><div class="user-msg-bubble prose dark:prose-invert">${marked.parse(u)}</div></div>
-                    <div class="ai-row flex items-start gap-4 animate-slide-up">
-                        <div class="w-8 h-8 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1"><div class="w-4 h-4">${currentModel.icon}</div></div>
-                        <div class="flex-1 min-w-0 pt-2">
-                            <div class="prose dark:prose-invert prose-target w-full">${a ? marked.parse(a) : '<div class="flex h-6"><span class="aether-loader"></span></div>'}</div>
-                            ${a && !isGenerating ? `<div class="flex items-center gap-5 mt-5">
-                                <button onclick="window.copyMsg(${i})" class="w-10 h-10 flex items-center justify-center opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i class="fa-regular fa-copy text-base"></i></button>
-                                <button onclick="window.regenMsg(${i})" class="w-10 h-10 flex items-center justify-center opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i class="fa-solid fa-rotate-right text-base"></i></button>
+                    <div class="user-row flex flex-col items-end"><div class="user-msg-bubble prose dark:prose-invert font-medium">${marked.parse(u)}</div></div>
+                    <div class="ai-row flex items-start gap-4 lg:gap-3 animate-slide-up">
+                        <div class="w-8 h-8 lg:w-7 lg:h-7 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1"><div class="w-4 h-4 lg:w-3.5 lg:h-3.5">${currentModel.icon}</div></div>
+                        <div class="flex-1 min-w-0 pt-2 lg:pt-1">
+                            <div class="prose dark:prose-invert prose-target w-full leading-relaxed">
+                                ${a ? marked.parse(a) : `
+                                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 w-fit select-none">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest">Thinking</span>
+                                    <div class="flex gap-1">
+                                        <div class="thinking-dot"></div>
+                                        <div class="thinking-dot"></div>
+                                        <div class="thinking-dot"></div>
+                                    </div>
+                                </div>
+                                `}
+                            </div>
+                            ${a && !isGenerating ? `<div class="flex items-center gap-5 mt-5 lg:mt-3">
+                                <button onclick="window.copyMsg(${i})" class="w-10 h-10 lg:w-7 lg:h-7 flex items-center justify-center opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i class="fa-regular fa-copy text-base lg:text-sm"></i></button>
+                                <button onclick="window.regenMsg(${i})" class="w-10 h-10 flex items-center justify-center opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i class="fa-solid fa-rotate-right text-base lg:text-sm"></i></button>
                             </div>` : ''}
                         </div>
                     </div>`).join('');
@@ -767,14 +845,14 @@
         const updateUI = () => {
             const hasText = els.input.value.trim().length > 0;
             els.send.disabled = !hasText && !isGenerating;
-            els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-sm";
+            els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-sm lg:text-xs";
             els.actIcon.innerHTML = currentModel.icon;
             document.getElementById('active-model-name').innerText = currentModel.name;
             document.getElementById('icon-pro-menu').innerHTML = MODELS.OLM2.icon;
             document.getElementById('icon-stargaze-menu').innerHTML = MODELS.OLM1.icon;
             document.getElementById('check-pro').classList.toggle('hidden', currentModel !== MODELS.OLM2);
             document.getElementById('check-stargaze').classList.toggle('hidden', currentModel !== MODELS.OLM1);
-            els.searchBtn.className = `flex items-center gap-2 px-4 py-3 rounded-full border transition-all text-[10px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg text-white' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
+            els.searchBtn.className = `flex items-center gap-2 px-4 py-3 lg:px-3 lg:py-1.5 rounded-full border transition-all text-[10px] lg:text-[9px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg text-white' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
             els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
         };
 
@@ -799,4 +877,3 @@
     </script>
 </body>
 </html>
-
