@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>OLM ENDPOINT</title>
+    <title>VAIL ENDPOINT</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
-    
     <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -24,6 +23,7 @@
             --sidebar-tint: rgba(59, 130, 246, 0.07);
             --accent-contrast: #ffffff;
             --fade-color: #ffffff;
+            --fade-gradient-stop: #ffffff;
         }
     </style>
 
@@ -85,7 +85,7 @@
         .vail-logo-ai { color: var(--accent-color); }
         .vail-logo-ai.gradient-mode {
             background: linear-gradient(-45deg, #3b82f6, #22c55e, #a855f7, #ef4444, #3b82f6);
-            background-size: 400% 400%;
+            background-size: 120% 120%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -100,7 +100,7 @@
         .user-msg-bubble {
             background-color: rgba(0,0,0,0.05);
             padding: 0.75rem 1.25rem;
-            margin-left: 1.5rem; /* Protection margin against left edge */
+            margin-left: 1.5rem;
             border-radius: 1.25rem;
             max-width: 90%;
             animation: fadeIn 0.3s ease-out forwards;
@@ -108,10 +108,8 @@
         .dark .user-msg-bubble { background-color: rgba(255,255,255,0.05); }
 
         .prose { max-width: 100%; color: inherit; font-size: 0.95rem; line-height: 1.6; }
-        .prose a { color: var(--accent-color); text-decoration: none; transition: text-decoration 0.2s ease; }
-        .prose a:hover { text-decoration: underline; }
+        .prose a { color: var(--accent-color); text-decoration: none; }
         
-        /* Reactive Syntax Highlighting Blocks */
         .prose pre { 
             position: relative;
             background: #f4f4f5; 
@@ -129,7 +127,6 @@
             border: 1px solid #27272a; 
         }
 
-        /* Code Copy Button */
         .code-copy-btn {
             position: absolute;
             top: 0.5rem;
@@ -149,14 +146,11 @@
             z-index: 10;
         }
         .prose pre:hover .code-copy-btn { opacity: 1; }
-        .code-copy-btn:hover { background: #ffffff; }
         .dark .code-copy-btn {
             background: rgba(39, 39, 42, 0.8);
             border-color: rgba(255,255,255,0.1);
         }
-        .dark .code-copy-btn:hover { background: #27272a; }
 
-        /* Reactive Inline Code */
         .prose code { 
             font-family: 'JetBrains Mono', monospace; 
             font-size: 0.85em; 
@@ -185,13 +179,12 @@
         .accent-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
         .accent-dot.active { border-color: currentColor; }
         
-        #custom-color-input { width: 1.8rem; height: 1.8rem; padding: 0; border: 1px solid rgba(0,0,0,0.1); background: none; cursor: pointer; border-radius: 9999px; overflow: hidden; }
-
         .input-box-wrap {
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(24px);
             position: relative;
             z-index: 40;
+            pointer-events: auto;
         }
         .dark .input-box-wrap { background-color: rgba(20, 20, 20, 0.85); }
         
@@ -202,18 +195,217 @@
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         #bottom-fade {
-            background: linear-gradient(to top, var(--fade-color) 0%, var(--fade-color) 40%, transparent 100%);
+            background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 30%, transparent 100%);
+            pointer-events: none;
         }
         
         .history-btn-container { display: flex; align-items: center; width: 100%; gap: 4px; padding: 0 4px; }
         .history-action-btn { flex-shrink: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 10px; opacity: 0.6; }
         .history-action-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
         .dark .history-action-btn:hover { background: rgba(255,255,255,0.05); }
+
+        .history-section-header {
+            font-size: 10px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em; padding: 1.25rem 0.75rem 0.5rem;
+        }
+
+        /* Onboarding Styles */
+        #onboarding-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(40px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.4s ease-out;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .dark #onboarding-overlay { background: rgba(13, 13, 13, 0.85); }
+        #onboarding-overlay.hidden { display: none !important; pointer-events: none !important; }
+        
+        .onboarding-card {
+            width: 100%; max-width: 400px; padding: 2rem 2.5rem; border-radius: 1.5rem;
+            background: white; border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dark .onboarding-card { background: #141414; border-color: rgba(255,255,255,0.05); }
+
+        #onboarding-pfp-preview {
+            width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
+            background: #f4f4f5; border: 2px dashed #e4e4e7;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .dark #onboarding-pfp-preview { background: #1e1e1e; border-color: #27272a; }
+
+        /* User Profile Section */
+        #user-profile-section { padding: 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 0.5rem; }
+        .dark #user-profile-section { border-top-color: rgba(255,255,255,0.05); }
+        
+        #user-avatar-display {
+            width: 32px; height: 32px; border-radius: 50%; overflow: hidden;
+            background: var(--accent-color); color: var(--accent-contrast);
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;
+        }
+        
+        #settings-panel {
+            position: fixed; left: 1rem; bottom: 5rem; width: 340px; z-index: 300;
+            background: white; border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 1.25rem; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            display: none; flex-direction: column; overflow: hidden;
+        }
+        .dark #settings-panel { background: #141414; border-color: #27272a; }
+        #settings-panel.active { display: flex; }
+
+        /* PFP Workspace */
+        #pfp-workspace {
+            width: 100%; aspect-ratio: 1; background: #000; border-radius: 0.75rem;
+            position: relative; overflow: hidden; touch-action: none;
+            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+        #pfp-movable-img {
+            position: absolute; max-width: none; pointer-events: none; user-select: none; transition: none;
+            height: 300px; width: auto;
+        }
+        #pfp-mask {
+            position: absolute; inset: 0; border: 4px solid var(--accent-color); border-radius: 50%;
+            pointer-events: none; box-shadow: 0 0 0 999px rgba(0,0,0,0.5);
+        }
+
+        #search-btn:active { transform: scale(0.96); }
     </style>
 </head>
 <body class="bg-chatbg-light dark:bg-chatbg-dark text-zinc-900 dark:text-zinc-200 font-sans h-full flex overflow-hidden">
 
-    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 dark:bg-black/60 z-[190] hidden opacity-0 transition-opacity duration-300" onclick="window.toggleSidebar()"></div>
+    <!-- Onboarding Overlay -->
+    <div id="onboarding-overlay" class="hidden">
+        <div class="onboarding-card">
+            <div class="text-center mb-6">
+                <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2">Welcome</p>
+                <h1 class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">
+                    V<span class="vail-logo-ai gradient-mode">AI</span>L
+                </h1>
+                <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Profile Setup</p>
+            </div>
+
+            <div class="space-y-5">
+                <div class="flex flex-col items-center">
+                    <div class="relative group" onclick="document.getElementById('onboarding-pfp-input').click()">
+                        <div id="onboarding-pfp-preview">
+                            <i class="fa-solid fa-camera text-zinc-400 text-xl"></i>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-6 h-6 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[10px] border-2 border-white dark:border-[#141414] shadow-md">
+                            <i class="fa-solid fa-plus"></i>
+                        </div>
+                    </div>
+                    <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*" onchange="window.handleOnboardingPfp(event)">
+                    <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-3">Photo</p>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1">Display Name</label>
+                    <input type="text" id="onboarding-name" placeholder="Enter your name" 
+                        class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-3.5 text-sm focus:border-blue-500 outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1">Interface Appearance</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.setTheme('light')" class="flex items-center justify-center gap-3 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold" id="theme-light-btn">
+                            <i class="fa-solid fa-sun"></i> Light
+                        </button>
+                        <button onclick="window.setTheme('dark')" class="flex items-center justify-center gap-3 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold" id="theme-dark-btn">
+                            <i class="fa-solid fa-moon"></i> Dark
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border border-zinc-200 dark:border-zinc-800 text-center">
+                    <p class="text-[10px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+                        VAIL stores all data locally in your browser for privacy.
+                    </p>
+                </div>
+
+                <button onclick="window.completeOnboarding()" class="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Settings Panel -->
+    <div id="settings-panel" class="animate-slide-up">
+        <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-white dark:bg-zinc-900">
+            <h3 class="font-bold text-[10px] uppercase tracking-widest text-zinc-400">Settings</h3>
+            <button onclick="window.toggleSettingsPanel()" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <div class="p-5 flex-1 overflow-y-auto space-y-6 max-h-[70vh] no-scrollbar">
+            <!-- PFP Resizer Workspace -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-black uppercase text-zinc-400">Profile Photo</label>
+                    <button onclick="document.getElementById('profile-upload').click()" class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Update</button>
+                </div>
+                
+                <div id="pfp-workspace" onpointerdown="window.pfpDragStart(event)">
+                    <img id="pfp-movable-img" src="">
+                    <div id="pfp-mask"></div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between text-[9px] font-black uppercase text-zinc-400">
+                        <span>Scale</span>
+                        <span id="scale-val" class="font-mono text-blue-500">1.0x</span>
+                    </div>
+                    <input type="range" id="pfp-scale-slider" min="0.2" max="4" step="0.01" value="1" class="w-full h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updatePfpScale(this.value)">
+                </div>
+                
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Display Name</label>
+                    <input type="text" id="settings-name-input" class="w-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700/50 rounded-xl px-4 py-3 text-xs focus:border-blue-500 outline-none" onchange="window.updateSettingsFromPanel()">
+                </div>
+
+                <input type="file" id="profile-upload" class="hidden" accept="image/*" onchange="window.handleProfilePicUpload(event)">
+            </div>
+
+            <!-- Global Style -->
+            <div class="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <div>
+                    <div class="flex justify-between text-[9px] font-black mb-2 uppercase text-zinc-400">
+                        <span>Creativity Bias</span>
+                        <span id="settings-temp-val" class="font-mono text-blue-500">0.70</span>
+                    </div>
+                    <input type="range" id="settings-param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updateTempFromPanel(this.value)">
+                </div>
+                
+                <div>
+                    <div class="text-[9px] font-black mb-3 uppercase text-zinc-400">Color Palette</div>
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <div class="accent-dot bg-zinc-900 dark:bg-zinc-100 !w-5 !h-5" data-color="auto" onclick="window.updateAccent('auto')"></div>
+                        <div class="accent-dot bg-blue-500 !w-5 !h-5" data-color="#3b82f6" onclick="window.updateAccent('#3b82f6')"></div>
+                        <div class="accent-dot bg-emerald-500 !w-5 !h-5" data-color="#10b981" onclick="window.updateAccent('#10b981')"></div>
+                        <div class="accent-dot bg-purple-500 !w-5 !h-5" data-color="#a855f7" onclick="window.updateAccent('#a855f7')"></div>
+                        <div class="accent-dot bg-rose-500 !w-5 !h-5" data-color="#f43f5e" onclick="window.updateAccent('#f43f5e')"></div>
+                        <div class="accent-dot bg-orange-500 !w-5 !h-5" data-color="#f97316" onclick="window.updateAccent('#f97316')"></div>
+                        <div class="accent-dot bg-blue-900 !w-5 !h-5" data-color="#1e3a8a" onclick="window.updateAccent('#1e3a8a')"></div>
+                        <input type="color" id="custom-color-input-v2" class="!w-6 !h-6 rounded-full border-none cursor-pointer p-0 bg-transparent" oninput="window.updateAccent(this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Destructive Action -->
+            <div class="pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                <button onclick="window.factoryReset()" class="w-full py-4 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl text-[10px] font-black uppercase transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash"></i>
+                    Erase all content
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-64 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none -translate-x-full lg:translate-x-0">
@@ -227,22 +419,38 @@
                 </button>
             </div>
 
-            <button id="new-chat-btn" onclick="window.resetChat()" class="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all mb-4 shadow-lg hover:brightness-110 active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)">
-                <span>New Session</span>
+            <button id="new-chat-btn" onclick="window.resetChat()" class="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm font-bold rounded-xl transition-all mb-4 shadow-lg hover:brightness-110 active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                <span>New Conversation</span>
                 <i class="fa-solid fa-plus text-[10px]"></i>
             </button>
 
             <div class="flex-1 overflow-y-auto no-scrollbar space-y-1" id="history-list"></div>
 
-            <div class="pt-4 mt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
-                <button onclick="window.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
+            <div class="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
+                <button onclick="window.toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
                     <i class="fa-solid fa-circle-half-stroke text-zinc-400"></i>
                     <span>Appearance</span>
                 </button>
                 <button onclick="window.clearAll()" class="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-semibold text-red-500/80 rounded-xl hover:bg-red-500/5 transition-all active:bg-red-500/10">
                     <i class="fa-solid fa-trash-can"></i>
-                    <span>Delete all chats</span>
+                    <span>Clear Chats</span>
                 </button>
+            </div>
+
+            <div id="user-profile-section">
+                <div class="flex items-center justify-between group">
+                    <div class="flex items-center gap-3">
+                        <div id="user-avatar-container">
+                            <div id="user-avatar-display">U</div>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span id="sidebar-user-name" class="text-xs font-bold truncate text-zinc-900 dark:text-white">Profile</span>
+                        </div>
+                    </div>
+                    <button onclick="window.toggleSettingsPanel()" class="p-2.5 rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
+                        <i class="fa-solid fa-gear text-sm"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </aside>
@@ -267,7 +475,7 @@
                                 <div id="icon-pro-menu" class="w-4 h-4"></div>
                                 <div>
                                     <span class="block font-bold text-xs">OLM North Star</span>
-                                    <span class="text-[10px] text-zinc-400">Instant synthesis</span>
+                                    <span class="text-[10px] text-zinc-400">Fast, Quick replies</span>
                                 </div>
                             </div>
                             <i id="check-pro" class="fa-solid fa-check text-[10px]" style="color: var(--accent-color)"></i>
@@ -277,7 +485,7 @@
                                 <div id="icon-stargaze-menu" class="w-4 h-4 text-zinc-400"></div>
                                 <div>
                                     <span class="block font-bold text-xs">OLM Stargaze</span>
-                                    <span class="text-[10px] text-zinc-400">Legacy reasoning</span>
+                                    <span class="text-[10px] text-zinc-400">Deep thinking</span>
                                 </div>
                             </div>
                             <i id="check-stargaze" class="fa-solid fa-check text-[10px] hidden" style="color: var(--accent-color)"></i>
@@ -288,106 +496,62 @@
 
             <div class="flex items-center gap-1 lg:gap-2">
                 <button onclick="window.toggleMenu(event, 'notes-menu')" class="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
-                    <i class="fa-solid fa-clipboard-list text-xs"></i>
+                    <i class="fa-solid fa-info-circle text-xs"></i>
                 </button>
                 <div id="notes-menu" class="dropdown-menu absolute right-12 lg:right-16 top-12 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-2xl rounded-2xl p-6 overflow-y-auto max-h-[70vh]">
-                    <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Terminal Log</h3>
+                    <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Information</h3>
                     <div class="space-y-4 text-xs">
                         <div class="border-l-2 border-blue-500 pl-3">
-                            <p class="font-bold text-[11px] mb-1">v0.7.6 - Interaction Polish</p>
+                            <p class="font-bold text-[11px] mb-1">Status Report</p>
                             <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                                <li>Tick feedback added to message Copy and Regen buttons</li>
-                                <li>Optimized left margin on mobile user bubbles</li>
-                                <li>Refined input area padding for mobile alignment</li>
-                                <li>Persistent checkmark logic for clipboard actions</li>
+                                <li>History grouping: Today, Yesterday, Dust collecting</li>
+                                <li>Dedicated Pinned section at top</li>
+                                <li>Optimized search button interaction</li>
+                                <li>Equation support using $$ delimiters</li>
                             </ul>
                         </div>
-                    </div>
-                </div>
-
-                <button onclick="window.toggleMenu(event, 'settings-menu')" class="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
-                    <i class="fa-solid fa-sliders text-xs"></i>
-                </button>
-                <div id="settings-menu" class="dropdown-menu absolute right-4 top-12 w-[calc(100vw-2rem)] sm:w-72 bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-2xl rounded-2xl p-5">
-                    <h3 class="font-bold text-[10px] mb-4 text-zinc-400 uppercase tracking-widest">Synthesis Config</h3>
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between text-[10px] font-black mb-2 uppercase">
-                                <span>Temperature</span>
-                                <span id="temp-val" class="font-mono" style="color: var(--accent-color)">0.70</span>
-                            </div>
-                            <input type="range" id="param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-900 dark:accent-zinc-100" oninput="window.updateTemp(this.value)">
-                        </div>
-                        
-                        <div>
-                            <div class="text-[10px] font-black mb-3 uppercase">System Accent</div>
-                            <div class="flex flex-wrap items-center gap-3" id="accent-picker">
-                                <div class="accent-dot bg-zinc-900 dark:bg-zinc-100" data-color="auto" onclick="window.updateAccent('auto')"></div>
-                                <div class="accent-dot bg-blue-500" data-color="#3b82f6" onclick="window.updateAccent('#3b82f6')"></div>
-                                <div class="accent-dot bg-emerald-500" data-color="#10b981" onclick="window.updateAccent('#10b981')"></div>
-                                <div class="accent-dot bg-purple-500" data-color="#a855f7" onclick="window.updateAccent('#a855f7')"></div>
-                                <div class="accent-dot bg-rose-500" data-color="#f43f5e" onclick="window.updateAccent('#f43f5e')"></div>
-                                <input type="color" id="custom-color-input" oninput="window.updateAccent(this.value)">
-                            </div>
-                        </div>
-
-                        <button onclick="window.closeAllMenus()" class="w-full py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-black uppercase rounded-xl transition-all">Sync Memory</button>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Chat Container -->
-        <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col">
-            <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center animate-fade-in">
-                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 sm:mb-10 tracking-tight text-zinc-900 dark:text-white">How can I help you today?</h2>
+        <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col relative">
+            <div id="welcome-state" class="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 text-center animate-fade-in z-0">
+                <h2 id="welcome-greeting" class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 sm:mb-10 tracking-tight text-zinc-900 dark:text-white">Hello, how can I help you?</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl">
                     <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Write a break-up letter from a toaster to a piece of bread.')">
                         <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
                             <i class="fa-solid fa-bread-slice text-orange-400 text-xs"></i>
-                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Drama</span>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Ideation</span>
                         </div>
-                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">A toaster's heartbreak.</span>
-                    </button>
-                    <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Convince me that the moon is actually a giant block of Swiss cheese.')">
-                        <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
-                            <i class="fa-solid fa-moon text-yellow-500 text-xs"></i>
-                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Conspiracy</span>
-                        </div>
-                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">The lunar cheese theory.</span>
+                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">Creative writing help.</span>
                     </button>
                     <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Explain the plot of Inception using only emojis.')">
                         <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
                             <i class="fa-solid fa-face-smile text-emerald-500 text-xs"></i>
-                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Visuals</span>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Quick Summary</span>
                         </div>
-                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">Inception in emoji form.</span>
-                    </button>
-                    <button class="p-4 sm:p-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm active:bg-zinc-100 dark:active:bg-zinc-800" onclick="window.sendMessage('Write a recipe for a cake, but in the style of a film noir detective.')">
-                        <div class="flex items-center gap-2.5 mb-1.5 sm:mb-2">
-                            <i class="fa-solid fa-user-secret text-zinc-500 text-xs"></i>
-                            <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors">Thriller</span>
-                        </div>
-                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">The Case of the Red Velvet.</span>
+                        <span class="text-xs sm:text-sm font-medium opacity-60 truncate block">Visual explanation.</span>
                     </button>
                 </div>
             </div>
-            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 sm:px-5 relative gap-8"></div>
+            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 sm:px-5 relative gap-8 z-10"></div>
         </div>
 
-        <!-- Input Area Fade and Box -->
-        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-8 z-40 pb-6 lg:pb-8 pt-10">
-            <div class="input-box-wrap p-1.5 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden max-w-2xl mx-auto transition-all duration-300">
-                <textarea id="user-input" placeholder="Message OLM..." rows="1" class="w-full bg-transparent px-4 py-2 sm:py-2.5 outline-none resize-none text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
+        <!-- Input Area -->
+        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-8 z-40 pb-6 lg:pb-8 pt-12">
+            <div class="input-box-wrap p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden max-w-2xl mx-auto transition-all duration-300">
+                <textarea id="user-input" placeholder="Ask anything..." rows="1" class="w-full bg-transparent px-4 pt-2.5 pb-1 outline-none resize-none text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
                 
-                <div class="flex items-center justify-between px-2 pb-1">
-                    <div class="flex items-center gap-1.5">
-                        <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-100 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50 active:bg-zinc-200 dark:active:bg-zinc-700">
-                            <i class="fa-solid fa-globe"></i>
+                <div class="flex items-center justify-between pl-3 pr-1.5 pb-1.5 pt-1">
+                    <div class="flex items-center">
+                        <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50 active:bg-zinc-200 dark:active:bg-zinc-700">
+                            <i class="fa-solid fa-magnifying-glass"></i>
                             <span class="hidden sm:inline">Search</span>
                         </button>
                     </div>
-                    <button id="send-btn" disabled onclick="window.handleAction()" class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full transition-all shadow-lg active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                    <button id="send-btn" disabled onclick="window.handleAction()" class="w-10 h-10 flex items-center justify-center rounded-full transition-all shadow-lg active:brightness-90 shrink-0" style="background-color: var(--accent-color); color: var(--accent-contrast)">
                         <i id="send-btn-icon" class="fa-solid fa-arrow-up text-[10px]"></i>
                     </button>
                 </div>
@@ -412,7 +576,17 @@
         let currentModel = MODELS.OLM2;
         let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
         let currentChatId = crypto.randomUUID();
-        let settings = JSON.parse(localStorage.getItem('vail_settings_v4') || JSON.stringify({ temp: 0.7, accent: 'auto' }));
+        
+        let settings = JSON.parse(localStorage.getItem('vail_settings_v4') || JSON.stringify({ 
+            temp: 0.7, 
+            accent: 'auto', 
+            userName: '', 
+            userPic: '',
+            pfpX: 0,
+            pfpY: 0,
+            pfpScale: 1.0,
+            systemPrompt: 'You are VAIL, a helpful assistant. Use $$ for all equations and formulas without exception.'
+        }));
 
         const els = {
             chatCont: document.getElementById("chat-container"),
@@ -423,13 +597,18 @@
             welcome: document.getElementById("welcome-state"),
             hist: document.getElementById("history-list"),
             modMenu: document.getElementById("model-menu"),
-            setMenu: document.getElementById("settings-menu"),
             noteMenu: document.getElementById("notes-menu"),
             searchBtn: document.getElementById("search-btn"),
             actIcon: document.getElementById('active-model-icon'),
             sidebar: document.getElementById('sidebar'),
-            backdrop: document.getElementById('sidebar-backdrop'),
-            logoAi: document.getElementById('logo-ai-core')
+            logoAi: document.getElementById('logo-ai-core'),
+            greeting: document.getElementById('welcome-greeting'),
+            onboarding: document.getElementById('onboarding-overlay'),
+            settingsPanel: document.getElementById('settings-panel'),
+            sidebarName: document.getElementById('sidebar-user-name'),
+            avatarDisplay: document.getElementById('user-avatar-display'),
+            pfpMovableImg: document.getElementById('pfp-movable-img'),
+            pfpWorkspace: document.getElementById('pfp-workspace')
         };
 
         const hexToRgba = (hex, alpha) => {
@@ -447,8 +626,14 @@
             let tintSide = hexToRgba(finalColor, isAuto ? 0.01 : 0.07);
             let contrast = isAuto ? (isDark ? '#000000' : '#ffffff') : '#ffffff';
 
+            const bgBase = isDark ? [13, 13, 13] : [255, 255, 255];
+            const accRgb = isAuto ? (isDark ? [255,255,255] : [0,0,0]) : [parseInt(finalColor.slice(1,3), 16), parseInt(finalColor.slice(3,5), 16), parseInt(finalColor.slice(5,7), 16)];
+            const alpha = isAuto ? 0.02 : 0.10;
+            const blended = accRgb.map((c, i) => Math.round(c * alpha + bgBase[i] * (1 - alpha)));
+            const fadeGradientStop = `rgb(${blended[0]}, ${blended[1]}, ${blended[2]})`;
+
             settings.accent = color;
-            localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
+            saveSettings();
 
             document.getElementById('dynamic-accent-styles').innerHTML = `
                 :root {
@@ -458,20 +643,13 @@
                     --sidebar-tint: ${tintSide};
                     --accent-contrast: ${contrast};
                     --fade-color: ${isDark ? '#0d0d0d' : '#ffffff'};
+                    --fade-gradient-stop: ${fadeGradientStop};
                 }
             `;
             
             els.logoAi.classList.toggle('gradient-mode', isAuto);
             updateUI();
             renderHistory();
-            render(); 
-        };
-
-        window.selectModel = (key) => {
-            currentModel = MODELS[key];
-            client = null; // Clear existing connection
-            updateUI();
-            window.closeAllMenus();
         };
 
         window.toggleSidebar = () => {
@@ -479,43 +657,188 @@
                 const isHidden = els.sidebar.classList.contains('-translate-x-full');
                 if (isHidden) {
                     els.sidebar.classList.remove('-translate-x-full');
-                    els.backdrop.classList.remove('hidden');
-                    setTimeout(() => els.backdrop.style.opacity = '1', 10);
                 } else {
                     els.sidebar.classList.add('-translate-x-full');
-                    els.backdrop.style.opacity = '0';
-                    setTimeout(() => els.backdrop.classList.add('hidden'), 300);
                 }
             } else {
                 document.body.classList.toggle('sidebar-collapsed');
             }
         };
 
-        window.toggleTheme = () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('vail_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        window.setTheme = (mode) => {
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-dark-btn').style.borderColor = 'var(--accent-color)';
+                document.getElementById('theme-light-btn').style.borderColor = '';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-light-btn').style.borderColor = 'var(--accent-color)';
+                document.getElementById('theme-dark-btn').style.borderColor = '';
+            }
+            localStorage.setItem('vail_theme', mode);
             window.updateAccent(settings.accent);
+        };
+
+        window.toggleTheme = () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('vail_theme', isDark ? 'dark' : 'light');
+            window.updateAccent(settings.accent);
+        };
+
+        // --- PFP Sync Logic ---
+        let isDraggingPfp = false;
+        let pfpStartX, pfpStartY;
+
+        window.toggleSettingsPanel = () => {
+            const isActive = els.settingsPanel.classList.toggle('active');
+            if (isActive) {
+                document.getElementById('settings-name-input').value = settings.userName;
+                document.getElementById('settings-param-temp').value = settings.temp;
+                document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+                
+                els.pfpMovableImg.src = settings.userPic || '';
+                
+                document.getElementById('pfp-scale-slider').value = settings.pfpScale || 1.0;
+                document.getElementById('scale-val').innerText = (settings.pfpScale || 1.0).toFixed(1) + 'x';
+                
+                applyMovableStyles();
+            }
+        };
+
+        window.updateTempFromPanel = (val) => {
+            settings.temp = parseFloat(val);
+            document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+            saveSettings();
+        };
+
+        window.updatePfpScale = (val) => {
+            settings.pfpScale = parseFloat(val);
+            document.getElementById('scale-val').innerText = settings.pfpScale.toFixed(1) + 'x';
+            applyMovableStyles();
+            saveSettings();
+            updateProfileUI();
+        };
+
+        const applyMovableStyles = () => {
+            els.pfpMovableImg.style.transform = `translate(${settings.pfpX}px, ${settings.pfpY}px) scale(${settings.pfpScale})`;
+        };
+
+        window.pfpDragStart = (e) => {
+            isDraggingPfp = true;
+            pfpStartX = e.clientX - (settings.pfpX || 0);
+            pfpStartY = e.clientY - (settings.pfpY || 0);
+            els.pfpWorkspace.setPointerCapture(e.pointerId);
+        };
+
+        els.pfpWorkspace.addEventListener('pointermove', (e) => {
+            if (!isDraggingPfp) return;
+            settings.pfpX = e.clientX - pfpStartX;
+            settings.pfpY = e.clientY - pfpStartY;
+            applyMovableStyles();
+            updateProfileUI();
+        });
+
+        els.pfpWorkspace.addEventListener('pointerup', () => {
+            isDraggingPfp = false;
+            saveSettings();
+        });
+
+        window.handleProfilePicUpload = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                settings.userPic = event.target.result;
+                settings.pfpX = 0; settings.pfpY = 0; settings.pfpScale = 1.0;
+                saveSettings();
+                els.pfpMovableImg.src = settings.userPic;
+                applyMovableStyles();
+                updateProfileUI();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.handleOnboardingPfp = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                settings.userPic = event.target.result;
+                const preview = document.getElementById('onboarding-pfp-preview');
+                preview.innerHTML = `<img src="${settings.userPic}" class="w-full h-full object-cover">`;
+                preview.style.borderStyle = 'solid';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.updateSettingsFromPanel = () => {
+            settings.userName = document.getElementById('settings-name-input').value.trim();
+            saveSettings();
+            updateProfileUI();
+            render();
+        };
+
+        const saveSettings = () => {
+            localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
+        };
+
+        window.factoryReset = () => {
+            localStorage.clear();
+            window.location.reload();
+        };
+
+        window.completeOnboarding = () => {
+            const name = document.getElementById('onboarding-name').value.trim();
+            if (!name) return;
+            settings.userName = name;
+            saveSettings();
+            els.onboarding.style.pointerEvents = 'none';
+            els.onboarding.style.opacity = '0';
+            setTimeout(() => {
+                els.onboarding.classList.add('hidden');
+                updateProfileUI();
+                render();
+            }, 400);
+        };
+
+        const updateProfileUI = () => {
+            els.sidebarName.innerText = settings.userName || "Profile";
+            if (settings.userPic) {
+                const workspaceBase = 300; 
+                const sidebarSize = 32;
+                const ratio = sidebarSize / workspaceBase;
+                const scale = settings.pfpScale || 1.0;
+                const tx = (settings.pfpX || 0) * ratio;
+                const ty = (settings.pfpY || 0) * ratio;
+                
+                els.avatarDisplay.innerHTML = `
+                    <div class="w-full h-full relative overflow-hidden rounded-full pointer-events-none">
+                        <img src="${settings.userPic}" class="absolute" style="max-width:none; width:auto; height:${sidebarSize}px; transform: translate(${tx}px, ${ty}px) scale(${scale}); transform-origin: center center;">
+                    </div>
+                `;
+            } else {
+                els.avatarDisplay.innerText = settings.userName ? settings.userName[0].toUpperCase() : 'U';
+            }
         };
 
         window.toggleMenu = (e, id) => {
             e.stopPropagation();
-            [els.modMenu, els.setMenu, els.noteMenu].forEach(m => {
+            [els.modMenu, els.noteMenu].forEach(m => {
                 if (m.id === id) m.classList.toggle('active');
                 else m.classList.remove('active');
             });
         };
 
-        window.closeAllMenus = () => [els.modMenu, els.setMenu, els.noteMenu].forEach(m => m.classList.remove('active'));
-
-        window.updateTemp = (val) => {
-            settings.temp = parseFloat(val);
-            document.getElementById('temp-val').innerText = settings.temp.toFixed(2);
-            localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
+        window.closeAllMenus = () => {
+            [els.modMenu, els.noteMenu].forEach(m => m.classList.remove('active'));
+            els.settingsPanel.classList.remove('active');
         };
 
-        window.toggleSearch = () => {
-            webSearch = !webSearch;
+        window.selectModel = (key) => {
+            currentModel = MODELS[key];
+            client = null; 
             updateUI();
+            window.closeAllMenus();
         };
 
         window.resetChat = () => {
@@ -525,7 +848,6 @@
             isGenerating = false;
             render();
             updateUI();
-            if (window.innerWidth < 1024 && !els.sidebar.classList.contains('-translate-x-full')) window.toggleSidebar();
         };
 
         window.clearAll = () => {
@@ -544,6 +866,11 @@
             if (isGenerating) {
                 if (currentJob) currentJob.cancel();
                 isGenerating = false;
+                if (history.length > 0) {
+                    const lastIdx = history.length - 1;
+                    history[lastIdx][1] = (history[lastIdx][1] || "") + "\n\n<span class='opacity-40 text-[11px] block mt-4 select-none italic'>Response stopped</span>";
+                }
+                render();
                 updateUI();
                 save();
             } else {
@@ -577,8 +904,14 @@
 
                 for await (const chunk of job) {
                     if (chunk?.data?.[0]) {
-                        const output = chunk.data[0];
-                        history[history.length - 1][1] = typeof output === 'string' ? output : output.text;
+                        const content = chunk.data[0];
+                        if (content === "model_stop") {
+                            isGenerating = false;
+                            updateUI();
+                            break;
+                        }
+
+                        history[history.length - 1][1] = content;
                         const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                         if (lastProse) {
                             lastProse.innerHTML = marked.parse(history[history.length - 1][1]);
@@ -589,7 +922,7 @@
                 }
             } catch (e) {
                 if (e.message !== "The user cancelled the request.") {
-                    history[history.length - 1][1] = `⚠️ Interface error: ${e.message}`;
+                    history[history.length - 1][1] = `⚠️ Error: ${e.message}`;
                     render();
                 }
             } finally {
@@ -597,20 +930,17 @@
                 currentJob = null;
                 updateUI();
                 save();
+                render(); 
             }
         };
 
         const applyContentFeatures = (el) => {
-            // 1. Render Math
             el.innerHTML = el.innerHTML.replace(/\$\$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
-            
-            // 2. Add Code Copy Buttons
             el.querySelectorAll('pre').forEach(pre => {
                 if (pre.querySelector('.code-copy-btn')) return;
                 const btn = document.createElement('button');
                 btn.className = 'code-copy-btn';
                 btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
-                btn.title = 'Copy code';
                 btn.onclick = (e) => {
                     e.stopPropagation();
                     const code = pre.querySelector('code')?.innerText || pre.innerText;
@@ -624,101 +954,89 @@
 
         const save = () => {
             if (!history.length) return;
-            const title = history[0][0].substring(0, 30) + (history[0][0].length > 30 ? '...' : '');
+            const title = history[0][0].substring(0, 30);
             allChats[currentChatId] = { id: currentChatId, title, history, timestamp: Date.now(), pinned: allChats[currentChatId]?.pinned || false };
             localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
             renderHistory();
         };
 
         window.copyMsg = (e, idx) => {
-            const btn = e.currentTarget;
-            const icon = btn.querySelector('i');
             const text = history[idx][1] || '';
             navigator.clipboard.writeText(text);
-            
-            icon.className = 'fa-solid fa-check text-sm';
-            setTimeout(() => {
-                icon.className = 'fa-regular fa-copy text-sm';
-            }, 2000);
         };
 
         window.regenMsg = (e, idx) => {
             if (isGenerating) return;
-            const btn = e.currentTarget;
-            const icon = btn.querySelector('i');
             const msg = history[idx][0];
-            
-            icon.className = 'fa-solid fa-check text-sm';
-            setTimeout(() => {
-                history = history.slice(0, idx);
-                window.sendMessage(msg);
-            }, 500);
+            history = history.slice(0, idx);
+            window.sendMessage(msg);
         };
 
         const render = () => {
-            els.welcome.style.display = history.length ? 'none' : 'flex';
-            els.chatMsgs.innerHTML = history.map(([u, a], i) => `
-                <div class="user-row flex flex-col items-end">
-                    <div class="user-msg-bubble prose dark:prose-invert">${marked.parse(u)}</div>
-                </div>
-                <div class="ai-row flex items-start gap-3 sm:gap-4 animate-slide-up">
-                    <div class="w-8 h-8 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1">
-                        <div class="w-4 h-4">${currentModel.icon}</div>
+            const isWelcome = history.length === 0;
+            els.welcome.style.display = isWelcome ? 'flex' : 'none';
+            els.chatMsgs.style.display = isWelcome ? 'none' : 'flex';
+            
+            if (isWelcome && settings.userName) {
+                els.greeting.innerText = `How can I help you today, ${settings.userName}?`;
+            }
+
+            if (!isWelcome) {
+                els.chatMsgs.innerHTML = history.map(([u, a], i) => `
+                    <div class="user-row flex flex-col items-end">
+                        <div class="user-msg-bubble prose dark:prose-invert">${marked.parse(u)}</div>
                     </div>
-                    <div class="flex-1 min-w-0 pt-2">
-                        <div class="prose dark:prose-invert prose-target w-full">
-                            ${a ? marked.parse(a) : '<div class="flex items-center h-6"><span class="aether-loader"></span></div>'}
+                    <div class="ai-row flex items-start gap-4 animate-slide-up">
+                        <div class="w-8 h-8 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1">
+                            <div class="w-4 h-4">${currentModel.icon}</div>
                         </div>
-                        ${a ? `
-                        <div class="flex items-center gap-4 mt-4">
-                            <button onclick="window.copyMsg(event, ${i})" class="opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)" title="Copy Message">
-                                <i class="fa-regular fa-copy text-sm"></i>
-                            </button>
-                            <button onclick="window.regenMsg(event, ${i})" class="opacity-70 hover:opacity-100 transition-opacity" style="color: var(--accent-color)" title="Regenerate">
-                                <i class="fa-solid fa-rotate-right text-sm"></i>
-                            </button>
+                        <div class="flex-1 min-w-0 pt-2">
+                            <div class="prose dark:prose-invert prose-target w-full">
+                                ${a ? marked.parse(a) : '<div class="flex items-center h-6"><span class="aether-loader"></span></div>'}
+                            </div>
+                            ${a && !isGenerating ? `
+                            <div class="flex items-center gap-4 mt-4">
+                                <button onclick="window.copyMsg(event, ${i})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)">
+                                    <i class="fa-regular fa-copy text-sm"></i>
+                                </button>
+                                <button onclick="window.regenMsg(event, ${i})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)">
+                                    <i class="fa-solid fa-rotate-right text-sm"></i>
+                                </button>
+                            </div>
+                            ` : ''}
                         </div>
-                        ` : ''}
                     </div>
-                </div>
-            `).join('');
-            els.chatMsgs.querySelectorAll('.prose-target').forEach(applyContentFeatures);
+                `).join('');
+                els.chatMsgs.querySelectorAll('.prose-target').forEach(applyContentFeatures);
+            }
+        };
+
+        window.toggleSearch = () => {
+            webSearch = !webSearch;
+            updateUI();
         };
 
         const updateUI = () => {
             const hasText = els.input.value.trim().length > 0;
             els.send.disabled = !hasText && !isGenerating;
-            
-            if (isGenerating) {
-                els.icon.className = "fa-solid fa-square text-[10px]";
-                els.send.style.opacity = "1";
-            } else {
-                els.icon.className = "fa-solid fa-arrow-up text-[10px]";
-                els.send.style.opacity = hasText ? "1" : "0.3";
-            }
-
+            els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-[10px]";
             els.actIcon.innerHTML = currentModel.icon;
-            els.actIcon.style.color = 'var(--accent-color)';
-            document.getElementById('active-model-name').innerText = currentModel.name;
+            
+            const modelNameEl = document.getElementById('active-model-name');
+            if(modelNameEl) modelNameEl.innerText = currentModel.name;
 
             const iconPro = document.getElementById('icon-pro-menu');
-            const iconStargaze = document.getElementById('icon-stargaze-menu');
+            const iconStar = document.getElementById('icon-stargaze-menu');
             const checkPro = document.getElementById('check-pro');
-            const checkStargaze = document.getElementById('check-stargaze');
+            const checkStar = document.getElementById('check-stargaze');
 
-            if (iconPro) {
-                iconPro.innerHTML = MODELS.OLM2.icon;
-                iconPro.style.color = currentModel === MODELS.OLM2 ? 'var(--accent-color)' : '';
-            }
-            if (iconStargaze) {
-                iconStargaze.innerHTML = MODELS.OLM1.icon;
-                iconStargaze.style.color = currentModel === MODELS.OLM1 ? 'var(--accent-color)' : '';
-            }
+            if(iconPro) iconPro.innerHTML = MODELS.OLM2.icon;
+            if(iconStar) iconStar.innerHTML = MODELS.OLM1.icon;
             
-            if (checkPro) checkPro.classList.toggle('hidden', currentModel !== MODELS.OLM2);
-            if (checkStargaze) checkStargaze.classList.toggle('hidden', currentModel !== MODELS.OLM1);
+            if(checkPro) checkPro.classList.toggle('hidden', currentModel !== MODELS.OLM2);
+            if(checkStar) checkStar.classList.toggle('hidden', currentModel !== MODELS.OLM1);
 
-            els.searchBtn.className = `flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-[9px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
+            els.searchBtn.className = `flex items-center gap-2 px-3.5 py-1.5 rounded-full border transition-all text-[10px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
             els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
             els.searchBtn.style.color = webSearch ? 'var(--accent-contrast)' : '';
         };
@@ -736,54 +1054,56 @@
             renderHistory();
         };
 
+        const renderHistoryItem = (c) => `
+            <div class="history-btn-container ${c.id === currentChatId ? 'history-item-active' : ''} rounded-xl group">
+                <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-3 rounded-xl text-[13px] font-medium truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">
+                    ${c.title}
+                </button>
+                <div class="flex items-center gap-1 pr-1">
+                    <button onclick="event.stopPropagation(); window.pinChat('${c.id}')" class="history-action-btn ${c.pinned ? 'text-blue-500 opacity-100' : ''}">
+                        <i class="fa-solid fa-thumbtack"></i>
+                    </button>
+                    <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+
         const renderHistory = () => {
             const chats = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
             
-            const now = new Date();
-            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-            const yesterdayStart = todayStart - 24 * 60 * 60 * 1000;
-            const lastWeekStart = todayStart - 7 * 24 * 60 * 60 * 1000;
+            const today = new Date().setHours(0, 0, 0, 0);
+            const yesterday = today - 86400000;
 
-            const sections = {
-                pinned: chats.filter(c => c.pinned),
-                today: chats.filter(c => !c.pinned && c.timestamp >= todayStart),
-                yesterday: chats.filter(c => !c.pinned && c.timestamp >= yesterdayStart && c.timestamp < todayStart),
-                lastWeek: chats.filter(c => !c.pinned && c.timestamp >= lastWeekStart && c.timestamp < yesterdayStart),
-                dust: chats.filter(c => !c.pinned && c.timestamp < lastWeekStart)
-            };
-
-            const labels = {
-                pinned: "Pinned",
-                today: "Today",
-                yesterday: "Yesterday",
-                lastWeek: "Last Week",
-                dust: "Dust collecting"
-            };
+            const pinned = chats.filter(c => c.pinned);
+            const todayChats = chats.filter(c => !c.pinned && c.timestamp >= today);
+            const yesterdayChats = chats.filter(c => !c.pinned && c.timestamp >= yesterday && c.timestamp < today);
+            const olderChats = chats.filter(c => !c.pinned && c.timestamp < yesterday);
 
             let html = '';
-            for (const key in sections) {
-                const group = sections[key];
-                if (group.length > 0) {
-                    html += `<div class="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-400 px-4 mt-6 mb-2 opacity-60">${labels[key]}</div>`;
-                    html += group.map(c => `
-                        <div class="history-btn-container ${c.id === currentChatId ? 'history-item-active' : ''} rounded-xl group">
-                            <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-3 rounded-xl text-[13px] font-medium transition-all truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">
-                                ${c.title}
-                            </button>
-                            <div class="flex items-center gap-1 pr-1">
-                                <button onclick="event.stopPropagation(); window.pinChat('${c.id}')" class="history-action-btn ${c.pinned ? 'text-blue-500 opacity-100' : ''}">
-                                    <i class="fa-solid fa-thumbtack"></i>
-                                </button>
-                                <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
-                }
+
+            if (pinned.length > 0) {
+                html += '<div class="history-section-header">Pinned</div>';
+                pinned.forEach(c => html += renderHistoryItem(c));
             }
 
-            els.hist.innerHTML = html || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">Archive Empty</div>`;
+            if (todayChats.length > 0) {
+                html += '<div class="history-section-header">Today</div>';
+                todayChats.forEach(c => html += renderHistoryItem(c));
+            }
+
+            if (yesterdayChats.length > 0) {
+                html += '<div class="history-section-header">Yesterday</div>';
+                yesterdayChats.forEach(c => html += renderHistoryItem(c));
+            }
+
+            if (olderChats.length > 0) {
+                html += '<div class="history-section-header">Dust collecting</div>';
+                olderChats.forEach(c => html += renderHistoryItem(c));
+            }
+
+            els.hist.innerHTML = html || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">No chats</div>`;
         };
 
         window.loadChat = (id) => {
@@ -792,35 +1112,30 @@
             render();
             updateUI();
             renderHistory();
-            if (window.innerWidth < 1024) window.toggleSidebar();
         };
 
         const scrollToBottom = () => els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
 
         const init = () => {
+            if (!settings.userName) els.onboarding.classList.remove('hidden');
             if (localStorage.getItem('vail_theme') === 'dark') document.documentElement.classList.add('dark');
             window.updateAccent(settings.accent);
-            window.updateTemp(settings.temp);
-            
+            updateProfileUI();
             els.input.oninput = () => {
                 els.input.style.height = 'auto';
                 els.input.style.height = Math.min(els.input.scrollHeight, 160) + 'px';
                 updateUI();
             };
-            
             els.input.onkeydown = (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    window.handleAction();
-                }
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.handleAction(); }
             };
-
-            window.onclick = () => window.closeAllMenus();
+            window.onclick = (e) => { if (!els.settingsPanel.contains(e.target) && !document.getElementById('model-dropdown-btn').contains(e.target)) window.closeAllMenus(); };
             renderHistory();
+            render();
+            updateUI();
         };
 
         init();
     </script>
 </body>
 </html>
-
