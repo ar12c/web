@@ -405,13 +405,13 @@
             <div class="flex items-center gap-1 lg:gap-2">
                 <button id="menu-toggle-btn" onclick="window.toggleSidebar()" class="w-12 h-12 flex items-center justify-center -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden"><i class="fa-solid fa-bars-staggered text-base"></i></button>
                 <div class="relative">
-                    <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-3 py-2 text-sm font-bold rounded-lg lg:rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"><div id="active-model-icon" class="w-4 h-4 lg:w-3.5 lg:h-3.5" style="color: var(--accent-color)"></div><span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-[13px]">VAIL North Star</span><i class="fa-solid fa-chevron-down text-[8px] opacity-30"></i></button>
+                    <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-3 py-2 text-sm font-bold rounded-lg lg:rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"><div id="active-model-icon" class="w-4 h-4 lg:w-3.5 lg:h-3.5" style="color: var(--accent-color)"></div><span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-[13px]">OLM North Star</span><i class="fa-solid fa-chevron-down text-[8px] opacity-30"></i></button>
                     <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-72 lg:w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-xl overflow-hidden py-2">
                         <button onclick="window.selectModel('OLM2')" class="w-full text-left px-5 py-4 lg:px-4 lg:py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group">
                             <div class="flex items-center gap-3 lg:gap-2">
                                 <div id="icon-pro-menu" class="w-5 h-5 lg:w-4 lg:h-4"></div>
                                 <div>
-                                    <span class="block font-bold text-xs">VAIL North Star</span>
+                                    <span class="block font-bold text-xs">OLM North Star</span>
                                     <span class="text-[10px] text-zinc-400">Fast synthesis</span>
                                 </div>
                             </div>
@@ -421,7 +421,7 @@
                             <div class="flex items-center gap-3 lg:gap-2">
                                 <div id="icon-stargaze-menu" class="w-5 h-5 lg:w-4 lg:h-4 text-zinc-400"></div>
                                 <div>
-                                    <span class="block font-bold text-xs">VAIL Stargaze</span>
+                                    <span class="block font-bold text-xs">OLM Stargaze</span>
                                     <span class="text-[10px] text-zinc-400">Deep reasoning</span>
                                 </div>
                             </div>
@@ -468,7 +468,7 @@
         <!-- Input Area -->
         <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-8 z-40 pb-6 lg:pb-6 pt-12">
             <div class="input-box-wrap p-2 lg:p-1.5 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl lg:rounded-2xl overflow-hidden max-w-2xl lg:max-w-xl mx-auto transition-all duration-300">
-                <textarea id="user-input" placeholder="Message VAIL..." rows="1" class="w-full bg-transparent px-5 py-4 lg:px-4 lg:py-2.5 outline-none resize-none text-base sm:text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
+                <textarea id="user-input" placeholder="Message OLM..." rows="1" class="w-full bg-transparent px-5 py-4 lg:px-4 lg:py-2.5 outline-none resize-none text-base sm:text-sm max-h-40 sm:max-h-48 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
                 <div class="flex items-center justify-between pl-3 pr-1.5 pb-2 pt-1 lg:pb-1 lg:pt-0.5">
                     <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-4 py-3 lg:px-3 lg:py-1.5 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] lg:text-[9px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50 active:bg-zinc-200 dark:active:bg-zinc-700">
                         <i class="fa-solid fa-magnifying-glass"></i><span class="hidden sm:inline">Search</span>
@@ -490,8 +490,8 @@
         };
 
         const MODELS = { 
-            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "VAIL Stargaze", icon: SVG.STAR },
-            OLM2: { id: "ar12c/OkemoLLM", name: "VAIL North Star", icon: SVG.NORTH } 
+            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", icon: SVG.STAR },
+            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: SVG.NORTH } 
         };
 
         let client = null, history = [], isGenerating = false, webSearch = false, currentJob = null;
