@@ -59,7 +59,7 @@
     <style>
         * { transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
+
         body::before {
             content: "";
             position: fixed;
@@ -121,7 +121,7 @@
             overflow-wrap: anywhere;
         }
         .prose a { color: var(--accent-color); text-decoration: none; }
-        
+
         @media (min-width: 1024px) {
             .prose { font-size: 0.9rem; line-height: 1.5; }
         }
@@ -164,7 +164,7 @@
         .prose pre:hover .code-copy-btn { opacity: 1; }
         .dark .code-copy-btn { background: rgba(39, 39, 42, 0.8); border-color: rgba(255,255,255,0.1); }
 
-        .katex-display { margin: 1rem 0 !important; padding: 0.75rem; background: rgba(0, 0, 0, 0.02); border-radius: 12px; overflow-x: auto; }
+        .katex-display { margin: 1.5rem 0 !important; padding: 0.75rem; background: rgba(0, 0, 0, 0.02); border-radius: 12px; overflow-x: auto; }
 
         .history-item-active { background: rgba(0, 0, 0, 0.06); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent-color); }
         .dark .history-item-active { background: rgba(255, 255, 255, 0.05); }
@@ -174,14 +174,14 @@
 
         .accent-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
         .accent-dot.active { border-color: currentColor; }
-        
+
         .input-box-wrap { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); position: relative; z-index: 40; pointer-events: auto; }
         .dark .input-box-wrap { background-color: rgba(20, 20, 20, 0.85); }
-        
+
         #bottom-fade { background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 30%, transparent 100%); pointer-events: none; }
-        
+
         .history-btn-container { display: flex; align-items: center; width: 100%; gap: 4px; padding: 0 4px; position: relative; }
-        
+
         .history-action-btn { 
             flex-shrink: 0; 
             width: 28px; 
@@ -201,11 +201,11 @@
 
         .history-section-header { font-size: 9px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.1em; padding: 1.25rem 0.75rem 0.4rem; }
 
-        /* Refined Thinking Animation */
+        /* Refined Thinking Animation - Centered with Icon */
         .thinking-container {
             display: flex;
             align-items: center;
-            height: 1.75rem; /* Match icon height */
+            height: 1.75rem; /* Matches the 28px (w-7 h-7) icon exactly */
             user-select: none;
             box-sizing: border-box;
         }
@@ -241,7 +241,7 @@
         }
         .dark #onboarding-overlay { background: rgba(13, 13, 13, 0.85); }
         #onboarding-overlay.hidden { display: none !important; }
-        
+
         .onboarding-card { 
             width: 100%; max-width: 440px; padding: 2rem 2.5rem; border-radius: 1.25rem; 
             background: white; border: 1px solid rgba(0,0,0,0.05); 
@@ -256,9 +256,9 @@
 
         #user-profile-section { padding: 0.6rem 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 0.4rem; }
         .dark #user-profile-section { border-top-color: rgba(255,255,255,0.05); }
-        
+
         #user-avatar-display { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--accent-color); color: var(--accent-contrast); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
-        
+
         #settings-panel {
             position: fixed; z-index: 1100; background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(25px); border: 1px solid rgba(0,0,0,0.1);
@@ -279,7 +279,7 @@
             }
             .dark #settings-panel.active { background: #0d0d0d !important; }
         }
-        
+
         @media (min-width: 1024px) {
             #settings-panel { 
                 left: 1rem; bottom: 5rem; top: auto; transform: none; width: 280px; 
@@ -439,8 +439,8 @@
                 </a>
             </section>
             <section class="pt-4 pb-4 border-t border-zinc-100 dark:border-zinc-800 text-center">
-                <button onclick="window.factoryReset()" class="w-full py-4 lg:py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-trash-can"></i> <span data-t="erase_data">Erase data</span>
+                <button onclick="window.clearAll()" class="w-full py-4 lg:py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-trash-can"></i> <span data-t="clear_chats">Clear chats</span>
                 </button>
             </section>
         </div>
@@ -573,12 +573,12 @@
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
         // Constants using unique names to prevent conflict
-        const APP_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
-        const APP_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
+        const UNIQUE_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
+        const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
 
         const MODELS = { 
-            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", icon: APP_SVG_STAR },
-            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: APP_SVG_NORTH } 
+            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", icon: UNIQUE_SVG_STAR },
+            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: UNIQUE_SVG_NORTH } 
         };
 
         const translations = {
@@ -626,7 +626,7 @@
                 ex_writing: "Writing Help",
                 ex_summary: "Quick Summary",
                 input_placeholder: "Message OLM...",
-                thinking: "Hmm...",
+                thinking: "Thinking...",
                 terminated: "Protocol Terminated",
                 no_history: "No history",
                 prompt_error: "⚠️ Service error: ",
@@ -683,7 +683,7 @@
                 ex_writing: "寫作助手",
                 ex_summary: "快速摘要",
                 input_placeholder: "傳送訊息給 OLM...",
-                thinking: "思考中",
+                thinking: "思考中...",
                 terminated: "程序已終止",
                 no_history: "暫無紀錄",
                 prompt_error: "⚠️ 服務錯誤：",
@@ -702,7 +702,7 @@
         let currentModel = MODELS.OLM2;
         let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
         let currentChatId = crypto.randomUUID();
-        
+
         let settings = JSON.parse(localStorage.getItem('vail_settings_v4') || JSON.stringify({ 
             temp: 0.7, accent: 'auto', userName: '', userPic: '',
             pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
@@ -968,6 +968,7 @@
             allChats = {}; 
             localStorage.setItem('vail_history_v4', '{}'); 
             window.resetChat(); 
+            renderHistory(); // Added this to clear list immediately
             window.updateStorageUsage();
         };
 
@@ -1101,13 +1102,13 @@
             } else {
                 els.chatMsgs.innerHTML = chatHistory.map(([u, a], i) => `
                     <div class="user-row flex flex-col items-end"><div class="user-msg-bubble prose dark:prose-invert font-medium">${marked.parse(u)}</div></div>
-                    <div class="ai-row flex items-start gap-3 animate-fade-in w-full">
-                        <div class="w-7 h-7 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1.5"><div class="w-3.5 h-3.5">${currentModel.icon}</div></div>
+                    <div class="ai-row flex ${a ? 'items-start' : 'items-center'} gap-3 animate-fade-in w-full">
+                        <div class="w-7 h-7 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 ${a ? 'mt-1.5' : ''}"><div class="w-3.5 h-3.5">${currentModel.icon}</div></div>
                         <div class="flex-1 min-w-0">
-                            <div class="prose dark:prose-invert prose-target w-full leading-relaxed break-words overflow-wrap-anywhere ${a ? 'mt-1.5' : ''}">
+                            <div class="prose dark:prose-invert prose-target w-full leading-relaxed break-words overflow-wrap-anywhere ${a ? 'mt-2' : ''}">
                                 ${a ? marked.parse(a) : `
-                                <div class="thinking-container mt-1.5">
-                                    <span class="thinking-text-gradient">${dict.thinking}...</span>
+                                <div class="thinking-container">
+                                    <span class="thinking-text-gradient">${dict.thinking}</span>
                                 </div>
                                 `}
                             </div>
