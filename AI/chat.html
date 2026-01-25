@@ -45,7 +45,6 @@
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'shimmer': 'shimmer 2.5s linear infinite',
-                        'spin-slow': 'spin 2s linear infinite',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
@@ -108,10 +107,19 @@
             border-radius: 1rem;
             max-width: 90%;
             animation: fadeIn 0.3s ease-out forwards;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
         }
         .dark .user-msg-bubble { background-color: rgba(255,255,255,0.05); }
 
-        .prose { max-width: 100%; color: inherit; font-size: 0.95rem; line-height: 1.6; }
+        .prose { 
+            max-width: 100%; 
+            color: inherit; 
+            font-size: 0.95rem; 
+            line-height: 1.6; 
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
         .prose a { color: var(--accent-color); text-decoration: none; }
         
         @media (min-width: 1024px) {
@@ -193,14 +201,13 @@
 
         .history-section-header { font-size: 9px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.1em; padding: 1.25rem 0.75rem 0.4rem; }
 
-        /* Stable Thinking Animation */
+        /* Refined Thinking Animation */
         .thinking-container {
             display: flex;
             align-items: center;
-            gap: 0.625rem;
-            padding: 0.25rem 0.25rem 2rem; 
+            height: 1.75rem; /* Match icon height */
             user-select: none;
-            height: 1.75rem; /* Match icon height for fixed horizontal line */
+            box-sizing: border-box;
         }
 
         .thinking-text-gradient {
@@ -211,7 +218,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: thinking-shimmer 2.5s linear infinite;
+            animation: thinking-shimmer 2s linear infinite;
         }
         .dark .thinking-text-gradient {
             background: linear-gradient(90deg, #6c6c6c 0%, #ffffff 50%, #6c6c6c 100%);
@@ -223,24 +230,6 @@
 
         @keyframes thinking-shimmer {
             to { background-position: 200% center; }
-        }
-
-        .thought-loader {
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid #71717a;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation-anim 1s linear infinite;
-            flex-shrink: 0;
-        }
-        .dark .thought-loader { border-color: #a1a1aa; border-bottom-color: transparent; }
-
-        @keyframes rotation-anim {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         /* Onboarding Styles */
@@ -583,14 +572,13 @@
     <script type="module">
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-        const SVG = {
-            NORTH: `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`,
-            STAR: `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`
-        };
+        // Constants using unique names to prevent conflict
+        const APP_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
+        const APP_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
 
         const MODELS = { 
-            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", icon: SVG.STAR },
-            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: SVG.NORTH } 
+            OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", icon: APP_SVG_STAR },
+            OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: APP_SVG_NORTH } 
         };
 
         const translations = {
@@ -710,7 +698,7 @@
             }
         };
 
-        let client = null, history = [], isGenerating = false, webSearch = false, currentJob = null;
+        let client = null, chatHistory = [], isGenerating = false, webSearch = false, currentJob = null;
         let currentModel = MODELS.OLM2;
         let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
         let currentChatId = crypto.randomUUID();
@@ -719,7 +707,7 @@
             temp: 0.7, accent: 'auto', userName: '', userPic: '',
             pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
             lang: 'en',
-            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS use $$ for ALL math formulas and equations without exception. DO NOT use parentheses or square brackets for wrapping equations.'
+            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL equations in $$ tags only. DO NOT use parentheses or square brackets for wrapping equations.'
         }));
 
         const els = {
@@ -748,15 +736,15 @@
         };
 
         window.updateStorageUsage = () => {
-            let total = 0;
+            let storageSize = 0;
             for (let k in localStorage) {
                 if (Object.prototype.hasOwnProperty.call(localStorage, k)) {
-                    total += ((localStorage[k].length + k.length) * 2);
+                    storageSize += ((localStorage[k].length + k.length) * 2);
                 }
             }
-            const gbValue = total / (1024 * 1024 * 1024);
+            const gbVal = storageSize / (1024 * 1024 * 1024);
             if (els.storageDisplay) {
-                els.storageDisplay.innerText = `${gbValue.toFixed(6)} GB`;
+                els.storageDisplay.innerText = `${gbVal.toFixed(6)} GB`;
             }
         };
 
@@ -972,7 +960,7 @@
 
         window.resetChat = () => {
             if (isGenerating && currentJob) currentJob.cancel();
-            currentChatId = crypto.randomUUID(); history = []; isGenerating = false;
+            currentChatId = crypto.randomUUID(); chatHistory = []; isGenerating = false;
             render(); updateUI();
         };
 
@@ -983,12 +971,12 @@
             window.updateStorageUsage();
         };
 
-        async function getClient() { if (client) return client; client = await Client.connect(currentModel.id); return client; }
+        async function getGradioClient() { if (client) return client; client = await Client.connect(currentModel.id); return client; }
 
         window.handleAction = () => {
             if (isGenerating) {
                 if (currentJob) currentJob.cancel(); isGenerating = false;
-                if (history.length > 0) history[history.length - 1][1] = (history[history.length - 1][1] || "") + `\n\n<span class='opacity-40 text-[11px] block mt-4 italic'>${translations[settings.lang || 'en'].terminated}</span>`;
+                if (chatHistory.length > 0) chatHistory[chatHistory.length - 1][1] = (chatHistory[chatHistory.length - 1][1] || "") + `\n\n<span class='opacity-40 text-[11px] block mt-4 italic'>${translations[settings.lang || 'en'].terminated}</span>`;
                 render(); updateUI(); save();
             } else window.sendMessage();
         };
@@ -997,22 +985,22 @@
             if (isGenerating) return;
             const msg = txt || els.input.value.trim(); if (!msg) return;
             els.input.value = ""; els.input.style.height = "auto";
-            history.push([msg, null]); render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+            chatHistory.push([msg, null]); render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
             isGenerating = true; updateUI();
             try {
-                const c = await getClient();
-                const job = c.submit(0, [msg + (webSearch ? " <SEARCH_MODE>" : ""), history.slice(0, -1), settings.temp, 0.85, 1.2, 4096]);
+                const c = await getGradioClient();
+                const job = c.submit(0, [msg + (webSearch ? " <SEARCH_MODE>" : ""), chatHistory.slice(0, -1), settings.temp, 0.85, 1.2, 4096]);
                 currentJob = job;
                 for await (const chunk of job) {
                     if (chunk?.data?.[0]) {
                         const content = chunk.data[0]; if (content === "model_stop") break;
-                        history[history.length - 1][1] = content;
+                        chatHistory[chatHistory.length - 1][1] = content;
                         const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                         if (lastProse) { lastProse.innerHTML = marked.parse(content); applyContentFeatures(lastProse); }
                         els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
                     }
                 }
-            } catch (e) { if (e.message !== "The user cancelled the request.") history[history.length - 1][1] = `${translations[settings.lang || 'en'].prompt_error}${e.message}`; }
+            } catch (e) { if (e.message !== "The user cancelled the request.") chatHistory[chatHistory.length - 1][1] = `${translations[settings.lang || 'en'].prompt_error}${e.message}`; }
             finally { isGenerating = false; updateUI(); save(); render(); }
         };
 
@@ -1030,15 +1018,15 @@
         };
 
         const save = () => {
-            if (!history.length) return;
-            allChats[currentChatId] = { id: currentChatId, title: history[0][0].substring(0, 30), history, timestamp: Date.now(), pinned: allChats[currentChatId]?.pinned || false };
+            if (!chatHistory.length) return;
+            allChats[currentChatId] = { id: currentChatId, title: chatHistory[0][0].substring(0, 30), history: chatHistory, timestamp: Date.now(), pinned: allChats[currentChatId]?.pinned || false };
             localStorage.setItem('vail_history_v4', JSON.stringify(allChats)); 
             renderHistory();
             window.updateStorageUsage();
         };
 
         window.copyMsg = (idx, btnEl) => {
-            const content = history[idx][1] || '';
+            const content = chatHistory[idx][1] || '';
             navigator.clipboard.writeText(content);
             const icon = btnEl.querySelector('i');
             const originalClass = icon.className;
@@ -1046,7 +1034,7 @@
             setTimeout(() => { icon.className = originalClass; }, 2000);
         };
 
-        window.regenMsg = (idx) => { if (!isGenerating) { const msg = history[idx][0]; history = history.slice(0, idx); window.sendMessage(msg); } };
+        window.regenMsg = (idx) => { if (!isGenerating) { const msg = chatHistory[idx][0]; chatHistory = chatHistory.slice(0, idx); window.sendMessage(msg); } };
 
         window.togglePin = (id) => {
             if (allChats[id]) {
@@ -1091,7 +1079,7 @@
         };
 
         window.loadChat = (id) => {
-            currentChatId = id; history = allChats[id].history; render(); updateUI(); renderHistory();
+            currentChatId = id; chatHistory = allChats[id].history; render(); updateUI(); renderHistory();
         };
 
         window.delChat = (id) => {
@@ -1102,7 +1090,7 @@
         };
 
         const render = () => {
-            const isWelcome = history.length === 0;
+            const isWelcome = chatHistory.length === 0;
             els.welcome.style.display = isWelcome ? 'flex' : 'none';
             els.chatMsgs.style.display = isWelcome ? 'none' : 'flex';
             const dict = translations[settings.lang || 'en'];
@@ -1111,15 +1099,14 @@
                 const welcomeName = settings.userName;
                 els.greeting.innerText = (welcomeName && welcomeName !== "Guest") ? `${dict.welcome_back}${welcomeName}?` : dict.welcome_header;
             } else {
-                els.chatMsgs.innerHTML = history.map(([u, a], i) => `
+                els.chatMsgs.innerHTML = chatHistory.map(([u, a], i) => `
                     <div class="user-row flex flex-col items-end"><div class="user-msg-bubble prose dark:prose-invert font-medium">${marked.parse(u)}</div></div>
-                    <div class="ai-row flex items-start gap-3 animate-fade-in">
-                        <div class="w-7 h-7 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-0.5"><div class="w-3.5 h-3.5">${currentModel.icon}</div></div>
+                    <div class="ai-row flex items-start gap-3 animate-fade-in w-full">
+                        <div class="w-7 h-7 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 mt-1.5"><div class="w-3.5 h-3.5">${currentModel.icon}</div></div>
                         <div class="flex-1 min-w-0">
-                            <div class="prose dark:prose-invert prose-target w-full leading-relaxed">
+                            <div class="prose dark:prose-invert prose-target w-full leading-relaxed break-words overflow-wrap-anywhere ${a ? 'mt-1.5' : ''}">
                                 ${a ? marked.parse(a) : `
-                                <div class="thinking-container">
-                                    <span class="thought-loader"></span>
+                                <div class="thinking-container mt-1.5">
                                     <span class="thinking-text-gradient">${dict.thinking}...</span>
                                 </div>
                                 `}
@@ -1153,7 +1140,7 @@
 
         window.factoryReset = () => { localStorage.clear(); window.location.reload(); };
 
-        const init = () => {
+        const initApp = () => {
             if (!settings.hasCompletedTutorial) els.onboarding.classList.remove('hidden');
             if (localStorage.getItem('vail_theme') === 'dark') document.documentElement.classList.add('dark');
             window.updateAccent(settings.accent); updateProfileUI();
@@ -1169,7 +1156,8 @@
             window.updateStorageUsage();
             renderHistory(); render(); updateUI();
         };
-        init();
+        initApp();
     </script>
 </body>
 </html>
+
