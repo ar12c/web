@@ -175,8 +175,57 @@
         .accent-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
         .accent-dot.active { border-color: currentColor; }
 
-        .input-box-wrap { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); position: relative; z-index: 40; pointer-events: auto; }
-        .dark .input-box-wrap { background-color: rgba(20, 20, 20, 0.85); }
+        /* Input Box Styling - Solid Borders (Gradient Removed per request) */
+        .input-box-wrap { 
+            background-color: white; 
+            backdrop-filter: blur(24px); 
+            position: relative; 
+            z-index: 40; 
+            pointer-events: auto;
+            border-radius: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .dark .input-box-wrap { 
+            background-color: #141414; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        body.is-generating .input-box-wrap {
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px -10px var(--accent-glow);
+        }
+
+        /* Shoot-up Flare Animation (Apple Intelligence Gradient) */
+        #intelligence-flare {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(ellipse at bottom, 
+                rgba(96, 165, 250, 0.4) 0%, 
+                rgba(168, 85, 247, 0.4) 25%, 
+                rgba(236, 72, 153, 0.3) 50%, 
+                rgba(244, 63, 94, 0.2) 75%, 
+                transparent 100%);
+            border-radius: 400px 400px 0 0;
+            filter: blur(40px);
+            pointer-events: none;
+            z-index: 30;
+            opacity: 0;
+            transform: translate(-50%, 20px) scaleX(0.5);
+        }
+
+        .flare-active {
+            animation: shoot-flare 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes shoot-flare {
+            0% { transform: translate(-50%, 20px) scaleX(0.5) scaleY(0.2); opacity: 0; }
+            20% { opacity: 0.7; }
+            100% { transform: translate(-50%, -250px) scaleX(1.4) scaleY(1.2); opacity: 0; }
+        }
 
         #bottom-fade { background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 30%, transparent 100%); pointer-events: none; }
 
@@ -201,11 +250,10 @@
 
         .history-section-header { font-size: 9px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.1em; padding: 1.25rem 0.75rem 0.4rem; }
 
-        /* Refined Thinking Animation - Centered with Icon */
         .thinking-container {
             display: flex;
             align-items: center;
-            height: 1.75rem; /* Matches the 28px (w-7 h-7) icon exactly */
+            height: 1.75rem;
             user-select: none;
             box-sizing: border-box;
         }
@@ -213,7 +261,7 @@
         .thinking-text-gradient {
             font-size: 0.875rem;
             font-weight: 600;
-            background: linear-gradient(90deg, #c5c5c5 0%, #000000 50%, #c5c5c5 100%);
+            background: linear-gradient(90deg, #9ca3af 0%, #111827 50%, #9ca3af 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -221,7 +269,7 @@
             animation: thinking-shimmer 2s linear infinite;
         }
         .dark .thinking-text-gradient {
-            background: linear-gradient(90deg, #6c6c6c 0%, #ffffff 50%, #6c6c6c 100%);
+            background: linear-gradient(90deg, #4b5563 0%, #f9fafb 50%, #4b5563 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -232,7 +280,7 @@
             to { background-position: 200% center; }
         }
 
-        /* Onboarding Styles */
+        /* Onboarding */
         #onboarding-overlay { 
             position: fixed; inset: 0; z-index: 2000; 
             background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(40px); 
@@ -528,7 +576,7 @@
                     <div class="border-l-2 border-blue-500 pl-3">
                         <p class="font-bold text-[11px] mb-1" data-t="ui_opt">UI Optimization</p>
                         <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                            <li data-t="opt_1">Gradient-based thinking synthesis</li>
+                            <li data-t="opt_1">Shoot-up flare intelligence flare</li>
                             <li data-t="opt_2">Two-step onboarding protocol</li>
                             <li data-t="opt_3">Equation support strictly via $$ delimiters</li>
                         </ul>
@@ -555,15 +603,19 @@
         </div>
 
         <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 z-40 pb-6 pt-12">
-            <div class="input-box-wrap p-2 shadow-2xl border border-zinc-200 dark:border-zinc-800 rounded-3xl overflow-hidden max-w-2xl mx-auto transition-all duration-300">
-                <textarea id="user-input" placeholder="Message OLM..." rows="1" class="w-full bg-transparent px-5 py-4 lg:py-2.5 outline-none resize-none text-base sm:text-sm max-h-40 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
-                <div class="flex items-center justify-between pl-3 pr-1.5 pb-2 pt-1 lg:pb-1 lg:pt-0.5">
-                    <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-4 py-3 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50">
-                        <i class="fa-solid fa-magnifying-glass"></i><span class="hidden sm:inline" data-t="search">Search</span>
-                    </button>
-                    <button id="send-btn" disabled onclick="window.handleAction()" class="w-12 h-12 lg:w-9 lg:h-9 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0" style="background-color: var(--accent-color); color: var(--accent-contrast)">
-                        <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-xs"></i>
-                    </button>
+            <div class="max-w-2xl mx-auto relative">
+                <!-- Intelligence Flare Animation -->
+                <div id="intelligence-flare"></div>
+                <div class="input-box-wrap p-2 shadow-2xl transition-all duration-300">
+                    <textarea id="user-input" placeholder="Message OLM..." rows="1" class="w-full bg-transparent px-5 py-4 lg:py-2.5 outline-none resize-none text-base sm:text-sm max-h-40 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
+                    <div class="flex items-center justify-between pl-3 pr-1.5 pb-2 pt-1 lg:pb-1 lg:pt-0.5">
+                        <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-4 py-3 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50">
+                            <i class="fa-solid fa-magnifying-glass"></i><span class="hidden sm:inline" data-t="search">Search</span>
+                        </button>
+                        <button id="send-btn" disabled onclick="window.handleAction()" class="w-12 h-12 lg:w-9 lg:h-9 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0" style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                            <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-xs"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -572,7 +624,6 @@
     <script type="module">
         import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-        // Constants using unique names to prevent conflict
         const UNIQUE_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
         const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
 
@@ -599,7 +650,7 @@
                 search: "Search",
                 protocol_stats: "Protocol Stats",
                 ui_opt: "UI Optimization",
-                opt_1: "Gradient-based thinking synthesis",
+                opt_1: "Intelligence flare shoot-up",
                 opt_2: "Two-step onboarding protocol",
                 opt_3: "Equation support strictly via $$ delimiters",
                 model_north: "OLM North Star",
@@ -626,7 +677,7 @@
                 ex_writing: "Writing Help",
                 ex_summary: "Quick Summary",
                 input_placeholder: "Message OLM...",
-                thinking: "Hmmmmm...",
+                thinking: "Hmmm....",
                 terminated: "Protocol Terminated",
                 no_history: "No history",
                 prompt_error: "⚠️ Service error: ",
@@ -656,7 +707,7 @@
                 search: "網路搜尋",
                 protocol_stats: "協定統計",
                 ui_opt: "介面優化",
-                opt_1: "漸變式思考合成",
+                opt_1: "渐变式思考合成",
                 opt_2: "兩步式入職流程",
                 opt_3: "數學公式僅支援 $$ 分隔符號",
                 model_north: "OLM 北極星",
@@ -674,7 +725,7 @@
                 onboarding_using: "如何使用 OLM",
                 onboarding_quickstart: "快速上手指南",
                 onboarding_prompting: "提問技巧",
-                onboarding_prompting_desc: "模型目前處於早期測試階段，使用描述性提問（如「二戰結束於」）會比直接提問（如「二戰何時結束？」）效果更好。",
+                onboarding_prompting_desc: "模型目前處於早期測試階段，使用描述性提問（如「二戰結束於」）會比直接提问（如「二戰何時結束？」）效果更好。",
                 onboarding_settings_desc: "您可以在設定中隨時編輯頭像、名稱和主題。",
                 onboarding_complete: "完成設定",
                 onboarding_back: "返回上一步",
@@ -683,7 +734,7 @@
                 ex_writing: "寫作助手",
                 ex_summary: "快速摘要",
                 input_placeholder: "傳送訊息給 OLM...",
-                thinking: "思考中...",
+                thinking: "嗯....",
                 terminated: "程序已終止",
                 no_history: "暫無紀錄",
                 prompt_error: "⚠️ 服務錯誤：",
@@ -707,7 +758,7 @@
             temp: 0.7, accent: 'auto', userName: '', userPic: '',
             pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
             lang: 'en',
-            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL equations in $$ tags only. DO NOT use parentheses or square brackets for wrapping equations.'
+            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL mathematical formulas, equations, and scientific notations strictly in $$ tags only. DO NOT use parentheses or square brackets.'
         }));
 
         const els = {
@@ -732,7 +783,8 @@
             avatarDisplay: document.getElementById('user-avatar-display'),
             pfpMovableImg: document.getElementById('pfp-movable-img'),
             pfpWorkspace: document.getElementById('pfp-workspace'),
-            storageDisplay: document.getElementById('storage-display')
+            storageDisplay: document.getElementById('storage-display'),
+            flare: document.getElementById('intelligence-flare')
         };
 
         window.updateStorageUsage = () => {
@@ -743,9 +795,7 @@
                 }
             }
             const gbVal = storageSize / (1024 * 1024 * 1024);
-            if (els.storageDisplay) {
-                els.storageDisplay.innerText = `${gbVal.toFixed(6)} GB`;
-            }
+            if (els.storageDisplay) els.storageDisplay.innerText = `${gbVal.toFixed(6)} GB`;
         };
 
         window.applyTranslations = () => {
@@ -799,8 +849,7 @@
         };
 
         window.toggleSidebar = () => {
-            const isMobile = window.innerWidth < 1024;
-            if (isMobile) {
+            if (window.innerWidth < 1024) {
                 const isHidden = els.sidebar.classList.contains('-translate-x-full');
                 els.sidebar.classList.toggle('-translate-x-full');
                 els.sidebarOverlay.style.display = isHidden ? 'block' : 'none';
@@ -968,7 +1017,7 @@
             allChats = {}; 
             localStorage.setItem('vail_history_v4', '{}'); 
             window.resetChat(); 
-            renderHistory(); // Added this to clear list immediately
+            renderHistory();
             window.updateStorageUsage();
         };
 
@@ -982,9 +1031,19 @@
             } else window.sendMessage();
         };
 
+        window.triggerFlare = () => {
+            els.flare.classList.remove('flare-active');
+            void els.flare.offsetWidth; // Trigger reflow
+            els.flare.classList.add('flare-active');
+        };
+
         window.sendMessage = async (txt = null) => {
             if (isGenerating) return;
             const msg = txt || els.input.value.trim(); if (!msg) return;
+            
+            // Trigger visual flare
+            window.triggerFlare();
+
             els.input.value = ""; els.input.style.height = "auto";
             chatHistory.push([msg, null]); render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
             isGenerating = true; updateUI();
@@ -1049,8 +1108,7 @@
             const sortedChats = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
             const currentLang = settings.lang || 'en';
             const dict = translations[currentLang];
-            const nowTs = new Date();
-            const dayStartTs = new Date(nowTs.getFullYear(), nowTs.getMonth(), nowTs.getDate()).getTime();
+            const dayStartTs = new Date().setHours(0,0,0,0);
             const yestStartTs = dayStartTs - 86400000;
             const weekStartTs = dayStartTs - (86400000 * 7);
             const groupsMap = {
@@ -1084,9 +1142,10 @@
         };
 
         window.delChat = (id) => {
-            delete allChats[id]; localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+            delete allChats[id]; 
+            localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
             if (id === currentChatId) window.resetChat(); 
-            renderHistory();
+            renderHistory(); // Refresh the list UI
             window.updateStorageUsage();
         };
 
@@ -1137,6 +1196,9 @@
             document.getElementById('check-stargaze').classList.toggle('hidden', currentModel !== MODELS.OLM1);
             els.searchBtn.className = `flex items-center gap-2 px-4 py-3 rounded-full border transition-all text-[10px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg text-white' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
             els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
+
+            // Toggle border state (gradient border removed, now just shows accent border on generation)
+            document.body.classList.toggle('is-generating', isGenerating);
         };
 
         window.factoryReset = () => { localStorage.clear(); window.location.reload(); };
@@ -1161,4 +1223,3 @@
     </script>
 </body>
 </html>
-
