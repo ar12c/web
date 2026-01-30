@@ -506,16 +506,10 @@
                         </div>
                     </div>
                     <div>
-                        <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuth()" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-lg transition-all" style="background-color: var(--accent-color); color: var(--accent-contrast);">
+                        <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-lg transition-all" style="background-color: var(--accent-color); color: var(--accent-contrast);">
                             <i class="fa-brands fa-google"></i>
                             <span id="google-btn-text-onboarding">Sign in with Google</span>
                         </button>
-                    </div>
-                    <div class="p-3 bg-zinc-50 dark:bg-white/5 rounded-xl border border-zinc-100 dark:border-white/5">
-                        <p class="text-[9px] font-medium text-zinc-500 dark:text-zinc-400 leading-relaxed text-center" data-t="onboarding_disclaimer">
-                            <i class="fa-solid fa-shield-halved mr-1 text-blue-500"></i>
-                            OLM is a local-first application. Your profile picture and name are stored solely in your browser's memory. We cannot see, access, or collect your personal data.
-                        </p>
                     </div>
                     <div class="flex flex-col gap-3">
                         <button onclick="window.nextOnboardingStep()" class="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl" data-t="onboarding_continue">Continue</button>
@@ -931,6 +925,16 @@
             }
         };
 
+        window.initGoogleAuthOnboarding = async () => {
+            // Sign in from onboarding (simplified - no sign out, just sign in)
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: window.handleGoogleSignIn
+            });
+            // Trigger the OAuth flow directly
+            google.accounts.id.prompt();
+        };
+
 window.handleGoogleSignIn = async (response) => {
     try {
         // 1. Extract the ID Token (JWT) from Google
@@ -1081,14 +1085,26 @@ window.handleGoogleSignIn = async (response) => {
         };
 
         window.updateGoogleAuthButton = () => {
+            // Update settings panel button
             const btn = document.getElementById('google-auth-btn');
             const btnText = document.getElementById('google-btn-text');
-            if (isGoogleSignedIn) {
-                btn.classList.add('bg-green-500/20', 'border-green-500/50');
-                btnText.innerText = 'Sign out from Google ✓';
-            } else {
-                btn.classList.remove('bg-green-500/20', 'border-green-500/50');
-                btnText.innerText = 'Sign in with Google';
+            if (btn && btnText) {
+                if (isGoogleSignedIn) {
+                    btnText.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Signed in';
+                } else {
+                    btnText.innerHTML = '<i class="fa-brands fa-google mr-1"></i>Sign in with Google';
+                }
+            }
+            
+            // Update onboarding button
+            const onboardingBtn = document.getElementById('google-auth-btn-onboarding');
+            const onboardingBtnText = document.getElementById('google-btn-text-onboarding');
+            if (onboardingBtn && onboardingBtnText) {
+                if (isGoogleSignedIn) {
+                    onboardingBtnText.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Signed in';
+                } else {
+                    onboardingBtnText.innerHTML = '<i class="fa-brands fa-google mr-1"></i>Sign in with Google';
+                }
             }
         };
 
@@ -1718,7 +1734,6 @@ window.handleGoogleSignIn = async (response) => {
 
         <div>
             <button id="google-auth-btn" onclick="window.initGoogleAuth()" class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-lg transition-all" style="background-color: var(--accent-color); color: var(--accent-contrast);">
-                <i class="fa-brands fa-google"></i>
                 <span id="google-btn-text">Sign in with Google</span>
             </button>
         </div>
