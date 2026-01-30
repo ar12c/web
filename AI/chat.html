@@ -82,7 +82,8 @@
 
         aside {
             position: fixed;
-            inset-y: 0;
+            top: 0;
+            bottom: 0;
             left: 0;
             z-index: 2500;
             width: 100%;
@@ -329,6 +330,10 @@
                 linear-gradient(#000 0 0) content-box,
                 linear-gradient(#000 0 0);
             -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
             mask-composite: exclude;
             opacity: 0;
             pointer-events: none;
@@ -1091,7 +1096,7 @@
                 const translations = {
                     en: {
                         welcome_header: "How can I help you today?",
-                        new_conversation: "New Conversation",
+                        new_conversation: "New Chat",
                         appearance: "Appearance",
                         clear_chats: "Clear chats",
                         profile: "Profile",
@@ -1134,7 +1139,7 @@
                         ex_summary: "Quick Summary",
                         input_placeholder: "Message OLM...",
                         thinking: "Hmmm....",
-                        terminated: "Protocol Terminated",
+                        terminated: "You stopped the reponse",
                         no_history: "No history",
                         prompt_error: "⚠️ Service error, tell okemo: ",
                         welcome_back: "How can I help you today, ",
@@ -1148,7 +1153,7 @@
                     },
                     zh: {
                         welcome_header: "有什麼我可以幫您的？",
-                        new_conversation: "開啟新對話",
+                        new_conversation: "新對話",
                         appearance: "介面外觀",
                         clear_chats: "清除所有對話",
                         profile: "個人檔案",
@@ -1190,7 +1195,7 @@
                         ex_writing: "寫作助手",
                         ex_summary: "快速摘要",
                         input_placeholder: "傳送訊息給 OLM...",
-                        thinking: "嗯....",
+                        thinking: "諗下sin....",
                         terminated: "程序已終止",
                         no_history: "暫無紀錄",
                         prompt_error: "⚠️ 服務錯誤：",
@@ -1217,7 +1222,11 @@
                 let isGoogleSignedIn = !!googleAccessToken;
 
                 let settings = JSON.parse(localStorage.getItem('vail_settings_v4') || JSON.stringify({
-                    temp: 0.7, accent: 'auto', userName: '', userPic: '',
+                    temp: 0.3,
+                    top_p: 0.9,
+                    rep_pen: 1.35,
+                    max_tokens: 256,
+                    accent: 'auto', userName: '', userPic: '',
                     pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
                     lang: 'en',
                     customAccents: [],
@@ -1587,6 +1596,21 @@
                         document.getElementById('settings-name-input').value = settings.userName;
                         document.getElementById('settings-param-temp').value = settings.temp;
                         document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+
+                        // New parameters
+                        if (document.getElementById('settings-param-top-p')) {
+                            document.getElementById('settings-param-top-p').value = settings.top_p || 0.9;
+                            document.getElementById('settings-top-p-val').innerText = (settings.top_p || 0.9).toFixed(2);
+                        }
+                        if (document.getElementById('settings-param-rep-pen')) {
+                            document.getElementById('settings-param-rep-pen').value = settings.rep_pen || 1.35;
+                            document.getElementById('settings-rep-pen-val').innerText = (settings.rep_pen || 1.35).toFixed(2);
+                        }
+                        if (document.getElementById('settings-param-max-tokens')) {
+                            document.getElementById('settings-param-max-tokens').value = settings.max_tokens || 256;
+                            document.getElementById('settings-max-tokens-val').innerText = settings.max_tokens || 256;
+                        }
+
                         els.pfpMovableImg.src = settings.userPic || '';
                         applyMovableStyles();
                         // Reset custom color preview
@@ -1694,7 +1718,29 @@
 
                 window.updateTempFromPanel = (val) => {
                     settings.temp = parseFloat(val);
-                    document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+                    const el = document.getElementById('settings-temp-val');
+                    if (el) el.innerText = settings.temp.toFixed(2);
+                    saveSettings();
+                };
+
+                window.updateTopPFromPanel = (val) => {
+                    settings.top_p = parseFloat(val);
+                    const el = document.getElementById('settings-top-p-val');
+                    if (el) el.innerText = settings.top_p.toFixed(2);
+                    saveSettings();
+                };
+
+                window.updateRepPenFromPanel = (val) => {
+                    settings.rep_pen = parseFloat(val);
+                    const el = document.getElementById('settings-rep-pen-val');
+                    if (el) el.innerText = settings.rep_pen.toFixed(2);
+                    saveSettings();
+                };
+
+                window.updateMaxTokensFromPanel = (val) => {
+                    settings.max_tokens = parseInt(val);
+                    const el = document.getElementById('settings-max-tokens-val');
+                    if (el) el.innerText = settings.max_tokens;
                     saveSettings();
                 };
 
@@ -1847,18 +1893,48 @@
                     isGenerating = true; updateUI();
                     try {
                         const c = await getGradioClient();
-                        const job = c.submit(0, [msg + (webSearch ? " <SEARCH_MODE>" : ""), chatHistory.slice(0, -1), settings.temp, 0.85, 1.2, 4096]);
+
+                        // Prepare history for Gradio 6 format: list of objects {role, content}
+                        const formattedHistory = [];
+                        for (const [u, a] of chatHistory.slice(0, -1)) {
+                            formattedHistory.push({ role: "user", content: u });
+                            if (a) formattedHistory.push({ role: "assistant", content: a });
+                        }
+
+                        // Determine if it's a search query
+                        const finalMsg = (webSearch && !msg.toLowerCase().startsWith("/search")) ? "/search " + msg : msg;
+
+                        const job = c.submit("/bot_step", [
+                            formattedHistory.concat([{ role: "user", content: finalMsg }]),
+                            settings.temp || 0.3,
+                            settings.top_p || 0.9,
+                            settings.rep_pen || 1.35,
+                            settings.max_tokens || 256
+                        ]);
+
                         currentJob = job;
                         for await (const chunk of job) {
                             if (chunk?.data?.[0]) {
-                                const content = chunk.data[0]; if (content === "model_stop") break;
-                                chatHistory[chatHistory.length - 1][1] = content;
-                                const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
-                                if (lastProse) { lastProse.innerHTML = marked.parse(content); applyContentFeatures(lastProse); }
-                                els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+                                const historyUpdate = chunk.data[0];
+                                const assistantMsg = historyUpdate[historyUpdate.length - 1];
+                                if (assistantMsg && assistantMsg.role === "assistant") {
+                                    const content = assistantMsg.content;
+                                    chatHistory[chatHistory.length - 1][1] = content;
+                                    const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
+                                    if (lastProse) {
+                                        lastProse.innerHTML = marked.parse(content);
+                                        applyContentFeatures(lastProse);
+                                    }
+                                    els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+                                }
                             }
                         }
-                    } catch (e) { if (e.message !== "The user cancelled the request.") chatHistory[chatHistory.length - 1][1] = `${translations[settings.lang || 'en'].prompt_error}${e.message}`; }
+                    } catch (e) {
+                        if (e.message !== "The user cancelled the request.") {
+                            chatHistory[chatHistory.length - 1][1] = `${translations[settings.lang || 'en'].prompt_error}${e.message}`;
+                            render();
+                        }
+                    }
                     finally { isGenerating = false; updateUI(); save(); render(); }
                 };
 
@@ -2162,12 +2238,37 @@
             </div>
 
             <div>
-                <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2"
-                    data-t="creativity">Creativity</label>
+                <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2" data-t="creativity">Creativity
+                    (Temp)</label>
                 <input type="range" id="settings-param-temp" min="0" max="1" step="0.01"
                     class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
                     oninput="window.updateTempFromPanel(this.value)">
-                <div id="settings-temp-val" class="text-right text-[10px] font-mono mt-1 opacity-50">0.70</div>
+                <div id="settings-temp-val" class="text-right text-[10px] font-mono mt-1 opacity-50">0.30</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Top-P</label>
+                    <input type="range" id="settings-param-top-p" min="0" max="1" step="0.01"
+                        class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        oninput="window.updateTopPFromPanel(this.value)">
+                    <div id="settings-top-p-val" class="text-right text-[10px] font-mono mt-1 opacity-50">0.90</div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Rep Pen</label>
+                    <input type="range" id="settings-param-rep-pen" min="1" max="2" step="0.05"
+                        class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        oninput="window.updateRepPenFromPanel(this.value)">
+                    <div id="settings-rep-pen-val" class="text-right text-[10px] font-mono mt-1 opacity-50">1.35</div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Max Tokens</label>
+                <input type="range" id="settings-param-max-tokens" min="64" max="1024" step="64"
+                    class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                    oninput="window.updateMaxTokensFromPanel(this.value)">
+                <div id="settings-max-tokens-val" class="text-right text-[10px] font-mono mt-1 opacity-50">256</div>
             </div>
 
             <div class="space-y-4">
