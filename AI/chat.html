@@ -1269,6 +1269,9 @@
                 };
 
                 // Google Authentication Functions
+                let tokenClient;
+
+                // Google Authentication Functions
                 window.initGoogleAuth = async () => {
                     if (isGoogleSignedIn) {
                         // Sign out
@@ -1279,74 +1282,77 @@
                         localStorage.removeItem('google_drive_folder_id');
                         updateGoogleAuthButton();
                         console.log('Signed out from Google');
+
+                        // Revoke token if possible (optional but good practice)
+                        if (googleAccessToken) {
+                            google.accounts.oauth2.revoke(googleAccessToken, () => { console.log('Token revoked') });
+                        }
                     } else {
-                        // Sign in
-                        google.accounts.id.initialize({
-                            client_id: GOOGLE_CLIENT_ID,
-                            callback: window.handleGoogleSignIn
-                        });
-                        google.accounts.id.renderButton(
-                            document.getElementById('google-auth-btn'),
-                            { theme: 'outline', size: 'large' }
-                        );
+                        // Sign In
+                        if (!tokenClient) {
+                            tokenClient = google.accounts.oauth2.initTokenClient({
+                                client_id: GOOGLE_CLIENT_ID,
+                                scope: 'https://www.googleapis.com/auth/drive.file profile email',
+                                callback: window.handleGoogleSignIn
+                            });
+                        }
+                        tokenClient.requestAccessToken();
                     }
                 };
 
                 window.initGoogleAuthOnboarding = async () => {
-                    // Sign in from onboarding (simplified - no sign out, just sign in)
-                    google.accounts.id.initialize({
-                        client_id: GOOGLE_CLIENT_ID,
-                        callback: window.handleGoogleSignIn
-                    });
-                    // Trigger the OAuth flow directly
-                    google.accounts.id.prompt();
+                    if (!tokenClient) {
+                        tokenClient = google.accounts.oauth2.initTokenClient({
+                            client_id: GOOGLE_CLIENT_ID,
+                            scope: 'https://www.googleapis.com/auth/drive.file profile email',
+                            callback: window.handleGoogleSignIn
+                        });
+                    }
+                    tokenClient.requestAccessToken();
                 };
 
-                window.handleGoogleSignIn = async (response) => {
-                    try {
-                        // 1. Extract the ID Token (JWT) from Google
-                        const credential = response.credential;
+                window.handleGoogleSignIn = async (tokenResponse) => {
+                    if (tokenResponse && tokenResponse.access_token) {
+                        try {
+                            googleAccessToken = tokenResponse.access_token;
+                            isGoogleSignedIn = true;
 
-                        // 2. Decode the JWT to get Name and PFP immediately
-                        const base64Url = credential.split('.')[1];
-                        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                        const payload = JSON.parse(window.atob(base64));
+                            // Load Google API Client Library
+                            await gapi.load('client', async () => {
+                                await gapi.client.init({
+                                    apiKey: 'AIzaSyDWRLN1WkR2YQc0U2OMUSUSF1RMYGDq5-A',
+                                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+                                });
 
-                        // Update your app settings with Google data
-                        settings.userName = payload.name;    // Full Name
-                        settings.userPic = payload.picture;  // Profile Picture URL
-                        isGoogleSignedIn = true;
-                        googleAccessToken = credential;      // Store token for API calls
+                                gapi.client.setToken({ access_token: googleAccessToken });
 
-                        // 3. Update the UI right away so the user sees their name/photo
-                        saveSettings();
-                        updateProfileUI();
-                        updateGoogleAuthButton();
+                                // Fetch User Profile Info manually since we don't have ID token claim
+                                const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                    headers: { Authorization: `Bearer ${googleAccessToken}` }
+                                }).then(res => res.json());
 
-                        // 4. Initialize the Google Drive Client
-                        // Note: We use the 'gapi' library specifically for Drive operations
-                        await gapi.load('client', async () => {
-                            await gapi.client.init({
-                                apiKey: 'AIzaSyDWRLN1WkR2YQc0U2OMUSUSF1RMYGDq5-A',
-                                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+                                if (userInfo) {
+                                    settings.userName = userInfo.name;
+                                    settings.userPic = userInfo.picture;
+                                }
+
+                                saveSettings();
+                                updateProfileUI();
+                                updateGoogleAuthButton();
+
+                                try {
+                                    await window.ensureGoogleDriveFolder();
+                                    await window.loadChatsFromGoogle();
+                                    await window.syncChatsToGoogle();
+                                    console.log('Profile loaded and Drive sync complete for:', settings.userName);
+                                } catch (driveErr) {
+                                    console.error('Drive Sync Error:', driveErr);
+                                }
                             });
 
-                            // Set the access token for Drive requests
-                            gapi.client.setToken({ access_token: googleAccessToken });
-
-                            // 5. Run your backup/sync functions
-                            try {
-                                await window.ensureGoogleDriveFolder();
-                                await window.loadChatsFromGoogle(); // Sync DOWN first
-                                await window.syncChatsToGoogle();   // Sync UP after merge
-                                console.log('Profile loaded and Drive sync complete for:', settings.userName);
-                            } catch (driveErr) {
-                                console.error('Drive Sync Error:', driveErr);
-                            }
-                        });
-
-                    } catch (error) {
-                        console.error('Critical Error handling Google sign-in:', error);
+                        } catch (error) {
+                            console.error('Error handling Google Sign-In:', error);
+                        }
                     }
                 };
                 window.ensureGoogleDriveFolder = async () => {
