@@ -68,8 +68,15 @@
             pointer-events: none;
             z-index: 0;
         }
+        aside { 
+            position: fixed; 
+            inset-y: 0; 
+            left: 0; 
+            z-index: 2500; 
+            width: 100%; /* Fullscreen on mobile */
+            transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
 
-        aside { position: relative; z-index: 500; transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         aside::before {
             content: "";
             position: absolute;
@@ -79,10 +86,38 @@
             z-index: -1;
         }
 
-        body.sidebar-collapsed aside {
-            width: 0;
+        aside.mobile-hidden {
             transform: translateX(-100%);
-            overflow: hidden;
+        }
+
+        @media (min-width: 1024px) {
+            aside { 
+                position: static; 
+                width: 240px; 
+                transform: none !important; 
+            }
+            body.sidebar-collapsed aside {
+                width: 64px;
+            }
+            body.sidebar-collapsed #sidebar-full-content { display: none; }
+            body.sidebar-collapsed #sidebar-mini-content { display: flex; }
+        }
+
+        aside.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        #sidebar-mini-content { display: none; }
+        #sidebar-full-content { display: flex; }
+
+        @media (min-width: 1024px) {
+            body.sidebar-collapsed aside {
+                width: 64px;
+                transform: translateX(0);
+                overflow: visible;
+            }
+            body.sidebar-collapsed #sidebar-full-content { display: none; }
+            body.sidebar-collapsed #sidebar-mini-content { display: flex; }
         }
 
         .vail-logo-ai { color: var(--accent-color); }
@@ -175,7 +210,6 @@
         .accent-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
         .accent-dot.active { border-color: currentColor; }
 
-        /* NEUTRAL BORDER DYNAMICS: Grey borders idle, Gradient generating */
         .input-box-wrap { 
             background-color: #ffffff;
             backdrop-filter: blur(24px); 
@@ -184,27 +218,59 @@
             pointer-events: auto;
             border-radius: 1.5rem;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1.5px solid #e5e7eb; /* Light mode: Light Grey border */
+            border: 1.5px solid #e5e7eb;
             background-origin: border-box;
             background-clip: padding-box, border-box;
+            overflow: visible;
         }
         .dark .input-box-wrap { 
             background-color: #141414;
-            border-color: #27272a; /* Dark mode: Darker neutral grey border */
+            border-color: #27272a;
         }
 
-        /* Seamless Spinning Gradient Border for Generation */
+        .input-box-wrap::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            padding: 2px;
+            background: conic-gradient(from var(--grad-angle), 
+                rgba(96, 165, 250, 1),
+                rgba(168, 85, 247, 1),
+                rgba(236, 72, 153, 1),
+                rgba(244, 63, 94, 1),
+                rgba(96, 165, 250, 1)
+            );
+            -webkit-mask: 
+                linear-gradient(#000 0 0) content-box, 
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            pointer-events: none;
+        }
+
         body.is-generating .input-box-wrap {
             border-color: transparent;
-            background-image: linear-gradient(white, white), 
-                              linear-gradient(110deg, #60a5fa, #a855f7, #ec4899, #f43f5e, #10b981, #60a5fa);
-            background-size: 100% 100%, 300% 100%;
-            animation: border-spin-move 3s linear infinite;
-            box-shadow: 0 10px 40px -10px rgba(168, 85, 247, 0.3);
+            background-image: none;
+            box-shadow: 0 0 22px rgba(96, 165, 250, 0.151),
+                        0 0 42px rgba(168, 85, 247, 0.151);
         }
-        .dark body.is-generating .input-box-wrap {
-            background-image: linear-gradient(#141414, #141414), 
-                              linear-gradient(110deg, #60a5fa, #a855f7, #ec4899, #f43f5e, #10b981, #60a5fa);
+
+        body.is-generating .input-box-wrap::before {
+            opacity: 1;
+            animation: rotate-gradient 3s linear infinite;
+        }
+
+        @property --grad-angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotate-gradient {
+            from { --grad-angle: 0deg; }
+            to { --grad-angle: 360deg; }
         }
 
         @keyframes border-spin-move {
@@ -212,25 +278,24 @@
             100% { background-position: 0 0, 300% 0%; }
         }
 
-        /* Intelligence Flare Animation - Absolute Bottom to Top */
         #intelligence-flare {
-            position: fixed;
+            position: absolute;
             bottom: 0;
-            left: 50%;
-            width: 100vw;
-            height: 40vh;
+            left: 0;
+            width: 100%;
+            height: 45vh;
             background: radial-gradient(ellipse at bottom, 
-                rgba(96, 165, 250, 0.6) 0%, 
-                rgba(168, 85, 247, 0.5) 25%, 
-                rgba(236, 72, 153, 0.4) 50%, 
-                rgba(244, 63, 94, 0.2) 75%, 
+                rgba(96, 165, 250, 0.9) 0%, 
+                rgba(168, 85, 247, 0.7) 25%, 
+                rgba(236, 72, 153, 0.55) 50%, 
+                rgba(244, 63, 94, 0.35) 75%, 
                 transparent 100%);
             border-radius: 100% 100% 0 0;
             filter: blur(80px);
             pointer-events: none;
-            z-index: 100;
+            z-index: 10;
             opacity: 0;
-            transform: translate(-50%, 100%) scaleX(0.5);
+            transform: translateY(100%) scaleX(0.5);
         }
 
         .flare-active {
@@ -238,9 +303,9 @@
         }
 
         @keyframes shoot-flare-global {
-            0% { transform: translate(-50%, 100%) scaleX(0.3) scaleY(0.5); opacity: 0; }
+            0% { transform: translateY(100%) scaleX(0.3) scaleY(0.5); opacity: 0; }
             15% { opacity: 0.9; }
-            100% { transform: translate(-50%, -120vh) scaleX(1.5) scaleY(1.2); opacity: 0; }
+            100% { transform: translateY(-120vh) scaleX(1.5) scaleY(1.2); opacity: 0; }
         }
 
         #bottom-fade { 
@@ -248,10 +313,13 @@
             bottom: 0; 
             left: 0; 
             width: 100%; 
-            height: 180px; 
-            background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 40%, transparent 100%); 
+            height: 220px; 
+            background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 50%, transparent 100%); 
             pointer-events: none; 
             z-index: 30;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
         .history-btn-container { display: flex; align-items: center; width: 100%; gap: 4px; padding: 0 4px; position: relative; }
@@ -299,46 +367,48 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: thinking-shimmer 2s linear infinite;
         }
 
         @keyframes thinking-shimmer {
             to { background-position: 200% center; }
         }
 
-        /* Onboarding Styles */
         #onboarding-overlay { 
             position: fixed; inset: 0; z-index: 2000; 
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(40px); 
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px); 
             display: flex; align-items: center; justify-content: center; 
             animation: fadeIn 0.4s ease-out; transition: opacity 0.4s ease, visibility 0.4s ease; 
         }
-        .dark #onboarding-overlay { background: rgba(13, 13, 13, 0.85); }
+        .dark #onboarding-overlay { background: rgba(13, 13, 13, 0.5); }
         #onboarding-overlay.hidden { display: none !important; }
 
         .onboarding-card { 
             width: 100%; max-width: 440px; padding: 2rem 2.5rem; border-radius: 1.25rem; 
             background: white; border: 1px solid rgba(0,0,0,0.05); 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); 
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
             position: relative;
+            z-index: 2100;
         }
         .dark .onboarding-card { background: #141414; border-color: rgba(255,255,255,0.05); }
 
         #onboarding-pfp-preview { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #f4f4f5; border: 2px dashed #e4e4e7; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
         .dark #onboarding-pfp-preview { background: #1e1e1e; border-color: #27272a; }
 
-        #user-profile-section { padding: 0.6rem 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 0.4rem; }
+        #user-profile-section { padding: 0.875rem 0.75rem; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 0.4rem; }
         .dark #user-profile-section { border-top-color: rgba(255,255,255,0.05); }
 
         #user-avatar-display { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--accent-color); color: var(--accent-contrast); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
 
         #settings-panel {
-            position: fixed; z-index: 1100; background: rgba(255, 255, 255, 0.92);
+            position: fixed; z-index: 3000; background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(25px); border: 1px solid rgba(0,0,0,0.1);
-            display: none; flex-direction: column; overflow: hidden;
+            display: none; flex-direction: column;
             left: 50%; top: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 420px; height: auto; border-radius: 1.25rem;
+            width: 90%; max-width: 420px; max-height: 90vh; border-radius: 1.25rem;
             box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            overflow-y: auto; overflow-x: hidden;
         }
         .dark #settings-panel { background: rgba(20, 20, 20, 0.92); border-color: rgba(255,255,255,0.1); }
         #settings-panel.active { display: flex; }
@@ -348,7 +418,8 @@
                 left: 0 !important; top: 0 !important; transform: none !important;
                 width: 100vw !important; height: 100vh !important; max-width: 100vw !important;
                 border-radius: 0 !important; border: none !important;
-                z-index: 2500; background: white !important;
+                z-index: 3500; background: white !important;
+                overflow-y: auto;
             }
             .dark #settings-panel.active { background: #0d0d0d !important; }
         }
@@ -369,6 +440,11 @@
         button, a { touch-action: manipulation; }
         #sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 450; display: none; }
         .dark #sidebar-overlay { background: rgba(0,0,0,0.6); }
+
+        /* Hide sidebar completely while onboarding is active */
+        body.onboarding-active #sidebar {
+            display: none !important;
+        }
 
         .tutorial-step { display: none; }
         .tutorial-step.active { display: block; animation: fadeIn 0.3s ease-out; }
@@ -413,10 +489,10 @@
                             <div class="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[12px] border-2 border-white dark:border-[#141414] shadow-md"><i class="fa-solid fa-plus"></i></div>
                         </div>
                         <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*" onchange="window.handleOnboardingPfp(event)">
-                        <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-3" data-t="photo">Photo</p>
+                        <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-3" data-t="photo">Change Photo</p>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1" data-t="display_name">Display Name</label>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1" data-t="display_name">Name</label>
                         <input type="text" id="onboarding-name" placeholder="Name or Alias" class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-4 text-sm focus:border-blue-500 outline-none transition-all">
                     </div>
                     <div>
@@ -466,64 +542,12 @@
         </div>
     </div>
 
-    <div id="settings-panel" class="animate-slide-up">
-        <div class="p-5 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl sticky top-0 z-20">
-            <h3 class="font-bold text-[10px] uppercase tracking-widest text-zinc-400" data-t="settings">Settings</h3>
-            <button onclick="window.toggleSettingsPanel()" class="w-9 h-9 lg:w-7 lg:h-7 flex items-center justify-center rounded-full bg-zinc-50 dark:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"><i class="fa-solid fa-xmark text-lg lg:text-xs"></i></button>
-        </div>
-        <div class="p-5 flex-1 overflow-y-auto space-y-8 lg:space-y-6 no-scrollbar">
-            <section class="space-y-4 lg:space-y-3">
-                <div class="flex items-center justify-between">
-                    <label class="text-[10px] font-black uppercase text-zinc-400 tracking-widest" data-t="photo">Photo</label>
-                    <button onclick="document.getElementById('profile-upload').click()" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest py-1" data-t="update">Update</button>
-                </div>
-                <div id="pfp-workspace" onpointerdown="window.pfpDragStart(event)"><img id="pfp-movable-img" src=""><div id="pfp-mask"></div></div>
-                <div class="space-y-2">
-                    <div class="flex justify-between text-[9px] font-black uppercase text-zinc-400"><span data-t="zoom">Zoom</span><span id="scale-val" class="font-mono text-blue-500 text-[10px]">1.0x</span></div>
-                    <input type="range" id="pfp-scale-slider" min="0.1" max="5" step="0.01" value="1" class="w-full h-1.5 lg:h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updatePfpScale(this.value)">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2 lg:mb-1" data-t="display_name">Display Name</label>
-                    <input type="text" id="settings-name-input" class="w-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700/50 rounded-lg px-4 py-3 lg:py-2 text-sm lg:text-xs focus:border-blue-500 outline-none" onchange="window.updateSettingsFromPanel()">
-                </div>
-                <input type="file" id="profile-upload" class="hidden" accept="image/*" onchange="window.handleProfilePicUpload(event)">
-            </section>
-            <section class="space-y-4 lg:space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                <div>
-                    <div class="flex justify-between text-[10px] font-black mb-2 lg:mb-1 uppercase text-zinc-400 tracking-widest"><span data-t="creativity">Creativity</span><span id="settings-temp-val" class="font-mono text-blue-500 text-[10px]">0.70</span></div>
-                    <input type="range" id="settings-param-temp" min="0" max="1" step="0.01" value="0.7" class="w-full h-1.5 lg:h-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="window.updateTempFromPanel(this.value)">
-                </div>
-                <div>
-                    <div class="text-[10px] font-black mb-3 lg:mb-2 uppercase text-zinc-400 tracking-widest" data-t="accent">Accent</div>
-                    <div class="flex flex-wrap items-center gap-3 lg:gap-2">
-                        <div class="accent-dot bg-zinc-900 dark:bg-zinc-100 !w-6 !h-6" data-color="auto" onclick="window.updateAccent('auto')"></div>
-                        <div class="accent-dot bg-blue-500 !w-6 !h-6" data-color="#3b82f6" onclick="window.updateAccent('#3b82f6')"></div>
-                        <div class="accent-dot bg-emerald-500 !w-6 !h-6" data-color="#10b981" onclick="window.updateAccent('#10b981')"></div>
-                        <div class="accent-dot bg-purple-500 !w-6 !h-6" data-color="#a855f7" onclick="window.updateAccent('#a855f7')"></div>
-                        <div class="accent-dot bg-rose-500 !w-6 !h-6" data-color="#f43f5e" onclick="window.updateAccent('#f43f5e')"></div>
-                        <div class="accent-dot bg-orange-500 !w-6 !h-6" data-color="#f97316" onclick="window.updateAccent('#f97316')"></div>
-                        <input type="color" id="custom-color-input-v2" class="!w-7 !h-7 rounded-full border-none cursor-pointer p-0 bg-transparent" oninput="window.updateAccent(this.value)">
-                    </div>
-                </div>
-            </section>
-            <section class="pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                <a href="https://discord.gg/BxjTsjvR8Z" target="_blank" class="w-full py-4 lg:py-3 bg-[#5865F2]/10 hover:bg-[#5865F2] text-[#5865F2] hover:text-white rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-3 group">
-                    <i class="fa-brands fa-discord text-base"></i> <span data-t="discord_btn">Latest developments</span>
-                </a>
-            </section>
-            <section class="pt-4 pb-4 border-t border-zinc-100 dark:border-zinc-800 text-center">
-                <button onclick="window.clearAll()" class="w-full py-4 lg:py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg text-[10px] font-black uppercase transition-all flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-trash-can"></i> <span data-t="clear_chats">Clear chats</span>
-                </button>
-            </section>
-        </div>
-    </div>
-
-    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 lg:w-60 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none -translate-x-full lg:translate-x-0 transition-all duration-300">
-        <div class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
+    <aside id="sidebar" class="mobile-hidden fixed lg:static inset-y-0 left-0 w-72 lg:w-60 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none transition-all duration-300">
+        <!-- Full Sidebar View -->
+        <div id="sidebar-full-content" class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
             <div class="mb-6 lg:mb-4 px-2 flex items-center justify-between">
                 <h1 class="select-none font-black italic text-lg tracking-tight text-zinc-900 dark:text-white uppercase">V<span class="vail-logo-ai gradient-mode" id="logo-ai-core">AI</span>L</h1>
-                <button class="lg:hidden w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" onclick="window.toggleSidebar()"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" onclick="window.toggleSidebar()"><i class="fa-solid fa-bars-staggered lg:fa-xmark text-lg lg:text-base"></i></button>
             </div>
             <button id="new-chat-btn" onclick="window.resetChat()" class="w-full flex items-center justify-between gap-3 px-4 py-4 lg:py-3 text-sm lg:text-xs font-bold rounded-xl transition-all mb-4 lg:mb-3 shadow-lg hover:brightness-110 active:brightness-90" style="background-color: var(--accent-color); color: var(--accent-contrast)"><span data-t="new_conversation">New Conversation</span><i class="fa-solid fa-plus text-[10px]"></i></button>
             <div class="flex-1 overflow-y-auto no-scrollbar space-y-1 lg:space-y-0.5" id="history-list"></div>
@@ -551,21 +575,44 @@
                             <span id="sidebar-user-name" class="text-xs font-bold truncate text-zinc-900 dark:text-white">Profile</span>
                         </div>
                     </div>
-                    <button onclick="window.toggleSettingsPanel()" class="w-10 h-10 lg:w-8 lg:h-8 flex items-center justify-center rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
+                    <button onclick="event.stopPropagation(); window.toggleSettingsPanel()" class="w-10 h-10 lg:w-8 lg:h-8 flex items-center justify-center rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
                         <i class="fa-solid fa-gear text-sm lg:text-xs"></i>
                     </button>
                 </div>
             </div>
         </div>
+
+        <!-- Mini Sidebar View (Desktop Collapsed Only) -->
+        <div id="sidebar-mini-content" class="hidden lg:flex flex-col items-center h-full py-4 gap-6">
+            <div class="flex flex-col items-center gap-4">
+                <button onclick="window.toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"><i class="fa-solid fa-bars text-lg"></i></button>
+                <button onclick="window.resetChat()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-200/50 dark:bg-zinc-800/50 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"><i class="fa-solid fa-pen text-base"></i></button>
+            </div>
+            <div class="flex-1"></div>
+            <div class="flex flex-col items-center gap-4 pb-2">
+                <div id="mini-avatar-display" class="cursor-pointer" onclick="event.stopPropagation(); window.toggleSettingsPanel()">
+                    <!-- Avatar injected via updateProfileUI -->
+                </div>
+                <button onclick="event.stopPropagation(); window.toggleSettingsPanel()" class="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
+                    <i class="fa-solid fa-gear text-lg"></i>
+                </button>
+            </div>
+        </div>
     </aside>
 
     <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+        <div id="intelligence-flare"></div>
+
         <header class="h-14 lg:h-12 flex items-center justify-between px-4 lg:px-6 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl z-50 border-b border-zinc-100 dark:border-zinc-900/50">
             <div class="flex items-center gap-1 lg:gap-2">
                 <button id="menu-toggle-btn" onclick="window.toggleSidebar()" class="w-12 h-12 flex items-center justify-center -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden"><i class="fa-solid fa-bars-staggered text-base"></i></button>
                 <div class="relative">
-                    <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-3 py-2 text-sm font-bold rounded-lg lg:rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"><div id="active-model-icon" class="w-4 h-4 lg:w-3.5 lg:h-3.5" style="color: var(--accent-color)"></div><span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-[13px]">OLM North Star</span><i class="fa-solid fa-chevron-down text-[8px] opacity-30"></i></button>
-                    <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-72 lg:w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-xl overflow-hidden py-2">
+                        <button id="model-dropdown-btn" onclick="window.toggleMenu(event, 'model-menu')" class="flex items-center gap-2 px-3 py-2 text-sm font-bold rounded-lg lg:rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                            <div id="active-model-icon" class="w-4 h-4 lg:w-3.5 lg:h-3.5" style="color: var(--accent-color)"></div>
+                            <span id="active-model-name" class="tracking-tight text-zinc-600 dark:text-zinc-400 text-xs lg:text-[13px]">OLM North Star</span>
+                            <i class="fa-solid fa-chevron-down text-[8px] opacity-30"></i>
+                        </button>
+                        <div id="model-menu" class="dropdown-menu absolute left-0 top-full mt-2 w-72 lg:w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl rounded-xl overflow-hidden py-2">
                         <button onclick="window.selectModel('OLM2')" class="w-full text-left px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center justify-between group">
                             <div class="flex items-center gap-3">
                                 <div id="icon-pro-menu" class="w-5 h-5"></div>
@@ -627,27 +674,41 @@
             <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 relative gap-8 z-10"></div>
         </div>
 
-        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 z-40 pb-6 pt-12">
-            <div class="max-w-2xl mx-auto relative group">
-                <!-- Intelligence Flare Animation -->
-                <div id="intelligence-flare"></div>
-                <div class="input-box-wrap p-2 shadow-2xl transition-all duration-300">
-                    <textarea id="user-input" placeholder="Message OLM..." rows="1" class="w-full bg-transparent px-5 py-4 lg:py-2.5 outline-none resize-none text-base sm:text-sm max-h-40 no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
-                    <div class="flex items-center justify-between pl-3 pr-1.5 pb-2 pt-1 lg:pb-1 lg:pt-0.5">
-                        <button id="search-btn" onclick="window.toggleSearch()" class="flex items-center gap-2 px-4 py-3 rounded-full border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest text-zinc-500 transition-all hover:bg-white/50 dark:hover:bg-zinc-800/50">
-                            <i class="fa-solid fa-magnifying-glass"></i><span class="hidden sm:inline" data-t="search">Search</span>
-                        </button>
-                        <button id="send-btn" disabled onclick="window.handleAction()" class="w-12 h-12 lg:w-9 lg:h-9 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0" style="background-color: var(--accent-color); color: var(--accent-contrast)">
-                            <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-xs"></i>
-                        </button>
+        <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-4 z-40 sm:pb-5 pb-2 pt-12">
+            <div class="w-full max-w-3xl mx-auto relative group">
+                <div class="input-box-wrap pt-2 mb-2 shadow-2xl transition-all duration-300">
+                    <textarea id="user-input" placeholder="Message OLM..." rows="1" 
+                              class="w-full bg-transparent px-6 py-5 lg:py-4 outline-none resize-none text-base sm:text-sm max-h-[600px] no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
+                    
+                    <div class="flex items-center justify-between pl-6 pr-3 pb-3 pt-1 gap-3">
+                        <span class="text-[6px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
+                            OkemoVail
+                        </span>
+                        <div class="flex items-center gap-2 mr-[2px]">
+                            <button id="search-btn" onclick="window.toggleSearch()" 
+                                    class="flex items-center justify-center w-auto px-4 h-12 lg:h-10 rounded-full border border-zinc-100 dark:border-zinc-800 transition-all duration-300 text-[11px] font-medium">
+                                <i class="fa-solid fa-globe text-sm lg:text-xs mr-1.5"></i>
+                                <span data-t="search">Search</span>
+                            </button>
+                            
+                            <button id="send-btn" disabled onclick="window.handleAction()" 
+                                    class="w-12 h-12 lg:w-10 lg:h-10 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0" 
+                                    style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                                <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-base"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <script type="module">
-        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+<script type="module">
+    (async function() {
+        if (window.__OLM_INITIALIZED__) return;
+        window.__OLM_INITIALIZED__ = true;
+
+        const { Client } = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
 
         const UNIQUE_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
         const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
@@ -665,8 +726,8 @@
                 clear_chats: "Clear chats",
                 profile: "Profile",
                 settings: "Settings",
-                photo: "Photo",
-                update: "Update",
+                photo: "Upload Photo",
+                update: "Update & Save",
                 zoom: "Zoom",
                 display_name: "Display Name",
                 creativity: "Creativity",
@@ -686,14 +747,14 @@
                 onboarding_setup: "Profile Setup",
                 theme_light: "Light",
                 theme_dark: "Dark",
-                onboarding_disclaimer: "OLM is a local-first application. Your profile picture and name are stored solely in your browser's memory. We cannot see, access, or collect your personal data.",
+                onboarding_disclaimer: "OLM is a local-first application...",
                 onboarding_continue: "Continue",
                 onboarding_guest: "Continue as Guest",
                 tutorial: "Tutorial",
                 onboarding_using: "Using OLM",
                 onboarding_quickstart: "Quick Start Guide",
                 onboarding_prompting: "Prompting",
-                onboarding_prompting_desc: "Model is currently in early Alpha stage, making prompts like 'World WWII ended in' will have a better effect than 'When did WWII end?'.",
+                onboarding_prompting_desc: "Model is currently in early Alpha stage...",
                 onboarding_settings_desc: "You can edit your PFP, name and theme in settings.",
                 onboarding_complete: "Complete Setup",
                 onboarding_back: "Go Back",
@@ -722,8 +783,8 @@
                 clear_chats: "清除所有對話",
                 profile: "個人檔案",
                 settings: "設定",
-                photo: "個人頭像",
-                update: "更新",
+                photo: "上傳照片",
+                update: "儲存並更新",
                 zoom: "縮放",
                 display_name: "顯示名稱",
                 creativity: "創意程度",
@@ -743,14 +804,14 @@
                 onboarding_setup: "檔案設定",
                 theme_light: "淺色",
                 theme_dark: "深色",
-                onboarding_disclaimer: "OLM 是本機優先的應用程式。您的頭像和姓名僅存儲在本機中。我無法看到、訪問或收集您的個人數據。",
+                onboarding_disclaimer: "OLM 是本機優先的應用程式...",
                 onboarding_continue: "繼續",
                 onboarding_guest: "以訪客身份進入",
                 tutorial: "新手教學",
                 onboarding_using: "如何使用 OLM",
                 onboarding_quickstart: "快速上手指南",
                 onboarding_prompting: "提問技巧",
-                onboarding_prompting_desc: "模型目前處於早期測試階段，使用描述性提問（如「二戰結束於」）會比直接提问（如「二戰何時結束？」）效果更好。",
+                onboarding_prompting_desc: "模型目前處於早期測試階段...",
                 onboarding_settings_desc: "您可以在設定中隨時編輯頭像、名稱和主題。",
                 onboarding_complete: "完成設定",
                 onboarding_back: "返回上一步",
@@ -783,34 +844,16 @@
             temp: 0.7, accent: 'auto', userName: '', userPic: '',
             pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
             lang: 'en',
-            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL mathematical formulas, equations, and scientific notations strictly in $$ tags only. DO NOT use parentheses or square brackets for wrapping equations.'
+            customAccents: [],
+            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL mathematical formulas strictly in $$ tags only.'
         }));
 
-        const els = {
-            chatCont: document.getElementById("chat-container"),
-            chatMsgs: document.getElementById("chat-messages"),
-            input: document.getElementById("user-input"),
-            send: document.getElementById("send-btn"),
-            icon: document.getElementById("send-btn-icon"),
-            welcome: document.getElementById("welcome-state"),
-            hist: document.getElementById("history-list"),
-            modMenu: document.getElementById("model-menu"),
-            noteMenu: document.getElementById("notes-menu"),
-            searchBtn: document.getElementById("search-btn"),
-            actIcon: document.getElementById('active-model-icon'),
-            sidebar: document.getElementById('sidebar'),
-            sidebarOverlay: document.getElementById('sidebar-overlay'),
-            logoAi: document.getElementById('logo-ai-core'),
-            greeting: document.getElementById('welcome-greeting'),
-            onboarding: document.getElementById('onboarding-overlay'),
-            settingsPanel: document.getElementById('settings-panel'),
-            sidebarName: document.getElementById('sidebar-user-name'),
-            avatarDisplay: document.getElementById('user-avatar-display'),
-            pfpMovableImg: document.getElementById('pfp-movable-img'),
-            pfpWorkspace: document.getElementById('pfp-workspace'),
-            storageDisplay: document.getElementById('storage-display'),
-            flare: document.getElementById('intelligence-flare')
-        };
+        // Ensure newer settings keys exist for older localStorage payloads
+        if (!Array.isArray(settings.customAccents)) {
+            settings.customAccents = [];
+        }
+
+        const els = {};
 
         const hexToRgba = (hex, alpha) => {
             if (hex.startsWith('rgba')) return hex;
@@ -836,7 +879,7 @@
                 const key = el.getAttribute('data-t');
                 if (dict[key]) el.innerText = dict[key];
             });
-            els.input.placeholder = dict.input_placeholder;
+            if (els.input) els.input.placeholder = dict.input_placeholder;
             document.querySelectorAll('.lang-text').forEach(t => t.innerText = langCode === 'en' ? '中文' : 'EN');
         };
 
@@ -852,12 +895,18 @@
         window.updateAccent = (color) => {
             let isAuto = color === 'auto', isDark = document.documentElement.classList.contains('dark');
             let finalColor = isAuto ? (isDark ? '#ffffff' : '#000000') : color;
-            settings.accent = color; saveSettings();
+            settings.accent = color;
+            
+            if (color.startsWith('#') && document.getElementById('custom-accent-picker')) {
+                document.getElementById('custom-accent-picker').value = color;
+            }
+
             const bgBase = isDark ? [13, 13, 13] : [255, 255, 255];
             const accRgb = isAuto ? (isDark ? [255,255,255] : [0,0,0]) : [parseInt(finalColor.slice(1,3), 16), parseInt(finalColor.slice(3,5), 16), parseInt(finalColor.slice(5,7), 16)];
             const alphaVal = isAuto ? 0.02 : 0.10;
             const blended = accRgb.map((c, i) => Math.round(c * alphaVal + bgBase[i] * (1 - alphaVal)));
             const fadeGradientStop = `rgb(${blended[0]}, ${blended[1]}, ${blended[2]})`;
+            
             document.getElementById('dynamic-accent-styles').innerHTML = `
                 :root {
                     --accent-color: ${finalColor};
@@ -869,17 +918,20 @@
                     --fade-gradient-stop: ${fadeGradientStop};
                 }
             `;
-            els.logoAi.classList.toggle('gradient-mode', isAuto);
-            updateUI(); renderHistory();
+            if (els.logoAi) els.logoAi.classList.toggle('gradient-mode', isAuto);
+            updateUI();
+            renderHistory();
+            if (window.renderCustomAccents) window.renderCustomAccents();
         };
 
         window.toggleSidebar = () => {
             if (window.innerWidth < 1024) {
-                const isHidden = els.sidebar.classList.contains('-translate-x-full');
-                els.sidebar.classList.toggle('-translate-x-full');
+                const isHidden = els.sidebar.classList.contains('mobile-hidden');
+                els.sidebar.classList.toggle('mobile-hidden');
                 els.sidebarOverlay.style.display = isHidden ? 'block' : 'none';
             } else {
                 document.body.classList.toggle('sidebar-collapsed');
+                updateUI();
             }
         };
 
@@ -895,6 +947,7 @@
         };
 
         window.toggleSettingsPanel = () => {
+            if (!els.settingsPanel) return;
             const isActive = els.settingsPanel.classList.toggle('active');
             if (isActive) {
                 document.getElementById('settings-name-input').value = settings.userName;
@@ -902,11 +955,19 @@
                 document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
                 els.pfpMovableImg.src = settings.userPic || '';
                 applyMovableStyles();
+                // Reset custom color preview
+                const previewEl = document.getElementById('custom-color-preview');
+                const addBtn = document.getElementById('add-custom-color-btn');
+                if (previewEl) previewEl.style.display = 'none';
+                if (addBtn) addBtn.style.display = 'none';
+                // Restore current accent color
+                window.updateAccent(settings.accent || 'auto');
+                if (window.renderCustomAccents) window.renderCustomAccents();
             }
         };
 
         const applyMovableStyles = () => {
-            els.pfpMovableImg.style.transform = `translate(-50%, -50%) translate(${settings.pfpX}px, ${settings.pfpY}px) scale(${settings.pfpScale})`;
+            if (els.pfpMovableImg) els.pfpMovableImg.style.transform = `translate(-50%, -50%) translate(${settings.pfpX}px, ${settings.pfpY}px) scale(${settings.pfpScale})`;
         };
 
         window.pfpDragStart = (e) => {
@@ -949,6 +1010,7 @@
             reader.onload = (ev) => {
                 settings.userPic = ev.target.result;
                 document.getElementById('onboarding-pfp-preview').innerHTML = `<img src="${settings.userPic}" class="w-full h-full object-cover">`;
+                updateProfileUI(); 
             };
             reader.readAsDataURL(file);
         };
@@ -960,6 +1022,7 @@
                 return;
             }
             settings.userName = name;
+            updateProfileUI();
             document.getElementById('onboarding-step-1').classList.remove('active');
             document.getElementById('onboarding-step-2').classList.add('active');
         };
@@ -967,6 +1030,7 @@
         window.continueAsGuest = () => {
             settings.userName = "Guest";
             settings.userPic = "";
+            updateProfileUI();
             document.getElementById('onboarding-step-1').classList.remove('active');
             document.getElementById('onboarding-step-2').classList.add('active');
         };
@@ -982,6 +1046,7 @@
             els.onboarding.style.opacity = '0';
             setTimeout(() => {
                 els.onboarding.classList.add('hidden');
+                document.body.classList.remove('onboarding-active');
                 updateProfileUI();
                 render();
             }, 400);
@@ -989,13 +1054,67 @@
 
         window.updateSettingsFromPanel = () => {
             settings.userName = document.getElementById('settings-name-input').value.trim();
-            saveSettings(); updateProfileUI(); render();
+            saveSettings(); updateProfileUI(); 
+            if (chatHistory.length === 0) render(); 
         };
 
         window.updateTempFromPanel = (val) => {
             settings.temp = parseFloat(val);
             document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
             saveSettings();
+        };
+
+        window.addCustomAccent = (color) => {
+            if (!color || typeof color !== 'string') return;
+            const hex = color.toLowerCase();
+            if (!/^#([0-9a-f]{6})$/.test(hex)) return;
+            if (!Array.isArray(settings.customAccents)) settings.customAccents = [];
+            if (!settings.customAccents.includes(hex)) {
+                settings.customAccents.push(hex);
+            }
+            saveSettings();
+            // Don't auto-apply, just add to the list
+            window.renderCustomAccents();
+        };
+
+        window.handleCustomAccentChange = (value) => {
+            // Just preview the color, don't add it yet
+            if (value && /^#([0-9a-f]{6})$/i.test(value)) {
+                const previewEl = document.getElementById('custom-color-preview');
+                const addBtn = document.getElementById('add-custom-color-btn');
+                if (previewEl) {
+                    previewEl.style.background = value;
+                    previewEl.style.display = 'flex';
+                }
+                if (addBtn) {
+                    addBtn.style.display = 'flex';
+                    addBtn.setAttribute('data-color', value.toLowerCase());
+                }
+                // Apply temporarily for preview
+                window.updateAccent(value);
+            }
+        };
+
+        window.addSelectedCustomColor = () => {
+            const addBtn = document.getElementById('add-custom-color-btn');
+            const color = addBtn?.getAttribute('data-color');
+            if (color) {
+                window.addCustomAccent(color);
+                // Hide preview and button after adding
+                const previewEl = document.getElementById('custom-color-preview');
+                if (previewEl) previewEl.style.display = 'none';
+                if (addBtn) addBtn.style.display = 'none';
+            }
+        };
+
+        window.resetCustomColors = () => {
+            if (confirm('Remove all custom colors?')) {
+                settings.customAccents = [];
+                saveSettings();
+                window.renderCustomAccents();
+                // Restore current accent color
+                window.updateAccent(settings.accent || 'auto');
+            }
         };
 
         const saveSettings = () => {
@@ -1006,12 +1125,24 @@
         const updateProfileUI = () => {
             const currentName = settings.userName || "Guest";
             const dict = translations[settings.lang || 'en'];
-            els.sidebarName.innerText = currentName === "Guest" ? (dict.onboarding_guest) : currentName;
-            if (settings.userPic) {
-                const ratio = 32 / 280, scale = settings.pfpScale || 1.0;
-                const tx = (settings.pfpX || 0) * ratio, ty = (settings.pfpY || 0) * ratio;
-                els.avatarDisplay.innerHTML = `<div class="w-full h-full relative overflow-hidden rounded-full bg-black"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; height:32px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale});"></div>`;
-            } else els.avatarDisplay.innerText = currentName[0].toUpperCase();
+            if (els.sidebarName) els.sidebarName.innerText = currentName === "Guest" ? (dict.onboarding_guest) : currentName;
+            
+            const renderAvatar = (targetEl, size) => {
+                if (!targetEl) return;
+                if (settings.userPic) {
+                    const ratio = size / 280, scale = settings.pfpScale || 1.0;
+                    const tx = (settings.pfpX || 0) * ratio, ty = (settings.pfpY || 0) * ratio;
+                    targetEl.innerHTML = `<div class="relative overflow-hidden rounded-full bg-black" style="width:${size}px;height:${size}px"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; height:${size}px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale});"></div>`;
+                } else {
+                    targetEl.className = `w-8 h-8 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs`;
+                    targetEl.style.width = size + 'px';
+                    targetEl.style.height = size + 'px';
+                    targetEl.innerText = currentName[0].toUpperCase();
+                }
+            };
+
+            renderAvatar(els.avatarDisplay, 32);
+            renderAvatar(els.miniAvatarDisplay, 32);
         };
 
         window.toggleMenu = (e, id) => {
@@ -1026,8 +1157,10 @@
             if (els.noteMenu) els.noteMenu.classList.remove('active');
             if (els.settingsPanel) els.settingsPanel.classList.remove('active');
             if (window.innerWidth < 1024) {
-                els.sidebar.classList.add('-translate-x-full');
-                els.sidebarOverlay.style.display = 'none';
+                if (settings.hasCompletedTutorial) {
+                    els.sidebar.classList.add('mobile-hidden');
+                    els.sidebarOverlay.style.display = 'none';
+                }
             }
         };
 
@@ -1062,7 +1195,7 @@
         window.triggerFlare = () => {
             if (!els.flare) return;
             els.flare.classList.remove('flare-active');
-            void els.flare.offsetWidth; // Trigger reflow
+            void els.flare.offsetWidth;
             els.flare.classList.add('flare-active');
         };
 
@@ -1222,46 +1355,221 @@
         window.toggleSearch = () => { webSearch = !webSearch; updateUI(); };
 
         const updateUI = () => {
-            const hasTextVal = els.input.value.trim().length > 0;
-            els.send.disabled = !hasTextVal && !isGenerating;
-            els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-xs";
-            els.actIcon.innerHTML = currentModel.icon;
+            const hasTextVal = (els.input ? els.input.value.trim().length > 0 : false);
+            if (els.send) els.send.disabled = !hasTextVal && !isGenerating;
+            if (els.icon) els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-xs";
+            if (els.actIcon) els.actIcon.innerHTML = currentModel.icon;
             const currentDict = translations[settings.lang || 'en'];
-            document.getElementById('active-model-name').innerText = currentModel.id === "https://ar12c-okemo2.hf.space" ? currentDict.model_stargaze : currentDict.model_north;
-            document.getElementById('icon-pro-menu').innerHTML = MODELS.OLM2.icon;
-            document.getElementById('icon-stargaze-menu').innerHTML = MODELS.OLM1.icon;
-            document.getElementById('check-pro').classList.toggle('hidden', currentModel !== MODELS.OLM2);
-            document.getElementById('check-stargaze').classList.toggle('hidden', currentModel !== MODELS.OLM1);
-            els.searchBtn.className = `flex items-center gap-2 px-4 py-3 rounded-full border transition-all text-[10px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg text-white' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
-            els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
+            const modelNameEl = document.getElementById('active-model-name');
+            if (modelNameEl) modelNameEl.innerText = currentModel.id === "https://ar12c-okemo2.hf.space" ? currentDict.model_stargaze : currentDict.model_north;
+            
+            const iconPro = document.getElementById('icon-pro-menu');
+            const iconStargaze = document.getElementById('icon-stargaze-menu');
+            if (iconPro) iconPro.innerHTML = MODELS.OLM2.icon;
+            if (iconStargaze) iconStargaze.innerHTML = MODELS.OLM1.icon;
+            
+            const checkPro = document.getElementById('check-pro');
+            const checkStargaze = document.getElementById('check-stargaze');
+            if (checkPro) checkPro.classList.toggle('hidden', currentModel !== MODELS.OLM2);
+            if (checkStargaze) checkStargaze.classList.toggle('hidden', currentModel !== MODELS.OLM1);
+            
+            if (els.searchBtn) {
+                if (webSearch) {
+                    els.searchBtn.style.backgroundColor = 'var(--accent-color)';
+                    els.searchBtn.style.color = 'var(--accent-contrast)';
+                    els.searchBtn.style.borderColor = 'transparent';
+                } else {
+                    els.searchBtn.style.backgroundColor = 'transparent';
+                    els.searchBtn.style.color = ''; 
+                    els.searchBtn.style.borderColor = ''; 
+                }
+            }
 
+            document.body.classList.toggle('sidebar-collapsed', document.body.classList.contains('sidebar-collapsed'));
             document.body.classList.toggle('is-generating', isGenerating);
         };
+        
+        window.updateUI = updateUI; 
 
         window.factoryReset = () => { localStorage.clear(); window.location.reload(); };
 
+        window.renderCustomAccents = () => {
+            if (!els.savedAccents) return;
+            const currentAccent = settings.accent || 'auto';
+            const customColors = settings.customAccents || [];
+            els.savedAccents.innerHTML = customColors.map(color => {
+                const isActive = currentAccent === color;
+                return `<button onclick="window.updateAccent('${color}')" class="accent-dot" style="background:${color};${isActive ? 'box-shadow:0 0 0 2px rgba(0,0,0,0.25);' : ''}"></button>`;
+            }).join('');
+            // Show/hide reset button based on whether there are custom colors
+            const resetBtn = document.getElementById('reset-custom-colors-btn');
+            if (resetBtn) {
+                resetBtn.style.display = customColors.length > 0 ? 'block' : 'none';
+            }
+        };
+
         const initApp = () => {
-            if (!settings.hasCompletedTutorial) els.onboarding.classList.remove('hidden');
+            els.chatCont = document.getElementById("chat-container");
+            els.chatMsgs = document.getElementById("chat-messages");
+            els.input = document.getElementById("user-input");
+            els.send = document.getElementById("send-btn");
+            els.icon = document.getElementById("send-btn-icon");
+            els.welcome = document.getElementById("welcome-state");
+            els.hist = document.getElementById("history-list");
+            els.modMenu = document.getElementById("model-menu");
+            els.noteMenu = document.getElementById("notes-menu");
+            els.searchBtn = document.getElementById("search-btn");
+            els.actIcon = document.getElementById('active-model-icon');
+            els.sidebar = document.getElementById('sidebar');
+            els.sidebarOverlay = document.getElementById('sidebar-overlay');
+            els.logoAi = document.getElementById('logo-ai-core');
+            els.greeting = document.getElementById('welcome-greeting');
+            els.onboarding = document.getElementById('onboarding-overlay');
+            els.settingsPanel = document.getElementById('settings-panel');
+            els.sidebarName = document.getElementById('sidebar-user-name');
+            els.avatarDisplay = document.getElementById('user-avatar-display');
+            els.miniAvatarDisplay = document.getElementById('mini-avatar-display');
+            els.pfpMovableImg = document.getElementById('pfp-movable-img');
+            els.pfpWorkspace = document.getElementById('pfp-workspace');
+            els.storageDisplay = document.getElementById('storage-display');
+            els.flare = document.getElementById('intelligence-flare');
+            els.savedAccents = document.getElementById('saved-accents');
+
+            if (!settings.hasCompletedTutorial) {
+                if (els.onboarding) els.onboarding.classList.remove('hidden');
+                if (els.sidebar) els.sidebar.classList.add('mobile-hidden'); 
+                document.body.classList.add('onboarding-active');
+            } else {
+                if (window.innerWidth >= 1024 && els.sidebar) {
+                    els.sidebar.classList.remove('mobile-hidden');
+                }
+                document.body.classList.remove('onboarding-active');
+            }
+
             if (localStorage.getItem('vail_theme') === 'dark') document.documentElement.classList.add('dark');
-            window.updateAccent(settings.accent); updateProfileUI();
-            els.input.oninput = () => { els.input.style.height = 'auto'; els.input.style.height = Math.min(els.input.scrollHeight, 160) + 'px'; updateUI(); };
-            els.input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.handleAction(); } };
+            
+            window.updateAccent(settings.accent); 
+            updateProfileUI();
+            window.renderCustomAccents();
+            
+            if (els.input) {
+                els.input.oninput = () => { 
+                    els.input.style.height = 'auto'; 
+                    // Enlarge maximum height to 600px
+                    const newHeight = Math.min(els.input.scrollHeight, 600); 
+                    els.input.style.height = newHeight + 'px'; 
+                    updateUI(); 
+                };
+                els.input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.handleAction(); } };
+            }
+
             window.onclick = (e) => {
-                const modelBtn = document.getElementById('model-dropdown-btn'), menuToggle = document.getElementById('menu-toggle-btn');
+                if (els.modMenu?.classList.contains('active') && !document.getElementById('model-dropdown-btn').contains(e.target)) els.modMenu.classList.remove('active');
+                if (els.noteMenu?.classList.contains('active') && !e.target.closest('#notes-menu') && !e.target.closest('button[onclick*="notes-menu"]')) els.noteMenu.classList.remove('active');
+                
+                const onboardingCard = document.querySelector('.onboarding-card');
                 const isSidebarClick = els.sidebar && els.sidebar.contains(e.target);
                 const isSettingsClick = els.settingsPanel && els.settingsPanel.contains(e.target);
-                const isModelBtnClick = modelBtn && modelBtn.contains(e.target);
-                const isToggleBtnClick = menuToggle && menuToggle.contains(e.target);
+                const isModelBtnClick = document.getElementById('model-dropdown-btn')?.contains(e.target);
+                const isToggleBtnClick = document.getElementById('menu-toggle-btn')?.contains(e.target);
+                const isOnboardingClick = onboardingCard?.contains(e.target);
 
-                if (!isSidebarClick && !isSettingsClick && !isModelBtnClick && !isToggleBtnClick) {
+                if (!isSidebarClick && !isSettingsClick && !isModelBtnClick && !isToggleBtnClick && !isOnboardingClick) {
                     window.closeAllMenus();
                 }
             };
+
             window.applyTranslations();
             window.updateStorageUsage();
             renderHistory(); render(); updateUI();
         };
-        initApp();
-    </script>
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    })();
+</script>
+<!--settings-->
+<div id="settings-panel">
+    <div class="p-6 space-y-6">
+        <div class="flex items-center justify-between">
+            <h3 class="font-black uppercase text-[10px] tracking-widest text-zinc-400" data-t="settings">Settings</h3>
+            <button onclick="window.toggleSettingsPanel()" class="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm active:scale-90">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div>
+            <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2" data-t="display_name">Display Name</label>
+            <input type="text" id="settings-name-input" 
+                   oninput="window.updateSettingsFromPanel()" 
+                   class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 ring-blue-500">
+        </div>
+
+        <div>
+            <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2" data-t="creativity">Creativity</label>
+            <input type="range" id="settings-param-temp" min="0" max="1" step="0.01" 
+                   class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500" 
+                   oninput="window.updateTempFromPanel(this.value)">
+            <div id="settings-temp-val" class="text-right text-[10px] font-mono mt-1 opacity-50">0.70</div>
+        </div>
+
+        <div class="space-y-4">
+            <div id="pfp-workspace" onpointerdown="window.pfpDragStart(event)" class="relative cursor-move overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <img id="pfp-movable-img" src="" class="pointer-events-none">
+                <div id="pfp-mask"></div>
+            </div>
+            <input type="file" id="pfp-upload" class="hidden" accept="image/*" onchange="window.handleProfilePicUpload(event)">
+            <button onclick="document.getElementById('pfp-upload').click()" class="w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-95 transition-all" data-t="photo">Upload Photo</button>
+            
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold text-zinc-400 uppercase" data-t="zoom">Zoom</span>
+                <input type="range" min="0.5" max="3" step="0.1" value="1" class="flex-1 accent-blue-500" oninput="window.updatePfpScale(this.value)">
+                <span id="scale-val" class="text-[10px] font-mono opacity-50">1.0x</span>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2" data-t="accent">Accent Color</label>
+            <div class="flex flex-wrap items-center gap-3 px-1">
+                <button onclick="window.updateAccent('auto')" class="accent-dot bg-zinc-900 dark:bg-white flex items-center justify-center text-[8px] font-black overflow-hidden" title="Auto">
+                    <span class="text-white dark:text-zinc-900">A</span>
+                </button>
+                <button onclick="window.updateAccent('#3b82f6')" class="accent-dot bg-blue-500"></button>
+                <button onclick="window.updateAccent('#a855f7')" class="accent-dot bg-purple-500"></button>
+                <button onclick="window.updateAccent('#22c55e')" class="accent-dot bg-emerald-500"></button>
+                
+                <div class="relative flex items-center justify-center w-6 h-6 rounded-full border-2 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 transition-all overflow-hidden group">
+                    <input type="color" id="custom-accent-picker" 
+                           oninput="window.handleCustomAccentChange(this.value)" 
+                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer scale-150">
+                    <i class="fa-solid fa-plus text-[10px] text-zinc-400 pointer-events-none group-hover:text-zinc-600 transition-colors"></i>
+                </div>
+                <div id="custom-color-preview" class="accent-dot hidden" style="display: none;"></div>
+                <button id="add-custom-color-btn" onclick="window.addSelectedCustomColor()" 
+                        class="hidden items-center gap-1 px-2 py-1 text-[9px] font-bold uppercase text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white rounded-md transition-colors"
+                        style="display: none;">
+                    <i class="fa-solid fa-plus text-[8px]"></i>
+                    Add
+                </button>
+            </div>
+            <div class="flex items-center justify-between mt-3 px-1">
+                <div id="saved-accents" class="flex flex-wrap items-center gap-2"></div>
+                <button id="reset-custom-colors-btn" onclick="window.resetCustomColors()" 
+                        class="text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-500 hover:text-red-500 dark:hover:text-red-400 transition-colors px-2 py-1 rounded"
+                        title="Reset all custom colors"
+                        style="display: none;">
+                    <i class="fa-solid fa-trash-can text-[8px]"></i>
+                </button>
+            </div>
+        </div>
+
+        <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()" class="w-full py-3 mt-4 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] rounded-lg hover:bg-red-500 hover:text-white transition-all">
+            <i class="fa-solid fa-fire-extinguisher mr-2"></i> Erase All Data
+        </button>
+    </div>
+</div>
 </body>
 </html>
