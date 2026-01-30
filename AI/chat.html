@@ -175,59 +175,84 @@
         .accent-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
         .accent-dot.active { border-color: currentColor; }
 
-        /* Input Box Styling - Solid Borders (Gradient Removed per request) */
+        /* NEUTRAL BORDER DYNAMICS: Grey borders idle, Gradient generating */
         .input-box-wrap { 
-            background-color: white; 
+            background-color: #ffffff;
             backdrop-filter: blur(24px); 
             position: relative; 
             z-index: 40; 
             pointer-events: auto;
             border-radius: 1.5rem;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(0,0,0,0.1);
+            border: 1.5px solid #e5e7eb; /* Light mode: Light Grey border */
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
         }
         .dark .input-box-wrap { 
-            background-color: #141414; 
-            border: 1px solid rgba(255,255,255,0.1);
+            background-color: #141414;
+            border-color: #27272a; /* Dark mode: Darker neutral grey border */
         }
 
+        /* Seamless Spinning Gradient Border for Generation */
         body.is-generating .input-box-wrap {
-            border-color: var(--accent-color);
-            box-shadow: 0 10px 30px -10px var(--accent-glow);
+            border-color: transparent;
+            background-image: linear-gradient(white, white), 
+                              linear-gradient(110deg, #60a5fa, #a855f7, #ec4899, #f43f5e, #10b981, #60a5fa);
+            background-size: 100% 100%, 300% 100%;
+            animation: border-spin-move 3s linear infinite;
+            box-shadow: 0 10px 40px -10px rgba(168, 85, 247, 0.3);
+        }
+        .dark body.is-generating .input-box-wrap {
+            background-image: linear-gradient(#141414, #141414), 
+                              linear-gradient(110deg, #60a5fa, #a855f7, #ec4899, #f43f5e, #10b981, #60a5fa);
         }
 
-        /* Shoot-up Flare Animation (Apple Intelligence Gradient) */
+        @keyframes border-spin-move {
+            0% { background-position: 0 0, 0% 0%; }
+            100% { background-position: 0 0, 300% 0%; }
+        }
+
+        /* Intelligence Flare Animation - Absolute Bottom to Top */
         #intelligence-flare {
-            position: absolute;
-            bottom: 40px;
+            position: fixed;
+            bottom: 0;
             left: 50%;
-            width: 400px;
-            height: 200px;
+            width: 100vw;
+            height: 40vh;
             background: radial-gradient(ellipse at bottom, 
-                rgba(96, 165, 250, 0.4) 0%, 
-                rgba(168, 85, 247, 0.4) 25%, 
-                rgba(236, 72, 153, 0.3) 50%, 
+                rgba(96, 165, 250, 0.6) 0%, 
+                rgba(168, 85, 247, 0.5) 25%, 
+                rgba(236, 72, 153, 0.4) 50%, 
                 rgba(244, 63, 94, 0.2) 75%, 
                 transparent 100%);
-            border-radius: 400px 400px 0 0;
-            filter: blur(40px);
+            border-radius: 100% 100% 0 0;
+            filter: blur(80px);
             pointer-events: none;
-            z-index: 30;
+            z-index: 100;
             opacity: 0;
-            transform: translate(-50%, 20px) scaleX(0.5);
+            transform: translate(-50%, 100%) scaleX(0.5);
         }
 
         .flare-active {
-            animation: shoot-flare 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: shoot-flare-global 1.2s cubic-bezier(0.15, 0.85, 0.35, 1) forwards;
         }
 
-        @keyframes shoot-flare {
-            0% { transform: translate(-50%, 20px) scaleX(0.5) scaleY(0.2); opacity: 0; }
-            20% { opacity: 0.7; }
-            100% { transform: translate(-50%, -250px) scaleX(1.4) scaleY(1.2); opacity: 0; }
+        @keyframes shoot-flare-global {
+            0% { transform: translate(-50%, 100%) scaleX(0.3) scaleY(0.5); opacity: 0; }
+            15% { opacity: 0.9; }
+            100% { transform: translate(-50%, -120vh) scaleX(1.5) scaleY(1.2); opacity: 0; }
         }
 
-        #bottom-fade { background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 30%, transparent 100%); pointer-events: none; }
+        #bottom-fade { 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 180px; 
+            background: linear-gradient(to top, var(--fade-gradient-stop) 0%, var(--fade-gradient-stop) 40%, transparent 100%); 
+            pointer-events: none; 
+            z-index: 30;
+        }
 
         .history-btn-container { display: flex; align-items: center; width: 100%; gap: 4px; padding: 0 4px; position: relative; }
 
@@ -280,7 +305,7 @@
             to { background-position: 200% center; }
         }
 
-        /* Onboarding */
+        /* Onboarding Styles */
         #onboarding-overlay { 
             position: fixed; inset: 0; z-index: 2000; 
             background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(40px); 
@@ -576,8 +601,8 @@
                     <div class="border-l-2 border-blue-500 pl-3">
                         <p class="font-bold text-[11px] mb-1" data-t="ui_opt">UI Optimization</p>
                         <ul class="text-zinc-500 dark:text-zinc-400 space-y-1 list-disc list-inside">
-                            <li data-t="opt_1">Shoot-up flare intelligence flare</li>
-                            <li data-t="opt_2">Two-step onboarding protocol</li>
+                            <li data-t="opt_1">Neutral static borders</li>
+                            <li data-t="opt_2">Intelligence border gradient</li>
                             <li data-t="opt_3">Equation support strictly via $$ delimiters</li>
                         </ul>
                     </div>
@@ -603,7 +628,7 @@
         </div>
 
         <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 z-40 pb-6 pt-12">
-            <div class="max-w-2xl mx-auto relative">
+            <div class="max-w-2xl mx-auto relative group">
                 <!-- Intelligence Flare Animation -->
                 <div id="intelligence-flare"></div>
                 <div class="input-box-wrap p-2 shadow-2xl transition-all duration-300">
@@ -650,8 +675,8 @@
                 search: "Search",
                 protocol_stats: "Protocol Stats",
                 ui_opt: "UI Optimization",
-                opt_1: "Intelligence flare shoot-up",
-                opt_2: "Two-step onboarding protocol",
+                opt_1: "Neutral natural borders",
+                opt_2: "Intelligence flare shoot-up",
                 opt_3: "Equation support strictly via $$ delimiters",
                 model_north: "OLM North Star",
                 model_stargaze: "OLM Stargaze",
@@ -758,7 +783,7 @@
             temp: 0.7, accent: 'auto', userName: '', userPic: '',
             pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
             lang: 'en',
-            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL mathematical formulas, equations, and scientific notations strictly in $$ tags only. DO NOT use parentheses or square brackets.'
+            systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL mathematical formulas, equations, and scientific notations strictly in $$ tags only. DO NOT use parentheses or square brackets for wrapping equations.'
         }));
 
         const els = {
@@ -785,6 +810,12 @@
             pfpWorkspace: document.getElementById('pfp-workspace'),
             storageDisplay: document.getElementById('storage-display'),
             flare: document.getElementById('intelligence-flare')
+        };
+
+        const hexToRgba = (hex, alpha) => {
+            if (hex.startsWith('rgba')) return hex;
+            const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         };
 
         window.updateStorageUsage = () => {
@@ -816,12 +847,6 @@
             updateProfileUI();
             renderHistory();
             render();
-        };
-
-        const hexToRgba = (hex, alpha) => {
-            if (hex.startsWith('rgba')) return hex;
-            const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         };
 
         window.updateAccent = (color) => {
@@ -991,12 +1016,15 @@
 
         window.toggleMenu = (e, id) => {
             e.stopPropagation();
-            [els.modMenu, els.noteMenu].forEach(m => m.id === id ? m.classList.toggle('active') : m.classList.remove('active'));
+            [els.modMenu, els.noteMenu].forEach(m => {
+                if (m) m.id === id ? m.classList.toggle('active') : m.classList.remove('active');
+            });
         };
 
         window.closeAllMenus = () => {
-            [els.modMenu, els.noteMenu].forEach(m => m.classList.remove('active'));
-            els.settingsPanel.classList.remove('active');
+            if (els.modMenu) els.modMenu.classList.remove('active');
+            if (els.noteMenu) els.noteMenu.classList.remove('active');
+            if (els.settingsPanel) els.settingsPanel.classList.remove('active');
             if (window.innerWidth < 1024) {
                 els.sidebar.classList.add('-translate-x-full');
                 els.sidebarOverlay.style.display = 'none';
@@ -1032,6 +1060,7 @@
         };
 
         window.triggerFlare = () => {
+            if (!els.flare) return;
             els.flare.classList.remove('flare-active');
             void els.flare.offsetWidth; // Trigger reflow
             els.flare.classList.add('flare-active');
@@ -1041,9 +1070,7 @@
             if (isGenerating) return;
             const msg = txt || els.input.value.trim(); if (!msg) return;
             
-            // Trigger visual flare
             window.triggerFlare();
-
             els.input.value = ""; els.input.style.height = "auto";
             chatHistory.push([msg, null]); render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
             isGenerating = true; updateUI();
@@ -1065,6 +1092,7 @@
         };
 
         const applyContentFeatures = (el) => {
+            if (!el) return;
             el.innerHTML = el.innerHTML.replace(/\$$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
             el.querySelectorAll('pre').forEach(pre => {
                 const btn = document.createElement('button'); btn.className = 'code-copy-btn'; btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
@@ -1104,11 +1132,33 @@
             }
         };
 
+        window.delChat = (id) => {
+            delete allChats[id]; 
+            localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+            if (id === currentChatId) {
+                currentChatId = crypto.randomUUID();
+                chatHistory = [];
+                render();
+            }
+            renderHistory();
+            window.updateStorageUsage();
+        };
+
+        window.loadChat = (id) => {
+            if (!allChats[id]) return;
+            currentChatId = id; 
+            chatHistory = allChats[id].history; 
+            render(); 
+            updateUI(); 
+            renderHistory();
+        };
+
         const renderHistory = () => {
             const sortedChats = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
             const currentLang = settings.lang || 'en';
             const dict = translations[currentLang];
-            const dayStartTs = new Date().setHours(0,0,0,0);
+            const now = new Date();
+            const dayStartTs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
             const yestStartTs = dayStartTs - 86400000;
             const weekStartTs = dayStartTs - (86400000 * 7);
             const groupsMap = {
@@ -1135,18 +1185,6 @@
                 }
             }
             els.hist.innerHTML = finalHtml || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">${dict.no_history}</div>`;
-        };
-
-        window.loadChat = (id) => {
-            currentChatId = id; chatHistory = allChats[id].history; render(); updateUI(); renderHistory();
-        };
-
-        window.delChat = (id) => {
-            delete allChats[id]; 
-            localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
-            if (id === currentChatId) window.resetChat(); 
-            renderHistory(); // Refresh the list UI
-            window.updateStorageUsage();
         };
 
         const render = () => {
@@ -1197,7 +1235,6 @@
             els.searchBtn.className = `flex items-center gap-2 px-4 py-3 rounded-full border transition-all text-[10px] font-bold uppercase ${webSearch ? 'border-transparent shadow-lg text-white' : 'border-zinc-200 dark:border-zinc-800 text-zinc-500'}`;
             els.searchBtn.style.backgroundColor = webSearch ? 'var(--accent-color)' : '';
 
-            // Toggle border state (gradient border removed, now just shows accent border on generation)
             document.body.classList.toggle('is-generating', isGenerating);
         };
 
@@ -1211,7 +1248,12 @@
             els.input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.handleAction(); } };
             window.onclick = (e) => {
                 const modelBtn = document.getElementById('model-dropdown-btn'), menuToggle = document.getElementById('menu-toggle-btn');
-                if (!els.settingsPanel.contains(e.target) && !modelBtn.contains(e.target) && !menuToggle.contains(e.target) && !els.sidebar.contains(e.target)) {
+                const isSidebarClick = els.sidebar && els.sidebar.contains(e.target);
+                const isSettingsClick = els.settingsPanel && els.settingsPanel.contains(e.target);
+                const isModelBtnClick = modelBtn && modelBtn.contains(e.target);
+                const isToggleBtnClick = menuToggle && menuToggle.contains(e.target);
+
+                if (!isSidebarClick && !isSettingsClick && !isModelBtnClick && !isToggleBtnClick) {
                     window.closeAllMenus();
                 }
             };
