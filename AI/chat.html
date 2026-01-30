@@ -1337,7 +1337,8 @@
                             // 5. Run your backup/sync functions
                             try {
                                 await window.ensureGoogleDriveFolder();
-                                await window.syncChatsToGoogle();
+                                await window.loadChatsFromGoogle(); // Sync DOWN first
+                                await window.syncChatsToGoogle();   // Sync UP after merge
                                 console.log('Profile loaded and Drive sync complete for:', settings.userName);
                             } catch (driveErr) {
                                 console.error('Drive Sync Error:', driveErr);
@@ -1354,7 +1355,7 @@
                         if (googleDriveFolderId) return;
 
                         const response = await gapi.client.drive.files.list({
-                            q: "name='OLM_Chat_Backups' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+                            q: "name='OLM-Chats' and mimeType='application/vnd.google-apps.folder' and trashed=false",
                             spaces: 'drive',
                             fields: 'files(id, name)'
                         });
@@ -1366,7 +1367,7 @@
                             // Create new folder
                             const createResponse = await gapi.client.drive.files.create({
                                 resource: {
-                                    name: 'OLM_Chat_Backups',
+                                    name: 'OLM-Chats',
                                     mimeType: 'application/vnd.google-apps.folder'
                                 },
                                 fields: 'id'
@@ -1376,6 +1377,44 @@
                         }
                     } catch (error) {
                         console.error('Error ensuring Google Drive folder:', error);
+                    }
+                };
+
+                window.loadChatsFromGoogle = async () => {
+                    if (!isGoogleSignedIn || !googleDriveFolderId) return;
+                    try {
+                        const listResponse = await gapi.client.drive.files.list({
+                            q: `name='olm_backup.json' and '${googleDriveFolderId}' in parents and trashed=false`,
+                            spaces: 'drive',
+                            fields: 'files(id)'
+                        });
+
+                        if (listResponse.result.files && listResponse.result.files.length > 0) {
+                            const fileId = listResponse.result.files[0].id;
+                            const response = await gapi.client.drive.files.get({
+                                fileId: fileId,
+                                alt: 'media'
+                            });
+
+                            const remoteData = response.result;
+                            if (remoteData && remoteData.chats) {
+                                // Merge logic: If remote timestamp > local, or local missing, update local
+                                let merged = false;
+                                for (const chatId in remoteData.chats) {
+                                    if (!allChats[chatId] || remoteData.chats[chatId].timestamp > (allChats[chatId].timestamp || 0)) {
+                                        allChats[chatId] = remoteData.chats[chatId];
+                                        merged = true;
+                                    }
+                                }
+                                if (merged) {
+                                    localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+                                    renderHistory();
+                                    render();
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error loading chats from Google Drive:', error);
                     }
                 };
 
