@@ -1,57 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>OkemoVail | Personal Portfolio</title>
+  <title>OkemoVail</title>
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+
+  <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      darkMode: 'media',
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
-            inter: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['"Inter"', 'sans-serif'],
           },
           colors: {
             brand: {
-              red: '#ef4444',
-              purple: '#a855f7',
+              primary: '#000000',
+              secondary: '#666666',
             }
           },
+          borderRadius: {
+            'dia': '1.5rem',
+            'dia-lg': '2.5rem',
+            'dia-full': '100px',
+          },
           animation: {
-            'gradient-flow': 'gradientFlow 8s ease infinite',
-            'fade-in-up': 'fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            'pulse-glow': 'pulseGlow 6s ease-in-out infinite',
+            'chroma-sweep': 'chroma-sweep 0.9s ease-in-out forwards',
+            'border-sweep': 'border-gradient-sweep 4s ease-in-out infinite',
           },
           keyframes: {
-            gradientFlow: {
-              '0%': { 'background-position': '0% 50%' },
-              '50%': { 'background-position': '100% 50%' },
-              '100%': { 'background-position': '0% 50%' },
+            'chroma-sweep': {
+              '0%': { 'background-position': '100% 0', filter: 'blur(1px)' },
+              '100%': { 'background-position': '0 0', filter: 'blur(0)' },
             },
-            pulseGlow: {
-              '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.3))' },
-              '50%': { filter: 'drop-shadow(0 0 35px rgba(168, 85, 247, 0.5))' },
-            },
-            fadeInUp: {
-              '0%': { opacity: '0', transform: 'translateY(20px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            float: {
-              '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
-              '33%': { transform: 'translate(5vw, 5vh) rotate(2deg)' },
-              '66%': { transform: 'translate(-2vw, 8vh) rotate(-1deg)' },
+            'border-gradient-sweep': {
+              '0%': { left: '-150%' },
+              '50%': { left: '100%' },
+              '50.1%': { left: '-150%' },
+              '100%': { left: '-150%' }
             }
           }
         }
@@ -61,600 +60,601 @@
 
   <style>
     :root {
-      --bg-color: #fbfbfd;
-      --text-color: #1d1d1f;
-      --nav-bg: rgba(255, 255, 255, 0.2);
-      --card-bg: rgba(255, 255, 255, 0.4);
-      --card-border: rgba(0, 0, 0, 0.08);
-      --star-color: 0x333333;
-      --accent-color: #ef4444;
-      --mock-win-bg: #ffffff;
-      --mock-side-bg: #f9f9f9;
-      --mock-msg-user: rgba(0,0,0,0.05);
-      --mock-border: rgba(0,0,0,0.1);
+      --bg-base: #f8f8f8;
+      --text-main: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.60);
+      --stroke-light: rgba(0, 0, 0, 0.06);
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #000000;
-        --text-color: #f5f5f7;
-        --nav-bg: rgba(0, 0, 0, 0.2);
-        --card-bg: rgba(255, 255, 255, 0.03);
-        --card-border: rgba(255, 255, 255, 0.05);
-        --star-color: 0xffffff;
-        --mock-win-bg: #0d0d0d;
-        --mock-side-bg: #141414;
-        --mock-msg-user: rgba(255,255,255,0.05);
-        --mock-border: rgba(255,255,255,0.1);
-      }
+    .dark {
+      --bg-base: #0f0f0f;
+      --text-main: rgba(255, 255, 255, 0.90);
+      --text-secondary: rgba(255, 255, 255, 0.70);
+      --stroke-light: rgba(255, 255, 255, 0.10);
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      transition: background-color 0.8s ease, color 0.8s ease;
     }
 
-    #space-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
+    .chroma-text {
+      background-image: linear-gradient(90deg, #000 0, #000 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
+      background-size: 300% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: chroma-sweep 1.2s cubic-bezier(0.87, 0, 0.13, 1) forwards;
+    }
+
+    .dark .chroma-text {
+      background-image: linear-gradient(90deg, #fff 0, #fff 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
+    }
+
+    @keyframes chroma-sweep {
+      0% {
+        background-position: 100% 0;
+        filter: blur(2px);
+      }
+
+      100% {
+        background-position: 0 0;
+        filter: blur(0);
+      }
+    }
+
+    /* Slower chroma sweep for emphasis */
+    .chroma-text-slow {
+      background-image: linear-gradient(90deg, #000 0, #000 20%, #c679c4 30%, #fa3d1d 35%, #ffb005 40%, #e1e1fe 45%, #0358f7 50%, #ffffff 55%, transparent 60%, transparent);
+      background-size: 400% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      /* Animation handled by JS class toggle */
+    }
+
+    .dark .chroma-text-slow {
+      background-image: linear-gradient(90deg, #fff 0, #fff 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
+    }
+
+    /* Transition class for cycling text */
+    .cycling-text-transition {
+      transition: opacity 0.5s ease-in-out;
+      opacity: 1;
+    }
+
+    .cycling-text-transition.fade-out {
+      opacity: 0;
+    }
+
+    .pfp-orbit {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      padding: 4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c679c4, #fa3d1d, #ffb005, #0358f7);
+      margin-top: 2rem;
+      animation: rotate 10s linear infinite;
+    }
+
+    /* Animation class for toggling */
+    .chroma-text-slow.animate {
+      animation: chroma-sweep 4s cubic-bezier(0.87, 0, 0.13, 1) forwards;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pfp-image {
       width: 100%;
       height: 100%;
-      z-index: -10;
-      pointer-events: none;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--bg-base);
+      transform: rotate(-360deg);
+      /* Counter-rotate to keep image upright */
+      animation: counter-rotate 10s linear infinite;
     }
 
-    .intel-gradient {
-      display: inline-block;
-      background: linear-gradient(
-        90deg, 
-        #ef4444, 
-        #a855f7,
-        #ec4899,
-        #ef4444
-      );
-      background-size: 300% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientFlow 6s linear infinite;
-      padding: 0.25em 0;
-      margin: -0.25em 0;
-    }
+    @keyframes counter-rotate {
+      from {
+        transform: rotate(0deg);
+      }
 
-    .glass-nav {
-      backdrop-filter: saturate(180%) blur(40px);
-      -webkit-backdrop-filter: saturate(180%) blur(40px);
-      background: var(--nav-bg);
-      border-bottom: 0.5px solid var(--card-border);
-      z-index: 100;
-      transition: background-color 0.5s ease;
-    }
-
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-radius: 24px;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-8px);
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .cta-apple {
-      background: var(--text-color);
-      color: var(--bg-color);
-      padding: 12px 36px;
-      border-radius: 980px;
-      font-weight: 700;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      font-size: 11px;
-    }
-
-    .cta-apple:hover {
-      background: var(--text-color);
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px rgba(168, 85, 247, 0.2);
+      to {
+        transform: rotate(-360deg);
+      }
     }
 
     .scroll-reveal {
       opacity: 0;
       transform: translateY(20px);
-      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .scroll-reveal.visible {
+    .scroll-reveal.active {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .blur-division {
-        height: 120px;
-        width: 100%;
-        background: linear-gradient(to bottom, transparent, var(--bg-color));
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        margin-top: -60px;
-        position: relative;
-        z-index: 30;
+    .dia-card {
+      background: var(--bg-base);
+      border: 1px solid var(--stroke-light);
+      border-radius: 2.5rem;
+      transition: all 0.3s cubic-bezier(0.87, 0, 0.13, 1);
     }
 
-    /* Endpoint Refined Mock Design */
-    .mock-endpoint-win {
-      background: var(--mock-win-bg);
-      border: 1px solid var(--mock-border);
-      box-shadow: 0 40px 100px rgba(0,0,0,0.3);
-      border-radius: 20px;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      position: relative;
-    }
-    
-    .mock-sidebar {
-      background: var(--mock-side-bg);
-      border-right: 1px solid var(--mock-border);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .dia-card:hover {
+      border-color: rgba(0, 0, 0, 0.12);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
     }
 
-    .mock-header {
-      height: 54px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid var(--mock-border);
-      padding: 0 20px;
-      background: rgba(128, 128, 128, 0.02);
-      backdrop-filter: blur(20px);
-      z-index: 10;
+    .dark .dia-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .mock-header-pill {
-      background: var(--mock-msg-user);
-      padding: 6px 12px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 10px;
+    .dia-btn-outline {
+      border: 1px solid var(--stroke-light);
+      border-radius: 100px;
       font-weight: 700;
-      letter-spacing: 0.05em;
+      transition: all 0.2s;
     }
 
-    .mock-chat-area {
-      flex: 1;
-      padding: 32px 24px;
+    .dia-btn-outline:hover {
+      background: var(--text-main);
+      color: var(--bg-base);
+      border-color: var(--text-main);
+    }
+
+    /* Side Animations Logic */
+    .chroma-mask {
+      mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+    }
+
+    .marquee-v {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      overflow-y: auto;
-      max-height: 400px;
+      animation: marquee-v 20s linear infinite;
     }
 
-    .mock-msg {
-      max-width: 85%;
-      padding: 12px 18px;
-      border-radius: 18px;
-      font-size: 13px;
-      line-height: 1.6;
+    @keyframes marquee-v {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-50%);
+      }
     }
 
-    .mock-msg.user {
-      align-self: flex-end;
-      background: var(--mock-msg-user);
-      border-bottom-right-radius: 4px;
-    }
-
-    .mock-msg.ai {
-      align-self: flex-start;
-      background: transparent;
-      border-radius: 0;
-      padding: 0;
-      max-width: 90%;
-    }
-
-    .ai-bubble-icon {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: #a855f7;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .mock-input-wrap {
-      padding: 24px;
-      background: transparent;
-      position: relative;
-    }
-
-    .mock-input-bar {
-      background: var(--mock-msg-user);
-      border: 1px solid var(--mock-border);
-      border-radius: 20px;
-      padding: 14px 24px;
+    /* Multi-column Sidebar Animation */
+    .sidebar-columns {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      backdrop-filter: blur(20px);
-    }
-    
-    .mock-sidebar-item {
-        font-size: 11px;
-        font-weight: 600;
-        padding: 10px;
-        border-radius: 8px;
-        opacity: 0.4;
-        transition: all 0.3s ease;
+      gap: 4px;
+      height: 100%;
+      opacity: 0.5;
     }
 
-    .mock-sidebar-item.active {
-        background: var(--mock-msg-user);
+    .chroma-col-item {
+      width: 12px;
+      height: 200%;
+      background: linear-gradient(to bottom, transparent, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #ffffff, transparent);
+      /* Animation handled by JS class toggle */
+      opacity: 0;
+      transform: translateY(100%);
+      filter: blur(6px);
+    }
+
+    .chroma-col-item.animate {
+      animation: sidebar-sweep 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .chroma-col-item:nth-child(2) {
+      transition-delay: 0.1s;
+    }
+
+    .chroma-col-item:nth-child(3) {
+      transition-delay: 0.2s;
+    }
+
+    @keyframes sidebar-sweep {
+      0% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      10% {
         opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+    }
+
+    /* Sweeping Sidebar Animation */
+    .sweep-bar {
+      transition: opacity 0.6s ease;
+    }
+
+    .sweep-bar-left {
+      animation: sweep-left 1.2s cubic-bezier(0.87, 0, 0.13, 1);
+    }
+
+    .sweep-bar-right {
+      animation: sweep-right 1.2s cubic-bezier(0.87, 0, 0.13, 1);
+    }
+
+    @keyframes sweep-left {
+      0% {
+        opacity: 0;
+        transform: translateY(100%);
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+    }
+
+    @keyframes sweep-right {
+      0% {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(100%);
+      }
     }
   </style>
 </head>
-<body class="font-sans">
 
-  <canvas id="space-canvas"></canvas>
+<body class="overflow-x-hidden">
 
-  <!-- Navigation -->
-  <nav class="fixed top-0 w-full glass-nav">
-    <div class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="w-6 h-6 rounded-sm grayscale border border-current opacity-80" />
-        <span class="font-black italic text-sm tracking-tight select-none">
-          OkemoVail
-        </span>
+  <!-- Simple Background -->
+  <div class="fixed inset-0 z-[-1] bg-[var(--bg-base)]"></div>
+
+  <nav
+    class="fixed top-0 inset-x-0 z-[100] px-6 py-4 flex items-center justify-between pointer-events-auto bg-[var(--bg-base)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10">
+    <div class="flex items-center gap-8">
+      <a href="#" class="flex items-center gap-3 group">
+        <div
+          class="w-8 h-8 rounded-full overflow-hidden border border-black/10 dark:border-white/20 group-hover:scale-110 transition-transform">
+          <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail"
+            class="w-full h-full object-cover">
+        </div>
+        <span class="text-sm font-bold tracking-tight">OkemoVail</span>
+      </a>
+      <div class="hidden md:flex gap-6 text-[13px] font-semibold opacity-50">
+        <a href="#skills" class="hover:opacity-100 transition-opacity">Skills</a>
+        <a href="#about" class="hover:opacity-100 transition-opacity">About</a>
       </div>
-      
-      <div class="hidden md:flex items-center gap-10">
-        <a href="#hero" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">Intro</a>
-        <a href="#olm-section" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">North Star</a>
-        <a href="#philosophy" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">The 3Es</a>
-        <a href="#foundry" class="text-[9px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-colors">Technical</a>
-      </div>
+    </div>
 
-      <a href="chat.html" class="text-[9px] font-bold bg-brand-purple text-white dark:bg-white dark:text-black px-4 py-1.5 rounded-full hover:opacity-80 transition-all uppercase tracking-widest" style="background-color: #a855f7;">Get Started</a>
+    <div class="flex items-center gap-3">
+      <!-- Dark Mode Toggle -->
+      <button id="theme-toggle" class="dia-card px-3 py-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+        title="Toggle dark mode">
+        <i class="fa-solid fa-moon text-base dark:hidden"></i>
+        <i class="fa-solid fa-sun text-base hidden dark:inline"></i>
+      </button>
+
+      <a href="https://github.com/OkemoVail" target="_blank"
+        class="flex items-center gap-2 dia-card px-5 py-2 text-[13px] font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+        <i class="fa-brands fa-github text-base"></i>
+        <span>Connect</span>
+      </a>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section id="hero" class="relative min-h-screen flex flex-col justify-end px-6 md:px-20 pb-20 md:pb-24 overflow-hidden text-left">
-    <div class="max-w-7xl w-full animate-fade-in-up">
-      <div class="flex items-center gap-4 mb-6">
-        <h2 class="text-[9px] md:text-xs font-bold opacity-30 tracking-[0.4em] uppercase text-left">Portfolio</h2>
+  <main class="relative z-10 w-full overflow-hidden">
+
+    <!-- Hero & Cycling Wrapper - Fullscreen Section -->
+    <div class="relative overflow-hidden min-h-screen flex flex-col justify-center gap-8">
+      <!-- Absolute Sweeping Sidebars (Scoped to this area) -->
+      <!-- Absolute Marquee Sidebars (Scoped to current fullheight section) -->
+      <div class="absolute left-0 top-0 bottom-0 overflow-hidden z-20 pointer-events-none h-full flex gap-2">
+        <div class="sidebar-columns ml-2">
+          <div class="chroma-col-item"></div>
+          <div class="chroma-col-item"></div>
+          <div class="chroma-col-item"></div>
+        </div>
+      </div>
+      <div class="absolute right-0 top-0 bottom-0 overflow-hidden z-20 pointer-events-none h-full flex justify-end">
+        <div class="sidebar-columns mr-2">
+          <div class="chroma-col-item"></div>
+          <div class="chroma-col-item"></div>
+          <div class="chroma-col-item"></div>
+        </div>
       </div>
 
-      <h1 class="text-4xl md:text-[6.5vw] font-extrabold tracking-tighter leading-[1.1] mb-8 max-w-5xl">
-        Hi, I'm <span class="italic">OkemoVail.</span>
-      </h1>
-      
-      <div class="flex flex-col items-start gap-8 mt-4 w-full">
-        <p class="text-sm md:text-lg opacity-40 max-w-xl mb-4 font-medium leading-relaxed">
-          A personal labor of love in language modeling. Built from scratch on the <span class="font-bold opacity-80 italic">3E Engine</span>: Expressive, Expeditious, and Economical. 
+      <!-- Hero Content -->
+      <div class="px-6 text-center relative z-10">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-12 scroll-reveal active">
+          <div class="pfp-orbit">
+            <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="pfp-image">
+          </div>
+          <div class="text-center md:text-left">
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter">
+              Hi, I'm <span class="chroma-text">OkemoVail</span>
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cycling Chroma Text Content -->
+      <div class="px-6 relative z-10 scale-90 origin-center">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2
+            class="text-2xl md:text-3xl font-bold tracking-tight leading-tight bg-white/5 dark:bg-black/5 rounded-3xl p-8 backdrop-blur-sm inline-block">
+            <span id="cycling-word" class="chroma-text-slow animate block cycling-text-transition mb-2">Speed</span>
+            <span class="block opacity-60">isn't a problem</span>
+          </h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Section: OLM North Star -->
+    <section class="py-20 px-6 border-y border-black/5 dark:border-white/10">
+      <div class="max-w-4xl mx-auto text-center space-y-8 scroll-reveal">
+        <div
+          class="inline-flex w-16 h-16 rounded-full items-center justify-center text-white shadow-lg relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-[#c679c4] to-[#0358f7]"></div>
+          <!-- 8-Sided Star SVG (True Octagram) -->
+          <svg viewBox="0 0 24 24" class="w-8 h-8 relative z-10 text-white fill-current">
+            <path d="M12 0L14.8 9.2L24 12L14.8 14.8L12 24L9.2 14.8L0 12L9.2 9.2L12 0Z" />
+          </svg>
+        </div>
+        <h3 class="text-4xl md:text-6xl font-black tracking-tighter chroma-text">Use OLM</h3>
+        <p class="text-lg md:text-xl opacity-60 font-medium leading-relaxed max-w-2xl mx-auto">
+          Experience the latest in AI technology with OLM North Star. A powerful language model designed for
+          intelligence and creativity.
         </p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-6 md:gap-8 mt-8">
-        <a href="#olm-section" class="cta-apple">
-          More
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- OLM North Star & Preview Section -->
-  <section id="olm-section" class="py-32 px-6 max-w-7xl mx-auto relative z-20">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-      <div class="space-y-8 scroll-reveal">
-        <h2 class="text-5xl md:text-7xl font-extrabold tracking-tighter uppercase">OLM <span class="italic">North Star</span></h2>
-        <p class="text-2xl md:text-3xl font-bold leading-tight tracking-tight">
-          Refining the <span class="intel-gradient italic">Okemo Engine</span> through iterative evolution.
-        </p>
-        <p class="opacity-40 text-lg leading-relaxed max-w-md text-left">
-          Built from the ground up to merge complex reasoning with a lightweight architecture. VAIL <span class="italic">North Star</span> represents a significant step in autonomous personal intelligence.
-        </p>
-        <a href="/AI/OkemoLLM.html" class="feature-card !p-6 inline-flex items-center gap-4 group">
-          <span class="text-sm font-bold uppercase tracking-widest">Initialise Session</span>
-          <i class="fa-solid fa-terminal opacity-30 group-hover:opacity-100 transition-opacity"></i>
-        </a>
-      </div>
-
-      <!-- Website Mockup with Open Sidebar -->
-      <div class="mock-endpoint-win w-full h-[580px] scroll-reveal" style="transition-delay: 0.2s;">
-        
-        <!-- Mock Sidebar -->
-        <div class="mock-sidebar">
-            <div class="mb-4">
-                <span class="font-black italic text-sm tracking-tight text-zinc-900 dark:text-white uppercase">V<span class="text-brand-purple italic">AI</span>L</span>
-            </div>
-            <div class="bg-brand-purple/90 text-white rounded-xl py-2 px-3 text-[10px] font-bold text-center mb-6">
-                New Session
-            </div>
-            <div class="space-y-1">
-                <div class="mock-sidebar-item active">Smoothing the Debate</div>
-                <div class="mock-sidebar-item">3E Engine Logic</div>
-                <div class="mock-sidebar-item">Token Latency Stats</div>
-            </div>
-        </div>
-
-        <div class="flex flex-col flex-1">
-            <div class="mock-header">
-                <div class="mock-header-pill">
-                    <i class="fa-solid fa-compass text-brand-purple"></i>
-                    <span>OLM <span class="italic">North Star</span> // Endpoint</span>
-                </div>
-            </div>
-            
-            <div class="mock-chat-area">
-                <div class="mock-msg user font-inter">
-                    Since a tomato is a fruit, technically speaking, is ketchup a smoothie?
-                </div>
-
-                <div class="mock-msg ai">
-                    <div class="flex gap-4">
-                        <div class="ai-bubble-icon">
-                            <i class="fa-solid fa-sparkles text-[10px] text-white"></i>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[9px] font-bold uppercase tracking-widest opacity-30">VAIL Intelligence</span>
-                            <p class="text-sm leading-relaxed opacity-80">Botanically, you are standing on solid ground. Culinary-wise, however, my Expressive engine suggests that calling ketchup a 'smoothie' at a party is a fast-track way to never being invited back. It’s more of a savory jam. Or, as I like to call it: 'Aggressive Tomato Reduction'.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mock-input-wrap">
-                <div class="mock-input-bar">
-                    <div class="flex items-center gap-4 opacity-30">
-                        <i class="fa-solid fa-globe text-xs"></i>
-                        <span class="text-[10px] font-inter font-medium">Message OLM North Star...</span>
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-brand-purple flex items-center justify-center text-white text-xs opacity-40">
-                        <i class="fa-solid fa-arrow-up"></i>
-                    </div>
-                </div>
-            </div>
+        <div class="pt-4">
+          <a href="/AI/OkemoLLM.html"
+            class="dia-card px-8 py-4 text-lg font-bold hover:scale-105 transition-transform inline-flex items-center gap-3">
+            <i class="fa-solid fa-rocket text-xl"></i>
+            <span>Launch OLM North Star</span>
+          </a>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- The 3Es Section -->
-  <section id="philosophy" class="py-32 px-6 max-w-7xl mx-auto relative z-20">
-    <div class="mb-24 scroll-reveal">
-        <h2 class="text-4xl md:text-6xl font-bold tracking-tight mb-8 text-left">The <span class="intel-gradient italic">3E</span> Standard.</h2>
-        <p class="text-lg opacity-40 max-w-2xl text-left">A focused exploration of speed and transparency in synthetic intelligence architecture.</p>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-6">
-        <div class="feature-card p-10 scroll-reveal text-left">
-            <span class="text-5xl font-black italic opacity-10 block mb-6">E1</span>
-            <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter italic">Expressive</h3>
-            <p class="opacity-40 text-sm leading-relaxed">
-                Design that communicates. Every pixel and interaction should tell a story, turning cold code into a digital narrative that resonates with the human experience.
-            </p>
+    <!-- Foundry (Skills) Section -->
+    <section id="foundry" class="py-60 px-6 max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-end gap-16 mb-32 scroll-reveal">
+        <div class="space-y-6">
+          <span class="text-brand-secondary font-black uppercase text-[11px] tracking-[0.6em] flex items-center gap-3">
+            <span class="w-12 h-[1px] bg-brand-secondary/30"></span> 02 // Stack Forge
+          </span>
+          <h2 class="text-6xl md:text-[8rem] font-black tracking-tighter leading-tight">
+            Technical <br />
+            <span class="text-white/10">Foundry.</span>
+          </h2>
         </div>
+      </div>
 
-        <div class="feature-card p-10 scroll-reveal text-left" style="transition-delay: 0.1s;">
-            <span class="text-5xl font-black italic opacity-10 block mb-6">E2</span>
-            <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter italic">Expeditious</h3>
-            <p class="opacity-40 text-sm leading-relaxed">
-                Velocity without compromise. Engineering designed for immediate deployment and scaling, ensuring that dreams reach reality at the speed of thought.
-            </p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <!-- Skill items with devicons -->
+        <div
+          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal border border-white/5 relative overflow-hidden">
+          <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <i
+            class="fa-brands fa-python text-6xl opacity-20 group-hover:opacity-100 group-hover:text-brand-primary transition-all group-hover:scale-125 relative z-10"></i>
+          <span
+            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">Python
+            // Core</span>
         </div>
-
-        <div class="feature-card p-10 scroll-reveal text-left" style="transition-delay: 0.2s;">
-            <span class="text-5xl font-black italic opacity-10 block mb-6">E3</span>
-            <h3 class="text-xl font-bold mb-3 uppercase tracking-tighter italic">Economical</h3>
-            <p class="opacity-40 text-sm leading-relaxed">
-                Lean precision. Maximizing digital impact while minimizing technical debt. Efficiency is the ultimate form of sophistication.
-            </p>
+        <div
+          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal [transition-delay:100ms] border border-white/5 relative overflow-hidden">
+          <div class="absolute inset-0 bg-brand-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <i
+            class="fa-brands fa-js text-6xl opacity-20 group-hover:opacity-100 group-hover:text-yellow-400 transition-all group-hover:scale-125 relative z-10"></i>
+          <span
+            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">TS
+            / Architect</span>
         </div>
-    </div>
-  </section>
-
-  <!-- Foundry Section -->
-  <section id="foundry" class="py-32 px-6 max-w-7xl mx-auto relative z-20">
-    <div class="feature-card p-12 scroll-reveal">
-        <div class="flex items-center gap-4 mb-16 text-left">
-            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tighter uppercase italic">The Technical</h2>
-            <div class="h-px flex-grow bg-white/10"></div>
+        <div
+          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal [transition-delay:200ms] border border-white/5 relative overflow-hidden">
+          <div class="absolute inset-0 bg-brand-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <i
+            class="fa-solid fa-cube text-6xl opacity-20 group-hover:opacity-100 group-hover:text-brand-secondary transition-all group-hover:scale-125 relative z-10"></i>
+          <span
+            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">Three.js
+            // UX</span>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 text-left">
-            <div class="space-y-6">
-                <h3 class="text-xl font-bold uppercase tracking-widest opacity-30">Engineering</h3>
-                <div class="space-y-4 font-mono text-xs">
-                    <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 opacity-60 hover:opacity-100 hover:text-brand-red transition-all">
-                        <i class="devicon-javascript-plain text-yellow-500 text-xl"></i> <span>JAVASCRIPT</span>
-                    </a>
-                    <a href="https://github.com/OkemoVail" target="_blank" class="flex items-center gap-4 opacity-60 hover:opacity-100 hover:text-brand-purple transition-all">
-                        <i class="devicon-python-plain text-blue-500 text-xl"></i> <span>PYTHON / TORCH</span>
-                    </a>
-                    <div class="flex items-center gap-4 opacity-60">
-                        <i class="devicon-html5-plain text-orange-500 text-xl"></i> <span>HTML5 / CSS3</span>
-                    </div>
-                    <div class="flex items-center gap-4 opacity-60">
-                        <i class="devicon-lua-plain text-blue-400 text-xl"></i> <span>LUA</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-6">
-                <h3 class="text-xl font-bold uppercase tracking-widest opacity-30">Visual Language</h3>
-                <p class="opacity-40 text-sm leading-relaxed">
-                    Focused on the intersection of Material You and Apple Design. Turning hardware constraints into visual clarity through deep color theory.
-                </p>
-                <div class="h-24 bg-black/20 rounded-xl flex items-center justify-center border border-white/5 italic opacity-30 text-[10px] tracking-widest uppercase">
-                    UI_ENGINEERING_ACTIVE
-                </div>
-            </div>
-
-            <div class="space-y-6">
-                <h3 class="text-xl font-bold uppercase tracking-widest opacity-30">Spatial Depth</h3>
-                <p class="opacity-40 text-sm leading-relaxed">
-                    Crafting environments with digital precision in Blender. Exploring three-dimensional web through optimized mesh flow and real-time lighting.
-                </p>
-                <div class="flex gap-2">
-                    <span class="w-8 h-8 rounded-full bg-brand-purple/20 flex items-center justify-center"><i class="fa-solid fa-cube text-[10px] text-brand-purple"></i></span>
-                    <span class="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center"><i class="fa-solid fa-vector-square text-[10px] text-brand-red"></i></span>
-                </div>
-            </div>
+        <div
+          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal [transition-delay:300ms] border border-white/5 relative overflow-hidden">
+          <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <i
+            class="fa-solid fa-wind text-6xl opacity-20 group-hover:opacity-100 group-hover:text-cyan-400 transition-all group-hover:scale-125 relative z-10"></i>
+          <span
+            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">Tailwind
+            // Design</span>
         </div>
-    </div>
-  </section>
+      </div>
+    </section>
 
-  <!-- Blur Division -->
-  <div class="blur-division"></div>
+    <!-- Testimonial Grid -->
+    <section id="about" class="py-40 border-y border-black/5 dark:border-white/10">
+      <div class="max-w-4xl mx-auto space-y-12 scroll-reveal text-center">
+        <h2 class="text-6xl md:text-[10rem] font-black tracking-tighter leading-none mb-20 chroma-text">Do it all.</h2>
+        <div class="flex justify-center">
+          <a href="https://github.com/OkemoVail" target="_blank"
+            class="dia-card px-10 py-5 text-2xl font-black hover:scale-105 transition-transform flex items-center gap-4">
+            <i class="fa-brands fa-github text-3xl"></i>
+            <span>Get in touch</span>
+          </a>
+        </div>
+        <p class="text-[11px] font-black opacity-30 uppercase tracking-[0.5em] pt-20">Currently available for
+          high-impact
+          collaborations.</p>
+      </div>
+    </section>
+
+  </main>
 
   <!-- Footer -->
-  <footer id="footer" class="py-20 bg-white/5 dark:bg-black/20 backdrop-blur-3xl px-6 relative z-40 border-t border-black/5 dark:border-white/10">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 text-left">
-      <div class="flex flex-col items-start text-left max-w-md">
-        <div class="flex items-center gap-3 mb-4">
-          <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="w-6 h-6 rounded-sm grayscale border border-current opacity-80" />
-          <span class="font-black italic text-xl tracking-tight select-none">
-            OkemoVail
-          </span>
-        </div>
-        <p class="opacity-40 text-[11px] leading-relaxed uppercase tracking-[0.15em] font-bold">
-          A personal project dedicated to high-speed, expressive, and economical intelligence.
+  <footer class="py-24 border-t border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/50 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12">
+
+      <div class="col-span-2 lg:col-span-1 space-y-6">
+        <a href="#" class="text-xl font-black flex items-center gap-2">
+          Vail
+        </a>
+        <p class="text-xs font-bold opacity-20 uppercase tracking-widest leading-loose">
+          Intelligence Architect <br />
+          Core System v4.0.2
         </p>
       </div>
-      
-      <div class="flex gap-16 md:gap-24 text-left">
-        <div class="flex flex-col gap-4">
-            <h4 class="text-[9px] font-bold uppercase tracking-[0.3em] mb-2 opacity-20">Connect</h4>
-            <a href="https://github.com/OkemoVail" target="_blank" class="cta-secondary text-center">GitHub</a>
-            <a href="https://www.youtube.com/@SochiVail" target="_blank" class="cta-secondary text-center">YouTube</a>
-        </div>
-        <div>
-            <h4 class="text-[9px] font-bold uppercase tracking-[0.3em] mb-6 opacity-20 text-left">Network</h4>
-            <ul class="space-y-4 text-[10px] opacity-40 font-bold uppercase tracking-widest text-left">
-                <li><a href="https://voidai.app" target="_blank" class="hover:text-brand-purple transition-colors" style="color: #a855f7;">Partner</a></li>
-            </ul>
-        </div>
+
+      <div class="space-y-4">
+        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Architectures</h4>
+        <ul class="space-y-3 text-[13px] font-medium opacity-60">
+          <li><a href="#" class="hover:opacity-100 transition-opacity">OLM North Star</a></li>
+          <li><a href="#" class="hover:opacity-100 transition-opacity">Liquid Glass UX</a></li>
+        </ul>
       </div>
+
+      <div class="space-y-4">
+        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Ethos</h4>
+        <ul class="space-y-3 text-[13px] font-medium opacity-60">
+          <li><a href="#" class="hover:opacity-100">Principles</a></li>
+          <li><a href="#" class="hover:opacity-100">Privacy</a></li>
+          <li><a href="#" class="hover:opacity-100">Open Source</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Connect</h4>
+        <ul class="space-y-3 text-[13px] font-medium opacity-60">
+          <li><a href="https://github.com/OkemoVail" class="hover:opacity-100 transition-opacity">Github</a></li>
+          <li><a href="https://youtube.com/@SochiVail" class="hover:opacity-100 transition-opacity">Youtube</a></li>
+        </ul>
+      </div>
+
     </div>
-    
-    <div class="max-w-7xl mx-auto mt-20 pt-8 flex flex-col md:flex-row justify-between items-center text-[9px] font-bold opacity-20 uppercase tracking-[0.3em] gap-4">
-      <div class="flex flex-col md:flex-row gap-4 md:gap-8 items-center">
-          <span>© 2024-2026 OKEMO CODE</span>
-      </div>
-      <div class="flex gap-8">
-        <span class="tracking-[0.4em]">Node 00 // v1.4</span>
+
+    <div
+      class="max-w-7xl mx-auto px-6 mt-24 pt-12 border-t border-black/[0.02] dark:border-white/[0.02] flex flex-col md:flex-row justify-between items-center gap-6">
+      <p class="text-[9px] font-black uppercase tracking-[0.8em] opacity-10">© 2026 OKEMOVAIL. ALL RIGHTS RESERVED.</p>
+      <div class="flex gap-8 text-[9px] font-black uppercase tracking-widest opacity-20">
+        <a href="#">Privacy</a>
+        <a href="#">Security</a>
       </div>
     </div>
   </footer>
 
   <script>
-    // Reveal Observer
-    const observerOptions = { threshold: 0.1 };
+    // Scroll Reveal & Chroma Sweep Intersection Observer
+    const observerOptions = {
+      threshold: 0.2
+    };
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
       });
     }, observerOptions);
 
-    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+    document.querySelectorAll('.scroll-reveal, .chroma-text').forEach(el => observer.observe(el));
 
-    // Three.js Space Background
-    let scene, camera, renderer, stars, starGeo;
-    let mouseX = 0, mouseY = 0;
-    let scrollY = 0;
+    // Cycling Word Animation (only the variable word)
+    const words = [
+      "Speed",
+      "Logic",
+      "Scale",
+      "Design",
+      "Privacy",
+      "Integrity"
+    ];
 
-    function initSpace() {
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-      camera.position.z = 1;
-      camera.rotation.x = Math.PI / 2;
+    let currentIndex = 0;
+    const cyclingWord = document.getElementById('cycling-word');
+    const sidebarCols = document.querySelectorAll('.chroma-col-item');
 
-      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), antialias: true, alpha: true });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
+    function cycleWord() {
+      // 1. Fade out
+      cyclingWord.classList.add('fade-out');
 
-      // Starfield
-      starGeo = new THREE.BufferGeometry();
-      let starCoords = [];
-      for(let i=0; i<8000; i++) {
-        starCoords.push(
-          Math.random() * 800 - 400,
-          Math.random() * 800 - 400,
-          Math.random() * 800 - 400
-        );
-      }
-      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+      // 2. Wait 500ms for fade out
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % words.length;
+        cyclingWord.textContent = words[currentIndex];
 
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      let starMaterial = new THREE.PointsMaterial({
-        color: isDark ? 0xffffff : 0x333333,
-        size: 0.6,
-        transparent: true,
-        opacity: 0.8
-      });
+        // Trigger sidebar sweep animations
+        sidebarCols.forEach(col => {
+          col.classList.remove('animate');
+          void col.offsetWidth; // Force reflow
+          col.classList.add('animate');
+        });
 
-      stars = new THREE.Points(starGeo, starMaterial);
-      scene.add(stars);
+        // Reset chroma animation on text
+        cyclingWord.classList.remove('animate');
+        void cyclingWord.offsetWidth; // Force reflow
+        cyclingWord.classList.add('animate');
 
-      // North Star
-      let nsGeom = new THREE.SphereGeometry(1.2, 32, 32);
-      let nsMat = new THREE.MeshBasicMaterial({ color: isDark ? 0xffffff : 0x333333 });
-      let northStar = new THREE.Mesh(nsGeom, nsMat);
-      northStar.name = 'northStar';
-      northStar.position.set(30, 200, -80);
-      scene.add(northStar);
+        // 3. Fade in (remove opacity 0 class)
+        cyclingWord.classList.remove('fade-out');
 
-      window.addEventListener('mousemove', e => {
-        mouseX = (e.clientX - window.innerWidth / 2) / 150;
-        mouseY = (event.clientY - window.innerHeight / 2) / 150;
-      });
-      window.addEventListener('scroll', () => scrollY = window.scrollY);
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-      
-      // Theme Change Listener
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        const dark = e.matches;
-        stars.material.color.setHex(dark ? 0xffffff : 0x333333);
-        const ns = scene.getObjectByName('northStar');
-        if (ns) ns.material.color.setHex(dark ? 0xffffff : 0x333333);
-      });
-      
-      animate();
+      }, 500);
     }
 
-    function animate() {
-      requestAnimationFrame(animate);
-      stars.rotation.y += 0.0003;
-      stars.position.y = scrollY * 0.05;
-      camera.rotation.z = scrollY * 0.0001;
-      camera.position.x += (mouseX - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY + 1 - camera.position.y) * 0.05;
-      camera.lookAt(0, stars.position.y, 0);
-      renderer.render(scene, camera);
-    }
+    // Force reflow helper
+    function forceReflow(el) { return el.offsetHeight; }
 
-    window.onload = initSpace;
+    // Cycle every 5 seconds to match slower animation
+    setInterval(cycleWord, 5000);
+
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    // Check for saved theme preference or default to dark
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    htmlElement.classList.toggle('dark', currentTheme === 'dark');
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = htmlElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // Simple smooth scroll for anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
   </script>
 </body>
+
 </html>
