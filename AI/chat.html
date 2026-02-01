@@ -762,62 +762,68 @@
             </button>
             <div id="onboarding-step-1" class="tutorial-step active">
                 <div class="text-center mb-8">
-                    <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2"
-                        data-t="onboarding_welcome">Welcome</p>
                     <h1
-                        class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">
-                        V<span class="vail-logo-ai gradient-mode">AI</span>L</h1>
-                    <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]"
-                        data-t="onboarding_setup">Profile Setup</p>
+                        class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-2">
+                        V<span class="vail-logo-ai gradient-mode">AI</span>L
+                    </h1>
+                    <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Welcome! Let's get you started.</p>
                 </div>
+
                 <div class="space-y-6">
-                    <div class="flex flex-col items-center">
+                    <!-- Google Sign-in on top -->
+                    <div>
+                        <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
+                            class="w-full flex items-center justify-center gap-3 px-4 py-4 text-sm font-bold rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-sm">
+                            <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5"
+                                alt="Google">
+                            <span id="google-btn-text-onboarding">Continue with Google</span>
+                        </button>
+                    </div>
+
+                    <!-- Separator -->
+                    <div class="relative flex items-center py-2">
+                        <div class="flex-grow border-t border-zinc-200 dark:border-zinc-800"></div>
+                        <span
+                            class="flex-shrink mx-4 text-[10px] font-black uppercase tracking-widest text-zinc-400">or</span>
+                        <div class="flex-grow border-t border-zinc-200 dark:border-zinc-800"></div>
+                    </div>
+
+                    <!-- PFP and Username Section -->
+                    <div class="flex flex-col items-center gap-6">
                         <div class="relative group cursor-pointer"
                             onclick="document.getElementById('onboarding-pfp-input').click()">
-                            <div id="onboarding-pfp-preview"><i class="fa-solid fa-camera text-zinc-400 text-xl"></i>
+                            <div id="onboarding-pfp-preview"
+                                class="w-24 h-24 rounded-full border-2 border-dashed border-zinc-200 dark:border-zinc-800 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 overflow-hidden transition-all group-hover:border-blue-500/50">
+                                <i
+                                    class="fa-solid fa-camera text-zinc-300 text-2xl group-hover:scale-110 transition-transform"></i>
                             </div>
                             <div
-                                class="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[12px] border-2 border-white dark:border-[#141414] shadow-md">
-                                <i class="fa-solid fa-plus"></i>
+                                class="absolute bottom-0 right-0 w-8 h-8 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center shadow-lg border border-zinc-100 dark:border-zinc-700">
+                                <i class="fa-solid fa-plus text-xs text-zinc-500"></i>
                             </div>
                         </div>
                         <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*"
                             onchange="window.handleOnboardingPfp(event)">
-                        <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-3" data-t="photo">
-                            Change Photo</p>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
-                            data-t="display_name">Name</label>
-                        <input type="text" id="onboarding-name" placeholder="Name or Alias"
-                            class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-4 text-sm focus:border-blue-500 outline-none transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
-                            data-t="appearance">Appearance</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="window.setTheme('light')"
-                                class="flex items-center justify-center gap-3 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
-                                    class="fa-solid fa-sun"></i> <span data-t="theme_light">Light</span></button>
-                            <button onclick="window.setTheme('dark')"
-                                class="flex items-center justify-center gap-3 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
-                                    class="fa-solid fa-moon"></i> <span data-t="theme_dark">Dark</span></button>
+
+                        <div class="w-full">
+                            <label
+                                class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1">Display
+                                Name</label>
+                            <input type="text" id="onboarding-name" placeholder="Enter your username"
+                                class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-center">
                         </div>
                     </div>
-                    <div>
-                        <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
-                            class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-lg transition-all"
-                            style="background-color: var(--accent-color); color: var(--accent-contrast);">
-                            <span id="google-btn-text-onboarding">Sign in with Google</span>
-                        </button>
-                    </div>
-                    <div class="flex flex-col gap-3">
+
+                    <!-- Actions -->
+                    <div class="flex flex-col gap-3 pt-2">
                         <button onclick="window.nextOnboardingStep()"
-                            class="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl"
-                            data-t="onboarding_continue">Continue</button>
+                            class="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-black text-sm uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl">
+                            Continue
+                        </button>
                         <button onclick="window.continueAsGuest()"
-                            class="w-full py-3 text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] hover:text-zinc-900 dark:hover:text-white transition-colors"
-                            data-t="onboarding_guest">Continue as Guest</button>
+                            class="w-full py-3 text-[11px] font-bold text-zinc-400 uppercase tracking-widest hover:text-zinc-900 dark:hover:text-white transition-colors">
+                            Skip for now
+                        </button>
                     </div>
                 </div>
             </div>
@@ -882,7 +888,7 @@
             <div class="flex-1 overflow-y-auto no-scrollbar space-y-1 lg:space-y-0.5" id="history-list"></div>
             <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 space-y-1 lg:space-y-0.5">
                 <button onclick="window.toggleTheme()"
-                    class="w-full flex items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold rounded-xl lg:rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
+                    class="hidden items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold rounded-xl lg:rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
                     <i class="fa-solid fa-circle-half-stroke text-zinc-400 text-xs"></i>
                     <span data-t="appearance">Appearance</span>
                 </button>
@@ -1055,17 +1061,15 @@
                     <textarea id="user-input" placeholder="Message OLM..." rows="1"
                         class="w-full bg-transparent px-6 py-5 lg:py-4 outline-none resize-none text-base sm:text-sm max-h-[600px] no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
 
-                    <div class="flex items-center justify-between pl-6 pr-3 pb-3 pt-1 gap-3">
-                        <span class="text-[6px] font-semibold uppercase tracking-[0.18em] text-zinc-400">
-                            OkemoVail
-                        </span>
-                        <div class="flex items-center gap-2 mr-[2px]">
+                    <div class="flex items-center justify-between pl-3 pr-3 pb-3 pt-1 gap-3">
+                        <div class="flex items-center gap-2">
                             <button id="search-btn" onclick="window.toggleSearch()"
                                 class="flex items-center justify-center w-auto px-4 h-12 lg:h-10 rounded-full border border-zinc-100 dark:border-zinc-800 transition-all duration-300 text-[11px] font-medium">
                                 <i class="fa-solid fa-globe text-sm lg:text-xs mr-1.5"></i>
                                 <span data-t="search">Search</span>
                             </button>
-
+                        </div>
+                        <div class="flex items-center gap-2 mr-[2px]">
                             <button id="send-btn" disabled onclick="window.handleAction()"
                                 class="w-12 h-12 lg:w-10 lg:h-10 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0"
                                 style="background-color: var(--accent-color); color: var(--accent-contrast)">

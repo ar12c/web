@@ -1,51 +1,58 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>VAIL | North Star Analytics</title>
+  <title>Vail</title>
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script>
     tailwind.config = {
-      darkMode: 'media',
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['"Inter"', 'sans-serif'],
           },
           colors: {
             brand: {
-              red: '#ef4444',
-              purple: '#a855f7',
+              primary: '#000000',
+              secondary: '#666666',
             }
           },
+          borderRadius: {
+            'dia': '1.5rem',
+            'dia-lg': '2.5rem',
+            'dia-full': '100px',
+          },
           animation: {
-            'gradient-flow': 'gradientFlow 8s ease infinite',
-            'fade-in-up': 'fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            'pulse-glow': 'pulseGlow 6s ease-in-out infinite',
+            'chroma-sweep': 'chroma-sweep 0.9s ease-in-out forwards',
+            'border-sweep': 'border-gradient-sweep 4s ease-in-out infinite',
+            'spin-slow': 'spin 8s linear infinite',
           },
           keyframes: {
-            gradientFlow: {
-              '0%': { 'background-position': '0% 50%' },
-              '50%': { 'background-position': '100% 50%' },
-              '100%': { 'background-position': '0% 50%' },
+            'chroma-sweep': {
+              '0%': { 'background-position': '100% 0', filter: 'blur(1px)' },
+              '100%': { 'background-position': '0 0', filter: 'blur(0)' },
             },
-            pulseGlow: {
-              '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.3))' },
-              '50%': { filter: 'drop-shadow(0 0 35px rgba(168, 85, 247, 0.5))' },
-            },
-            fadeInUp: {
-              '0%': { opacity: '0', transform: 'translateY(20px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
+            'border-gradient-sweep': {
+              '0%': { left: '-150%' },
+              '50%': { left: '100%' },
+              '50.1%': { left: '-150%' },
+              '100%': { left: '-150%' }
             }
           }
         }
@@ -55,435 +62,749 @@
 
   <style>
     :root {
-      --bg-color: #fbfbfd;
-      --text-color: #1d1d1f;
-      --nav-bg: rgba(255, 255, 255, 0.2);
-      --card-bg: rgba(255, 255, 255, 0.4);
-      --card-border: rgba(0, 0, 0, 0.08);
+      --bg-base: #f8f8f8;
+      --text-main: rgba(0, 0, 0, 0.85);
+      --text-secondary: rgba(0, 0, 0, 0.60);
+      --stroke-light: rgba(0, 0, 0, 0.06);
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #000000;
-        --text-color: #f5f5f7;
-        --nav-bg: rgba(0, 0, 0, 0.2);
-        --card-bg: rgba(255, 255, 255, 0.03);
-        --card-border: rgba(255, 255, 255, 0.05);
-      }
+    .dark {
+      --bg-base: #0f0f0f;
+      --text-main: rgba(255, 255, 255, 0.90);
+      --text-secondary: rgba(255, 255, 255, 0.70);
+      --stroke-light: rgba(255, 255, 255, 0.10);
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      transition: background-color 0.8s ease, color 0.8s ease;
     }
 
-    #space-canvas {
+    /* Fixed Canvas for Three.js */
+    #starfield {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -10;
+      z-index: -1;
+      opacity: 0.6;
       pointer-events: none;
     }
 
-    .intel-gradient {
-      display: inline-block;
-      background: linear-gradient(90deg, #ef4444, #a855f7, #ec4899, #ef4444);
+    .ghost-pfp {
+      position: fixed;
+      z-index: 1000;
+      border-radius: 50%;
+      overflow: hidden;
+      pointer-events: none;
+      /* Initial state hidden, managed by JS */
+      opacity: 0;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .dark .ghost-pfp {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-links-container {
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .chroma-text {
+      background-image: linear-gradient(90deg, #000 0, #000 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
       background-size: 300% 100%;
+      background-position: 100% 0;
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: gradientFlow 6s linear infinite;
+      animation: chroma-sweep 1.2s cubic-bezier(0.87, 0, 0.13, 1) forwards;
     }
 
-    .glass-nav {
-      backdrop-filter: saturate(180%) blur(40px);
-      -webkit-backdrop-filter: saturate(180%) blur(40px);
-      background: var(--nav-bg);
-      border-bottom: 0.5px solid var(--card-border);
-      z-index: 100;
-      transition: background-color 0.5s ease;
+    .dark .chroma-text {
+      background-image: linear-gradient(90deg, #fff 0, #fff 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
     }
 
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-radius: 24px;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease;
+    @keyframes chroma-sweep {
+      0% {
+        background-position: 100% 0;
+        filter: blur(2px);
+      }
+
+      100% {
+        background-position: 0 0;
+        filter: blur(0);
+      }
     }
 
-    .feature-card:hover {
-      transform: translateY(-4px);
-      background: rgba(255, 255, 255, 0.08);
+    /* Slower chroma sweep for emphasis */
+    .chroma-text-slow {
+      background-image: linear-gradient(90deg, #000 0, #000 20%, #c679c4 30%, #fa3d1d 35%, #ffb005 40%, #e1e1fe 45%, #0358f7 50%, #ffffff 55%, transparent 60%, transparent);
+      background-size: 400% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      /* Animation handled by JS class toggle */
+    }
+
+    .dark .chroma-text-slow {
+      background-image: linear-gradient(90deg, #fff 0, #fff 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
+    }
+
+    /* Transition class for cycling text */
+    .cycling-text-transition {
+      transition: opacity 0.5s ease-in-out;
+      opacity: 1;
+    }
+
+    .cycling-text-transition.fade-out {
+      opacity: 0;
+    }
+
+    .pfp-orbit {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      padding: 4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c679c4, #fa3d1d, #ffb005, #0358f7);
+      margin-top: 2rem;
+      animation: rotate 10s linear infinite;
+    }
+
+    /* Animation class for toggling */
+    .chroma-text-slow.animate {
+      animation: chroma-sweep 4s cubic-bezier(0.87, 0, 0.13, 1) forwards;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .pfp-image {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--bg-base);
+      transform: rotate(-360deg);
+      /* Counter-rotate to keep image upright */
+      animation: counter-rotate 10s linear infinite;
+    }
+
+    @keyframes counter-rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      filter: blur(10px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scroll-reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .dia-card {
+      background: var(--bg-base);
+      border: 1px solid var(--stroke-light);
+      border-radius: 2.5rem;
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    .dia-card:hover {
+      border-color: rgba(0, 0, 0, 0.12);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .dark .dia-card:hover {
       border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .macos-content-area {
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 12px;
-      border: 1px solid var(--card-border);
-      padding: 16px;
+    .dia-btn-outline {
+      border: 1px solid var(--stroke-light);
+      border-radius: 100px;
+      font-weight: 700;
+      transition: all 0.2s;
     }
 
-    .chart-container {
-      position: relative;
-      height: 240px;
-      width: 100%;
+    .dia-btn-outline:hover {
+      background: var(--text-main);
+      color: var(--bg-base);
+      border-color: var(--text-main);
     }
 
-    .blur-division {
-      height: 120px;
+    /* Intelligence Flair Animation */
+    #intelligence-flare {
+      position: absolute;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      background: linear-gradient(to bottom, transparent, var(--bg-color));
-      backdrop-filter: blur(12px);
-      margin-top: -60px;
-      position: relative;
-      z-index: 30;
+      height: 60vh;
+      background: radial-gradient(circle at bottom,
+          rgba(198, 121, 196, 0.45) 0%,
+          /* #c679c4 */
+          rgba(250, 61, 29, 0.35) 25%,
+          /* #fa3d1d */
+          rgba(255, 176, 5, 0.25) 50%,
+          /* #ffb005 */
+          rgba(3, 88, 247, 0.15) 75%,
+          /* #0358f7 */
+          transparent 90%);
+      border-radius: 100% 100% 0 0;
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(100%) scaleX(0.8);
+      mix-blend-mode: screen;
+    }
+
+    .flare-active {
+      animation: shoot-flare-futuristic 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes shoot-flare-futuristic {
+      0% {
+        transform: translateY(100%) translateX(0) scaleX(0.5);
+        opacity: 0;
+        filter: blur(60px);
+      }
+
+      10% {
+        opacity: 1;
+        transform: translateY(50%) translateX(0) scaleX(1);
+        filter: blur(40px);
+      }
+
+      100% {
+        /* Shoot up and arc slightly right */
+        transform: translateY(-200%) translateX(20%) scaleX(2) rotate(10deg);
+        opacity: 0;
+        filter: blur(80px);
+      }
+    }
+
+    /* Nav Brand Animation */
+    #nav-brand {
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
   </style>
 </head>
-<body class="font-sans">
 
-  <canvas id="space-canvas"></canvas>
+<body class="overflow-x-hidden">
 
-  <!-- Navigation -->
-  <nav class="fixed top-0 w-full glass-nav">
-    <div class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
-      <div class="flex items-center gap-4">
-        <a href="OkemoLLM.html" class="opacity-40 hover:opacity-100 transition-opacity">
-          <i class="fa-solid fa-arrow-left text-xs"></i>
-        </a>
-        <span class="font-black italic text-xl tracking-tight select-none">
-          V<span class="intel-gradient italic">AI</span>L
-        </span>
+  <!-- Ghost PFP for Flying Animation -->
+  <div id="ghost-pfp" class="ghost-pfp w-8 h-8 opacity-0">
+    <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="Ghost PFP" class="w-full h-full object-cover">
+  </div>
+
+  <!-- Three.js Background Canvas -->
+  <canvas id="starfield"></canvas>
+  <!-- Fallback/Base Background -->
+  <div class="fixed inset-0 z-[-2] bg-[var(--bg-base)] transition-colors duration-500"></div>
+
+  <nav
+    class="fixed top-0 inset-x-0 z-[100] px-8 md:px-6 py-4 flex items-center justify-between pointer-events-auto bg-[var(--bg-base)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10">
+    <div class="flex items-center gap-8 relative">
+      <a href="#" id="nav-brand" class="flex items-center gap-3 group opacity-0 pointer-events-none -translate-y-2">
+        <div
+          class="w-8 h-8 rounded-full overflow-hidden border border-black/10 dark:border-white/20 group-hover:scale-110 transition-transform">
+          <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="Vail"
+            class="w-full h-full object-cover">
+        </div>
+        <span class="text-sm font-bold tracking-tight">Vail</span>
+      </a>
+      <div id="nav-links" class="nav-links-container hidden md:flex gap-6 text-[13px] font-semibold opacity-50">
+        <a href="#skills" class="hover:opacity-100 transition-opacity">Skills</a>
+        <a href="#about" class="hover:opacity-100 transition-opacity">About</a>
       </div>
-      
-      <div class="flex items-center gap-3">
-        <div id="status-dot" class="w-2 h-2 rounded-full bg-red-500"></div>
-        <span id="status-text" class="text-[9px] font-bold uppercase tracking-[0.2em] opacity-40">Uplink Pending</span>
-      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <!-- Dark Mode Toggle -->
+      <button id="theme-toggle" class="dia-card px-3 py-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
+        title="Toggle dark mode">
+        <i class="fa-solid fa-moon text-base dark:hidden"></i>
+        <i class="fa-solid fa-sun text-base hidden dark:inline"></i>
+      </button>
+
+      <a href="https://github.com/Vail" target="_blank"
+        class="flex items-center gap-2 dia-card px-5 py-2 text-[13px] font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+        <i class="fa-brands fa-github text-base"></i>
+        <span>Connect</span>
+      </a>
     </div>
   </nav>
 
-  <!-- Dashboard Hero -->
-  <section class="relative min-h-[70vh] flex flex-col items-center justify-center text-center px-6 pb-12 overflow-hidden">
-    <div class="max-w-7xl w-full animate-fade-in-up">
-      <div class="flex flex-col items-center gap-2 mb-6">
-        <h2 class="text-[9px] md:text-xs font-bold opacity-30 tracking-[0.4em] uppercase">Compute Analytics</h2>
-        <span class="text-[10px] font-bold uppercase tracking-widest opacity-30 mt-8 block">Project North Star Efficiency</span>
-      </div>
 
-      <div class="flex flex-col items-center justify-center">
-        <h1 id="val-loss" class="text-7xl md:text-[10vw] font-extrabold tracking-tighter leading-[0.8] mb-8 intel-gradient">
-          0.0000
-        </h1>
-        
-        <div class="flex flex-col items-center mb-8">
-            <a href="https://voidai.app" target="_blank" class="flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity group">
-                <img src="https://voidai.app/voidai.png" alt="VoidAI" class="w-6 h-6 grayscale group-hover:grayscale-0 transition-all">
-                <div class="text-left border-l border-white/20 pl-3">
-                    <span class="text-[8px] font-black uppercase tracking-[0.3em]">Powered by VOID.AI</span>
-                </div>
-            </a>
-        </div>
 
-        <p id="activity-text" class="text-sm md:text-lg opacity-40 font-medium uppercase tracking-widest">Initialising Remote Protocol...</p>
-      </div>
-    </div>
-  </section>
+  <main class="relative z-10 w-full overflow-hidden">
 
-  <!-- Live Stats Bento -->
-  <main class="max-w-7xl mx-auto px-6 pb-32 relative z-20">
-    
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <div class="feature-card p-6 flex flex-col items-center text-center">
-        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">Compute Velocity</span>
-        <span id="val-step" class="text-2xl md:text-3xl font-bold tracking-tighter block">0</span>
-        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Tokens Processed</span>
-      </div>
+    <!-- Hero & Cycling Wrapper - Fullscreen Section -->
+    <div class="relative overflow-hidden min-h-screen flex flex-col justify-center gap-8">
+      <!-- Absolute Marquee Sidebars (Scoped to current fullheight section) -->
 
-      <div class="feature-card p-6 flex flex-col items-center text-center">
-        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">Model Stability</span>
-        <span id="val-avg-loss" class="text-2xl md:text-3xl font-bold tracking-tighter block">0.0000</span>
-        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Cycle: <span id="val-update-id">--</span></span>
-      </div>
+      <!-- Intelligence Flare -->
+      <div id="intelligence-flare"></div>
 
-      <div class="feature-card p-6 flex flex-col items-center text-center">
-        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">VRAM Usage</span>
-        <span id="val-vram" class="text-2xl md:text-3xl font-bold tracking-tighter block uppercase">0.00 GB</span>
-        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Available Buffer</span>
-      </div>
-
-      <div class="feature-card p-6 flex flex-col items-center text-center">
-        <span class="text-[9px] font-bold uppercase tracking-widest opacity-30 block mb-4">Uptime</span>
-        <span id="val-elapsed" class="text-2xl md:text-3xl font-bold tracking-tighter block uppercase">0s</span>
-        <span class="text-[8px] font-bold opacity-20 uppercase mt-1 block">Elapsed Runtime</span>
-      </div>
-    </div>
-
-    <!-- Charts -->
-    <div class="grid md:grid-cols-2 gap-6 mb-8">
-      <div class="feature-card p-8">
-        <div class="flex justify-between items-center mb-8">
-          <span class="text-[10px] font-bold uppercase tracking-widest opacity-30">Loss Curves</span>
-          <i class="fa-solid fa-chart-line text-brand-red opacity-30"></i>
-        </div>
-        <div class="chart-container">
-          <canvas id="lossChart"></canvas>
+      <!-- Hero Content -->
+      <div class="px-6 text-center relative z-10">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-12 scroll-reveal active">
+          <div class="pfp-orbit" id="hero-pfp-container">
+            <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="Vail" class="pfp-image"
+              id="hero-pfp">
+          </div>
+          <div class="text-center md:text-left">
+            <h1 class="pt-10 text-5xl md:text-8xl font-black tracking-tighter">
+              Hi, I'm <span class="chroma-text">Vail</span>
+            </h1>
+          </div>
         </div>
       </div>
 
-      <div class="feature-card p-8">
-        <div class="flex justify-between items-center mb-8">
-          <span class="text-[10px] font-bold uppercase tracking-widest opacity-30">Accumulation</span>
-          <i class="fa-solid fa-server text-brand-purple opacity-30"></i>
-        </div>
-        <div class="chart-container">
-          <canvas id="tokenChart"></canvas>
+      <!-- Cycling Chroma Text Content -->
+      <div class="px-6 relative z-10 scale-90 origin-center">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="text-2xl md:text-3xl font-bold tracking-tight leading-tight rounded-3xl p-8 inline-block">
+            <span id="cycling-word" class="chroma-text-slow animate block cycling-text-transition mb-2">Speed</span>
+            <span class="block opacity-60">isn't a problem</span>
+          </h2>
         </div>
       </div>
     </div>
 
-    <!-- Terminal -->
-    <div class="feature-card p-8">
-      <div class="flex justify-between items-center mb-6">
-        <span class="text-[10px] font-bold uppercase tracking-widest opacity-30">Node Console</span>
-        <div class="flex gap-1.5">
-          <div class="w-2 h-2 rounded-full bg-brand-red opacity-30"></div>
-          <div class="w-2 h-2 rounded-full bg-brand-purple opacity-30"></div>
+    <!-- AI Section: OLM North Star -->
+    <section
+      class="min-h-screen flex flex-col justify-center py-20 px-6 border-y border-black/5 dark:border-white/10 relative overflow-hidden">
+      <!-- Background subtle gradient -->
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-transparent via-brand-secondary/5 to-transparent pointer-events-none">
+      </div>
+
+      <div class="max-w-4xl mx-auto text-center space-y-8 md:space-y-12 scroll-reveal relative z-10">
+        <div
+          class="inline-flex w-24 h-24 rounded-full items-center justify-center text-white shadow-2xl relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-[#c679c4] via-[#fa3d1d] to-[#0358f7] animate-spin-slow">
+          </div>
+          <!-- 8-Sided Star SVG (True Octagram) -->
+          <svg viewBox="0 0 24 24" class="w-12 h-12 relative z-10 text-white fill-current">
+            <path
+              d="M12 0 L15 6 L21 3.5 L18 9 L24 12 L18 15 L21 20.5 L15 18 L12 24 L9 18 L3 20.5 L6 15 L0 12 L6 9 L3 3.5 L9 6 Z" />
+          </svg>
+        </div>
+        <h3 class="text-5xl md:text-7xl font-black tracking-tighter chroma-text">Use OLM</h3>
+        <p class="text-xl md:text-2xl opacity-60 font-medium leading-relaxed max-w-2xl mx-auto">
+          Experience the latest in AI technology with OLM North Star. A powerful language model designed for
+          intelligence and creativity.
+        </p>
+        <div class="pt-8">
+          <a href="/AI/OkemoLLM.html"
+            class="dia-card px-10 py-5 text-xl font-bold hover:scale-105 transition-transform inline-flex items-center gap-4 shadow-lg shadow-brand-primary/10">
+            <i class="fa-solid fa-rocket text-2xl"></i>
+            <span>Launch OLM North Star</span>
+          </a>
         </div>
       </div>
-      <div class="macos-content-area">
-        <div id="terminal-body" class="h-64 overflow-y-auto font-mono text-[11px] leading-relaxed text-zinc-400 whitespace-pre-wrap selection:bg-brand-purple selection:text-white">
-          [SYSTEM] Initialising encrypted stream...
-          [SYSTEM] V*AI*L North Star 266M Online.
+    </section>
+
+    <!-- Foundry (Skills) Section - List View -->
+    <section id="foundry" class="min-h-screen flex flex-col justify-center py-20 px-6 max-w-5xl mx-auto">
+      <div class="mb-24 scroll-reveal">
+        <span
+          class="text-brand-secondary font-black uppercase text-[11px] tracking-[0.6em] flex items-center gap-3 mb-6">
+          <span class="w-12 h-[1px] bg-brand-secondary/30"></span> 02 // Stack Forge
+        </span>
+        <h2 class="text-6xl md:text-[8rem] font-black tracking-tighter leading-tight">
+          Technical <br />
+          <span class="text-black/10 dark:text-white/10">Foundry.</span>
+        </h2>
+      </div>
+
+      <div class="space-y-4">
+        <!-- List Item 1 -->
+        <div
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">01</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              Python</h3>
+          </div>
+          <span
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Core</span>
+        </div>
+
+        <!-- List Item 2 -->
+        <div
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:100ms]">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">02</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              TypeScript</h3>
+          </div>
+          <span
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Architecture</span>
+        </div>
+
+        <!-- List Item 3 -->
+        <div
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:200ms]">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">03</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              Three.js</h3>
+          </div>
+          <span
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Visual
+            Experience</span>
+        </div>
+
+        <!-- List Item 4 -->
+        <div
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:300ms]">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">04</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              Tailwind</h3>
+          </div>
+          <span
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Design
+            System</span>
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Testimonial / Contact Grid -->
+    <section id="about"
+      class="min-h-screen flex flex-col justify-center py-40 border-y border-black/5 dark:border-white/10 relative">
+      <div class="max-w-4xl mx-auto space-y-12 scroll-reveal text-center">
+        <h2 class="text-6xl md:text-[10rem] font-black tracking-tighter leading-none mb-20 chroma-text">Do it all.
+        </h2>
+        <div class="flex justify-center">
+          <a href="https://github.com/Vail" target="_blank"
+            class="dia-card px-10 py-5 text-2xl font-black hover:scale-105 transition-transform flex items-center gap-4">
+            <i class="fa-brands fa-github text-3xl"></i>
+            <span>Get in touch</span>
+          </a>
+        </div>
+        <!-- Removed "Currently available..." text based on user request -->
+      </div>
+    </section>
 
   </main>
 
-  <!-- Error Notification -->
-  <div id="error-alert" class="hidden fixed bottom-12 left-1/2 -translate-x-1/2 z-[200] feature-card !bg-brand-red/90 !border-none px-8 py-4 flex items-center gap-4 text-white shadow-2xl">
-    <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
-    <span id="error-message">Network Disruption Detected</span>
-  </div>
+  <!-- Footer -->
+  <footer class="py-24 border-t border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/50 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12">
 
-  <div class="blur-division"></div>
-
-  <footer class="py-20 backdrop-blur-3xl px-6 relative z-40 border-t border-black/5 dark:border-white/10">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-[9px] font-bold opacity-30 uppercase tracking-[0.3em] gap-8">
-      <div class="flex gap-12">
-        <span>© 2026 Personal Intelligence Project</span>
-        <span>Precision: Bfloat16</span>
+      <div class="col-span-2 lg:col-span-1 space-y-6">
+        <a href="#" class="text-xl font-black flex items-center gap-2">
+          Vail
+        </a>
       </div>
-      <div class="flex gap-8">
-        <span>Cycle Clock: <span id="clock-display">00:00:00</span></span>
-        <span>Node 02</span>
+
+      <div class="space-y-4">
+        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Architectures</h4>
+        <ul class="space-y-3 text-[13px] font-medium opacity-60">
+          <li><a href="#" class="hover:opacity-100 transition-opacity">OLM North Star</a></li>
+          <li><a href="#" class="hover:opacity-100 transition-opacity">OLM Stargaze</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Ethos</h4>
+        <ul class="space-y-3 text-[13px] font-medium opacity-60">
+          <li><a href="#" class="hover:opacity-100">Principles</a></li>
+          <li><a href="#" class="hover:opacity-100">Privacy</a></li>
+          <li><a href="#" class="hover:opacity-100">Open Source</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Connect</h4>
+        <ul class="space-y-3 text-[13px] font-medium opacity-60">
+          <li><a href="https://github.com/Vail" class="hover:opacity-100 transition-opacity">Github</a></li>
+          <li><a href="https://youtube.com/@SochiVail" class="hover:opacity-100 transition-opacity">Youtube</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div
+      class="max-w-7xl mx-auto px-6 mt-24 pt-12 border-t border-black/[0.02] dark:border-white/[0.02] flex flex-col md:flex-row justify-between items-center gap-6">
+      <p class="text-[9px] font-black uppercase tracking-[0.8em] opacity-10">© 2026 OKEMOVAIL. ALL RIGHTS RESERVED.
+      </p>
+      <div class="flex gap-8 md:gap-8 gap-12 text-[10px] sm:text-[9px] font-black uppercase tracking-widest opacity-20">
+        <a href="#" class="py-2">Privacy</a>
+        <a href="#" class="py-2">Security</a>
       </div>
     </div>
   </footer>
 
   <script>
-    // Reveal Observer
-    const observerOptions = { threshold: 0.1 };
+    // Scroll Reveal & Chroma Sweep Intersection Observer
+    const observerOptions = {
+      threshold: 0.2
+    };
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
       });
     }, observerOptions);
-    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
 
-    // Three.js Space Background
-    let scene, camera, renderer, stars, starGeo, mouseX = 0, mouseY = 0, scrollY = 0;
+    document.querySelectorAll('.scroll-reveal, .chroma-text').forEach(el => observer.observe(el));
 
-    function initSpace() {
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-      camera.position.z = 1;
-      camera.rotation.x = Math.PI / 2;
+    // Cycling Word Animation (strictly synced)
+    const words = [
+      "Speed",
+      "Logic",
+      "Scale",
+      "Design",
+      "Privacy",
+      "Integrity"
+    ];
 
-      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), antialias: true, alpha: true });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
+    let currentIndex = 0;
+    const cyclingWord = document.getElementById('cycling-word');
+    const flare = document.getElementById('intelligence-flare');
 
-      starGeo = new THREE.BufferGeometry();
-      let starCoords = [];
-      for(let i=0; i<8000; i++) {
-        starCoords.push(Math.random() * 800 - 400, Math.random() * 800 - 400, Math.random() * 800 - 400);
-      }
-      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+    function cycleWord() {
+      // 1. Fade out text
+      cyclingWord.classList.add('fade-out');
 
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      let starMaterial = new THREE.PointsMaterial({
-        color: isDark ? 0xffffff : 0x333333,
-        size: 0.6,
-        transparent: true,
-        opacity: 0.8
-      });
+      // 2. Wait for fade out (500ms)
+      setTimeout(() => {
+        // Change text
+        currentIndex = (currentIndex + 1) % words.length;
+        cyclingWord.textContent = words[currentIndex];
 
-      stars = new THREE.Points(starGeo, starMaterial);
-      scene.add(stars);
+        // 3. Trigger Text Animations
 
-      let nsGeom = new THREE.SphereGeometry(1.2, 32, 32);
-      let nsMat = new THREE.MeshBasicMaterial({ color: isDark ? 0xffffff : 0x333333 });
-      let northStar = new THREE.Mesh(nsGeom, nsMat);
-      northStar.name = 'northStar';
-      northStar.position.set(30, 200, -80);
-      scene.add(northStar);
+        // Text Chroma Animation: Remove -> Force Reflow -> Add
+        cyclingWord.classList.remove('animate');
+        void cyclingWord.offsetWidth; // Force reflow
+        cyclingWord.classList.add('animate');
 
-      window.addEventListener('mousemove', e => {
-        mouseX = (e.clientX - window.innerWidth / 2) / 150;
-        mouseY = (event.clientY - window.innerHeight / 2) / 150;
-      });
-      window.addEventListener('scroll', () => scrollY = window.scrollY);
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-      
-      animate();
+        // Fade in text
+        cyclingWord.classList.remove('fade-out');
+
+        // Intelligence Flair: Trigger 1.5s after text appears
+        if (flare) {
+          setTimeout(() => {
+            flare.classList.remove('flare-active');
+            void flare.offsetWidth; // Force reflow
+            flare.classList.add('flare-active');
+          }, 1500);
+        }
+
+      }, 500);
     }
+
+    // Initial trigger
+    setInterval(cycleWord, 5000);
+
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    htmlElement.classList.toggle('dark', currentTheme === 'dark');
+
+    function updateStarColor(isDark) {
+      if (!window.starsMaterial) return;
+      if (isDark) {
+        window.starsMaterial.color.setHex(0xffffff); // White stars
+        window.starsMaterial.opacity = 0.8;
+      } else {
+        window.starsMaterial.color.setHex(0x000000); // Black stars
+        window.starsMaterial.opacity = 0.4;
+      }
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const isDark = htmlElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateStarColor(isDark);
+    });
+
+    // Nav Brand Scroll Logic & Flying PFP
+    const navBrand = document.getElementById('nav-brand');
+    const navLinks = document.getElementById('nav-links');
+    const heroPfpContainer = document.getElementById('hero-pfp-container');
+    const ghostPfp = document.getElementById('ghost-pfp');
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const triggerPoint = 100;
+
+      if (scrollY > triggerPoint) {
+        // Scrolled Down State
+        navBrand.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+
+        if (navLinks) {
+          navLinks.style.transform = 'translateX(0)';
+        }
+
+        if (ghostPfp) ghostPfp.style.opacity = '0';
+        if (heroPfpContainer) heroPfpContainer.style.opacity = '0';
+
+      } else {
+        // Top State (Transition Zone)
+        navBrand.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+
+        if (navLinks) {
+          // Move links left to occupy empty space
+          navLinks.style.transform = 'translateX(-140px)'; // Approx width of brand
+        }
+
+        // Flying PFP Logic
+        if (heroPfpContainer && ghostPfp && navBrand) {
+          const navPfpDiv = navBrand.querySelector('div');
+
+          if (navPfpDiv) {
+            const heroRect = heroPfpContainer.getBoundingClientRect();
+            // We need the Nav target rect. Since Nav is fixed, finding the rect might be tricky if it's hidden/transformed.
+            // But it is present in DOM.
+            // However, navBrand has '-translate-y-2'. This affects rect.
+            // We can approximate or use values.
+            // Or, we can rely on the fact that when we want to dock, the navBrand is about to appear.
+            const navRect = navPfpDiv.getBoundingClientRect();
+
+            // Calculate progress (0 at top, 1 at triggerPoint)
+            let progress = scrollY / triggerPoint;
+            progress = Math.min(Math.max(progress, 0), 1);
+
+            // Smoothstep ease
+            const t = progress * progress * (3 - 2 * progress);
+
+            // Interpolate
+            // Note: bounding client rects are relative to viewport, which is what we want for fixed ghost
+            const top = heroRect.top + (navRect.top - heroRect.top) * t;
+            const left = heroRect.left + (navRect.left - heroRect.left) * t;
+            const width = heroRect.width + (navRect.width - heroRect.width) * t;
+            const height = heroRect.height + (navRect.height - heroRect.height) * t;
+
+            if (scrollY > 5) {
+              ghostPfp.style.opacity = '1';
+              ghostPfp.style.top = `${top}px`;
+              ghostPfp.style.left = `${left}px`;
+              ghostPfp.style.width = `${width}px`;
+              ghostPfp.style.height = `${height}px`;
+
+              heroPfpContainer.style.opacity = '0';
+            } else {
+              ghostPfp.style.opacity = '0';
+              heroPfpContainer.style.opacity = '1';
+            }
+          }
+        }
+      }
+    });
+
+    // Three.js Starry Night Background
+    const canvas = document.getElementById('starfield');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Create Stars
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 700;
+    const posArray = new Float32Array(starsCount * 3);
+
+    for (let i = 0; i < starsCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 15; // Spread
+    }
+
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    // Material
+    window.starsMaterial = new THREE.PointsMaterial({
+      size: 0.02,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.8,
+    });
+
+    // Initialize correct color
+    updateStarColor(htmlElement.classList.contains('dark'));
+
+    const starsMesh = new THREE.Points(starsGeometry, window.starsMaterial);
+    scene.add(starsMesh);
+
+    camera.position.z = 2;
+
+    // Animation Loop logic
+    let mouseX = 0;
+    let mouseY = 0;
+
+    document.addEventListener('mousemove', (event) => {
+      mouseX = event.clientX * 0.0001;
+      mouseY = event.clientY * 0.0001;
+    });
+
+    const clock = new THREE.Clock();
 
     function animate() {
       requestAnimationFrame(animate);
-      stars.rotation.y += 0.0003;
-      stars.position.y = scrollY * 0.05;
-      camera.rotation.z = scrollY * 0.0001;
-      camera.position.x += (mouseX - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY + 1 - camera.position.y) * 0.05;
-      camera.lookAt(0, stars.position.y, 0);
+      const elapsedTime = clock.getElapsedTime();
+
+      starsMesh.rotation.y = elapsedTime * 0.05;
+      starsMesh.rotation.x += (mouseY - starsMesh.rotation.x) * 0.05;
+      starsMesh.rotation.y += (mouseX - starsMesh.rotation.y) * 0.05;
+
       renderer.render(scene, camera);
     }
 
-    // Telemetry Logic
-    const DATABASE_URL = "https://olm266m-default-rtdb.firebaseio.com/stats/stats.json";
-    const STALE_THRESHOLD_SECONDS = 300; 
-    let telemetryHistory = []; 
-    let lastKnownUpdate = null;
-    let lastDataChangeTime = Date.now(); 
-    let lossChart, tokenChart;
+    animate();
 
-    function initCharts() {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const textColor = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
-      const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
 
-      const commonOptions = {
-        responsive: true, maintainAspectRatio: false, animation: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color: textColor, font: { size: 8 } }, grid: { display: false } },
-          y: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } }
-        }
-      };
-
-      lossChart = new Chart(document.getElementById('lossChart').getContext('2d'), {
-        type: 'line',
-        data: { labels: [], datasets: [{ data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 0 }] },
-        options: commonOptions
+    // Simple smooth scroll for anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
       });
-
-      tokenChart = new Chart(document.getElementById('tokenChart').getContext('2d'), {
-        type: 'line',
-        data: { labels: [], datasets: [{ data: [], borderColor: '#a855f7', fill: false, tension: 0.1, borderWidth: 2, pointRadius: 0 }] },
-        options: commonOptions
-      });
-    }
-
-    function formatTime(seconds) {
-      if (!seconds) return "0s";
-      const h = Math.floor(seconds / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      const s = Math.floor(seconds % 60);
-      return h > 0 ? `${h}H ${m}M` : (m > 0 ? `${m}M ${s}S` : `${s}S`);
-    }
-
-    async function fetchStats() {
-      try {
-        const response = await fetch(DATABASE_URL);
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        if (!data) return;
-
-        const now = Date.now();
-        if (data.update !== lastKnownUpdate) {
-          lastDataChangeTime = now;
-          lastKnownUpdate = data.update;
-        }
-
-        const secondsSinceUpdate = (now - lastDataChangeTime) / 2000;
-        const isStale = secondsSinceUpdate >= STALE_THRESHOLD_SECONDS;
-
-        // UI Updates
-        document.getElementById('val-loss').innerText = (data.loss || 0).toFixed(4);
-        document.getElementById('val-avg-loss').innerText = (data.moving_avg_loss || 0).toFixed(4);
-        document.getElementById('val-step').innerText = (data.total_tokens || 0).toLocaleString();
-        document.getElementById('val-update-id').innerText = data.update || "--";
-        document.getElementById('val-vram').innerText = (data.vram_free || 0).toFixed(2) + " GB";
-        document.getElementById('val-elapsed').innerText = formatTime(data.time_elapsed);
-
-        if (data.logs) {
-          const term = document.getElementById('terminal-body');
-          term.innerText = data.logs.slice(-50).join('\n');
-          term.scrollTop = term.scrollHeight;
-        }
-
-        const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        if (telemetryHistory.length === 0 || telemetryHistory[telemetryHistory.length-1].update !== data.update) {
-          telemetryHistory.push({ time: timeLabel, loss: data.loss, tokens: data.total_tokens, update: data.update });
-          if (telemetryHistory.length > 50) telemetryHistory.shift();
-
-          lossChart.data.labels = telemetryHistory.map(h => h.time);
-          lossChart.data.datasets[0].data = telemetryHistory.map(h => h.loss);
-          lossChart.update('none');
-
-          tokenChart.data.labels = telemetryHistory.map(h => h.time);
-          tokenChart.data.datasets[0].data = telemetryHistory.map(h => h.tokens);
-          tokenChart.update('none');
-        }
-
-        const dot = document.getElementById('status-dot');
-        const stext = document.getElementById('status-text');
-        const atext = document.getElementById('activity-text');
-        const alert = document.getElementById('error-alert');
-        const errMsg = document.getElementById('error-message');
-        
-        if (isStale) {
-          dot.className = "w-2 h-2 rounded-full bg-red-600";
-          stext.innerText = "Sync Failed";
-          atext.innerText = "Node Synchronization Interrupted";
-          alert.classList.remove('hidden');
-          errMsg.innerText = "CRITICAL: NODE DISCONNECTED";
-        } else {
-          dot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]";
-          stext.innerText = "Uplink Active";
-          atext.innerText = "Active Sync: M2 Max Node";
-          alert.classList.add('hidden');
-        }
-      } catch (e) {
-        document.getElementById('error-alert').classList.remove('hidden');
-      }
-    }
-
-    function updateClock() {
-      document.getElementById('clock-display').textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
-    }
-
-    window.onload = () => {
-      initSpace();
-      initCharts();
-      fetchStats();
-      updateClock();
-      setInterval(fetchStats, 1000); 
-      setInterval(updateClock, 1000);
-    };
+    });
   </script>
 </body>
+
 </html>

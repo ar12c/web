@@ -1,55 +1,48 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>VAIL | Personal Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vail</title>
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind & FA -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
 
   <script>
     tailwind.config = {
-      darkMode: 'media',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Roboto Mono', 'monospace'],
           },
           colors: {
-            brand: {
-              red: '#ef4444',
-              purple: '#a855f7',
-            }
+            // OpenAI-esque palette
+            'charcoal': '#191919',
+            'off-white': '#FFFFF2',
+            'vail-black': '#000000',
+            'vail-gray': '#6e6e80',
+            'vail-hover': '#f0f0f0',
           },
           animation: {
-            'gradient-flow': 'gradientFlow 8s ease infinite',
-            'fade-in-up': 'fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            'pulse-glow': 'pulseGlow 6s ease-in-out infinite',
+            'blob': 'blob 10s infinite',
           },
           keyframes: {
-            gradientFlow: {
-              '0%': { 'background-position': '0% 50%' },
-              '50%': { 'background-position': '100% 50%' },
-              '100%': { 'background-position': '0% 50%' },
-            },
-            pulseGlow: {
-              '0%, 100%': { filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.3))' },
-              '50%': { filter: 'drop-shadow(0 0 35px rgba(168, 85, 247, 0.5))' },
-            },
-            fadeInUp: {
-              '0%': { opacity: '0', transform: 'translateY(20px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            float: {
-              '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
-              '33%': { transform: 'translate(5vw, 5vh) rotate(2deg)' },
-              '66%': { transform: 'translate(-2vw, 8vh) rotate(-1deg)' },
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
             }
           }
         }
@@ -58,410 +51,280 @@
   </script>
 
   <style>
-    :root {
-      --bg-color: #fbfbfd;
-      --text-color: #1d1d1f;
-      --nav-bg: rgba(255, 255, 255, 0.2);
-      --card-bg: rgba(255, 255, 255, 0.4);
-      --card-border: rgba(0, 0, 0, 0.08);
-      --star-color: 0x333333;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #000000;
-        --text-color: #f5f5f7;
-        --nav-bg: rgba(0, 0, 0, 0.2);
-        --card-bg: rgba(255, 255, 255, 0.03);
-        --card-border: rgba(255, 255, 255, 0.05);
-        --star-color: 0xffffff;
-      }
-    }
-
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: #000000;
+      /* Dark mode default like current OpenAI research pages sometimes */
+      color: #ffffff;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      transition: background-color 0.8s ease, color 0.8s ease;
     }
 
-    #space-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
+    /* Custom link underline animation */
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
       width: 100%;
-      height: 100%;
-      z-index: -10;
-      pointer-events: none;
+      transform: scaleX(0);
+      height: 1px;
+      bottom: -2px;
+      left: 0;
+      background-color: currentColor;
+      transform-origin: bottom right;
+      transition: transform 0.25s ease-out;
     }
 
-    .intel-gradient {
-      display: inline-block;
-      background: linear-gradient(
-        90deg, 
-        #ef4444, 
-        #a855f7,
-        #ec4899,
-        #ef4444
-      );
-      background-size: 300% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientFlow 6s linear infinite;
-      /* Added padding to prevent clipping of shadows/glows */
-      padding: 0.1em 0;
-      margin: -0.1em 0;
+    .nav-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
     }
 
-    .glass-nav {
-      backdrop-filter: saturate(180%) blur(40px);
-      -webkit-backdrop-filter: saturate(180%) blur(40px);
-      background: var(--nav-bg);
-      border-bottom: 0.5px solid var(--card-border);
-      z-index: 100;
-      transition: background-color 0.5s ease;
-    }
-
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-radius: 24px;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease, border-color 0.4s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-8px);
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .cta-apple {
-      background: var(--text-color);
-      color: var(--bg-color);
-      padding: 12px 36px;
-      border-radius: 980px;
-      font-weight: 700;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      font-size: 11px;
-    }
-
-    .cta-apple:hover {
-      background: var(--text-color);
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 15px 30px rgba(168, 85, 247, 0.2);
-    }
-
-    .cta-secondary {
-      background: rgba(128, 128, 128, 0.1);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(12px);
-      color: var(--text-color);
-      padding: 11px 28px;
-      border-radius: 980px;
-      font-weight: 700;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 10px;
-    }
-
-    .cta-secondary:hover {
-      background: rgba(128, 128, 128, 0.2);
-      transform: translateY(-2px);
-      border-color: #a855f7;
-    }
-
-    .scroll-reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .scroll-reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .sponsored-tag {
-        font-size: 9px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.3em;
-        color: var(--text-color);
-        opacity: 0.4;
-        border-left: 1px solid var(--card-border);
-        padding-left: 1rem;
-    }
-
-    .blur-division {
-        height: 120px;
-        width: 100%;
-        background: linear-gradient(to bottom, transparent, var(--bg-color));
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        margin-top: -60px;
-        position: relative;
-        z-index: 30;
+    /* Gradient blob for visual interest */
+    .gradient-blob {
+      background: linear-gradient(135deg, #FF9966, #FF5E62);
+      filter: blur(80px);
+      opacity: 0.6;
     }
   </style>
 </head>
-<body class="font-sans">
 
-  <canvas id="space-canvas"></canvas>
+<body class="bg-black text-white selection:bg-white selection:text-black">
 
-  <!-- Navigation -->
-  <nav class="fixed top-0 w-full glass-nav">
-    <div class="max-w-7xl mx-auto px-6 h-14 flex justify-between items-center">
-      <div class="flex items-center gap-2">
-        <span class="font-black italic text-xl tracking-tight select-none">
-          V<span class="intel-gradient italic">AI</span>L
-        </span>
+  <!-- Navbar -->
+  <nav
+    class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 top-0 left-0 transition-all duration-300"
+    id="navbar">
+    <div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+      <!-- Left: Logo & Links -->
+      <div class="flex items-center gap-12">
+        <a href="../index.html" class="text-lg font-bold tracking-tight z-50 relative group">
+          Vail
+        </a>
+
+        <div class="hidden md:flex items-center gap-8 text-[15px] font-medium text-white/90">
+          <a href="#" class="nav-link hover:text-white transition-colors">Research</a>
+          <a href="#" class="nav-link hover:text-white transition-colors">Products</a>
+          <a href="#" class="nav-link hover:text-white transition-colors">Safety</a>
+          <a href="#" class="nav-link hover:text-white transition-colors">Company</a>
+        </div>
       </div>
-      
-      <a href="chat.html" class="text-[9px] font-bold bg-brand-purple text-white dark:bg-white dark:text-black px-4 py-1.5 rounded-full hover:opacity-80 transition-all uppercase tracking-widest" style="background-color: #a855f7;">Get Started</a>
+
+      <!-- Right: Actions -->
+      <div class="flex items-center gap-6 text-[15px] font-medium">
+        <a href="#" class="hidden md:block hover:text-white transition-colors">Search</a>
+        <a href="#" class="hidden md:block hover:text-white transition-colors">Log in</a>
+        <a href="chat.html"
+          class="bg-white text-black px-3 py-1.5 rounded-sm font-medium hover:bg-white/90 transition-colors flex items-center gap-2">
+          Try Vail <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+        </a>
+      </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="relative min-h-screen flex flex-col justify-end px-6 md:px-20 pb-20 md:pb-24 overflow-hidden">
-    <div class="max-w-7xl w-full animate-fade-in-up">
-      <div class="flex items-center gap-4 mb-6">
-        <h2 class="text-[9px] md:text-xs font-bold opacity-30 tracking-[0.4em] uppercase">Introducing</h2>
-        <div class="sponsored-tag">Powered by <a href="https://voidai.app" target="_blank" class="hover:text-brand-purple transition-colors">VOID.AI</a></div>
+  <!-- Mobile Menu Overlay (Hidden logic for now, keeping simple) -->
+
+  <main class="pt-16">
+
+    <!-- Hero Section -->
+    <section class="min-h-[85vh] flex items-center relative overflow-hidden">
+      <!-- Abstract Background Element -->
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-purple-500 via-red-500 to-yellow-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob">
       </div>
 
-      <h1 class="text-4xl md:text-[6.5vw] font-extrabold tracking-tighter leading-[1.1] mb-8 max-w-5xl">
-        OLM.
-        <span class="intel-gradient pulse-glow">Intelligence for everyone.</span>
-      </h1>
-      
-      <p class="text-sm md:text-lg opacity-40 max-w-xl mb-12 font-medium leading-relaxed">
-        A personal labor of love in language modeling. Built from scratch on the <span class="font-bold opacity-80">3E Engine</span>: Expressive, Expeditious, and Economical. 
-      </p>
-
-      <div class="flex flex-wrap items-center gap-6 md:gap-8">
-        <a href="chat.html" class="cta-apple">
-          Start Now
-        </a>
-        <div class="flex items-center gap-4">
-            <a href="LiveStargaze.html" class="cta-secondary">
-              Live Stargaze
+      <div class="max-w-[1440px] mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10 w-full">
+        <div class="space-y-8">
+          <div class="inline-block">
+            <span
+              class="border border-white/30 rounded-full px-3 py-1 text-xs font-mono uppercase tracking-widest text-white/80 mb-6 inline-block">Release</span>
+          </div>
+          <h1 class="text-6xl md:text-8xl font-medium tracking-tighter leading-[0.95]">
+            Vail <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">o1</span>
+          </h1>
+          <p class="text-xl md:text-2xl text-white/70 max-w-lg leading-relaxed font-light">
+            A new series of AI models designed to spend more time thinking before they respond. capable of reasoning
+            through complex tasks.
+          </p>
+          <div class="flex flex-wrap gap-4 pt-4">
+            <a href="chat.html"
+              class="bg-white text-black px-6 py-3 rounded text-[15px] font-medium hover:bg-white/90 transition-all">
+              Try Vail o1
             </a>
-            <a href="LiveNorthStar.html" class="cta-secondary">
-              Live North Star
+            <a href="#"
+              class="px-6 py-3 rounded text-[15px] font-medium border border-white/20 hover:border-white transition-all underline decoration-transparent hover:decoration-white">
+              Read research
             </a>
+          </div>
         </div>
-        <a href="#features" class="text-brand-purple text-[9px] font-bold uppercase tracking-[0.3em] flex items-center gap-2 hover:gap-3 transition-all" style="color: #a855f7;">
-          Learn more <i class="fa-solid fa-chevron-right text-[7px]"></i>
-        </a>
+
+        <!-- Visual / Graphic (Code or Interactive) -->
+        <div
+          class="relative aspect-square md:aspect-[4/3] bg-white/5 rounded-lg border border-white/10 overflow-hidden flex items-center justify-center group">
+          <!-- Abstract visual representation of reasoning -->
+          <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+
+          <div class="relative w-full max-w-sm font-mono text-sm leading-6 space-y-4 p-8 text-white/80">
+            <div
+              class="flex gap-3 items-start opacity-50 group-hover:opacity-100 transition-opacity duration-700 delay-100">
+              <span class="text-green-400">user:</span>
+              <span>Design a stable fusion reactor control system logic.</span>
+            </div>
+            <div
+              class="flex gap-3 items-start opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-1000">
+              <span class="text-purple-400">vail:</span>
+              <span class="animate-pulse">Thinking...</span>
+            </div>
+            <div
+              class="flex gap-3 items-start opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-[2500ms]">
+              <span class="text-purple-400">vail:</span>
+              <span><span class="text-white/40 italic block mb-2 text-xs border-l border-white/20 pl-2">analyzing
+                  containment field parameters...<br>optimizing magnetic flux...</span>Here is a proposed control loop
+                architecture for stabilizing the plasma confinement...</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Content Section -->
-  <section id="features" class="py-32 px-6 max-w-7xl mx-auto relative z-20">
-    <div class="mb-24 scroll-reveal">
-        <h2 class="text-4xl md:text-6xl font-bold tracking-tight mb-8">Built to be <br><span class="opacity-20 italic">completely personal.</span></h2>
-        <p class="text-lg opacity-40 max-w-2xl">A focused exploration of speed and transparency in synthetic intelligence architecture.</p>
-    </div>
+    <!-- Latest Updates Grid -->
+    <section class="py-24 border-t border-white/10 bg-[#0a0a0a]">
+      <div class="max-w-[1440px] mx-auto px-6">
+        <h2 class="text-3xl font-medium tracking-tight mb-12">Latest updates</h2>
 
-    <div class="grid md:grid-cols-2 gap-6">
-        <div class="feature-card p-10 flex flex-col justify-between scroll-reveal">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Card 1 -->
+          <a href="#" class="group block space-y-4">
+            <div class="aspect-[4/3] w-full bg-[#1a1a1a] rounded overflow-hidden relative border border-white/5">
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-blue-900/40 to-transparent group-hover:scale-105 transition-transform duration-700">
+              </div>
+            </div>
             <div>
-                <i class="fa-solid fa-bolt-lightning text-xl text-brand-red mb-6" style="color: #ef4444;"></i>
-                <h3 class="text-xl font-bold mb-3">Expeditious.</h3>
-                <p class="opacity-40 text-sm leading-relaxed mb-6">
-                    Optimized for sub-20ms first-token latency. Designed to surface thoughts as fast as you can conceive them.
-                </p>
+              <h3 class="text-lg font-medium group-hover:underline decoration-1 underline-offset-4">Vail o1-preview</h3>
+              <p class="text-sm text-white/50 mt-2">Sep 12, 2026</p>
             </div>
-            <div class="h-1 w-full bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-brand-red w-full animate-pulse" style="background: #ef4444;"></div>
-            </div>
-        </div>
+          </a>
 
-        <div class="feature-card p-10 flex flex-col justify-between scroll-reveal" style="transition-delay: 0.1s;">
+          <!-- Card 2 -->
+          <a href="#" class="group block space-y-4">
+            <div class="aspect-[4/3] w-full bg-[#1a1a1a] rounded overflow-hidden relative border border-white/5">
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-green-900/40 to-transparent group-hover:scale-105 transition-transform duration-700">
+              </div>
+            </div>
             <div>
-                <i class="fa-solid fa-sparkles text-xl text-brand-purple mb-6" style="color: #a855f7;"></i>
-                <h3 class="text-xl font-bold mb-3">Expressive.</h3>
-                <p class="opacity-40 text-sm leading-relaxed mb-6">
-                    Fine-tuned for creative depth. VAIL and the <span class="font-bold">OLM series</span> understand nuanced intent in conversation.
-                </p>
+              <h3 class="text-lg font-medium group-hover:underline decoration-1 underline-offset-4">SearchGPT Prototype
+              </h3>
+              <p class="text-sm text-white/50 mt-2">Jul 25, 2026</p>
             </div>
-            <div class="flex gap-2">
-                <span class="w-6 h-6 rounded-full bg-purple-500/10 flex items-center justify-center" style="background: rgba(168, 85, 247, 0.1);"><i class="fa-solid fa-pen text-[7px] text-brand-purple" style="color: #a855f7;"></i></span>
-                <span class="w-6 h-6 rounded-full bg-purple-500/10 flex items-center justify-center" style="background: rgba(168, 85, 247, 0.1);"><i class="fa-solid fa-palette text-[7px] text-brand-purple" style="color: #a855f7;"></i></span>
-            </div>
-        </div>
+          </a>
 
-        <div class="feature-card p-10 md:col-span-2 flex flex-col md:flex-row items-center gap-10 scroll-reveal" style="transition-delay: 0.2s;">
-            <div class="flex-1">
-                <i class="fa-solid fa-leaf text-xl text-brand-red mb-6" style="color: #ef4444;"></i>
-                <h3 class="text-xl font-bold mb-3 text-white">Economical.</h3>
-                <p class="opacity-40 text-sm leading-relaxed">
-                    An original 266M parameter architecture built from the ground up. Powerful reasoning at a fraction of the compute cost—available for personal deployment.
-                </p>
+          <!-- Card 3 -->
+          <a href="#" class="group block space-y-4">
+            <div class="aspect-[4/3] w-full bg-[#1a1a1a] rounded overflow-hidden relative border border-white/5">
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-red-900/40 to-transparent group-hover:scale-105 transition-transform duration-700">
+              </div>
             </div>
-            <div class="flex-none bg-black/5 dark:bg-white/5 px-6 py-4 rounded-2xl border border-black/5 dark:border-white/5 font-mono text-xs">
-                <div class="text-brand-purple mb-1 font-bold uppercase tracking-widest text-[10px]" style="color: #a855f7;">Model Efficiency</div>
-                <div class="text-2xl font-bold mb-2 tracking-tighter text-white">94.2%</div>
-                <div class="opacity-20 uppercase tracking-widest text-[8px]">Optimized for Local Access</div>
+            <div>
+              <h3 class="text-lg font-medium group-hover:underline decoration-1 underline-offset-4">Vail 4o mini</h3>
+              <p class="text-sm text-white/50 mt-2">Jul 18, 2026</p>
             </div>
-        </div>
-    </div>
-  </section>
+          </a>
 
-  <!-- Blur Division -->
-  <div class="blur-division"></div>
+          <!-- Card 4 -->
+          <a href="#" class="group block space-y-4">
+            <div class="aspect-[4/3] w-full bg-[#1a1a1a] rounded overflow-hidden relative border border-white/5">
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-purple-900/40 to-transparent group-hover:scale-105 transition-transform duration-700">
+              </div>
+            </div>
+            <div>
+              <h3 class="text-lg font-medium group-hover:underline decoration-1 underline-offset-4">Safety & Alignment
+              </h3>
+              <p class="text-sm text-white/50 mt-2">Jun 30, 2026</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Careers / CTA -->
+    <section class="py-32 border-t border-white/10 bg-black">
+      <div class="max-w-[1440px] mx-auto px-6 grid md:grid-cols-2 gap-12 items-end">
+        <div>
+          <h2 class="text-4xl md:text-5xl font-medium tracking-tighter mb-6">Join us in shaping the future of
+            technology.</h2>
+        </div>
+        <div class="md:text-right">
+          <a href="#" class="inline-block border-b border-white pb-1 text-lg hover:text-white/70 transition-colors">View
+            careers</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
 
   <!-- Footer -->
-  <footer id="footer" class="py-20 bg-white/5 dark:bg-black/20 backdrop-blur-3xl px-6 relative z-40 border-t border-black/5 dark:border-white/10">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
-      <div class="flex flex-col items-start text-left max-w-md">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="font-black italic text-xl tracking-tight select-none">
-            V<span class="intel-gradient italic">AI</span>L
-          </span>
+  <footer class="bg-[#0a0a0a] py-20 border-t border-white/10 text-sm">
+    <div class="max-w-[1440px] mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-12 mb-20">
+        <!-- Brand Column -->
+        <div class="col-span-2 md:col-span-2">
+          <a href="#" class="text-2xl font-bold tracking-tight block mb-8">Vail</a>
+          <p class="text-white/60 max-w-xs">
+            Vail is an AI research and deployment company. Our mission is to ensure that artificial general intelligence
+            benefits all of humanity.
+          </p>
         </div>
-        <p class="opacity-40 text-[11px] leading-relaxed uppercase tracking-[0.15em] font-bold">
-          A personal project dedicated to high-speed, expressive, and economical intelligence.
-        </p>
-      </div>
-      
-      <div class="flex gap-24 text-left">
-        <div>
-            <h4 class="text-[9px] font-bold uppercase tracking-[0.3em] mb-6 opacity-20">Links</h4>
-            <ul class="space-y-4 text-[10px] opacity-40 font-bold uppercase tracking-widest">
-                <li><a href="#" class="hover:text-brand-red transition-colors flex items-center gap-2">GitHub <i class="fa-brands fa-github"></i></a></li>
-                <li><a href="https://voidai.app" target="_blank" class="hover:text-brand-purple transition-colors" style="color: #a855f7;">Partner</a></li>
-            </ul>
+
+        <!-- Links -->
+        <div class="space-y-4">
+          <h4 class="font-medium text-white mb-6">Research</h4>
+          <ul class="space-y-3 text-white/60">
+            <li><a href="#" class="hover:text-white transition-colors">Overview</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Index</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Vail o1</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Vail 4o</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-4">
+          <h4 class="font-medium text-white mb-6">API</h4>
+          <ul class="space-y-3 text-white/60">
+            <li><a href="#" class="hover:text-white transition-colors">Overview</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Docs</a></li>
+          </ul>
+        </div>
+
+        <div class="space-y-4">
+          <h4 class="font-medium text-white mb-6">Company</h4>
+          <ul class="space-y-3 text-white/60">
+            <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Security</a></li>
+          </ul>
         </div>
       </div>
-    </div>
-    
-    <div class="max-w-7xl mx-auto mt-20 pt-8 flex flex-col md:flex-row justify-between items-center text-[9px] font-bold opacity-20 uppercase tracking-[0.3em] gap-4">
-      <div class="flex flex-col md:flex-row gap-4 md:gap-8 items-center">
-          <span>© 2026 Personal Project // Build 1.4</span>
-      </div>
-      <div class="flex gap-8">
-        <span class="tracking-[0.4em]">Node 01</span>
+
+      <div
+        class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-white/40 text-xs">
+        <div class="flex gap-6 mb-4 md:mb-0">
+          <a href="#">Vail © 2026</a>
+        </div>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-white">Terms & policies</a>
+          <a href="#" class="hover:text-white">Privacy policy</a>
+          <a href="#" class="hover:text-white">Brand guidelines</a>
+        </div>
       </div>
     </div>
   </footer>
 
-  <script>
-    // Reveal Observer
-    const observerOptions = { threshold: 0.1 };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-
-    // Three.js Space Background
-    let scene, camera, renderer, stars, starGeo;
-    let mouseX = 0, mouseY = 0;
-    let scrollY = 0;
-
-    function initSpace() {
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-      camera.position.z = 1;
-      camera.rotation.x = Math.PI / 2;
-
-      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space-canvas'), antialias: true, alpha: true });
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
-
-      // Starfield
-      starGeo = new THREE.BufferGeometry();
-      let starCoords = [];
-      for(let i=0; i<8000; i++) {
-        starCoords.push(
-          Math.random() * 800 - 400,
-          Math.random() * 800 - 400,
-          Math.random() * 800 - 400
-        );
-      }
-      starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
-
-      // Get initial star color based on theme
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      let starMaterial = new THREE.PointsMaterial({
-        color: isDark ? 0xffffff : 0x333333,
-        size: 0.6,
-        transparent: true,
-        opacity: 0.8
-      });
-
-      stars = new THREE.Points(starGeo, starMaterial);
-      scene.add(stars);
-
-      // North Star (Brighter Point)
-      let nsGeom = new THREE.SphereGeometry(1.2, 32, 32);
-      let nsMat = new THREE.MeshBasicMaterial({ color: isDark ? 0xffffff : 0x333333 });
-      let northStar = new THREE.Mesh(nsGeom, nsMat);
-      northStar.name = 'northStar';
-      northStar.position.set(30, 200, -80);
-      scene.add(northStar);
-
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('resize', onWindowResize);
-      window.addEventListener('scroll', onScroll);
-      
-      // Theme Change Listener
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        const dark = e.matches;
-        stars.material.color.setHex(dark ? 0xffffff : 0x333333);
-        const ns = scene.getObjectByName('northStar');
-        if (ns) ns.material.color.setHex(dark ? 0xffffff : 0x333333);
-      });
-      
-      animate();
-    }
-
-    function onMouseMove(event) {
-      mouseX = (event.clientX - window.innerWidth / 2) / 150;
-      mouseY = (event.clientY - window.innerHeight / 2) / 150;
-    }
-
-    function onScroll() {
-      scrollY = window.scrollY;
-    }
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      stars.rotation.y += 0.0003;
-      
-      const targetCamX = mouseX;
-      const targetCamY = -mouseY + 1;
-      
-      stars.position.y = scrollY * 0.05;
-      camera.rotation.z = scrollY * 0.0001;
-
-      camera.position.x += (targetCamX - camera.position.x) * 0.05;
-      camera.position.y += (targetCamY - camera.position.y) * 0.05;
-      
-      camera.lookAt(0, stars.position.y, 0);
-
-      renderer.render(scene, camera);
-    }
-
-    window.onload = initSpace;
-  </script>
 </body>
+
 </html>
