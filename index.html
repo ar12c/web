@@ -18,6 +18,7 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -40,6 +41,7 @@
           animation: {
             'chroma-sweep': 'chroma-sweep 0.9s ease-in-out forwards',
             'border-sweep': 'border-gradient-sweep 4s ease-in-out infinite',
+            'spin-slow': 'spin 8s linear infinite',
           },
           keyframes: {
             'chroma-sweep': {
@@ -78,6 +80,37 @@
       color: var(--text-main);
       font-family: 'Inter', sans-serif;
       -webkit-font-smoothing: antialiased;
+    }
+
+    /* Fixed Canvas for Three.js */
+    #starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .ghost-pfp {
+      position: fixed;
+      z-index: 1000;
+      border-radius: 50%;
+      overflow: hidden;
+      pointer-events: none;
+      /* Initial state hidden, managed by JS */
+      opacity: 0;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .dark .ghost-pfp {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-links-container {
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .chroma-text {
@@ -181,24 +214,27 @@
     .scroll-reveal {
       opacity: 0;
       transform: translateY(20px);
+      filter: blur(10px);
       transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .scroll-reveal.active {
       opacity: 1;
       transform: translateY(0);
+      filter: blur(0);
     }
 
     .dia-card {
       background: var(--bg-base);
       border: 1px solid var(--stroke-light);
       border-radius: 2.5rem;
-      transition: all 0.3s cubic-bezier(0.87, 0, 0.13, 1);
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
     }
 
     .dia-card:hover {
       border-color: rgba(0, 0, 0, 0.12);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
     }
 
     .dark .dia-card:hover {
@@ -218,130 +254,80 @@
       border-color: var(--text-main);
     }
 
-    /* Side Animations Logic */
-    .chroma-mask {
-      mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-    }
-
-    .marquee-v {
-      display: flex;
-      flex-direction: column;
-      animation: marquee-v 20s linear infinite;
-    }
-
-    @keyframes marquee-v {
-      0% {
-        transform: translateY(0);
-      }
-
-      100% {
-        transform: translateY(-50%);
-      }
-    }
-
-    /* Multi-column Sidebar Animation */
-    .sidebar-columns {
-      display: flex;
-      gap: 4px;
-      height: 100%;
-      opacity: 0.5;
-    }
-
-    .chroma-col-item {
-      width: 12px;
-      height: 200%;
-      background: linear-gradient(to bottom, transparent, #c679c4, #fa3d1d, #ffb005, #e1e1fe, #0358f7, #ffffff, transparent);
-      /* Animation handled by JS class toggle */
+    /* Intelligence Flair Animation */
+    #intelligence-flare {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60vh;
+      background: radial-gradient(circle at bottom,
+          rgba(198, 121, 196, 0.45) 0%,
+          /* #c679c4 */
+          rgba(250, 61, 29, 0.35) 25%,
+          /* #fa3d1d */
+          rgba(255, 176, 5, 0.25) 50%,
+          /* #ffb005 */
+          rgba(3, 88, 247, 0.15) 75%,
+          /* #0358f7 */
+          transparent 90%);
+      border-radius: 100% 100% 0 0;
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 5;
       opacity: 0;
-      transform: translateY(100%);
-      filter: blur(6px);
+      transform: translateY(100%) scaleX(0.8);
+      mix-blend-mode: screen;
     }
 
-    .chroma-col-item.animate {
-      animation: sidebar-sweep 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .flare-active {
+      animation: shoot-flare-futuristic 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .chroma-col-item:nth-child(2) {
-      transition-delay: 0.1s;
-    }
-
-    .chroma-col-item:nth-child(3) {
-      transition-delay: 0.2s;
-    }
-
-    @keyframes sidebar-sweep {
+    @keyframes shoot-flare-futuristic {
       0% {
-        transform: translateY(100%);
+        transform: translateY(100%) translateX(0) scaleX(0.5);
         opacity: 0;
+        filter: blur(60px);
       }
 
       10% {
         opacity: 1;
+        transform: translateY(50%) translateX(0) scaleX(1);
+        filter: blur(40px);
       }
 
       100% {
-        transform: translateY(-100%);
+        /* Shoot up and arc slightly right */
+        transform: translateY(-200%) translateX(20%) scaleX(2) rotate(10deg);
         opacity: 0;
+        filter: blur(80px);
       }
     }
 
-    /* Sweeping Sidebar Animation */
-    .sweep-bar {
-      transition: opacity 0.6s ease;
-    }
-
-    .sweep-bar-left {
-      animation: sweep-left 1.2s cubic-bezier(0.87, 0, 0.13, 1);
-    }
-
-    .sweep-bar-right {
-      animation: sweep-right 1.2s cubic-bezier(0.87, 0, 0.13, 1);
-    }
-
-    @keyframes sweep-left {
-      0% {
-        opacity: 0;
-        transform: translateY(100%);
-      }
-
-      50% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateY(-100%);
-      }
-    }
-
-    @keyframes sweep-right {
-      0% {
-        opacity: 0;
-        transform: translateY(-100%);
-      }
-
-      50% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateY(100%);
-      }
+    /* Nav Brand Animation */
+    #nav-brand {
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
   </style>
 </head>
 
 <body class="overflow-x-hidden">
 
-  <!-- Simple Background -->
-  <div class="fixed inset-0 z-[-1] bg-[var(--bg-base)]"></div>
+  <!-- Ghost PFP for Flying Animation -->
+  <div id="ghost-pfp" class="ghost-pfp w-8 h-8 opacity-0">
+    <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="Ghost PFP" class="w-full h-full object-cover">
+  </div>
+
+  <!-- Three.js Background Canvas -->
+  <canvas id="starfield"></canvas>
+  <!-- Fallback/Base Background -->
+  <div class="fixed inset-0 z-[-2] bg-[var(--bg-base)] transition-colors duration-500"></div>
 
   <nav
-    class="fixed top-0 inset-x-0 z-[100] px-6 py-4 flex items-center justify-between pointer-events-auto bg-[var(--bg-base)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10">
-    <div class="flex items-center gap-8">
-      <a href="#" class="flex items-center gap-3 group">
+    class="fixed top-0 inset-x-0 z-[100] px-8 md:px-6 py-4 flex items-center justify-between pointer-events-auto bg-[var(--bg-base)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10">
+    <div class="flex items-center gap-8 relative">
+      <a href="#" id="nav-brand" class="flex items-center gap-3 group opacity-0 pointer-events-none -translate-y-2">
         <div
           class="w-8 h-8 rounded-full overflow-hidden border border-black/10 dark:border-white/20 group-hover:scale-110 transition-transform">
           <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail"
@@ -349,7 +335,7 @@
         </div>
         <span class="text-sm font-bold tracking-tight">OkemoVail</span>
       </a>
-      <div class="hidden md:flex gap-6 text-[13px] font-semibold opacity-50">
+      <div id="nav-links" class="nav-links-container hidden md:flex gap-6 text-[13px] font-semibold opacity-50">
         <a href="#skills" class="hover:opacity-100 transition-opacity">Skills</a>
         <a href="#about" class="hover:opacity-100 transition-opacity">About</a>
       </div>
@@ -371,35 +357,26 @@
     </div>
   </nav>
 
+
+
   <main class="relative z-10 w-full overflow-hidden">
 
     <!-- Hero & Cycling Wrapper - Fullscreen Section -->
     <div class="relative overflow-hidden min-h-screen flex flex-col justify-center gap-8">
-      <!-- Absolute Sweeping Sidebars (Scoped to this area) -->
       <!-- Absolute Marquee Sidebars (Scoped to current fullheight section) -->
-      <div class="absolute left-0 top-0 bottom-0 overflow-hidden z-20 pointer-events-none h-full flex gap-2">
-        <div class="sidebar-columns ml-2">
-          <div class="chroma-col-item"></div>
-          <div class="chroma-col-item"></div>
-          <div class="chroma-col-item"></div>
-        </div>
-      </div>
-      <div class="absolute right-0 top-0 bottom-0 overflow-hidden z-20 pointer-events-none h-full flex justify-end">
-        <div class="sidebar-columns mr-2">
-          <div class="chroma-col-item"></div>
-          <div class="chroma-col-item"></div>
-          <div class="chroma-col-item"></div>
-        </div>
-      </div>
+
+      <!-- Intelligence Flare -->
+      <div id="intelligence-flare"></div>
 
       <!-- Hero Content -->
       <div class="px-6 text-center relative z-10">
         <div class="flex flex-col md:flex-row items-center justify-center gap-12 scroll-reveal active">
-          <div class="pfp-orbit">
-            <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="pfp-image">
+          <div class="pfp-orbit" id="hero-pfp-container">
+            <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="pfp-image"
+              id="hero-pfp">
           </div>
           <div class="text-center md:text-left">
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter">
+            <h1 class="pt-10 text-5xl md:text-8xl font-black tracking-tighter">
               Hi, I'm <span class="chroma-text">OkemoVail</span>
             </h1>
           </div>
@@ -409,8 +386,7 @@
       <!-- Cycling Chroma Text Content -->
       <div class="px-6 relative z-10 scale-90 origin-center">
         <div class="max-w-4xl mx-auto text-center">
-          <h2
-            class="text-2xl md:text-3xl font-bold tracking-tight leading-tight bg-white/5 dark:bg-black/5 rounded-3xl p-8 backdrop-blur-sm inline-block">
+          <h2 class="text-2xl md:text-3xl font-bold tracking-tight leading-tight rounded-3xl p-8 inline-block">
             <span id="cycling-word" class="chroma-text-slow animate block cycling-text-transition mb-2">Speed</span>
             <span class="block opacity-60">isn't a problem</span>
           </h2>
@@ -419,90 +395,115 @@
     </div>
 
     <!-- AI Section: OLM North Star -->
-    <section class="py-20 px-6 border-y border-black/5 dark:border-white/10">
-      <div class="max-w-4xl mx-auto text-center space-y-8 scroll-reveal">
+    <section
+      class="min-h-screen flex flex-col justify-center py-20 px-6 border-y border-black/5 dark:border-white/10 relative overflow-hidden">
+      <!-- Background subtle gradient -->
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-transparent via-brand-secondary/5 to-transparent pointer-events-none">
+      </div>
+
+      <div class="max-w-4xl mx-auto text-center space-y-8 md:space-y-12 scroll-reveal relative z-10">
         <div
-          class="inline-flex w-16 h-16 rounded-full items-center justify-center text-white shadow-lg relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-[#c679c4] to-[#0358f7]"></div>
+          class="inline-flex w-24 h-24 rounded-full items-center justify-center text-white shadow-2xl relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-[#c679c4] via-[#fa3d1d] to-[#0358f7] animate-spin-slow">
+          </div>
           <!-- 8-Sided Star SVG (True Octagram) -->
-          <svg viewBox="0 0 24 24" class="w-8 h-8 relative z-10 text-white fill-current">
-            <path d="M12 0L14.8 9.2L24 12L14.8 14.8L12 24L9.2 14.8L0 12L9.2 9.2L12 0Z" />
+          <svg viewBox="0 0 24 24" class="w-12 h-12 relative z-10 text-white fill-current">
+            <path
+              d="M12 0 L15 6 L21 3.5 L18 9 L24 12 L18 15 L21 20.5 L15 18 L12 24 L9 18 L3 20.5 L6 15 L0 12 L6 9 L3 3.5 L9 6 Z" />
           </svg>
         </div>
-        <h3 class="text-4xl md:text-6xl font-black tracking-tighter chroma-text">Use OLM</h3>
-        <p class="text-lg md:text-xl opacity-60 font-medium leading-relaxed max-w-2xl mx-auto">
+        <h3 class="text-5xl md:text-7xl font-black tracking-tighter chroma-text">Use OLM</h3>
+        <p class="text-xl md:text-2xl opacity-60 font-medium leading-relaxed max-w-2xl mx-auto">
           Experience the latest in AI technology with OLM North Star. A powerful language model designed for
           intelligence and creativity.
         </p>
-        <div class="pt-4">
+        <div class="pt-8">
           <a href="/AI/OkemoLLM.html"
-            class="dia-card px-8 py-4 text-lg font-bold hover:scale-105 transition-transform inline-flex items-center gap-3">
-            <i class="fa-solid fa-rocket text-xl"></i>
+            class="dia-card px-10 py-5 text-xl font-bold hover:scale-105 transition-transform inline-flex items-center gap-4 shadow-lg shadow-brand-primary/10">
+            <i class="fa-solid fa-rocket text-2xl"></i>
             <span>Launch OLM North Star</span>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- Foundry (Skills) Section -->
-    <section id="foundry" class="py-60 px-6 max-w-7xl mx-auto">
-      <div class="flex flex-col md:flex-row justify-between items-end gap-16 mb-32 scroll-reveal">
-        <div class="space-y-6">
-          <span class="text-brand-secondary font-black uppercase text-[11px] tracking-[0.6em] flex items-center gap-3">
-            <span class="w-12 h-[1px] bg-brand-secondary/30"></span> 02 // Stack Forge
-          </span>
-          <h2 class="text-6xl md:text-[8rem] font-black tracking-tighter leading-tight">
-            Technical <br />
-            <span class="text-white/10">Foundry.</span>
-          </h2>
-        </div>
+    <!-- Foundry (Skills) Section - List View -->
+    <section id="foundry" class="min-h-screen flex flex-col justify-center py-20 px-6 max-w-5xl mx-auto">
+      <div class="mb-24 scroll-reveal">
+        <span
+          class="text-brand-secondary font-black uppercase text-[11px] tracking-[0.6em] flex items-center gap-3 mb-6">
+          <span class="w-12 h-[1px] bg-brand-secondary/30"></span> 02 // Stack Forge
+        </span>
+        <h2 class="text-6xl md:text-[8rem] font-black tracking-tighter leading-tight">
+          Technical <br />
+          <span class="text-black/10 dark:text-white/10">Foundry.</span>
+        </h2>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-        <!-- Skill items with devicons -->
+      <div class="space-y-4">
+        <!-- List Item 1 -->
         <div
-          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal border border-white/5 relative overflow-hidden">
-          <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <i
-            class="fa-brands fa-python text-6xl opacity-20 group-hover:opacity-100 group-hover:text-brand-primary transition-all group-hover:scale-125 relative z-10"></i>
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">01</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              Python</h3>
+          </div>
           <span
-            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">Python
-            // Core</span>
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Core</span>
         </div>
+
+        <!-- List Item 2 -->
         <div
-          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal [transition-delay:100ms] border border-white/5 relative overflow-hidden">
-          <div class="absolute inset-0 bg-brand-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <i
-            class="fa-brands fa-js text-6xl opacity-20 group-hover:opacity-100 group-hover:text-yellow-400 transition-all group-hover:scale-125 relative z-10"></i>
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:100ms]">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">02</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              TypeScript</h3>
+          </div>
           <span
-            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">TS
-            / Architect</span>
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Architecture</span>
         </div>
+
+        <!-- List Item 3 -->
         <div
-          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal [transition-delay:200ms] border border-white/5 relative overflow-hidden">
-          <div class="absolute inset-0 bg-brand-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <i
-            class="fa-solid fa-cube text-6xl opacity-20 group-hover:opacity-100 group-hover:text-brand-secondary transition-all group-hover:scale-125 relative z-10"></i>
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:200ms]">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">03</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              Three.js</h3>
+          </div>
           <span
-            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">Three.js
-            // UX</span>
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Visual
+            Experience</span>
         </div>
+
+        <!-- List Item 4 -->
         <div
-          class="glass-card group hover:bg-white/[0.03] py-16 flex flex-col items-center justify-center gap-8 scroll-reveal [transition-delay:300ms] border border-white/5 relative overflow-hidden">
-          <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <i
-            class="fa-solid fa-wind text-6xl opacity-20 group-hover:opacity-100 group-hover:text-cyan-400 transition-all group-hover:scale-125 relative z-10"></i>
+          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:300ms]">
+          <div class="flex items-center gap-8">
+            <span class="text-xs font-mono opacity-30">04</span>
+            <h3
+              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
+              Tailwind</h3>
+          </div>
           <span
-            class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 relative z-10 transition-opacity">Tailwind
-            // Design</span>
+            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Design
+            System</span>
         </div>
       </div>
     </section>
 
-    <!-- Testimonial Grid -->
-    <section id="about" class="py-40 border-y border-black/5 dark:border-white/10">
+    <!-- Testimonial / Contact Grid -->
+    <section id="about"
+      class="min-h-screen flex flex-col justify-center py-40 border-y border-black/5 dark:border-white/10 relative">
       <div class="max-w-4xl mx-auto space-y-12 scroll-reveal text-center">
-        <h2 class="text-6xl md:text-[10rem] font-black tracking-tighter leading-none mb-20 chroma-text">Do it all.</h2>
+        <h2 class="text-6xl md:text-[10rem] font-black tracking-tighter leading-none mb-20 chroma-text">Do it all.
+        </h2>
         <div class="flex justify-center">
           <a href="https://github.com/OkemoVail" target="_blank"
             class="dia-card px-10 py-5 text-2xl font-black hover:scale-105 transition-transform flex items-center gap-4">
@@ -510,9 +511,7 @@
             <span>Get in touch</span>
           </a>
         </div>
-        <p class="text-[11px] font-black opacity-30 uppercase tracking-[0.5em] pt-20">Currently available for
-          high-impact
-          collaborations.</p>
+        <!-- Removed "Currently available..." text based on user request -->
       </div>
     </section>
 
@@ -524,19 +523,15 @@
 
       <div class="col-span-2 lg:col-span-1 space-y-6">
         <a href="#" class="text-xl font-black flex items-center gap-2">
-          Vail
+          OkemoVail
         </a>
-        <p class="text-xs font-bold opacity-20 uppercase tracking-widest leading-loose">
-          Intelligence Architect <br />
-          Core System v4.0.2
-        </p>
       </div>
 
       <div class="space-y-4">
         <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Architectures</h4>
         <ul class="space-y-3 text-[13px] font-medium opacity-60">
           <li><a href="#" class="hover:opacity-100 transition-opacity">OLM North Star</a></li>
-          <li><a href="#" class="hover:opacity-100 transition-opacity">Liquid Glass UX</a></li>
+          <li><a href="#" class="hover:opacity-100 transition-opacity">OLM Stargaze</a></li>
         </ul>
       </div>
 
@@ -561,10 +556,11 @@
 
     <div
       class="max-w-7xl mx-auto px-6 mt-24 pt-12 border-t border-black/[0.02] dark:border-white/[0.02] flex flex-col md:flex-row justify-between items-center gap-6">
-      <p class="text-[9px] font-black uppercase tracking-[0.8em] opacity-10">© 2026 OKEMOVAIL. ALL RIGHTS RESERVED.</p>
-      <div class="flex gap-8 text-[9px] font-black uppercase tracking-widest opacity-20">
-        <a href="#">Privacy</a>
-        <a href="#">Security</a>
+      <p class="text-[9px] font-black uppercase tracking-[0.8em] opacity-10">© 2026 OKEMOVAIL. ALL RIGHTS RESERVED.
+      </p>
+      <div class="flex gap-8 md:gap-8 gap-12 text-[10px] sm:text-[9px] font-black uppercase tracking-widest opacity-20">
+        <a href="#" class="py-2">Privacy</a>
+        <a href="#" class="py-2">Security</a>
       </div>
     </div>
   </footer>
@@ -585,7 +581,7 @@
 
     document.querySelectorAll('.scroll-reveal, .chroma-text').forEach(el => observer.observe(el));
 
-    // Cycling Word Animation (only the variable word)
+    // Cycling Word Animation (strictly synced)
     const words = [
       "Speed",
       "Logic",
@@ -597,52 +593,206 @@
 
     let currentIndex = 0;
     const cyclingWord = document.getElementById('cycling-word');
-    const sidebarCols = document.querySelectorAll('.chroma-col-item');
+    const flare = document.getElementById('intelligence-flare');
 
     function cycleWord() {
-      // 1. Fade out
+      // 1. Fade out text
       cyclingWord.classList.add('fade-out');
 
-      // 2. Wait 500ms for fade out
+      // 2. Wait for fade out (500ms)
       setTimeout(() => {
+        // Change text
         currentIndex = (currentIndex + 1) % words.length;
         cyclingWord.textContent = words[currentIndex];
 
-        // Trigger sidebar sweep animations
-        sidebarCols.forEach(col => {
-          col.classList.remove('animate');
-          void col.offsetWidth; // Force reflow
-          col.classList.add('animate');
-        });
+        // 3. Trigger Text Animations
 
-        // Reset chroma animation on text
+        // Text Chroma Animation: Remove -> Force Reflow -> Add
         cyclingWord.classList.remove('animate');
         void cyclingWord.offsetWidth; // Force reflow
         cyclingWord.classList.add('animate');
 
-        // 3. Fade in (remove opacity 0 class)
+        // Fade in text
         cyclingWord.classList.remove('fade-out');
+
+        // Intelligence Flair: Trigger 1.5s after text appears
+        if (flare) {
+          setTimeout(() => {
+            flare.classList.remove('flare-active');
+            void flare.offsetWidth; // Force reflow
+            flare.classList.add('flare-active');
+          }, 1500);
+        }
 
       }, 500);
     }
 
-    // Force reflow helper
-    function forceReflow(el) { return el.offsetHeight; }
-
-    // Cycle every 5 seconds to match slower animation
+    // Initial trigger
     setInterval(cycleWord, 5000);
 
     // Dark Mode Toggle
     const themeToggle = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
-    // Check for saved theme preference or default to dark
     const currentTheme = localStorage.getItem('theme') || 'dark';
     htmlElement.classList.toggle('dark', currentTheme === 'dark');
+
+    function updateStarColor(isDark) {
+      if (!window.starsMaterial) return;
+      if (isDark) {
+        window.starsMaterial.color.setHex(0xffffff); // White stars
+        window.starsMaterial.opacity = 0.8;
+      } else {
+        window.starsMaterial.color.setHex(0x000000); // Black stars
+        window.starsMaterial.opacity = 0.4;
+      }
+    }
 
     themeToggle.addEventListener('click', () => {
       const isDark = htmlElement.classList.toggle('dark');
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateStarColor(isDark);
+    });
+
+    // Nav Brand Scroll Logic & Flying PFP
+    const navBrand = document.getElementById('nav-brand');
+    const navLinks = document.getElementById('nav-links');
+    const heroPfpContainer = document.getElementById('hero-pfp-container');
+    const ghostPfp = document.getElementById('ghost-pfp');
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const triggerPoint = 100;
+
+      if (scrollY > triggerPoint) {
+        // Scrolled Down State
+        navBrand.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+
+        if (navLinks) {
+          navLinks.style.transform = 'translateX(0)';
+        }
+
+        if (ghostPfp) ghostPfp.style.opacity = '0';
+        if (heroPfpContainer) heroPfpContainer.style.opacity = '0';
+
+      } else {
+        // Top State (Transition Zone)
+        navBrand.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+
+        if (navLinks) {
+          // Move links left to occupy empty space
+          navLinks.style.transform = 'translateX(-140px)'; // Approx width of brand
+        }
+
+        // Flying PFP Logic
+        if (heroPfpContainer && ghostPfp && navBrand) {
+          const navPfpDiv = navBrand.querySelector('div');
+
+          if (navPfpDiv) {
+            const heroRect = heroPfpContainer.getBoundingClientRect();
+            // We need the Nav target rect. Since Nav is fixed, finding the rect might be tricky if it's hidden/transformed.
+            // But it is present in DOM.
+            // However, navBrand has '-translate-y-2'. This affects rect.
+            // We can approximate or use values.
+            // Or, we can rely on the fact that when we want to dock, the navBrand is about to appear.
+            const navRect = navPfpDiv.getBoundingClientRect();
+
+            // Calculate progress (0 at top, 1 at triggerPoint)
+            let progress = scrollY / triggerPoint;
+            progress = Math.min(Math.max(progress, 0), 1);
+
+            // Smoothstep ease
+            const t = progress * progress * (3 - 2 * progress);
+
+            // Interpolate
+            // Note: bounding client rects are relative to viewport, which is what we want for fixed ghost
+            const top = heroRect.top + (navRect.top - heroRect.top) * t;
+            const left = heroRect.left + (navRect.left - heroRect.left) * t;
+            const width = heroRect.width + (navRect.width - heroRect.width) * t;
+            const height = heroRect.height + (navRect.height - heroRect.height) * t;
+
+            if (scrollY > 5) {
+              ghostPfp.style.opacity = '1';
+              ghostPfp.style.top = `${top}px`;
+              ghostPfp.style.left = `${left}px`;
+              ghostPfp.style.width = `${width}px`;
+              ghostPfp.style.height = `${height}px`;
+
+              heroPfpContainer.style.opacity = '0';
+            } else {
+              ghostPfp.style.opacity = '0';
+              heroPfpContainer.style.opacity = '1';
+            }
+          }
+        }
+      }
+    });
+
+    // Three.js Starry Night Background
+    const canvas = document.getElementById('starfield');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Create Stars
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 700;
+    const posArray = new Float32Array(starsCount * 3);
+
+    for (let i = 0; i < starsCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 15; // Spread
+    }
+
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    // Material
+    window.starsMaterial = new THREE.PointsMaterial({
+      size: 0.02,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.8,
+    });
+
+    // Initialize correct color
+    updateStarColor(htmlElement.classList.contains('dark'));
+
+    const starsMesh = new THREE.Points(starsGeometry, window.starsMaterial);
+    scene.add(starsMesh);
+
+    camera.position.z = 2;
+
+    // Animation Loop logic
+    let mouseX = 0;
+    let mouseY = 0;
+
+    document.addEventListener('mousemove', (event) => {
+      mouseX = event.clientX * 0.0001;
+      mouseY = event.clientY * 0.0001;
+    });
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
+
+      starsMesh.rotation.y = elapsedTime * 0.05;
+      starsMesh.rotation.x += (mouseY - starsMesh.rotation.x) * 0.05;
+      starsMesh.rotation.y += (mouseX - starsMesh.rotation.y) * 0.05;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
     // Simple smooth scroll for anchors
