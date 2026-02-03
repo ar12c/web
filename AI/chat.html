@@ -599,31 +599,107 @@
         #settings-panel {
             position: fixed;
             z-index: 3000;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(40px);
             border: 1px solid rgba(0, 0, 0, 0.1);
             display: none;
-            flex-direction: column;
+            flex-direction: row;
+            /* changed to row for split view */
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.95);
             width: 90%;
-            max-width: 420px;
-            max-height: 90vh;
+            max-width: 900px;
+            /* Wider for split view */
+            height: 80vh;
+            /* Fixed height for consistent layout */
+            max-height: 700px;
             border-radius: 1.25rem;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-            overflow-y: auto;
-            overflow-x: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            /* Manage overflow internally */
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
         .dark #settings-panel {
-            background: rgba(20, 20, 20, 0.92);
+            background: rgba(20, 20, 20, 0.95);
             border-color: rgba(255, 255, 255, 0.1);
         }
 
         #settings-panel.active {
             display: flex;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
+
+        #settings-sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        .dark #settings-sidebar {
+            border-right-color: rgba(255, 255, 255, 0.05);
+        }
+
+        #settings-content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .settings-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #71717a;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: 4px;
+        }
+
+        .dark .settings-nav-item {
+            color: #a1a1aa;
+        }
+
+        .settings-nav-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: #18181b;
+        }
+
+        .dark .settings-nav-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: #ffffff;
+        }
+
+        .settings-nav-item.active {
+            background: var(--accent-color);
+            color: var(--accent-contrast);
+        }
+
+        /* Smart Sidebar Hover Trigger */
+        #sidebar-hover-trigger {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 20px;
+            z-index: 2400;
+            /* Just below sidebar */
+            display: none;
+            /* Enabled via JS */
+        }
+
 
         @media (max-width: 1023px) {
             #settings-panel.active {
@@ -633,29 +709,47 @@
                 width: 100vw !important;
                 height: 100vh !important;
                 max-width: 100vw !important;
+                max-height: 100vh !important;
                 border-radius: 0 !important;
                 border: none !important;
                 z-index: 3500;
-                background: white !important;
-                overflow-y: auto;
+                flex-direction: column;
+                overflow: hidden;
             }
 
-            .dark #settings-panel.active {
-                background: #0d0d0d !important;
+            #settings-sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 1rem;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .dark #settings-sidebar {
+                border-bottom-color: rgba(255, 255, 255, 0.05);
+            }
+
+            .settings-nav-item {
+                white-space: nowrap;
+                padding: 8px 16px;
+                background: rgba(0, 0, 0, 0.03);
+                margin-right: 8px;
+                margin-bottom: 0;
+            }
+
+            .dark .settings-nav-item {
+                background: rgba(255, 255, 255, 0.03);
+            }
+
+            #settings-content-area {
+                padding: 1.5rem;
             }
         }
 
         @media (min-width: 1024px) {
-            #settings-panel {
-                left: 1rem;
-                bottom: 5rem;
-                top: auto;
-                transform: none;
-                width: 280px;
-                max-height: calc(100vh - 8rem);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-                border-radius: 1rem;
-            }
+            /* Settings panel positioning removed to keep it centered */
         }
 
         #pfp-workspace {
@@ -754,6 +848,7 @@
     class="bg-chatbg-light dark:bg-chatbg-dark text-zinc-900 dark:text-zinc-200 font-sans h-full flex overflow-hidden">
 
     <div id="sidebar-overlay" onclick="window.toggleSidebar()"></div>
+    <div id="sidebar-hover-trigger"></div>
 
     <div id="onboarding-overlay" class="hidden">
         <div class="onboarding-card">
@@ -761,69 +856,81 @@
                 <i class="fa-solid fa-language mr-1"></i> <span class="lang-text">中文</span>
             </button>
             <div id="onboarding-step-1" class="tutorial-step active">
-                <div class="text-center mb-8">
+                <div class="text-center mb-6">
+                    <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2"
+                        data-t="onboarding_welcome">Welcome</p>
                     <h1
-                        class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-2">
-                        V<span class="vail-logo-ai gradient-mode">AI</span>L
-                    </h1>
-                    <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Welcome! Let's get you started.</p>
+                        class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">
+                        V<span class="vail-logo-ai gradient-mode">AI</span>L</h1>
                 </div>
 
                 <div class="space-y-6">
-                    <!-- Google Sign-in on top -->
+                    <!-- 1. Google Auth at Top -->
                     <div>
                         <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
-                            class="w-full flex items-center justify-center gap-3 px-4 py-4 text-sm font-bold rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all shadow-sm">
-                            <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5"
-                                alt="Google">
-                            <span id="google-btn-text-onboarding">Continue with Google</span>
+                            class="w-full flex items-center justify-center gap-2 px-4 py-3.5 text-xs font-bold rounded-xl transition-all shadow-lg hover:brightness-110 active:scale-[0.98]"
+                            style="background-color: var(--accent-color); color: var(--accent-contrast);">
+                            <span id="google-btn-text-onboarding"><i class="fa-brands fa-google mr-2.5"></i>Continue
+                                with Google</span>
                         </button>
                     </div>
 
-                    <!-- Separator -->
-                    <div class="relative flex items-center py-2">
-                        <div class="flex-grow border-t border-zinc-200 dark:border-zinc-800"></div>
-                        <span
-                            class="flex-shrink mx-4 text-[10px] font-black uppercase tracking-widest text-zinc-400">or</span>
-                        <div class="flex-grow border-t border-zinc-200 dark:border-zinc-800"></div>
+                    <!-- 2. Limits Text -->
+                    <div class="text-center">
+                        <p class="text-[10px] font-bold text-zinc-400/80 uppercase tracking-wider">OLM has no limits for
+                            all accounts</p>
                     </div>
 
-                    <!-- PFP and Username Section -->
-                    <div class="flex flex-col items-center gap-6">
-                        <div class="relative group cursor-pointer"
-                            onclick="document.getElementById('onboarding-pfp-input').click()">
-                            <div id="onboarding-pfp-preview"
-                                class="w-24 h-24 rounded-full border-2 border-dashed border-zinc-200 dark:border-zinc-800 flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 overflow-hidden transition-all group-hover:border-blue-500/50">
-                                <i
-                                    class="fa-solid fa-camera text-zinc-300 text-2xl group-hover:scale-110 transition-transform"></i>
+                    <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
+
+                    <!-- 3. Local Profile Setup -->
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="flex items-center gap-4 w-full">
+                            <div class="relative group cursor-pointer flex-shrink-0"
+                                onclick="document.getElementById('onboarding-pfp-input').click()">
+                                <div id="onboarding-pfp-preview"><i
+                                        class="fa-solid fa-camera text-zinc-400 text-xl"></i>
+                                </div>
+                                <div
+                                    class="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[12px] border-2 border-white dark:border-[#141414] shadow-md">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
                             </div>
-                            <div
-                                class="absolute bottom-0 right-0 w-8 h-8 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center shadow-lg border border-zinc-100 dark:border-zinc-700">
-                                <i class="fa-solid fa-plus text-xs text-zinc-500"></i>
+                            <div class="flex-1">
+                                <label
+                                    class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
+                                    data-t="display_name">Name</label>
+                                <input type="text" id="onboarding-name" placeholder="Name or Alias"
+                                    class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-3.5 text-sm font-bold focus:border-blue-500 outline-none transition-all">
                             </div>
                         </div>
                         <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*"
                             onchange="window.handleOnboardingPfp(event)">
+                    </div>
 
-                        <div class="w-full">
-                            <label
-                                class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1">Display
-                                Name</label>
-                            <input type="text" id="onboarding-name" placeholder="Enter your username"
-                                class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-center">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
+                            data-t="appearance">Appearance</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="window.setTheme('light')"
+                                class="flex items-center justify-center gap-3 py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
+                                    class="fa-solid fa-sun"></i> <span data-t="theme_light">Light</span></button>
+                            <button onclick="window.setTheme('dark')"
+                                class="flex items-center justify-center gap-3 py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
+                                    class="fa-solid fa-moon"></i> <span data-t="theme_dark">Dark</span></button>
                         </div>
                     </div>
 
-                    <!-- Actions -->
-                    <div class="flex flex-col gap-3 pt-2">
+                    <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
+
+                    <!-- 4. Continue Buttons -->
+                    <div class="flex flex-col gap-3">
                         <button onclick="window.nextOnboardingStep()"
-                            class="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-black text-sm uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl">
-                            Continue
-                        </button>
+                            class="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl"
+                            data-t="onboarding_continue">Continue</button>
                         <button onclick="window.continueAsGuest()"
-                            class="w-full py-3 text-[11px] font-bold text-zinc-400 uppercase tracking-widest hover:text-zinc-900 dark:hover:text-white transition-colors">
-                            Skip for now
-                        </button>
+                            class="w-full py-2 text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] hover:text-zinc-900 dark:hover:text-white transition-colors"
+                            data-t="onboarding_guest">Continue as Guest</button>
                     </div>
                 </div>
             </div>
@@ -888,7 +995,7 @@
             <div class="flex-1 overflow-y-auto no-scrollbar space-y-1 lg:space-y-0.5" id="history-list"></div>
             <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 space-y-1 lg:space-y-0.5">
                 <button onclick="window.toggleTheme()"
-                    class="hidden items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold rounded-xl lg:rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
+                    class="w-full flex items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold rounded-xl lg:rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700">
                     <i class="fa-solid fa-circle-half-stroke text-zinc-400 text-xs"></i>
                     <span data-t="appearance">Appearance</span>
                 </button>
@@ -1061,21 +1168,18 @@
                     <textarea id="user-input" placeholder="Message OLM..." rows="1"
                         class="w-full bg-transparent px-6 py-5 lg:py-4 outline-none resize-none text-base sm:text-sm max-h-[600px] no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
 
-                    <div class="flex items-center justify-between pl-3 pr-3 pb-3 pt-1 gap-3">
-                        <div class="flex items-center gap-2">
-                            <button id="search-btn" onclick="window.toggleSearch()"
-                                class="flex items-center justify-center w-auto px-4 h-12 lg:h-10 rounded-full border border-zinc-100 dark:border-zinc-800 transition-all duration-300 text-[11px] font-medium">
-                                <i class="fa-solid fa-globe text-sm lg:text-xs mr-1.5"></i>
-                                <span data-t="search">Search</span>
-                            </button>
-                        </div>
-                        <div class="flex items-center gap-2 mr-[2px]">
-                            <button id="send-btn" disabled onclick="window.handleAction()"
-                                class="w-12 h-12 lg:w-10 lg:h-10 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0"
-                                style="background-color: var(--accent-color); color: var(--accent-contrast)">
-                                <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-base"></i>
-                            </button>
-                        </div>
+                    <div class="flex items-center justify-between pl-6 pr-3 pb-3 pt-1 gap-3">
+                        <button id="search-btn" onclick="window.toggleSearch()"
+                            class="flex items-center justify-center w-auto px-4 h-12 lg:h-10 rounded-full border border-zinc-100 dark:border-zinc-800 transition-all duration-300 text-[11px] font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                            <i class="fa-solid fa-globe text-sm lg:text-xs mr-1.5"></i>
+                            <span data-t="search">Search</span>
+                        </button>
+
+                        <button id="send-btn" disabled onclick="window.handleAction()"
+                            class="w-12 h-12 lg:w-10 lg:h-10 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0"
+                            style="background-color: var(--accent-color); color: var(--accent-contrast)">
+                            <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-base"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1233,6 +1337,7 @@
                     accent: 'auto', userName: '', userPic: '',
                     pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
                     lang: 'en',
+                    sidebarMode: 'manual', // 'manual' or 'smart'
                     customAccents: [],
                     systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL mathematical formulas strictly in $$ tags only.'
                 }));
@@ -1597,35 +1702,105 @@
                     if (!els.settingsPanel) return;
                     const isActive = els.settingsPanel.classList.toggle('active');
                     if (isActive) {
-                        document.getElementById('settings-name-input').value = settings.userName;
-                        document.getElementById('settings-param-temp').value = settings.temp;
-                        document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+                        // Default to Profile tab
+                        window.openSettingsTab('profile');
 
-                        // New parameters
+                        document.getElementById('settings-name-input-new').value = settings.userName;
+
+                        // Populate Intelligence Tab Values
+                        if (document.getElementById('settings-param-temp')) {
+                            document.getElementById('settings-param-temp').value = settings.temp;
+                            document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
+                        }
                         if (document.getElementById('settings-param-top-p')) {
                             document.getElementById('settings-param-top-p').value = settings.top_p || 0.9;
                             document.getElementById('settings-top-p-val').innerText = (settings.top_p || 0.9).toFixed(2);
-                        }
-                        if (document.getElementById('settings-param-rep-pen')) {
-                            document.getElementById('settings-param-rep-pen').value = settings.rep_pen || 1.35;
-                            document.getElementById('settings-rep-pen-val').innerText = (settings.rep_pen || 1.35).toFixed(2);
                         }
                         if (document.getElementById('settings-param-max-tokens')) {
                             document.getElementById('settings-param-max-tokens').value = settings.max_tokens || 256;
                             document.getElementById('settings-max-tokens-val').innerText = settings.max_tokens || 256;
                         }
 
+                        // Sidebar Settings
+                        const toggleBtn = document.getElementById('toggle-smart-sidebar');
+                        if (toggleBtn) {
+                            const thumb = toggleBtn.querySelector('div');
+                            if (settings.sidebarMode === 'smart') {
+                                toggleBtn.classList.replace('bg-zinc-200', 'bg-green-500');
+                                toggleBtn.classList.replace('dark:bg-zinc-700', 'bg-green-500');
+                                thumb.style.transform = 'translateX(20px)';
+                            } else {
+                                toggleBtn.classList.remove('bg-green-500');
+                                toggleBtn.classList.add('bg-zinc-200', 'dark:bg-zinc-700');
+                                thumb.style.transform = 'translateX(0)';
+                            }
+                        }
+
                         els.pfpMovableImg.src = settings.userPic || '';
                         applyMovableStyles();
                         // Reset custom color preview
-                        const previewEl = document.getElementById('custom-color-preview');
-                        const addBtn = document.getElementById('add-custom-color-btn');
+                        const previewEl = document.getElementById('custom-color-preview'); // Legacy check
+                        const newPreviewBtn = document.getElementById('pending-custom-color');
                         if (previewEl) previewEl.style.display = 'none';
-                        if (addBtn) addBtn.style.display = 'none';
+                        if (newPreviewBtn) newPreviewBtn.style.display = 'none';
+
                         // Restore current accent color
                         window.updateAccent(settings.accent || 'auto');
-                        if (window.renderCustomAccents) window.renderCustomAccents();
+                        if (window.renderThemes) window.renderThemes();
                     }
+                };
+
+                window.openSettingsTab = (tabName) => {
+                    // 1. Update Sidebar Active State
+                    document.querySelectorAll('.settings-nav-item').forEach(el => {
+                        el.classList.toggle('active', el.innerText.toLowerCase().includes(tabName));
+                    });
+
+                    // 2. Show Content
+                    document.querySelectorAll('.settings-tab-content').forEach(el => {
+                        el.classList.add('hidden');
+                        el.classList.remove('block');
+                    });
+                    const target = document.getElementById(`tab-${tabName}`);
+                    if (target) {
+                        target.classList.remove('hidden');
+                        target.classList.add('block');
+                    }
+                };
+
+                window.toggleSmartSidebar = () => {
+                    settings.sidebarMode = settings.sidebarMode === 'smart' ? 'manual' : 'smart';
+                    saveSettings();
+
+                    // Update Button UI
+                    const toggleBtn = document.getElementById('toggle-smart-sidebar');
+                    const thumb = toggleBtn.querySelector('div');
+                    if (settings.sidebarMode === 'smart') {
+                        toggleBtn.classList.remove('bg-zinc-200', 'dark:bg-zinc-700');
+                        toggleBtn.classList.add('bg-green-500');
+                        thumb.style.transform = 'translateX(20px)';
+                    } else {
+                        toggleBtn.classList.remove('bg-green-500');
+                        toggleBtn.classList.add('bg-zinc-200', 'dark:bg-zinc-700');
+                        thumb.style.transform = 'translateX(0)';
+                    }
+
+                    applySidebarMode();
+                };
+
+                const applySidebarMode = () => {
+                    const isSmart = settings.sidebarMode === 'smart';
+                    const trigger = document.getElementById('sidebar-hover-trigger');
+
+                    if (isSmart) {
+                        // Collapse sidebar initially if smart mode is on
+                        if (window.innerWidth >= 1024) document.body.classList.add('sidebar-collapsed');
+                        if (trigger) trigger.style.display = 'block';
+                    } else {
+                        // If switching to manual, ensure manual control works (stay collapsed or not)
+                        if (trigger) trigger.style.display = 'none';
+                    }
+                    updateUI();
                 };
 
                 const applyMovableStyles = () => {
@@ -1715,7 +1890,8 @@
                 };
 
                 window.updateSettingsFromPanel = () => {
-                    settings.userName = document.getElementById('settings-name-input').value.trim();
+                    const nameInput = document.getElementById('settings-name-input-new') || document.getElementById('settings-name-input');
+                    if (nameInput) settings.userName = nameInput.value.trim();
                     saveSettings(); updateProfileUI();
                     if (chatHistory.length === 0) render();
                 };
@@ -1748,17 +1924,21 @@
                     saveSettings();
                 };
 
-                window.addCustomAccent = (color) => {
+                window.addCustomAccent = (color, name) => {
                     if (!color || typeof color !== 'string') return;
                     const hex = color.toLowerCase();
                     if (!/^#([0-9a-f]{6})$/.test(hex)) return;
                     if (!Array.isArray(settings.customAccents)) settings.customAccents = [];
-                    if (!settings.customAccents.includes(hex)) {
-                        settings.customAccents.push(hex);
+                    // Check if this color already exists
+                    const exists = settings.customAccents.some(item => {
+                        const c = typeof item === 'string' ? item : item.color;
+                        return c === hex;
+                    });
+                    if (!exists) {
+                        settings.customAccents.push({ color: hex, name: name || 'Custom Color' });
                     }
                     saveSettings();
-                    // Don't auto-apply, just add to the list
-                    window.renderCustomAccents();
+                    window.renderThemes();
                 };
 
                 window.handleCustomAccentChange = (value) => {
@@ -1811,22 +1991,61 @@
                     const dict = translations[settings.lang || 'en'];
                     if (els.sidebarName) els.sidebarName.innerText = currentName === "Guest" ? (dict.onboarding_guest) : currentName;
 
-                    const renderAvatar = (targetEl, size) => {
+                    const renderAvatar = (targetEl, size, isHighRes) => {
                         if (!targetEl) return;
                         if (settings.userPic) {
                             const ratio = size / 280, scale = settings.pfpScale || 1.0;
                             const tx = (settings.pfpX || 0) * ratio, ty = (settings.pfpY || 0) * ratio;
-                            targetEl.innerHTML = `<div class="relative overflow-hidden rounded-full bg-black" style="width:${size}px;height:${size}px"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; height:${size}px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale});"></div>`;
+                            // For regular avatars
+                            if (!isHighRes) {
+                                targetEl.innerHTML = `<div class="relative overflow-hidden rounded-full bg-black" style="width:${size}px;height:${size}px"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; height:${size}px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale});"></div>`;
+                            } else {
+                                // For settings display - use standard img fit
+                                targetEl.innerHTML = `<img src="${settings.userPic}" class="w-full h-full object-cover">`;
+                            }
                         } else {
-                            targetEl.className = `w-8 h-8 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs`;
-                            targetEl.style.width = size + 'px';
-                            targetEl.style.height = size + 'px';
+                            targetEl.className = `w-full h-full rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold relative overflow-hidden`;
+                            if (!isHighRes) {
+                                targetEl.style.width = size + 'px';
+                                targetEl.style.height = size + 'px';
+                                targetEl.className += ' text-xs';
+                            } else {
+                                targetEl.className += ' text-3xl';
+                            }
                             targetEl.innerText = currentName[0].toUpperCase();
                         }
                     };
 
                     renderAvatar(els.avatarDisplay, 32);
                     renderAvatar(els.miniAvatarDisplay, 32);
+
+                    // Update Settings Panel Profile
+                    const settingsNameInput = document.getElementById('settings-name-input-new');
+                    if (settingsNameInput) {
+                        settingsNameInput.value = settings.userName || '';
+                    }
+
+                    const googleStatusBadge = document.getElementById('google-status-badge');
+                    const googleStatusText = document.getElementById('google-status-text');
+                    const googleSyncCheck = document.getElementById('google-sync-check');
+
+                    if (googleStatusText) {
+                        if (isGoogleSignedIn) {
+                            googleStatusText.innerText = 'Signed In';
+                            googleStatusText.className = 'text-green-500';
+                            if (googleSyncCheck) googleSyncCheck.classList.remove('hidden');
+                        } else {
+                            googleStatusText.innerText = 'Not Signed In';
+                            googleStatusText.className = 'text-zinc-400';
+                            if (googleSyncCheck) googleSyncCheck.classList.add('hidden');
+                        }
+                    }
+
+                    const settingsPfpDisplay = document.getElementById('settings-pfp-display');
+                    if (settingsPfpDisplay) renderAvatar(settingsPfpDisplay, 96, true);
+
+                    // Render themes whenever profile UI updates (often accompanies state changes)
+                    if (window.renderThemes) window.renderThemes();
                 };
 
                 window.toggleMenu = (e, id) => {
@@ -2115,19 +2334,96 @@
 
                 window.factoryReset = () => { localStorage.clear(); window.location.reload(); };
 
-                window.renderCustomAccents = () => {
-                    if (!els.savedAccents) return;
-                    const currentAccent = settings.accent || 'auto';
-                    const customColors = settings.customAccents || [];
-                    els.savedAccents.innerHTML = customColors.map(color => {
-                        const isActive = currentAccent === color;
-                        return `<button onclick="window.updateAccent('${color}')" class="accent-dot" style="background:${color};${isActive ? 'box-shadow:0 0 0 2px rgba(0,0,0,0.25);' : ''}"></button>`;
-                    }).join('');
-                    // Show/hide reset button based on whether there are custom colors
-                    const resetBtn = document.getElementById('reset-custom-colors-btn');
-                    if (resetBtn) {
-                        resetBtn.style.display = customColors.length > 0 ? 'block' : 'none';
+                window.handleCustomAccentChangeNew = (val) => {
+                    const btn = document.getElementById('pending-custom-color');
+                    const dot = document.getElementById('pending-color-dot');
+                    if (btn && dot) {
+                        btn.style.display = 'flex';
+                        btn.setAttribute('data-color', val);
+                        dot.style.background = val;
                     }
+                };
+
+                window.addSelectedCustomColorNew = () => {
+                    const btn = document.getElementById('pending-custom-color');
+                    const color = btn?.getAttribute('data-color');
+                    if (color) {
+                        const name = prompt("Name your color:", "My New Theme");
+                        if (name) {
+                            window.addCustomAccent(color, name);
+                            btn.style.display = 'none';
+                        }
+                    }
+                };
+
+                window.removeCustomAccent = (index) => {
+                    if (confirm('Delete this theme?')) {
+                        if (settings.customAccents && settings.customAccents[index]) {
+                            // If deleting active accent, revert to auto
+                            const accToDelete = typeof settings.customAccents[index] === 'string' ? settings.customAccents[index] : settings.customAccents[index].color;
+                            if (settings.accent === accToDelete) {
+                                window.updateAccent('auto');
+                            }
+                            settings.customAccents.splice(index, 1);
+                            saveSettings();
+                            window.renderThemes();
+                        }
+                    }
+                };
+
+                window.renderThemes = () => {
+                    const container = document.getElementById('theme-list-container');
+                    if (!container) return;
+
+                    const currentAccent = settings.accent || 'auto';
+                    const PRESETS = [
+                        { color: 'auto', name: 'System Auto', isAuto: true },
+                        { color: '#3b82f6', name: 'Electric Blue' },
+                        { color: '#a855f7', name: 'Cosmic Purple' },
+                        { color: '#22c55e', name: 'Lush Green' },
+                        { color: '#f97316', name: 'Vitamin C' },
+                        { color: '#ef4444', name: 'Code Red' }
+                    ];
+
+                    let html = '';
+
+                    // Render Presets
+                    PRESETS.forEach(theme => {
+                        const isActive = currentAccent === theme.color;
+                        const colorStyle = theme.isAuto ? 'background: #52525b;' : `background: ${theme.color};`;
+
+                        html += `
+                        <button onclick="window.updateAccent('${theme.color}')" class="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${isActive ? 'bg-zinc-100 dark:bg-zinc-800 shadow-inner ring-1 ring-zinc-200 dark:ring-zinc-700' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'}">
+                            <div class="w-5 h-5 rounded-full flex items-center justify-center shadow-sm" style="${colorStyle}">
+                                ${theme.isAuto ? '<i class="fa-solid fa-circle-half-stroke text-[10px] text-white"></i>' : ''}
+                            </div>
+                            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">${theme.name}</span>
+                            ${isActive ? '<i class="fa-solid fa-check text-xs ml-auto text-blue-500"></i>' : ''}
+                        </button>`;
+                    });
+
+                    // Render Custom
+                    if (settings.customAccents && Array.isArray(settings.customAccents)) {
+                        settings.customAccents.forEach((item, index) => {
+                            const color = typeof item === 'string' ? item : item.color;
+                            const name = typeof item === 'string' ? 'Custom Color' : item.name;
+                            const isActive = currentAccent === color;
+
+                            html += `
+                            <button onclick="window.updateAccent('${color}')" class="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${isActive ? 'bg-zinc-100 dark:bg-zinc-800 shadow-inner ring-1 ring-zinc-200 dark:ring-zinc-700' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'} group">
+                                <div class="w-5 h-5 rounded-full shadow-sm" style="background: ${color}"></div>
+                                <div class="text-left">
+                                     <span class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 leading-tight">${name}</span>
+                                </div>
+                                ${isActive ? '<i class="fa-solid fa-check text-xs ml-auto text-blue-500"></i>' : ''}
+                                <div onclick="event.stopPropagation(); window.removeCustomAccent(${index})" class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 ml-${isActive ? '2' : 'auto'} opacity-0 group-hover:opacity-100 transition-all text-zinc-400 hover:text-red-500">
+                                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                                </div>
+                            </button>`;
+                        });
+                    }
+
+                    container.innerHTML = html;
                 };
 
                 const initApp = () => {
@@ -2172,7 +2468,7 @@
 
                     window.updateAccent(settings.accent);
                     updateProfileUI();
-                    window.renderCustomAccents();
+                    window.renderThemes();
 
                     if (els.input) {
                         els.input.oninput = () => {
@@ -2204,6 +2500,28 @@
                     window.applyTranslations();
                     window.updateStorageUsage();
                     updateGoogleAuthButton();
+                    applySidebarMode(); // Apply on init
+
+                    // Smart Sidebar Events
+                    const trigger = document.getElementById('sidebar-hover-trigger');
+                    if (trigger) {
+                        trigger.addEventListener('mouseenter', () => {
+                            if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024) {
+                                document.body.classList.remove('sidebar-collapsed');
+                                updateUI();
+                            }
+                        });
+                    }
+                    if (els.sidebar) {
+                        els.sidebar.addEventListener('mouseleave', () => {
+                            // Only auto-hide if smart mode is ON and menu is NOT open (e.g. pinned) - simplifying: just auto hide
+                            if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024 && !els.settingsPanel.classList.contains('active')) {
+                                document.body.classList.add('sidebar-collapsed');
+                                updateUI();
+                            }
+                        });
+                    }
+
                     renderHistory(); render(); updateUI();
                 };
 
@@ -2216,130 +2534,250 @@
     </script>
     <!--settings-->
     <div id="settings-panel">
-        <div class="p-6 space-y-6">
-            <div class="flex items-center justify-between">
+        <!-- Sidebar Navigation -->
+        <div id="settings-sidebar" class="no-scrollbar">
+            <div class="mb-8 px-2 pt-2">
                 <h3 class="font-black uppercase text-[10px] tracking-widest text-zinc-400" data-t="settings">Settings
                 </h3>
+            </div>
+            <nav class="flex flex-col gap-1">
+                <div class="settings-nav-item active" onclick="window.openSettingsTab('profile')">
+                    <i class="fa-solid fa-user text-xs w-5"></i>
+                    <span data-t="profile">Profile</span>
+                </div>
+                <div class="settings-nav-item" onclick="window.openSettingsTab('appearance')">
+                    <i class="fa-solid fa-palette text-xs w-5"></i>
+                    <span data-t="appearance">Appearance</span>
+                </div>
+                <div class="settings-nav-item" onclick="window.openSettingsTab('sidebar')">
+                    <i class="fa-solid fa-columns text-xs w-5"></i>
+                    <span>Sidebar</span>
+                </div>
+                <div class="settings-nav-item" onclick="window.openSettingsTab('intelligence')">
+                    <i class="fa-solid fa-brain text-xs w-5"></i>
+                    <span>Intelligence</span>
+                </div>
+            </nav>
+            <div class="mt-auto px-2 pb-2">
                 <button onclick="window.toggleSettingsPanel()"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm active:scale-90">
-                    <i class="fa-solid fa-xmark"></i>
+                    class="w-full py-3 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors text-left flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Chat
                 </button>
             </div>
+        </div>
 
-            <div>
-                <button id="google-auth-btn" onclick="window.initGoogleAuth()"
-                    class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-lg transition-all"
-                    style="background-color: var(--accent-color); color: var(--accent-contrast);">
-                    <span id="google-btn-text">Sign in with Google</span>
-                </button>
-            </div>
-
-            <div>
-                <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2" data-t="display_name">Display
-                    Name</label>
-                <input type="text" id="settings-name-input" oninput="window.updateSettingsFromPanel()"
-                    class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 ring-blue-500">
-            </div>
-
-            <div>
-                <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2" data-t="creativity">Creativity
-                    (Temp)</label>
-                <input type="range" id="settings-param-temp" min="0" max="1" step="0.01"
-                    class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    oninput="window.updateTempFromPanel(this.value)">
-                <div id="settings-temp-val" class="text-right text-[10px] font-mono mt-1 opacity-50">0.30</div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Top-P</label>
-                    <input type="range" id="settings-param-top-p" min="0" max="1" step="0.01"
-                        class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                        oninput="window.updateTopPFromPanel(this.value)">
-                    <div id="settings-top-p-val" class="text-right text-[10px] font-mono mt-1 opacity-50">0.90</div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Rep Pen</label>
-                    <input type="range" id="settings-param-rep-pen" min="1" max="2" step="0.05"
-                        class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                        oninput="window.updateRepPenFromPanel(this.value)">
-                    <div id="settings-rep-pen-val" class="text-right text-[10px] font-mono mt-1 opacity-50">1.35</div>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2">Max Tokens</label>
-                <input type="range" id="settings-param-max-tokens" min="64" max="1024" step="64"
-                    class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    oninput="window.updateMaxTokensFromPanel(this.value)">
-                <div id="settings-max-tokens-val" class="text-right text-[10px] font-mono mt-1 opacity-50">256</div>
-            </div>
-
-            <div class="space-y-4">
-                <div id="pfp-workspace" onpointerdown="window.pfpDragStart(event)"
-                    class="relative cursor-move overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
-                    <img id="pfp-movable-img" src="" class="pointer-events-none">
-                    <div id="pfp-mask"></div>
-                </div>
-                <input type="file" id="pfp-upload" class="hidden" accept="image/*"
-                    onchange="window.handleProfilePicUpload(event)">
-                <button onclick="document.getElementById('pfp-upload').click()"
-                    class="w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-[10px] font-black uppercase tracking-widest hover:brightness-95 transition-all"
-                    data-t="photo">Upload Photo</button>
-
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase" data-t="zoom">Zoom</span>
-                    <input type="range" min="0.5" max="3" step="0.1" value="1" class="flex-1 accent-blue-500"
-                        oninput="window.updatePfpScale(this.value)">
-                    <span id="scale-val" class="text-[10px] font-mono opacity-50">1.0x</span>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-[10px] font-black uppercase text-zinc-400 mb-2" data-t="accent">Accent
-                    Color</label>
-                <div class="flex flex-wrap items-center gap-3 px-1">
-                    <button onclick="window.updateAccent('auto')"
-                        class="accent-dot bg-zinc-900 dark:bg-white flex items-center justify-center text-[8px] font-black overflow-hidden"
-                        title="Auto">
-                        <span class="text-white dark:text-zinc-900">A</span>
-                    </button>
-                    <button onclick="window.updateAccent('#3b82f6')" class="accent-dot bg-blue-500"></button>
-                    <button onclick="window.updateAccent('#a855f7')" class="accent-dot bg-purple-500"></button>
-                    <button onclick="window.updateAccent('#22c55e')" class="accent-dot bg-emerald-500"></button>
-                    <button onclick="window.updateAccent('#f97316')" class="accent-dot bg-orange-500"></button>
-                    <button onclick="window.updateAccent('#ef4444')" class="accent-dot bg-red-500"></button>
-
-                    <div
-                        class="relative flex items-center justify-center w-6 h-6 rounded-full border-2 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 transition-all overflow-hidden group">
-                        <input type="color" id="custom-accent-picker"
-                            oninput="window.handleCustomAccentChange(this.value)"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer scale-150">
-                        <i
-                            class="fa-solid fa-plus text-[10px] text-zinc-400 pointer-events-none group-hover:text-zinc-600 transition-colors"></i>
-                    </div>
-                    <div id="custom-color-preview" class="accent-dot hidden" style="display: none;"></div>
-                    <button id="add-custom-color-btn" onclick="window.addSelectedCustomColor()"
-                        class="hidden items-center gap-1 px-2 py-1 text-[9px] font-bold uppercase text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white rounded-md transition-colors"
-                        style="display: none;">
-                        <i class="fa-solid fa-plus text-[8px]"></i>
-                        Add
-                    </button>
-                </div>
-                <div class="flex items-center justify-between mt-3 px-1">
-                    <div id="saved-accents" class="flex flex-wrap items-center gap-2"></div>
-                    <button id="reset-custom-colors-btn" onclick="window.resetCustomColors()"
-                        class="text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-500 hover:text-red-500 dark:hover:text-red-400 transition-colors px-2 py-1 rounded"
-                        title="Reset all custom colors" style="display: none;">
-                        <i class="fa-solid fa-trash-can text-[8px]"></i>
-                    </button>
-                </div>
-            </div>
-
-            <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()"
-                class="w-full py-3 mt-4 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] rounded-lg hover:bg-red-500 hover:text-white transition-all">
-                <i class="fa-solid fa-fire-extinguisher mr-2"></i> Erase All Data
+        <!-- Content Area -->
+        <div id="settings-content-area" class="no-scrollbar">
+            <button onclick="window.toggleSettingsPanel()"
+                class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm active:scale-90 z-20">
+                <i class="fa-solid fa-xmark"></i>
             </button>
+
+            <!-- TAB: PROFILE -->
+            <div id="tab-profile" class="settings-tab-content animate-fade-in block">
+                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Profile</h2>
+
+                <div class="flex flex-col gap-8">
+                    <!-- PFP Editor -->
+                    <div
+                        class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-800/50">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-4">Profile
+                            Picture</label>
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <div class="relative group">
+                                <div id="pfp-workspace" class="shadow-inner ring-1 ring-zinc-900/5 dark:ring-white/10">
+                                    <img id="pfp-movable-img" src="" alt="">
+                                    <div id="pfp-mask"></div>
+                                </div>
+                                <div class="absolute bottom-2 right-2 flex gap-2">
+                                    <button onclick="document.getElementById('pfp-upload-settings').click()"
+                                        class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 shadow-lg flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:scale-110 transition-transform">
+                                        <i class="fa-solid fa-camera text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 w-full space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-[10px] font-bold text-zinc-500 uppercase">Zoom</span>
+                                        <span id="scale-val" class="text-[10px] font-mono text-zinc-400">1.0x</span>
+                                    </div>
+                                    <input type="range"
+                                        class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                        min="0.5" max="3.0" step="0.1" value="1.0"
+                                        oninput="window.updatePfpScale(this.value)">
+                                </div>
+                                <p class="text-[10px] text-zinc-400 leading-relaxed">
+                                    Drag image to position. Use slider to zoom.
+                                </p>
+                            </div>
+                        </div>
+                        <input type="file" id="pfp-upload-settings" class="hidden" accept="image/*"
+                            onchange="window.handleProfilePicUpload(event)">
+                    </div>
+
+                    <!-- Name & Auth -->
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Display
+                                Name</label>
+                            <input type="text" id="settings-name-input-new"
+                                class="w-full bg-transparent border-b-2 border-zinc-100 dark:border-zinc-800 px-0 py-3 text-lg font-bold text-zinc-900 dark:text-white focus:border-blue-500 outline-none transition-all placeholder-zinc-300 dark:placeholder-zinc-700"
+                                placeholder="Your Name" oninput="window.updateSettingsFromPanel()">
+                        </div>
+
+                        <div class="pt-2">
+                            <button id="google-auth-btn-settings" onclick="window.initGoogleAuth()"
+                                class="w-full flex items-center justify-between px-4 py-4 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-all group">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-white dark:bg-black/50 flex items-center justify-center shadow-sm text-zinc-700 dark:text-zinc-300">
+                                        <i class="fa-brands fa-google"></i>
+                                    </div>
+                                    <div class="text-left">
+                                        <span class="block text-xs font-bold text-zinc-900 dark:text-white">Google
+                                            Account</span>
+                                        <span id="google-btn-text-settings" class="block text-[10px] text-zinc-500">Not
+                                            connected</span>
+                                    </div>
+                                </div>
+                                <div id="google-sync-icon" class="hidden text-emerald-500"><i
+                                        class="fa-solid fa-check-circle"></i></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: APPEARANCE -->
+            <div id="tab-appearance" class="settings-tab-content animate-fade-in hidden">
+                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Appearance</h2>
+
+                <div class="space-y-8">
+                    <!-- Mode -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="window.setTheme('light')"
+                            class="flex flex-col items-center gap-3 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-all">
+                            <div
+                                class="w-full aspect-video rounded-lg bg-zinc-100 border border-zinc-200 relative overflow-hidden shadow-inner">
+                            </div>
+                            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Light Mode</span>
+                        </button>
+                        <button onclick="window.setTheme('dark')"
+                            class="flex flex-col items-center gap-3 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-all">
+                            <div
+                                class="w-full aspect-video rounded-lg bg-zinc-900 border border-zinc-800 relative overflow-hidden shadow-inner">
+                            </div>
+                            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Dark Mode</span>
+                        </button>
+                    </div>
+
+                    <!-- Themes -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400">Accent
+                                Theme</label>
+                            <button onclick="document.getElementById('custom-accent-picker-new').click()"
+                                class="text-[10px] font-bold text-blue-500 hover:underline flex items-center gap-1">
+                                <i class="fa-solid fa-plus"></i> New Theme
+                            </button>
+                            <input type="color" id="custom-accent-picker-new"
+                                oninput="window.handleCustomAccentChangeNew(this.value)" class="hidden">
+                        </div>
+
+                        <!-- Pending New Theme -->
+                        <div id="pending-custom-color" onclick="window.addSelectedCustomColorNew()"
+                            class="mb-4 hidden animate-fade-in cursor-pointer p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 flex items-center justify-between group">
+                            <div class="flex items-center gap-3">
+                                <div id="pending-color-dot"
+                                    class="w-6 h-6 rounded-full shadow-sm ring-2 ring-white dark:ring-zinc-900"></div>
+                                <span class="text-xs font-bold text-blue-600 dark:text-blue-400">Save Custom
+                                    Theme...</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-blue-400"></i>
+                        </div>
+
+                        <div id="theme-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <!-- Injected JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: SIDEBAR -->
+            <div id="tab-sidebar" class="settings-tab-content animate-fade-in hidden">
+                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Sidebar</h2>
+
+                <div
+                    class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-800/50 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-bold text-zinc-900 dark:text-white">Smart Autohide</h4>
+                            <p class="text-[10px] text-zinc-500 mt-1 max-w-[250px]">Automatically hide the sidebar to
+                                focus on content. Hover left edge to reveal.</p>
+                        </div>
+                        <button id="toggle-smart-sidebar" onclick="window.toggleSmartSidebar()"
+                            class="w-12 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 relative transition-colors duration-300">
+                            <div
+                                class="w-5 h-5 rounded-full bg-white absolute top-1 left-1 shadow-md transition-transform duration-300 transform">
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: INTELLIGENCE -->
+            <div id="tab-intelligence" class="settings-tab-content animate-fade-in hidden">
+                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Intelligence</h2>
+
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-[10px] font-black uppercase text-zinc-400"
+                                data-t="creativity">Temperature (Creativity)</label>
+                            <span id="settings-temp-val"
+                                class="text-[10px] font-mono font-bold text-zinc-900 dark:text-white opacity-70">0.30</span>
+                        </div>
+                        <input type="range" id="settings-param-temp" min="0" max="1" step="0.01"
+                            class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                            oninput="window.updateTempFromPanel(this.value)">
+                        <p class="text-[10px] text-zinc-400 mt-1.5">Higher values make responses more random and
+                            creative.</p>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-[10px] font-black uppercase text-zinc-400">Top-P</label>
+                            <span id="settings-top-p-val"
+                                class="text-[10px] font-mono font-bold text-zinc-900 dark:text-white opacity-70">0.90</span>
+                        </div>
+                        <input type="range" id="settings-param-top-p" min="0" max="1" step="0.01"
+                            class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                            oninput="window.updateTopPFromPanel(this.value)">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-[10px] font-black uppercase text-zinc-400">Max Tokens</label>
+                            <span id="settings-max-tokens-val"
+                                class="text-[10px] font-mono font-bold text-zinc-900 dark:text-white opacity-70">256</span>
+                        </div>
+                        <input type="range" id="settings-param-max-tokens" min="64" max="2048" step="64"
+                            class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                            oninput="window.updateMaxTokensFromPanel(this.value)">
+                    </div>
+
+                    <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+                        <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()"
+                            class="flex items-center gap-2 text-red-500/70 hover:text-red-500 text-[10px] font-bold uppercase tracking-widest transition-all">
+                            <i class="fa-solid fa-trash-can"></i> Erase All Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </body>
