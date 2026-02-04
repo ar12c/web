@@ -350,6 +350,25 @@
             animation: rotate-gradient 3s linear infinite;
         }
 
+        /* Prevent logo movement and distractions during generation */
+        body.is-generating .vail-logo-ai,
+        body.is-generating #active-model-icon,
+        body.is-generating #active-model-icon svg,
+        body.is-generating #active-model-icon path,
+        body.is-generating #active-model-icon circle {
+            animation: none !important;
+            transform: none !important;
+            background-position: 0 0 !important;
+            transition: none !important;
+        }
+
+        /* Hide flare during generation to prevent "moving blob" distraction */
+        body.is-generating #intelligence-flare {
+            display: none !important;
+            opacity: 0 !important;
+            animation: none !important;
+        }
+
         @property --grad-angle {
             syntax: '<angle>';
             initial-value: 0deg;
