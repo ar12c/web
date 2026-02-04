@@ -297,21 +297,20 @@
 
         .input-box-wrap {
             background-color: #ffffff;
-            backdrop-filter: blur(24px);
+            border: 1px solid #e5e7eb;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             z-index: 40;
+            overflow: hidden;
             pointer-events: auto;
-            border-radius: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1.5px solid #e5e7eb;
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            overflow: visible;
         }
 
         .dark .input-box-wrap {
-            background-color: #141414;
+            background-color: #18181b;
             border-color: #27272a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
         }
 
         .input-box-wrap::before {
@@ -429,6 +428,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
+            transition: background 0.3s ease;
         }
 
         .history-btn-container {
@@ -596,35 +596,55 @@
             font-size: 14px;
         }
 
+        /* Settings Backdrop Overlay */
+        #settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2990;
+            /* Below settings panel (3000) */
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #settings-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Apple Settings Style */
         #settings-panel {
             position: fixed;
             z-index: 3000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(40px);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: #f2f2f7;
+            /* iOS Light Gray */
             display: none;
             flex-direction: row;
-            /* changed to row for split view */
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%) scale(0.95);
             width: 90%;
-            max-width: 900px;
-            /* Wider for split view */
+            max-width: 960px;
             height: 80vh;
-            /* Fixed height for consistent layout */
             max-height: 700px;
-            border-radius: 1.25rem;
+            border-radius: 24px;
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            /* Manage overflow internally */
             opacity: 0;
             transition: opacity 0.2s ease, transform 0.2s ease;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         .dark #settings-panel {
-            background: rgba(20, 20, 20, 0.95);
-            border-color: rgba(255, 255, 255, 0.1);
+            background: #000000;
+            /* iOS Dark Black */
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         #settings-panel.active {
@@ -634,24 +654,30 @@
         }
 
         #settings-sidebar {
-            width: 240px;
+            width: 280px;
             flex-shrink: 0;
-            border-right: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
+            background: rgba(242, 242, 247, 0.8);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            background: rgba(0, 0, 0, 0.01);
+            backdrop-filter: blur(20px);
         }
 
         .dark #settings-sidebar {
-            border-right-color: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.8);
+            border-right-color: rgba(255, 255, 255, 0.15);
         }
 
         #settings-content-area {
             flex: 1;
             overflow-y: auto;
             padding: 2rem;
-            position: relative;
+            background: #ffffff;
+        }
+
+        .dark #settings-content-area {
+            background: #1c1c1e;
         }
 
         .settings-nav-item {
@@ -687,13 +713,147 @@
             color: var(--accent-contrast);
         }
 
+        /* Apple Sidebar Item */
+        .apple-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-bottom: 2px;
+        }
+
+        .dark .apple-nav-item {
+            color: #fff;
+        }
+
+        .apple-nav-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .apple-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .apple-nav-item.active {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .apple-nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .apple-icon-box {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* Apple Profile Card (Sidebar Top) */
+        .apple-profile-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-bottom: 24px;
+        }
+
+        .apple-profile-card:hover,
+        .apple-profile-card.active {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .apple-profile-card:hover,
+        .dark .apple-profile-card.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Apple Grouped List */
+        .apple-section-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #6c6c70;
+            margin-bottom: 8px;
+            padding-left: 16px;
+            font-weight: 400;
+        }
+
+        .dark .apple-section-title {
+            color: #8e8e93;
+        }
+
+        .apple-list-group {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .dark .apple-list-group {
+            background: #2c2c2e;
+        }
+
+        .apple-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            /* Separator */
+            font-size: 16px;
+            color: #000;
+        }
+
+        .dark .apple-list-item {
+            color: #fff;
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .apple-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .apple-search-bar {
+            background: rgba(118, 118, 128, 0.12);
+            color: #8e8e93;
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .dark .apple-search-bar {
+            background: rgba(118, 118, 128, 0.24);
+        }
+
+
         /* Smart Sidebar Hover Trigger */
         #sidebar-hover-trigger {
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            width: 20px;
+            width: 30px;
+            /* Increased width for better detection */
             z-index: 2400;
             /* Just below sidebar */
             display: none;
@@ -720,11 +880,14 @@
             #settings-sidebar {
                 width: 100%;
                 height: auto;
-                flex-direction: row;
-                overflow-x: auto;
+                flex-direction: column;
+                overflow-x: hidden;
                 padding: 1rem;
                 border-right: none;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                max-height: 200px;
+                /* Limit height on mobile */
+                overflow-y: auto;
             }
 
             .dark #settings-sidebar {
@@ -745,6 +908,11 @@
 
             #settings-content-area {
                 padding: 1.5rem;
+                background: #f2f2f7;
+            }
+
+            .dark #settings-content-area {
+                background: #000;
             }
         }
 
@@ -1102,6 +1270,9 @@
                         </button>
                     </div>
                 </div>
+                <span
+                    class="text-[10px] font-medium text-zinc-400 dark:text-zinc-600 ml-1 opacity-50 cursor-default select-none hidden sm:block">semi-sponsored
+                    by voidai</span>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="window.toggleLanguage()"
@@ -1164,21 +1335,22 @@
 
         <div id="bottom-fade" class="absolute bottom-0 left-0 w-full px-4 sm:px-4 z-40 sm:pb-5 pb-2 pt-12">
             <div class="w-full max-w-3xl mx-auto relative group">
-                <div class="input-box-wrap pt-2 mb-2 shadow-2xl transition-all duration-300">
-                    <textarea id="user-input" placeholder="Message OLM..." rows="1"
-                        class="w-full bg-transparent px-6 py-5 lg:py-4 outline-none resize-none text-base sm:text-sm max-h-[600px] no-scrollbar leading-relaxed text-zinc-900 dark:text-white"></textarea>
+                <div
+                    class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-2 focus-within:ring-blue-500/20 dark:focus-within:ring-blue-500/10">
+                    <textarea id="user-input" placeholder="How can I help you?" rows="1"
+                        class="w-full bg-transparent px-5 py-4 outline-none resize-none text-base max-h-[200px] no-scrollbar leading-relaxed text-zinc-900 dark:text-white placeholder-zinc-400"></textarea>
 
-                    <div class="flex items-center justify-between pl-6 pr-3 pb-3 pt-1 gap-3">
+                    <div class="flex items-center justify-between px-3 pb-3 pt-1">
+                        <!-- Web Search Pill -->
                         <button id="search-btn" onclick="window.toggleSearch()"
-                            class="flex items-center justify-center w-auto px-4 h-12 lg:h-10 rounded-full border border-zinc-100 dark:border-zinc-800 transition-all duration-300 text-[11px] font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800">
-                            <i class="fa-solid fa-globe text-sm lg:text-xs mr-1.5"></i>
+                            class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all text-xs font-medium border border-transparent">
+                            <i class="fa-solid fa-globe text-[10px]"></i>
                             <span data-t="search">Search</span>
                         </button>
 
                         <button id="send-btn" disabled onclick="window.handleAction()"
-                            class="w-12 h-12 lg:w-10 lg:h-10 flex items-center justify-center rounded-full transition-all shadow-lg shrink-0"
-                            style="background-color: var(--accent-color); color: var(--accent-contrast)">
-                            <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm lg:text-base"></i>
+                            class="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700 text-zinc-400 cursor-not-allowed transition-all shadow-sm">
+                            <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm"></i>
                         </button>
                     </div>
                 </div>
@@ -1691,6 +1863,22 @@
                     document.documentElement.classList.toggle('dark', mode === 'dark');
                     localStorage.setItem('vail_theme', mode);
                     window.updateAccent(settings.accent);
+                    window.updateThemeButtons(mode);
+                };
+
+                window.updateThemeButtons = (mode) => {
+                    const lightBtn = document.getElementById('btn-theme-light');
+                    const darkBtn = document.getElementById('btn-theme-dark');
+                    if (lightBtn && darkBtn) {
+                        // Reset
+                        lightBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
+                        darkBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
+
+                        // Active
+                        const activeClass = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-white dark:bg-zinc-600 text-black dark:text-white shadow-sm";
+                        if (mode === 'light') lightBtn.className = activeClass;
+                        else darkBtn.className = activeClass;
+                    }
                 };
 
                 window.toggleTheme = () => {
@@ -1700,12 +1888,23 @@
 
                 window.toggleSettingsPanel = () => {
                     if (!els.settingsPanel) return;
-                    const isActive = els.settingsPanel.classList.toggle('active');
-                    if (isActive) {
-                        // Default to Profile tab
-                        window.openSettingsTab('profile');
 
-                        document.getElementById('settings-name-input-new').value = settings.userName;
+                    const isActive = els.settingsPanel.classList.toggle('active');
+
+                    // Toggle Overlay
+                    const overlay = document.getElementById('settings-overlay');
+                    if (overlay) {
+                        if (isActive) overlay.classList.add('active');
+                        else overlay.classList.remove('active');
+                    }
+
+                    if (isActive) {
+                        // Default to General tab (Apple style preference)
+                        window.openSettingsTab('general');
+
+                        // Populate Inputs
+                        const nameInput = document.getElementById('settings-name-input-new');
+                        if (nameInput) nameInput.value = settings.userName;
 
                         // Populate Intelligence Tab Values
                         if (document.getElementById('settings-param-temp')) {
@@ -1738,10 +1937,9 @@
 
                         els.pfpMovableImg.src = settings.userPic || '';
                         applyMovableStyles();
-                        // Reset custom color preview
-                        const previewEl = document.getElementById('custom-color-preview'); // Legacy check
+
+                        // New Custom Color Logic Reset
                         const newPreviewBtn = document.getElementById('pending-custom-color');
-                        if (previewEl) previewEl.style.display = 'none';
                         if (newPreviewBtn) newPreviewBtn.style.display = 'none';
 
                         // Restore current accent color
@@ -1752,9 +1950,22 @@
 
                 window.openSettingsTab = (tabName) => {
                     // 1. Update Sidebar Active State
-                    document.querySelectorAll('.settings-nav-item').forEach(el => {
-                        el.classList.toggle('active', el.innerText.toLowerCase().includes(tabName));
+                    document.querySelectorAll('.apple-nav-item').forEach(el => {
+                        // Check if the click matches the tab
+                        const span = el.querySelector('span');
+                        const isMatch = span && span.innerText.toLowerCase().includes(tabName);
+                        // However, General matches 'general' but button says 'General'
+                        if (tabName === 'general' && span.innerText === 'General') el.classList.add('active');
+                        else if (tabName === 'intelligence' && span.innerText === 'Intelligence') el.classList.add('active');
+                        else el.classList.remove('active');
                     });
+
+                    // Profile Card Active State
+                    const profileCard = document.querySelector('.apple-profile-card');
+                    if (profileCard) {
+                        if (tabName === 'profile') profileCard.classList.add('active');
+                        else profileCard.classList.remove('active');
+                    }
 
                     // 2. Show Content
                     document.querySelectorAll('.settings-tab-content').forEach(el => {
@@ -1825,8 +2036,25 @@
 
                 window.updatePfpScale = (val) => {
                     settings.pfpScale = parseFloat(val);
-                    document.getElementById('scale-val').innerText = settings.pfpScale.toFixed(1) + 'x';
+                    const label = document.getElementById('scale-val');
+                    if (label) label.innerText = settings.pfpScale.toFixed(1) + 'x';
                     applyMovableStyles(); saveSettings(); updateProfileUI();
+                };
+
+                window.resetPfpPosition = () => {
+                    settings.pfpX = 0;
+                    settings.pfpY = 0;
+                    settings.pfpScale = 1.0;
+
+                    // Update slider UI
+                    const slider = document.getElementById('pfp-zoom-slider');
+                    if (slider) slider.value = "1.0";
+                    const label = document.getElementById('scale-val');
+                    if (label) label.innerText = "1.0x";
+
+                    applyMovableStyles();
+                    saveSettings();
+                    updateProfileUI();
                 };
 
                 window.handleProfilePicUpload = (e) => {
@@ -1996,13 +2224,9 @@
                         if (settings.userPic) {
                             const ratio = size / 280, scale = settings.pfpScale || 1.0;
                             const tx = (settings.pfpX || 0) * ratio, ty = (settings.pfpY || 0) * ratio;
-                            // For regular avatars
-                            if (!isHighRes) {
-                                targetEl.innerHTML = `<div class="relative overflow-hidden rounded-full bg-black" style="width:${size}px;height:${size}px"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; height:${size}px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale});"></div>`;
-                            } else {
-                                // For settings display - use standard img fit
-                                targetEl.innerHTML = `<img src="${settings.userPic}" class="w-full h-full object-cover">`;
-                            }
+
+                            // Always use transform logic for consistent scaling
+                            targetEl.innerHTML = `<div class="relative overflow-hidden rounded-full bg-black" style="width:100%;height:100%;"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; height:${size}px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale});"></div>`;
                         } else {
                             targetEl.className = `w-full h-full rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold relative overflow-hidden`;
                             if (!isHighRes) {
@@ -2024,6 +2248,13 @@
                     if (settingsNameInput) {
                         settingsNameInput.value = settings.userName || '';
                     }
+
+                    // Update Apple Sidebar Profile Card
+                    const sidebarCardName = document.getElementById('settings-sidebar-name-card');
+                    if (sidebarCardName) sidebarCardName.innerText = currentName;
+
+                    const sidebarCardPfp = document.getElementById('settings-sidebar-pfp-card');
+                    if (sidebarCardPfp) renderAvatar(sidebarCardPfp, 48, true);
 
                     const googleStatusBadge = document.getElementById('google-status-badge');
                     const googleStatusText = document.getElementById('google-status-text');
@@ -2058,7 +2289,12 @@
                 window.closeAllMenus = () => {
                     if (els.modMenu) els.modMenu.classList.remove('active');
                     if (els.noteMenu) els.noteMenu.classList.remove('active');
-                    if (els.settingsPanel) els.settingsPanel.classList.remove('active');
+                    if (els.noteMenu) els.noteMenu.classList.remove('active');
+                    if (els.settingsPanel) {
+                        els.settingsPanel.classList.remove('active');
+                        const overlay = document.getElementById('settings-overlay');
+                        if (overlay) overlay.classList.remove('active');
+                    }
                     if (window.innerWidth < 1024) {
                         if (settings.hasCompletedTutorial) {
                             els.sidebar.classList.add('mobile-hidden');
@@ -2297,7 +2533,18 @@
 
                 const updateUI = () => {
                     const hasTextVal = (els.input ? els.input.value.trim().length > 0 : false);
-                    if (els.send) els.send.disabled = !hasTextVal && !isGenerating;
+                    if (els.send) {
+                        els.send.disabled = !hasTextVal && !isGenerating;
+                        if (!els.send.disabled) {
+                            els.send.style.backgroundColor = 'var(--accent-color)';
+                            els.send.style.color = 'var(--accent-contrast)';
+                            els.send.classList.remove('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400');
+                        } else {
+                            els.send.style.backgroundColor = '';
+                            els.send.style.color = '';
+                            els.send.classList.add('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400');
+                        }
+                    }
                     if (els.icon) els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-xs";
                     if (els.actIcon) els.actIcon.innerHTML = currentModel.icon;
                     const currentDict = translations[settings.lang || 'en'];
@@ -2316,13 +2563,19 @@
 
                     if (els.searchBtn) {
                         if (webSearch) {
+                            // Active State
+                            els.searchBtn.className = "flex items-center gap-2 px-3 py-1.5 rounded-full transition-all text-xs font-medium border border-transparent shadow-md";
                             els.searchBtn.style.backgroundColor = 'var(--accent-color)';
                             els.searchBtn.style.color = 'var(--accent-contrast)';
-                            els.searchBtn.style.borderColor = 'transparent';
+                            const icon = els.searchBtn.querySelector('i');
+                            if (icon) icon.className = "fa-solid fa-globe text-[10px]";
                         } else {
-                            els.searchBtn.style.backgroundColor = 'transparent';
+                            // Inactive State
+                            els.searchBtn.style.backgroundColor = '';
                             els.searchBtn.style.color = '';
-                            els.searchBtn.style.borderColor = '';
+                            els.searchBtn.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all text-xs font-medium border border-transparent";
+                            const icon = els.searchBtn.querySelector('i');
+                            if (icon) icon.className = "fa-solid fa-globe text-[10px]";
                         }
                     }
 
@@ -2464,7 +2717,9 @@
                         document.body.classList.remove('onboarding-active');
                     }
 
-                    if (localStorage.getItem('vail_theme') === 'dark') document.documentElement.classList.add('dark');
+                    const theme = localStorage.getItem('vail_theme') || 'light';
+                    if (theme === 'dark') document.documentElement.classList.add('dark');
+                    window.updateThemeButtons(theme);
 
                     window.updateAccent(settings.accent);
                     updateProfileUI();
@@ -2504,20 +2759,33 @@
 
                     // Smart Sidebar Events
                     const trigger = document.getElementById('sidebar-hover-trigger');
+                    let hideTimeout;
+
                     if (trigger) {
                         trigger.addEventListener('mouseenter', () => {
                             if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024) {
+                                clearTimeout(hideTimeout);
                                 document.body.classList.remove('sidebar-collapsed');
                                 updateUI();
                             }
                         });
                     }
                     if (els.sidebar) {
-                        els.sidebar.addEventListener('mouseleave', () => {
-                            // Only auto-hide if smart mode is ON and menu is NOT open (e.g. pinned) - simplifying: just auto hide
-                            if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024 && !els.settingsPanel.classList.contains('active')) {
-                                document.body.classList.add('sidebar-collapsed');
+                        els.sidebar.addEventListener('mouseenter', () => {
+                            clearTimeout(hideTimeout);
+                            if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024) {
+                                document.body.classList.remove('sidebar-collapsed');
                                 updateUI();
+                            }
+                        });
+
+                        els.sidebar.addEventListener('mouseleave', () => {
+                            // Only auto-hide if smart mode is ON and menu is NOT open (e.g. pinned)
+                            if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024 && !els.settingsPanel.classList.contains('active')) {
+                                hideTimeout = setTimeout(() => {
+                                    document.body.classList.add('sidebar-collapsed');
+                                    updateUI();
+                                }, 300); // Small delay to prevent flickering
                             }
                         });
                     }
@@ -2532,35 +2800,48 @@
                 }
             })();
     </script>
+    <!-- Settings Overlay -->
+    <div id="settings-overlay" onclick="window.toggleSettingsPanel()"></div>
+
     <!--settings-->
     <div id="settings-panel">
         <!-- Sidebar Navigation -->
         <div id="settings-sidebar" class="no-scrollbar">
-            <div class="mb-8 px-2 pt-2">
-                <h3 class="font-black uppercase text-[10px] tracking-widest text-zinc-400" data-t="settings">Settings
-                </h3>
+
+            <!-- Profile Card (Top) -->
+
+            <!-- Profile Card (Top) -->
+            <div class="apple-profile-card" onclick="window.openSettingsTab('profile')">
+                <div id="settings-sidebar-pfp-card"
+                    class="w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden shrink-0">
+                    <!-- Img injected by JS -->
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <span id="settings-sidebar-name-card"
+                        class="text-[15px] font-semibold text-zinc-900 dark:text-white truncate">User</span>
+                </div>
             </div>
+
+            <!-- Nav Items -->
             <nav class="flex flex-col gap-1">
-                <div class="settings-nav-item active" onclick="window.openSettingsTab('profile')">
-                    <i class="fa-solid fa-user text-xs w-5"></i>
-                    <span data-t="profile">Profile</span>
+                <div class="apple-nav-item active" onclick="window.openSettingsTab('general')">
+                    <div class="apple-icon-box bg-gray-400">
+                        <i class="fa-solid fa-gear text-white"></i>
+                    </div>
+                    <span data-t="settings_general">General</span>
                 </div>
-                <div class="settings-nav-item" onclick="window.openSettingsTab('appearance')">
-                    <i class="fa-solid fa-palette text-xs w-5"></i>
-                    <span data-t="appearance">Appearance</span>
-                </div>
-                <div class="settings-nav-item" onclick="window.openSettingsTab('sidebar')">
-                    <i class="fa-solid fa-columns text-xs w-5"></i>
-                    <span>Sidebar</span>
-                </div>
-                <div class="settings-nav-item" onclick="window.openSettingsTab('intelligence')">
-                    <i class="fa-solid fa-brain text-xs w-5"></i>
-                    <span>Intelligence</span>
+
+                <div class="apple-nav-item" onclick="window.openSettingsTab('intelligence')">
+                    <div class="apple-icon-box bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+                        <i class="fa-solid fa-brain text-white"></i>
+                    </div>
+                    <span>Model</span>
                 </div>
             </nav>
+
             <div class="mt-auto px-2 pb-2">
                 <button onclick="window.toggleSettingsPanel()"
-                    class="w-full py-3 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors text-left flex items-center gap-2">
+                    class="w-full py-3 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors text-left flex items-center gap-2 pl-2">
                     <i class="fa-solid fa-arrow-left"></i> Back to Chat
                 </button>
             </div>
@@ -2568,160 +2849,136 @@
 
         <!-- Content Area -->
         <div id="settings-content-area" class="no-scrollbar">
-            <button onclick="window.toggleSettingsPanel()"
-                class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm active:scale-90 z-20">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
 
             <!-- TAB: PROFILE -->
-            <div id="tab-profile" class="settings-tab-content animate-fade-in block">
-                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Profile</h2>
 
-                <div class="flex flex-col gap-8">
+            <!-- TAB: PROFILE -->
+            <div id="tab-profile" class="settings-tab-content animate-fade-in hidden">
+                <h2 class="text-3xl font-bold mb-6 text-zinc-900 dark:text-white">Profile</h2>
+
+                <div class="apple-section-title">Personal Information</div>
+                <div class="apple-list-group">
                     <!-- PFP Editor -->
-                    <div
-                        class="p-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-800/50">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-4">Profile
-                            Picture</label>
+                    <div class="p-6 border-b border-zinc-100 dark:border-white/5">
                         <div class="flex flex-col md:flex-row gap-6 items-center">
                             <div class="relative group">
-                                <div id="pfp-workspace" class="shadow-inner ring-1 ring-zinc-900/5 dark:ring-white/10">
+                                <div id="pfp-workspace" class="shadow-inner ring-1 ring-zinc-900/5 dark:ring-white/10"
+                                    style="width: 100px; height: 100px; border-radius: 50%;"
+                                    onpointerdown="window.pfpDragStart(event)">
                                     <img id="pfp-movable-img" src="" alt="">
                                     <div id="pfp-mask"></div>
                                 </div>
-                                <div class="absolute bottom-2 right-2 flex gap-2">
+                                <div class="absolute bottom-0 right-0">
                                     <button onclick="document.getElementById('pfp-upload-settings').click()"
-                                        class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 shadow-lg flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:scale-110 transition-transform">
+                                        class="w-8 h-8 rounded-full bg-blue-500 shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
                                         <i class="fa-solid fa-camera text-xs"></i>
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="flex-1 w-full space-y-4">
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-[10px] font-bold text-zinc-500 uppercase">Zoom</span>
-                                        <span id="scale-val" class="text-[10px] font-mono text-zinc-400">1.0x</span>
-                                    </div>
-                                    <input type="range"
-                                        class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                                        min="0.5" max="3.0" step="0.1" value="1.0"
-                                        oninput="window.updatePfpScale(this.value)">
-                                </div>
-                                <p class="text-[10px] text-zinc-400 leading-relaxed">
-                                    Drag image to position. Use slider to zoom.
-                                </p>
+                            <div class="flex-1 w-full">
+                                <label
+                                    class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1 block">Display
+                                    Name</label>
+                                <input type="text" id="settings-name-input-new"
+                                    class="w-full bg-transparent text-xl font-bold text-zinc-900 dark:text-white focus:outline-none placeholder-zinc-300"
+                                    placeholder="Your Name" oninput="window.updateSettingsFromPanel()">
                             </div>
                         </div>
                         <input type="file" id="pfp-upload-settings" class="hidden" accept="image/*"
                             onchange="window.handleProfilePicUpload(event)">
                     </div>
 
-                    <!-- Name & Auth -->
-                    <div class="space-y-4">
-                        <div>
-                            <label
-                                class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Display
-                                Name</label>
-                            <input type="text" id="settings-name-input-new"
-                                class="w-full bg-transparent border-b-2 border-zinc-100 dark:border-zinc-800 px-0 py-3 text-lg font-bold text-zinc-900 dark:text-white focus:border-blue-500 outline-none transition-all placeholder-zinc-300 dark:placeholder-zinc-700"
-                                placeholder="Your Name" oninput="window.updateSettingsFromPanel()">
-                        </div>
-
-                        <div class="pt-2">
-                            <button id="google-auth-btn-settings" onclick="window.initGoogleAuth()"
-                                class="w-full flex items-center justify-between px-4 py-4 bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-all group">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-white dark:bg-black/50 flex items-center justify-center shadow-sm text-zinc-700 dark:text-zinc-300">
-                                        <i class="fa-brands fa-google"></i>
-                                    </div>
-                                    <div class="text-left">
-                                        <span class="block text-xs font-bold text-zinc-900 dark:text-white">Google
-                                            Account</span>
-                                        <span id="google-btn-text-settings" class="block text-[10px] text-zinc-500">Not
-                                            connected</span>
-                                    </div>
-                                </div>
-                                <div id="google-sync-icon" class="hidden text-emerald-500"><i
-                                        class="fa-solid fa-check-circle"></i></div>
+                    <div class="apple-list-item">
+                        <div class="flex items-center gap-3 w-full justify-between">
+                            <span class="text-sm font-medium">Zoom Profile Picture <span id="scale-val"
+                                    class="text-xs text-zinc-400 ml-1">1.0x</span></span>
+                            <div class="w-1/2 max-w-[200px] flex items-center gap-2">
+                                <span class="text-[10px] text-zinc-400">0.5x</span>
+                                <input type="range" id="pfp-zoom-slider"
+                                    class="flex-1 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                    min="0.5" max="3.0" step="0.1" value="1.0"
+                                    oninput="window.updatePfpScale(this.value)">
+                                <span class="text-[10px] text-zinc-400">3.0x</span>
+                            </div>
+                            <button onclick="window.resetPfpPosition()"
+                                class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm"
+                                title="Reset Position">
+                                <i class="fa-solid fa-rotate-left text-xs"></i>
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="apple-section-title">Account</div>
+                <div class="apple-list-group">
+                    <div class="apple-list-item cursor-pointer hover:bg-zinc-50 dark:hover:bg-white/5"
+                        onclick="window.initGoogleAuth()">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-7 h-7 rounded-md bg-white border border-zinc-200 flex items-center justify-center">
+                                <i class="fa-brands fa-google text-zinc-700"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[15px] font-medium">Google Account</span>
+                                <span id="google-btn-text-settings" class="text-[12px] text-zinc-500">Not
+                                    connected</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="google-status-text" class="text-sm text-zinc-400">Sign In</span>
+                            <i class="fa-solid fa-chevron-right text-xs text-zinc-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB: APPEARANCE -->
-            <div id="tab-appearance" class="settings-tab-content animate-fade-in hidden">
-                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Appearance</h2>
+            <!-- TAB: GENERAL (Merged Appearance + Sidebar) -->
+            <div id="tab-general" class="settings-tab-content animate-fade-in block">
+                <h2 class="text-3xl font-bold mb-6 text-zinc-900 dark:text-white">General</h2>
 
-                <div class="space-y-8">
-                    <!-- Mode -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="window.setTheme('light')"
-                            class="flex flex-col items-center gap-3 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-all">
-                            <div
-                                class="w-full aspect-video rounded-lg bg-zinc-100 border border-zinc-200 relative overflow-hidden shadow-inner">
-                            </div>
-                            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Light Mode</span>
-                        </button>
-                        <button onclick="window.setTheme('dark')"
-                            class="flex flex-col items-center gap-3 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-all">
-                            <div
-                                class="w-full aspect-video rounded-lg bg-zinc-900 border border-zinc-800 relative overflow-hidden shadow-inner">
-                            </div>
-                            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Dark Mode</span>
-                        </button>
+                <div class="apple-section-title">Appearance</div>
+                <div class="apple-list-group">
+                    <div class="apple-list-item">
+                        <span class="text-[15px] font-medium">Dark Mode</span>
+                        <div
+                            class="flex bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                            <button id="btn-theme-light" onclick="window.setTheme('light')"
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">Light</button>
+                            <button id="btn-theme-dark" onclick="window.setTheme('dark')"
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">Dark</button>
+                        </div>
                     </div>
 
-                    <!-- Themes -->
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400">Accent
-                                Theme</label>
+                    <div class="p-4 border-t border-zinc-100 dark:border-white/5">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[15px] font-medium">Accent Color</span>
                             <button onclick="document.getElementById('custom-accent-picker-new').click()"
-                                class="text-[10px] font-bold text-blue-500 hover:underline flex items-center gap-1">
-                                <i class="fa-solid fa-plus"></i> New Theme
-                            </button>
+                                class="text-xs text-blue-500 font-medium">Custom...</button>
                             <input type="color" id="custom-accent-picker-new"
                                 oninput="window.handleCustomAccentChangeNew(this.value)" class="hidden">
                         </div>
-
                         <!-- Pending New Theme -->
                         <div id="pending-custom-color" onclick="window.addSelectedCustomColorNew()"
-                            class="mb-4 hidden animate-fade-in cursor-pointer p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 flex items-center justify-between group">
-                            <div class="flex items-center gap-3">
-                                <div id="pending-color-dot"
-                                    class="w-6 h-6 rounded-full shadow-sm ring-2 ring-white dark:ring-zinc-900"></div>
-                                <span class="text-xs font-bold text-blue-600 dark:text-blue-400">Save Custom
-                                    Theme...</span>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-blue-400"></i>
+                            class="mb-3 hidden cursor-pointer h-10 w-full rounded-lg bg-blue-50 dark:bg-blue-900/20 border-dashed border-2 border-blue-300 flex items-center justify-center text-blue-500 text-xs font-bold">
+                            Save Selected Color
                         </div>
-
-                        <div id="theme-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <!-- Injected JS -->
-                        </div>
+                        <div id="theme-list-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                     </div>
                 </div>
-            </div>
 
-            <!-- TAB: SIDEBAR -->
-            <div id="tab-sidebar" class="settings-tab-content animate-fade-in hidden">
-                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Sidebar</h2>
-
-                <div
-                    class="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-800/50 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h4 class="text-sm font-bold text-zinc-900 dark:text-white">Smart Autohide</h4>
-                            <p class="text-[10px] text-zinc-500 mt-1 max-w-[250px]">Automatically hide the sidebar to
-                                focus on content. Hover left edge to reveal.</p>
+                <div class="apple-section-title">Sidebar</div>
+                <div class="apple-list-group">
+                    <div class="apple-list-item">
+                        <div class="flex flex-col">
+                            <span class="text-[15px] font-medium">Smart Autohide</span>
+                            <span class="text-[12px] text-zinc-400">Hide sidebar to focus. Hover left edge to
+                                reveal.</span>
                         </div>
                         <button id="toggle-smart-sidebar" onclick="window.toggleSmartSidebar()"
-                            class="w-12 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 relative transition-colors duration-300">
+                            class="w-11 h-6 rounded-full bg-zinc-200 dark:bg-zinc-700 relative transition-colors duration-300 cursor-pointer">
                             <div
-                                class="w-5 h-5 rounded-full bg-white absolute top-1 left-1 shadow-md transition-transform duration-300 transform">
+                                class="w-5 h-5 rounded-full bg-white absolute top-0.5 left-0.5 shadow-md transition-transform duration-300 transform">
                             </div>
                         </button>
                     </div>
@@ -2730,51 +2987,50 @@
 
             <!-- TAB: INTELLIGENCE -->
             <div id="tab-intelligence" class="settings-tab-content animate-fade-in hidden">
-                <h2 class="text-xl font-bold mb-6 text-zinc-900 dark:text-white">Intelligence</h2>
+                <h2 class="text-3xl font-bold mb-6 text-zinc-900 dark:text-white">Intelligence</h2>
 
-                <div class="space-y-6">
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-[10px] font-black uppercase text-zinc-400"
-                                data-t="creativity">Temperature (Creativity)</label>
-                            <span id="settings-temp-val"
-                                class="text-[10px] font-mono font-bold text-zinc-900 dark:text-white opacity-70">0.30</span>
+                <div class="apple-section-title">Model Parameters</div>
+                <div class="apple-list-group">
+                    <div class="apple-list-item">
+                        <span class="text-[15px] font-medium w-1/3">Temperature</span>
+                        <div class="flex-1 flex flex-col px-4">
+                            <input type="range" id="settings-param-temp" min="0" max="1" step="0.01"
+                                class="w-full h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                oninput="window.updateTempFromPanel(this.value)">
                         </div>
-                        <input type="range" id="settings-param-temp" min="0" max="1" step="0.01"
-                            class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                            oninput="window.updateTempFromPanel(this.value)">
-                        <p class="text-[10px] text-zinc-400 mt-1.5">Higher values make responses more random and
-                            creative.</p>
+                        <span id="settings-temp-val"
+                            class="text-[15px] font-mono text-zinc-500 w-12 text-right">0.30</span>
                     </div>
 
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-[10px] font-black uppercase text-zinc-400">Top-P</label>
-                            <span id="settings-top-p-val"
-                                class="text-[10px] font-mono font-bold text-zinc-900 dark:text-white opacity-70">0.90</span>
+                    <div class="apple-list-item">
+                        <span class="text-[15px] font-medium w-1/3">Top-P</span>
+                        <div class="flex-1 flex flex-col px-4">
+                            <input type="range" id="settings-param-top-p" min="0" max="1" step="0.01"
+                                class="w-full h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                oninput="window.updateTopPFromPanel(this.value)">
                         </div>
-                        <input type="range" id="settings-param-top-p" min="0" max="1" step="0.01"
-                            class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                            oninput="window.updateTopPFromPanel(this.value)">
+                        <span id="settings-top-p-val"
+                            class="text-[15px] font-mono text-zinc-500 w-12 text-right">0.90</span>
                     </div>
 
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-[10px] font-black uppercase text-zinc-400">Max Tokens</label>
-                            <span id="settings-max-tokens-val"
-                                class="text-[10px] font-mono font-bold text-zinc-900 dark:text-white opacity-70">256</span>
+                    <div class="apple-list-item">
+                        <span class="text-[15px] font-medium w-1/3">Max Tokens</span>
+                        <div class="flex-1 flex flex-col px-4">
+                            <input type="range" id="settings-param-max-tokens" min="64" max="2048" step="64"
+                                class="w-full h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                oninput="window.updateMaxTokensFromPanel(this.value)">
                         </div>
-                        <input type="range" id="settings-param-max-tokens" min="64" max="2048" step="64"
-                            class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                            oninput="window.updateMaxTokensFromPanel(this.value)">
+                        <span id="settings-max-tokens-val"
+                            class="text-[15px] font-mono text-zinc-500 w-12 text-right">256</span>
                     </div>
+                </div>
 
-                    <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
-                        <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()"
-                            class="flex items-center gap-2 text-red-500/70 hover:text-red-500 text-[10px] font-bold uppercase tracking-widest transition-all">
-                            <i class="fa-solid fa-trash-can"></i> Erase All Data
-                        </button>
-                    </div>
+                <div class="apple-section-title">Danger Zone</div>
+                <div class="apple-list-group">
+                    <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()"
+                        class="w-full text-left apple-list-item text-red-500 font-medium hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
+                        Erase All Data
+                    </button>
                 </div>
             </div>
 
