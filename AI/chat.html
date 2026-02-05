@@ -586,6 +586,38 @@
             transition: all 0.2s ease;
         }
 
+        .typing-cursor {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: currentColor;
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        .prose ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+        }
+
+        .prose strong {
+            font-weight: 700;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
         .dark #onboarding-pfp-preview {
             background: #1e1e1e;
             border-color: #27272a;
@@ -1518,6 +1550,12 @@
                 let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
                 let currentChatId = crypto.randomUUID();
 
+                // Typing effect variables
+                let streamQueue = "";
+                let displayedContent = "";
+                let typeInterval = null;
+                const TYPE_SPEED_MS = 10; // 10ms per character block update
+
                 // Google API configuration
                 const GOOGLE_CLIENT_ID = '937870221827-2l21bkkuhn0uo7nsco258484duv29rag.apps.googleusercontent.com';
                 let googleAccessToken = localStorage.getItem('google_access_token') || null;
@@ -2371,6 +2409,11 @@
 
                     window.triggerFlare();
                     els.input.value = ""; els.input.style.height = "auto";
+
+                    // Init typing vars
+                    streamQueue = "";
+                    displayedContent = "";
+
                     chatHistory.push([msg, null]); render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
                     isGenerating = true; updateUI();
                     try {
@@ -2394,20 +2437,41 @@
                             settings.max_tokens || 256
                         ]);
 
+
                         currentJob = job;
+
+                        // Start Typing Loop
+                        clearInterval(typeInterval);
+                        typeInterval = setInterval(() => {
+                            if (streamQueue.length > 0) {
+                                // Consume chunk
+                                const chunk = streamQueue.substring(0, 3); // Type 3 chars at a time to look fast
+                                streamQueue = streamQueue.substring(3);
+                                displayedContent += chunk;
+
+                                const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
+                                if (lastProse) {
+                                    lastProse.innerHTML = marked.parse(displayedContent + '<span class="typing-cursor"></span>');
+                                    applyContentFeatures(lastProse);
+                                }
+                                els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+                            }
+                        }, TYPE_SPEED_MS);
+
                         for await (const chunk of job) {
                             if (chunk?.data?.[0]) {
                                 const historyUpdate = chunk.data[0];
                                 const assistantMsg = historyUpdate[historyUpdate.length - 1];
                                 if (assistantMsg && assistantMsg.role === "assistant") {
-                                    const content = assistantMsg.content;
-                                    chatHistory[chatHistory.length - 1][1] = content;
-                                    const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
-                                    if (lastProse) {
-                                        lastProse.innerHTML = marked.parse(content);
-                                        applyContentFeatures(lastProse);
+                                    const fullContent = assistantMsg.content || "";
+                                    chatHistory[chatHistory.length - 1][1] = fullContent;
+
+                                    // Calculate diff to add to queue
+                                    // Note: Gradio sends full history, so we just check what we haven't queued yet
+                                    const totalQueuedOrDisplayed = displayedContent.length + streamQueue.length;
+                                    if (fullContent.length > totalQueuedOrDisplayed) {
+                                        streamQueue += fullContent.substring(totalQueuedOrDisplayed);
                                     }
-                                    els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
                                 }
                             }
                         }
@@ -2417,7 +2481,16 @@
                             render();
                         }
                     }
-                    finally { isGenerating = false; updateUI(); save(); render(); }
+                    finally {
+                        // Flush remaining queue
+                        clearInterval(typeInterval);
+                        isGenerating = false;
+
+                        // Final render ensures consistency
+                        render();
+                        updateUI();
+                        save();
+                    }
                 };
 
                 const applyContentFeatures = (el) => {
@@ -2532,9 +2605,8 @@
                     } else {
                         els.chatMsgs.innerHTML = chatHistory.map(([u, a], i) => `
                     <div class="user-row flex flex-col items-end"><div class="user-msg-bubble prose dark:prose-invert font-medium">${marked.parse(u)}</div></div>
-                    <div class="ai-row flex ${a ? 'items-start' : 'items-center'} gap-3 animate-fade-in w-full">
-                        <div class="w-7 h-7 rounded-full ai-icon-bubble flex items-center justify-center shrink-0 ${a ? 'mt-1.5' : ''}"><div class="w-3.5 h-3.5">${currentModel.icon}</div></div>
-                        <div class="flex-1 min-w-0">
+                    <div class="ai-row flex flex-col items-start animate-fade-in w-full">
+                        <div class="flex-1 min-w-0 w-full px-4">
                             <div class="prose dark:prose-invert prose-target w-full leading-relaxed break-words overflow-wrap-anywhere ${a ? 'mt-2' : ''}">
                                 ${a ? marked.parse(a) : `
                                 <div class="thinking-container">
@@ -2561,11 +2633,13 @@
                         if (!els.send.disabled) {
                             els.send.style.backgroundColor = 'var(--accent-color)';
                             els.send.style.color = 'var(--accent-contrast)';
-                            els.send.classList.remove('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400');
+                            els.send.classList.remove('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400', 'cursor-not-allowed');
+                            els.send.classList.add('cursor-pointer');
                         } else {
                             els.send.style.backgroundColor = '';
                             els.send.style.color = '';
-                            els.send.classList.add('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400');
+                            els.send.classList.add('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400', 'cursor-not-allowed');
+                            els.send.classList.remove('cursor-pointer');
                         }
                     }
                     if (els.icon) els.icon.className = isGenerating ? "fa-solid fa-square text-[10px]" : "fa-solid fa-arrow-up text-xs";
