@@ -174,7 +174,7 @@
             background-color: rgba(0, 0, 0, 0.05);
             padding: 0.75rem 1.25rem;
             margin-left: 1.5rem;
-            border-radius: 1rem;
+            border-radius: 12px;
             max-width: 90%;
             animation: fadeIn 0.3s ease-out forwards;
             word-wrap: break-word;
@@ -298,7 +298,7 @@
         .input-box-wrap {
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
-            border-radius: 1.5rem;
+            border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
@@ -554,22 +554,32 @@
             display: none !important;
         }
 
+        #onboarding-overlay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
         .onboarding-card {
-            width: 100%;
-            max-width: 440px;
-            padding: 2rem 2.5rem;
-            border-radius: 1.25rem;
+            width: 95%;
+            height: 85vh;
+            max-height: 900px;
+            max-width: 1200px;
+            border-radius: 24px;
             background: white;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 0.3s ease-out;
             position: relative;
             z-index: 2100;
+            overflow: hidden;
+            display: flex;
         }
 
         .dark .onboarding-card {
             background: #141414;
-            border-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         #onboarding-pfp-preview {
@@ -1071,40 +1081,44 @@
 
     <div id="onboarding-overlay" class="hidden">
         <div class="onboarding-card">
-            <button onclick="window.toggleLanguage()" class="lang-btn">
-                <i class="fa-solid fa-language mr-1"></i> <span class="lang-text">中文</span>
-            </button>
-            <div id="onboarding-step-1" class="tutorial-step active">
-                <div class="text-center mb-6">
-                    <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2"
-                        data-t="onboarding_welcome">Welcome</p>
-                    <h1
-                        class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">
-                        V<span class="vail-logo-ai gradient-mode">AI</span>L</h1>
-                </div>
+            <!-- Left Side: Content -->
+            <div class="w-full lg:w-1/2 flex-shrink-0 p-8 flex flex-col relative justify-center">
+                <button onclick="window.toggleLanguage()" class="lang-btn">
+                    <i class="fa-solid fa-language mr-1"></i> <span class="lang-text">中文</span>
+                </button>
 
-                <div class="space-y-6">
-                    <!-- 1. Google Auth at Top -->
-                    <div>
-                        <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
-                            class="w-full flex items-center justify-center gap-2 px-4 py-3.5 text-xs font-bold rounded-xl transition-all shadow-lg hover:brightness-110 active:scale-[0.98]"
-                            style="background-color: var(--accent-color); color: var(--accent-contrast);">
-                            <span id="google-btn-text-onboarding"><i class="fa-brands fa-google mr-2.5"></i>Continue
-                                with Google</span>
-                        </button>
+                <!-- Step 1 -->
+                <div id="onboarding-step-1" class="tutorial-step active flex-1 flex flex-col justify-center">
+                    <div class="text-center mb-8">
+                        <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2"
+                            data-t="onboarding_welcome">Welcome</p>
+                        <h1
+                            class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">
+                            V<span class="vail-logo-ai gradient-mode">AI</span>L</h1>
                     </div>
 
-                    <!-- 2. Limits Text -->
-                    <div class="text-center">
-                        <p class="text-[10px] font-bold text-zinc-400/80 uppercase tracking-wider">OLM has no limits for
-                            all accounts</p>
-                    </div>
+                    <div class="space-y-6 max-w-sm mx-auto w-full">
+                        <!-- 1. Google Auth at Top -->
+                        <div>
+                            <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
+                                class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-lg transition-all shadow-lg hover:brightness-110 active:scale-[0.98]"
+                                style="background-color: var(--accent-color); color: var(--accent-contrast);">
+                                <span id="google-btn-text-onboarding"><i class="fa-brands fa-google mr-2.5"></i>Continue
+                                    with Google</span>
+                            </button>
+                        </div>
 
-                    <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
+                        <!-- 2. Limits Text -->
+                        <div class="text-center">
+                            <p class="text-[10px] font-bold text-zinc-400/80 uppercase tracking-wider">OLM has no limits
+                                for
+                                all accounts</p>
+                        </div>
 
-                    <!-- 3. Local Profile Setup -->
-                    <div class="flex flex-col items-center gap-4">
-                        <div class="flex items-center gap-4 w-full">
+                        <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
+
+                        <!-- 3. Local Profile Setup -->
+                        <div class="flex flex-col items-center gap-6 w-full">
                             <div class="relative group cursor-pointer flex-shrink-0"
                                 onclick="document.getElementById('onboarding-pfp-input').click()">
                                 <div id="onboarding-pfp-preview"><i
@@ -1115,80 +1129,52 @@
                                     <i class="fa-solid fa-plus"></i>
                                 </div>
                             </div>
-                            <div class="flex-1">
+                            <div class="w-full">
                                 <label
-                                    class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
-                                    data-t="display_name">Name</label>
+                                    class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1 text-center"
+                                    data-t="display_name">Display Name</label>
                                 <input type="text" id="onboarding-name" placeholder="Name or Alias"
-                                    class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-3.5 text-sm font-bold focus:border-blue-500 outline-none transition-all">
+                                    class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-3 text-sm font-bold focus:border-blue-500 outline-none transition-all text-center">
+                            </div>
+                            <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*"
+                                onchange="window.handleOnboardingPfp(event)">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1 text-center"
+                                data-t="appearance">Appearance</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="window.setTheme('light')"
+                                    class="flex items-center justify-center gap-3 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
+                                        class="fa-solid fa-sun"></i> <span data-t="theme_light">Light</span></button>
+                                <button onclick="window.setTheme('dark')"
+                                    class="flex items-center justify-center gap-3 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
+                                        class="fa-solid fa-moon"></i> <span data-t="theme_dark">Dark</span></button>
                             </div>
                         </div>
-                        <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*"
-                            onchange="window.handleOnboardingPfp(event)">
-                    </div>
 
-                    <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
-                            data-t="appearance">Appearance</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="window.setTheme('light')"
-                                class="flex items-center justify-center gap-3 py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
-                                    class="fa-solid fa-sun"></i> <span data-t="theme_light">Light</span></button>
-                            <button onclick="window.setTheme('dark')"
-                                class="flex items-center justify-center gap-3 py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
-                                    class="fa-solid fa-moon"></i> <span data-t="theme_dark">Dark</span></button>
+                        <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
+
+                        <!-- 4. Continue Buttons -->
+                        <div class="flex flex-col gap-3">
+                            <button onclick="window.completeOnboarding()"
+                                class="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl"
+                                data-t="onboarding_complete">Complete Setup</button>
+                            <button onclick="window.continueAsGuest()"
+                                class="w-full py-2 text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] hover:text-zinc-900 dark:hover:text-white transition-colors"
+                                data-t="onboarding_guest">Continue as Guest</button>
                         </div>
                     </div>
-
-                    <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
-
-                    <!-- 4. Continue Buttons -->
-                    <div class="flex flex-col gap-3">
-                        <button onclick="window.nextOnboardingStep()"
-                            class="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl"
-                            data-t="onboarding_continue">Continue</button>
-                        <button onclick="window.continueAsGuest()"
-                            class="w-full py-2 text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] hover:text-zinc-900 dark:hover:text-white transition-colors"
-                            data-t="onboarding_guest">Continue as Guest</button>
-                    </div>
                 </div>
+
+
             </div>
-            <div id="onboarding-step-2" class="tutorial-step">
-                <div class="text-center mb-8">
-                    <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2" data-t="tutorial">
-                        Tutorial</p>
-                    <h2 class="font-black italic text-2xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1"
-                        data-t="onboarding_using">Using OLM</h2>
-                    <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]"
-                        data-t="onboarding_quickstart">Quick Start Guide</p>
-                </div>
-                <div class="space-y-5 max-h-[350px] overflow-y-auto pr-2 no-scrollbar">
-                    <div
-                        class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
-                        <h4 class="text-[11px] font-black uppercase text-purple-500 mb-2" data-t="onboarding_prompting">
-                            Prompting</h4>
-                        <p class="text-xs text-zinc-500 leading-relaxed" data-t="onboarding_prompting_desc">
-                            Model is currently in early Alpha stage, making prompts like "World WWII ended in" will have
-                            a better effect than "When did WWII end?".
-                        </p>
-                    </div>
-                    <div
-                        class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800">
-                        <h4 class="text-[11px] font-black uppercase text-orange-500 mb-2" data-t="settings">Settings
-                        </h4>
-                        <p class="text-xs text-zinc-500 leading-relaxed" data-t="onboarding_settings_desc">
-                            You can edit your PFP, name and theme in settings.
-                        </p>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-3 pt-8">
-                    <button onclick="window.completeOnboarding()"
-                        class="w-full py-5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl"
-                        data-t="onboarding_complete">Complete Setup</button>
-                    <button onclick="window.prevOnboardingStep()"
-                        class="w-full py-3 text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] hover:text-zinc-900 dark:hover:text-white transition-colors"
-                        data-t="onboarding_back">Go Back</button>
-                </div>
+
+            <!-- Right Side: Image -->
+            <div
+                class="hidden lg:flex w-1/2 flex-shrink-0 bg-zinc-50 dark:bg-zinc-900/50 items-center justify-center border-l border-zinc-100 dark:border-zinc-800 relative overflow-hidden p-0">
+                <img src="../src/OLM.png" class="w-full h-full object-cover">
             </div>
         </div>
     </div>
@@ -1236,7 +1222,8 @@
                 </div>
             </div>
             <div id="user-profile-section">
-                <div class="flex items-center justify-between group">
+                <div onclick="window.toggleSettingsPanel()"
+                    class="flex items-center justify-between group cursor-pointer hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all rounded-xl p-2 -mx-2">
                     <div class="flex items-center gap-3 lg:gap-2">
                         <div id="user-avatar-container">
                             <div id="user-avatar-display">U</div>
@@ -1246,8 +1233,8 @@
                                 class="text-xs font-bold truncate text-zinc-900 dark:text-white">Profile</span>
                         </div>
                     </div>
-                    <button onclick="event.stopPropagation(); window.toggleSettingsPanel()"
-                        class="w-10 h-10 lg:w-8 lg:h-8 flex items-center justify-center rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
+                    <button
+                        class="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-all">
                         <i class="fa-solid fa-gear text-sm lg:text-xs"></i>
                     </button>
                 </div>
@@ -1363,7 +1350,7 @@
                     data-t="welcome_header">How can I help you today?</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
                     <button
-                        class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm"
+                        class="p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm"
                         onclick="window.sendMessage('Write a professional greeting message.')">
                         <div class="flex items-center gap-2 mb-1.5"><i
                                 class="fa-solid fa-pen text-blue-400 text-[10px]"></i><span
@@ -1373,7 +1360,7 @@
                             Help</span>
                     </button>
                     <button
-                        class="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm"
+                        class="p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm"
                         onclick="window.sendMessage('Explain the plot of Inception using emojis.')">
                         <div class="flex items-center gap-2 mb-1.5"><i
                                 class="fa-solid fa-face-smile text-emerald-500 text-[10px]"></i><span
@@ -1398,13 +1385,13 @@
                     <div class="flex items-center justify-between px-3 pb-3 pt-1">
                         <!-- Web Search Pill -->
                         <button id="search-btn" onclick="window.toggleSearch()"
-                            class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all text-xs font-medium border border-transparent">
+                            class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all text-xs font-medium border border-transparent">
                             <i class="fa-solid fa-globe text-[10px]"></i>
                             <span data-t="search">Search</span>
                         </button>
 
                         <button id="send-btn" disabled onclick="window.handleAction()"
-                            class="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700 text-zinc-400 cursor-not-allowed transition-all shadow-sm">
+                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-700 text-zinc-400 cursor-not-allowed transition-all shadow-sm">
                             <i id="send-btn-icon" class="fa-solid fa-arrow-up text-sm"></i>
                         </button>
                     </div>
@@ -2141,32 +2128,26 @@
                     reader.readAsDataURL(file);
                 };
 
-                window.nextOnboardingStep = () => {
-                    const name = document.getElementById('onboarding-name').value.trim();
-                    if (!name) {
-                        document.getElementById('onboarding-name').classList.add('border-red-500');
-                        return;
-                    }
-                    settings.userName = name;
-                    updateProfileUI();
-                    document.getElementById('onboarding-step-1').classList.remove('active');
-                    document.getElementById('onboarding-step-2').classList.add('active');
-                };
-
                 window.continueAsGuest = () => {
                     settings.userName = "Guest";
                     settings.userPic = "";
                     updateProfileUI();
-                    document.getElementById('onboarding-step-1').classList.remove('active');
-                    document.getElementById('onboarding-step-2').classList.add('active');
-                };
-
-                window.prevOnboardingStep = () => {
-                    document.getElementById('onboarding-step-2').classList.remove('active');
-                    document.getElementById('onboarding-step-1').classList.add('active');
+                    window.finalizeOnboarding();
                 };
 
                 window.completeOnboarding = () => {
+                    const nameInput = document.getElementById('onboarding-name');
+                    const name = nameInput.value.trim();
+                    if (!name) {
+                        nameInput.classList.add('border-red-500');
+                        return;
+                    }
+                    settings.userName = name;
+                    updateProfileUI();
+                    window.finalizeOnboarding();
+                };
+
+                window.finalizeOnboarding = () => {
                     settings.hasCompletedTutorial = true;
                     saveSettings();
                     els.onboarding.style.opacity = '0';
