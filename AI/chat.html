@@ -563,8 +563,8 @@
 
         .onboarding-card {
             width: 95%;
-            height: 85vh;
-            max-height: 900px;
+            height: 70vh;
+            max-height: 700px;
             max-width: 1200px;
             border-radius: 24px;
             background: white;
@@ -583,8 +583,8 @@
         }
 
         #onboarding-pfp-preview {
-            width: 80px;
-            height: 80px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             overflow: hidden;
             background: #f4f4f5;
@@ -1117,23 +1117,23 @@
                         <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
 
                         <!-- 3. Local Profile Setup -->
-                        <div class="flex flex-col items-center gap-6 w-full">
+                        <div class="flex items-center gap-4 w-full">
                             <div class="relative group cursor-pointer flex-shrink-0"
                                 onclick="document.getElementById('onboarding-pfp-input').click()">
                                 <div id="onboarding-pfp-preview"><i
                                         class="fa-solid fa-camera text-zinc-400 text-xl"></i>
                                 </div>
                                 <div
-                                    class="absolute bottom-0 right-0 w-8 h-8 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[12px] border-2 border-white dark:border-[#141414] shadow-md">
+                                    class="absolute bottom-0 right-0 w-6 h-6 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[10px] border-2 border-white dark:border-[#141414] shadow-md">
                                     <i class="fa-solid fa-plus"></i>
                                 </div>
                             </div>
-                            <div class="w-full">
+                            <div class="flex-1">
                                 <label
-                                    class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1 text-center"
+                                    class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
                                     data-t="display_name">Display Name</label>
                                 <input type="text" id="onboarding-name" placeholder="Name or Alias"
-                                    class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-3 text-sm font-bold focus:border-blue-500 outline-none transition-all text-center">
+                                    class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-3 text-sm font-bold focus:border-blue-500 outline-none transition-all">
                             </div>
                             <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*"
                                 onchange="window.handleOnboardingPfp(event)">
@@ -1143,12 +1143,16 @@
                             <label
                                 class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1 text-center"
                                 data-t="appearance">Appearance</label>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-3 gap-2">
                                 <button onclick="window.setTheme('light')"
-                                    class="flex items-center justify-center gap-3 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
+                                    class="flex items-center justify-center gap-2 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
                                         class="fa-solid fa-sun"></i> <span data-t="theme_light">Light</span></button>
+                                <button onclick="window.setTheme('system')"
+                                    class="flex items-center justify-center gap-2 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
+                                        class="fa-solid fa-laptop"></i> <span
+                                        data-t="theme_system">System</span></button>
                                 <button onclick="window.setTheme('dark')"
-                                    class="flex items-center justify-center gap-3 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
+                                    class="flex items-center justify-center gap-2 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
                                         class="fa-solid fa-moon"></i> <span data-t="theme_dark">Dark</span></button>
                             </div>
                         </div>
@@ -1350,23 +1354,21 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl">
                     <button
                         class="p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm"
-                        onclick="window.sendMessage('Write a professional greeting message.')">
+                        onclick="window.sendMessage('Hello!')">
                         <div class="flex items-center gap-2 mb-1.5"><i
-                                class="fa-solid fa-pen text-blue-400 text-[10px]"></i><span
+                                class="fa-solid fa-comment text-amber-400 text-[10px]"></i><span
                                 class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors"
-                                data-t="cat_creative">Creative</span></div>
-                        <span class="text-sm font-medium opacity-60 truncate block" data-t="ex_writing">Writing
-                            Help</span>
+                                data-t="cat_greeting">Greeting</span></div>
+                        <span class="text-sm font-medium opacity-60 truncate block" data-t="ex_hello">Say Hello</span>
                     </button>
                     <button
                         class="p-5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-left bg-white/60 dark:bg-zinc-900/60 hover:bg-white dark:hover:bg-zinc-800/80 transition-all group shadow-sm"
-                        onclick="window.sendMessage('Explain the plot of Inception using emojis.')">
+                        onclick="window.sendMessage('Tell me a fun fact.')">
                         <div class="flex items-center gap-2 mb-1.5"><i
-                                class="fa-solid fa-face-smile text-emerald-500 text-[10px]"></i><span
+                                class="fa-solid fa-lightbulb text-emerald-500 text-[10px]"></i><span
                                 class="text-[9px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-600 transition-colors"
-                                data-t="cat_visual">Visual</span></div>
-                        <span class="text-sm font-medium opacity-60 truncate block" data-t="ex_summary">Quick
-                            Summary</span>
+                                data-t="cat_learn">Learn</span></div>
+                        <span class="text-sm font-medium opacity-60 truncate block" data-t="ex_funfact">Fun Fact</span>
                     </button>
                 </div>
             </div>
@@ -1443,6 +1445,7 @@
                         onboarding_setup: "Profile Setup",
                         theme_light: "Light",
                         theme_dark: "Dark",
+                        theme_system: "System",
                         onboarding_disclaimer: "OLM is a local-first application...",
                         onboarding_continue: "Continue",
                         onboarding_guest: "Continue as Guest",
@@ -1500,6 +1503,7 @@
                         onboarding_setup: "檔案設定",
                         theme_light: "淺色",
                         theme_dark: "深色",
+                        theme_system: "系統",
                         onboarding_disclaimer: "OLM 是本機優先的應用程式...",
                         onboarding_continue: "繼續",
                         onboarding_guest: "以訪客身份進入",
@@ -1540,7 +1544,7 @@
                 let streamQueue = "";
                 let displayedContent = "";
                 let typeInterval = null;
-                const TYPE_SPEED_MS = 10; // 10ms per character block update
+                const TYPE_SPEED_MS = 150; // 150ms per character block update
 
                 // Google API configuration
                 const GOOGLE_CLIENT_ID = '937870221827-2l21bkkuhn0uo7nsco258484duv29rag.apps.googleusercontent.com';
@@ -1907,25 +1911,38 @@
                 };
 
                 window.setTheme = (mode) => {
-                    document.documentElement.classList.toggle('dark', mode === 'dark');
                     localStorage.setItem('vail_theme', mode);
+
+                    if (mode === 'system') {
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        document.documentElement.classList.toggle('dark', prefersDark);
+                    } else {
+                        document.documentElement.classList.toggle('dark', mode === 'dark');
+                    }
+
                     window.updateAccent(settings.accent);
                     window.updateThemeButtons(mode);
                 };
 
+                // Listen for system theme changes
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (localStorage.getItem('vail_theme') === 'system') {
+                        document.documentElement.classList.toggle('dark', e.matches);
+                        window.updateAccent(settings.accent);
+                    }
+                });
+
                 window.updateThemeButtons = (mode) => {
                     const lightBtn = document.getElementById('btn-theme-light');
                     const darkBtn = document.getElementById('btn-theme-dark');
-                    if (lightBtn && darkBtn) {
-                        // Reset
-                        lightBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
-                        darkBtn.className = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
+                    const systemBtn = document.getElementById('btn-theme-system');
 
-                        // Active
-                        const activeClass = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-white dark:bg-zinc-600 text-black dark:text-white shadow-sm";
-                        if (mode === 'light') lightBtn.className = activeClass;
-                        else darkBtn.className = activeClass;
-                    }
+                    const resetClass = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
+                    const activeClass = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-white dark:bg-zinc-600 text-black dark:text-white shadow-sm";
+
+                    if (lightBtn) lightBtn.className = mode === 'light' ? activeClass : resetClass;
+                    if (darkBtn) darkBtn.className = mode === 'dark' ? activeClass : resetClass;
+                    if (systemBtn) systemBtn.className = mode === 'system' ? activeClass : resetClass;
                 };
 
                 window.toggleTheme = () => {
@@ -2384,7 +2401,11 @@
                 };
 
                 window.sendMessage = async (txt = null) => {
-                    if (isGenerating) return;
+                    console.log("sendMessage called, isGenerating:", isGenerating);
+                    if (isGenerating) {
+                        console.log("Blocked: still generating");
+                        return;
+                    }
                     const msg = txt || els.input.value.trim(); if (!msg) return;
 
                     window.triggerFlare();
@@ -2399,7 +2420,7 @@
                     try {
                         const c = await getGradioClient();
 
-                        // Prepare history for Gradio 6 format: list of objects {role, content}
+                        // Prepare history for Gradio format
                         const formattedHistory = [];
                         for (const [u, a] of chatHistory.slice(0, -1)) {
                             formattedHistory.push({ role: "user", content: u });
@@ -2409,64 +2430,108 @@
                         // Determine if it's a search query
                         const finalMsg = (webSearch && !msg.toLowerCase().startsWith("/search")) ? "/search " + msg : msg;
 
-                        const job = c.submit("/bot_step", [
-                            formattedHistory.concat([{ role: "user", content: finalMsg }]),
-                            settings.temp || 0.3,
-                            settings.top_p || 0.9,
-                            settings.rep_pen || 1.35,
-                            settings.max_tokens || 256
-                        ]);
+                        console.log("Calling /chat with message:", finalMsg);
 
+                        // Streaming call
+                        const job = c.submit("/chat", {
+                            message: finalMsg,
+                            history: formattedHistory
+                        });
 
                         currentJob = job;
 
-                        // Start Typing Loop
-                        clearInterval(typeInterval);
-                        typeInterval = setInterval(() => {
-                            if (streamQueue.length > 0) {
-                                // Consume chunk
-                                const chunk = streamQueue.substring(0, 3); // Type 3 chars at a time to look fast
-                                streamQueue = streamQueue.substring(3);
-                                displayedContent += chunk;
+                        // Process streaming chunks - loop ends when generator completes
+                        for await (const event of job) {
+                            console.log("Event type:", event?.type, "Event:", JSON.stringify(event, null, 2));
+
+                            // Check for completion
+                            if (event?.type === "status" && event?.stage === "complete") {
+                                console.log("Generation complete (status event)");
+                                break;
+                            }
+
+                            // Process data events
+                            const chunk = event?.data || event;
+                            if (chunk?.[0]) {
+                                const newHistory = chunk[0];
+                                const lastMsg = newHistory[newHistory.length - 1];
+
+                                // Get assistant's current content - handle various formats
+                                let responseText = "";
+                                if (lastMsg?.role === "assistant") {
+                                    const content = lastMsg.content;
+                                    if (typeof content === 'string') {
+                                        responseText = content;
+                                    } else if (Array.isArray(content)) {
+                                        responseText = content.map(c => c.text || c).join("");
+                                    } else if (content?.text) {
+                                        responseText = content.text;
+                                    }
+                                } else if (typeof lastMsg?.content === 'string') {
+                                    responseText = lastMsg.content;
+                                } else if (Array.isArray(lastMsg?.content)) {
+                                    responseText = lastMsg.content.map(c => c.text || c).join("");
+                                }
+
+                                responseText = String(responseText || "");
+
+                                // Check for __DONE__ signal from backend
+                                let isDone = false;
+                                if (responseText.endsWith("__DONE__")) {
+                                    responseText = responseText.replace("__DONE__", "").trim();
+                                    isDone = true;
+                                    console.log("Received __DONE__ signal from backend");
+                                }
+
+                                // Strip stop tokens
+                                const stopPatterns = ["<|im_end|>", "<|im_end", "<|im_", "<|im", "<|i", "<|"];
+                                for (const pattern of stopPatterns) {
+                                    if (responseText.includes(pattern)) {
+                                        responseText = responseText.split(pattern)[0].trim();
+                                        break;
+                                    }
+                                }
+
+                                chatHistory[chatHistory.length - 1][1] = responseText;
 
                                 const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                                 if (lastProse) {
-                                    lastProse.innerHTML = marked.parse(displayedContent + '<span class="typing-cursor"></span>');
+                                    if (isDone) {
+                                        // Final render without cursor
+                                        lastProse.innerHTML = marked.parse(responseText);
+                                    } else {
+                                        lastProse.innerHTML = marked.parse(responseText + '<span class="typing-cursor"></span>');
+                                    }
                                     applyContentFeatures(lastProse);
                                 }
                                 els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
-                            }
-                        }, TYPE_SPEED_MS);
 
-                        for await (const chunk of job) {
-                            if (chunk?.data?.[0]) {
-                                const historyUpdate = chunk.data[0];
-                                const assistantMsg = historyUpdate[historyUpdate.length - 1];
-                                if (assistantMsg && assistantMsg.role === "assistant") {
-                                    const fullContent = assistantMsg.content || "";
-                                    chatHistory[chatHistory.length - 1][1] = fullContent;
-
-                                    // Calculate diff to add to queue
-                                    // Note: Gradio sends full history, so we just check what we haven't queued yet
-                                    const totalQueuedOrDisplayed = displayedContent.length + streamQueue.length;
-                                    if (fullContent.length > totalQueuedOrDisplayed) {
-                                        streamQueue += fullContent.substring(totalQueuedOrDisplayed);
-                                    }
+                                // Break out of loop if done
+                                if (isDone) {
+                                    console.log("Generation complete (backend signal)");
+                                    break;
                                 }
                             }
                         }
+
+                        console.log("Stream loop complete");
                     } catch (e) {
                         if (e.message !== "The user cancelled the request.") {
+                            console.error("Chat error:", e);
                             chatHistory[chatHistory.length - 1][1] = `${translations[settings.lang || 'en'].prompt_error}${e.message}`;
                             render();
                         }
                     }
                     finally {
-                        // Flush remaining queue
-                        clearInterval(typeInterval);
+                        document.querySelectorAll('.typing-cursor').forEach(c => c.remove());
+                        const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
+                        if (lastProse && chatHistory[chatHistory.length - 1][1]) {
+                            lastProse.innerHTML = marked.parse(chatHistory[chatHistory.length - 1][1]);
+                            applyContentFeatures(lastProse);
+                        }
+                        currentJob = null;
                         isGenerating = false;
-
-                        // Final render ensures consistency
+                        console.log("Generation complete, ready for next message");
                         render();
                         updateUI();
                         save();
@@ -2475,7 +2540,7 @@
 
                 const applyContentFeatures = (el) => {
                     if (!el) return;
-                    el.innerHTML = el.innerHTML.replace(/\$$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
+                    el.innerHTML = el.innerHTML.replace(/\$\$([\s\S]+?)\$\$/g, (_, f) => `<div class="katex-display">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`);
                     el.querySelectorAll('pre').forEach(pre => {
                         const btn = document.createElement('button'); btn.className = 'code-copy-btn'; btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
                         btn.onclick = () => {
@@ -2795,7 +2860,12 @@
                     }
 
                     const theme = localStorage.getItem('vail_theme') || 'light';
-                    if (theme === 'dark') document.documentElement.classList.add('dark');
+                    if (theme === 'system') {
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        document.documentElement.classList.toggle('dark', prefersDark);
+                    } else if (theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    }
                     window.updateThemeButtons(theme);
 
                     window.updateAccent(settings.accent);
@@ -3022,6 +3092,8 @@
                             class="flex bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700">
                             <button id="btn-theme-light" onclick="window.setTheme('light')"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">Light</button>
+                            <button id="btn-theme-system" onclick="window.setTheme('system')"
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">System</button>
                             <button id="btn-theme-dark" onclick="window.setTheme('dark')"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">Dark</button>
                         </div>
