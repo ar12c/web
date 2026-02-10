@@ -185,6 +185,48 @@
             background-color: rgba(255, 255, 255, 0.05);
         }
 
+        .user-row {
+            position: relative;
+        }
+
+        .user-msg-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            padding-top: 4px;
+            justify-content: flex-end;
+        }
+
+        .user-row:hover .user-msg-actions {
+            opacity: 1;
+        }
+
+        .user-msg-action-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #a1a1aa;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: transparent;
+            border: none;
+        }
+
+        .user-msg-action-btn:hover {
+            color: var(--accent-color);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .user-msg-action-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         .prose {
             max-width: 100%;
             color: inherit;
@@ -1377,7 +1419,7 @@
                     </button>
                 </div>
             </div>
-            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 relative gap-8 z-10">
+            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 relative gap-4 z-10">
             </div>
         </div>
 
@@ -2424,18 +2466,19 @@
                     isGenerating = true; updateUI();
                     try {
                         const c = await getGradioClient();
+                        console.log("Client connected successfully");
 
-                        // Prepare history for Gradio format
+                        // Prepare history for Gradio Chatbot format (content must be a list of parts)
                         const formattedHistory = [];
                         for (const [u, a] of chatHistory.slice(0, -1)) {
-                            formattedHistory.push({ role: "user", content: u });
-                            if (a) formattedHistory.push({ role: "assistant", content: a });
+                            formattedHistory.push({ role: "user", content: [{ type: "text", text: u }] });
+                            if (a) formattedHistory.push({ role: "assistant", content: [{ type: "text", text: a }] });
                         }
 
                         // Determine if it's a search query
                         const finalMsg = (webSearch && !msg.toLowerCase().startsWith("/search")) ? "/search " + msg : msg;
 
-                        console.log("Calling /chat with message:", finalMsg);
+                        console.log("Calling /chat with message:", finalMsg, "history length:", formattedHistory.length);
 
                         // Streaming call
                         const job = c.submit("/chat", {
@@ -2445,11 +2488,9 @@
 
                         currentJob = job;
 
-                        // Process streaming chunks - loop ends when generator completes
+                        // Process streaming chunks
                         for await (const event of job) {
-                            console.log("Event type:", event?.type, "Event:", JSON.stringify(event, null, 2));
-
-                            // Check for completion
+                            // Check for completion status
                             if (event?.type === "status" && event?.stage === "complete") {
                                 console.log("Generation complete (status event)");
                                 break;
@@ -2502,7 +2543,6 @@
                                 const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                                 if (lastProse) {
                                     if (isDone) {
-                                        // Final render without cursor
                                         lastProse.innerHTML = marked.parse(responseText);
                                     } else {
                                         lastProse.innerHTML = marked.parse(responseText + '<span class="typing-cursor"></span>');
@@ -2511,7 +2551,6 @@
                                 }
                                 els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
 
-                                // Break out of loop if done
                                 if (isDone) {
                                     console.log("Generation complete (backend signal)");
                                     break;
@@ -2535,6 +2574,7 @@
                             applyContentFeatures(lastProse);
                         }
                         currentJob = null;
+                        client = null; // Force fresh connection for next message
                         isGenerating = false;
                         console.log("Generation complete, ready for next message");
                         render();
@@ -2576,6 +2616,26 @@
                     const originalClass = icon.className;
                     icon.className = 'fa-solid fa-check text-sm';
                     setTimeout(() => { icon.className = originalClass; }, 2000);
+                };
+
+                window.copyUserMsg = (idx, btnEl) => {
+                    const content = chatHistory[idx][0] || '';
+                    navigator.clipboard.writeText(content);
+                    const icon = btnEl.querySelector('i');
+                    const originalClass = icon.className;
+                    icon.className = 'fa-solid fa-check text-[11px]';
+                    setTimeout(() => { icon.className = originalClass; }, 2000);
+                };
+
+                window.editMsg = (idx) => {
+                    if (isGenerating) return;
+                    const msg = chatHistory[idx][0];
+                    chatHistory = chatHistory.slice(0, idx);
+                    els.input.value = msg;
+                    els.input.style.height = 'auto';
+                    els.input.style.height = els.input.scrollHeight + 'px';
+                    els.input.focus();
+                    render(); updateUI(); save();
                 };
 
                 window.regenMsg = (idx) => { if (!isGenerating) { const msg = chatHistory[idx][0]; chatHistory = chatHistory.slice(0, idx); window.sendMessage(msg); } };
@@ -2654,7 +2714,13 @@
                         els.greeting.innerText = (welcomeName && welcomeName !== "Guest") ? `${dict.welcome_back}${welcomeName}?` : dict.welcome_header;
                     } else {
                         els.chatMsgs.innerHTML = chatHistory.map(([u, a], i) => `
-                    <div class="user-row flex flex-col items-end"><div class="user-msg-bubble prose dark:prose-invert font-medium">${marked.parse(u)}</div></div>
+                    <div class="user-row flex flex-col items-end">
+                        <div class="user-msg-bubble prose dark:prose-invert font-medium">${marked.parse(u)}</div>
+                        <div class="user-msg-actions">
+                            <button class="user-msg-action-btn" onclick="window.copyUserMsg(${i}, this)" title="Copy"><i class="fa-regular fa-copy"></i></button>
+                            <button class="user-msg-action-btn" onclick="window.editMsg(${i})" title="Edit"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                        </div>
+                    </div>
                     <div class="ai-row flex flex-col items-start animate-fade-in w-full">
                         <div class="flex-1 min-w-0 w-full px-4">
                             <div class="prose dark:prose-invert prose-target w-full leading-relaxed break-words overflow-wrap-anywhere ${a ? 'mt-2' : ''}">

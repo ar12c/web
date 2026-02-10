@@ -128,7 +128,24 @@ load_model()
 
 # ================= GENERATION =================
 
-SYSTEM_INSTRUCTION = """You are OLM North Star, a helpful AI assistant. Follow the user's instructions exactly. Be concise and direct."""
+SYSTEM_INSTRUCTION = "You are OLM North Star, a helpful AI assistant. Follow the user's instructions exactly. Be concise and direct."
+
+def extract_text(content):
+    """Extract plain text from various Gradio content formats."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        # List of content parts like [{"type": "text", "text": "..."}]
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif isinstance(part, dict):
+                parts.append(part.get("text", part.get("value", str(part))))
+            else:
+                parts.append(getattr(part, "text", getattr(part, "value", str(part))))
+        return "".join(parts)
+    return str(content)
 
 def stream_chat(message, history):
     """Streaming chat function - yields updated history as tokens are generated."""
@@ -141,11 +158,18 @@ def stream_chat(message, history):
     # Build prompt with ChatML format
     full_prompt = f"<|im_start|>system\n{SYSTEM_INSTRUCTION}<|im_end|>\n"
     
-    # Add conversation history
+    # Add conversation history - handle both dict and ChatMessage objects
     for turn in history:
+        role = ""
+        content = ""
         if isinstance(turn, dict):
             role = turn.get("role", "user")
-            content = turn.get("content", "")
+            content = extract_text(turn.get("content", ""))
+        else:
+            # Gradio ChatMessage objects
+            role = getattr(turn, "role", "user")
+            content = extract_text(getattr(turn, "content", ""))
+        if role and content:
             full_prompt += f"<|im_start|>{role}\n{content}<|im_end|>\n"
     
     # Add current user input
@@ -155,8 +179,16 @@ def stream_chat(message, history):
     idx = tokenizer.encode(full_prompt, return_tensors="pt").to(DEVICE)
     generated_text = ""
     
+    # Build clean history as plain dicts for output
+    clean_history = []
+    for turn in history:
+        if isinstance(turn, dict):
+            clean_history.append({"role": turn.get("role", "user"), "content": extract_text(turn.get("content", ""))})
+        else:
+            clean_history.append({"role": getattr(turn, "role", "user"), "content": extract_text(getattr(turn, "content", ""))})
+    
     # Add user message to history first
-    new_history = history + [
+    new_history = clean_history + [
         {"role": "user", "content": message},
         {"role": "assistant", "content": ""}
     ]
