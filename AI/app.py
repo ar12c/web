@@ -194,7 +194,7 @@ def stream_chat(message, history):
     ]
     
     max_new_tokens = 200
-    temperature = 0.6
+    temperature = 0.8
     top_k = 40
     
     for _ in range(max_new_tokens):
