@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>EDITOR | OLM</title>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+
+    <!-- External Resources -->
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <style>
+        :root {
+            --accent-color: #3b82f6;
+            --chatbg-light: #f3f4f6;
+            /* Lighter Docs-like background */
+            --chatbg-dark: #09090b;
+            --paper-light: #ffffff;
+            --paper-dark: #18181b;
+            --toolbar-light: #ffffff;
+            --toolbar-dark: #27272a;
+        }
+
+        html {
+            background-color: var(--chatbg-light);
+            transition: background-color 0.3s ease;
+        }
+
+        html.dark {
+            background-color: var(--chatbg-dark);
+        }
+
+        body {
+            background-color: transparent;
+            color: #1a1a1b;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: color 0.3s ease;
+        }
+
+        .dark body {
+            color: #f4f4f5;
+            /* zinc-100 */
+        }
+
+        /* Island Styling */
+        .header-island {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 9999px;
+            padding: 2px 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 38px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+        }
+
+        .dark .header-island {
+            background: rgba(39, 39, 42, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Toolbar */
+        .editor-toolbar {
+            background: var(--toolbar-light);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .dark .editor-toolbar {
+            background: var(--toolbar-dark);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: #71717a;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #18181b;
+        }
+
+        .dark .toolbar-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .toolbar-btn.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-color);
+        }
+
+        /* Paper */
+        .editor-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .editor-paper {
+            background: var(--paper-light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            min-height: 1100px;
+            padding: 80px 90px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .dark .editor-paper {
+            background: var(--paper-dark);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        [contenteditable]:focus {
+            outline: none;
+        }
+
+        /* Placeholder */
+        .placeholder:empty:before {
+            content: attr(data-placeholder);
+            color: #a1a1aa;
+            cursor: text;
+        }
+
+        /* Image Wrapping & Resizing */
+        .editor-image-container {
+            position: relative;
+            display: inline-block;
+            margin: 10px;
+            cursor: default;
+            max-width: 100%;
+        }
+
+        .editor-image-container img {
+            display: block;
+            border-radius: 8px;
+            transition: outline 0.2s ease;
+        }
+
+        .editor-image-container:hover img {
+            outline: 2px solid var(--accent-color);
+        }
+
+        .image-controls {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #18181b;
+            border-radius: 8px;
+            padding: 4px;
+            display: none;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .editor-image-container:hover .image-controls {
+            display: flex;
+        }
+
+        .control-btn {
+            padding: 4px 8px;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .control-btn:hover {
+            background: #3f3f46;
+        }
+
+        .float-left {
+            float: left;
+            margin-right: 20px;
+        }
+
+        .float-right {
+            float: right;
+            margin-left: 20px;
+        }
+
+        .inline {
+            display: block;
+            margin: 20px auto;
+        }
+
+        /* Typography fixes */
+        #blog-editor h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        #blog-editor h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        #blog-editor p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        #blog-editor ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #blog-editor ol {
+            list-style-type: decimal;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="h-full overflow-y-auto no-scrollbar">
+    <!-- Header -->
+    <header
+        class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none fixed top-0 left-0 right-0">
+        <div class="flex items-center gap-2 pointer-events-auto">
+            <div class="header-island">
+                <a href="research.html"
+                    class="flex items-center gap-2 px-3 py-1.5 text-xs lg:text-[13px] font-bold tracking-tight text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-all">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span class="hidden sm:inline">Back</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 pointer-events-auto">
+            <div class="header-island pr-2">
+                <button onclick="publishBlog()"
+                    class="flex items-center gap-2 px-4 py-1.5 bg-blue-600 text-white rounded-full font-bold text-xs hover:brightness-110 active:scale-95 transition-all">
+                    <span>Publish</span>
+                </button>
+                <div class="w-px h-1/2 bg-zinc-200 dark:bg-zinc-800 mx-2"></div>
+                <button onclick="toggleTheme()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black dark:text-white">
+                    <i class="fa-solid fa-circle-half-stroke text-[13px]"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-24 lg:pt-28 pb-32">
+        <div class="editor-container">
+            <!-- Toolbar -->
+            <div class="flex justify-center mb-6 sticky top-20 z-40">
+                <div class="editor-toolbar">
+                    <button onclick="execCmd('bold')" class="toolbar-btn" title="Bold"><i
+                            class="fa-solid fa-bold"></i></button>
+                    <button onclick="execCmd('italic')" class="toolbar-btn" title="Italic"><i
+                            class="fa-solid fa-italic"></i></button>
+                    <div class="w-px h-6 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+                    <button onclick="execCmd('formatBlock', 'H1')" class="toolbar-btn text-[10px] font-black"
+                        title="Heading 1">H1</button>
+                    <button onclick="execCmd('formatBlock', 'H2')" class="toolbar-btn text-[10px] font-black"
+                        title="Heading 2">H2</button>
+                    <button onclick="execCmd('formatBlock', 'P')" class="toolbar-btn text-[10px] font-black"
+                        title="Paragraph">P</button>
+                    <div class="w-px h-6 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+                    <button onclick="execCmd('insertUnorderedList')" class="toolbar-btn" title="Bullet List"><i
+                            class="fa-solid fa-list-ul"></i></button>
+                    <div class="w-px h-6 bg-zinc-200 dark:bg-zinc-700 mx-1"></div>
+                    <select onchange="execCmd('fontSize', this.value)"
+                        class="bg-transparent text-xs font-bold outline-none border-none cursor-pointer text-zinc-500 dark:text-zinc-400">
+                        <option value="3">Small</option>
+                        <option value="4" selected>Normal</option>
+                        <option value="5">Large</option>
+                        <option value="6">Huge</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Paper -->
+            <div class="editor-paper" id="drop-zone overflow-hidden">
+                <div class="flex flex-col gap-6 mb-12">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-wrap gap-2" id="tags-selector">
+                            <button onclick="toggleTag('Architecture', 'blue')" id="tag-Architecture"
+                                class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 border-blue-500/20 text-blue-500/40 hover:bg-blue-500/5 transition-all">Architecture</button>
+                            <button onclick="toggleTag('Core Logic', 'red')" id="tag-Core Logic"
+                                class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 border-red-500/20 text-red-500/40 hover:bg-red-500/5 transition-all">Core
+                                Logic</button>
+                            <button onclick="toggleTag('UX/Design', 'green')" id="tag-UX/Design"
+                                class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 border-emerald-500/20 text-emerald-500/40 hover:bg-emerald-500/5 transition-all">UX/Design</button>
+                            <button onclick="toggleTag('Hardware', 'yellow')" id="tag-Hardware"
+                                class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 border-amber-500/20 text-amber-500/40 hover:bg-amber-500/5 transition-all">Hardware</button>
+                        </div>
+                        <div class="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest"
+                            id="current-date">FEB 2026</div>
+                    </div>
+                </div>
+
+                <div id="blog-editor" contenteditable="true"
+                    class="min-h-[800px] text-lg text-zinc-800 dark:text-zinc-100">
+                    <h1 id="blog-title-input" class="placeholder" data-placeholder="Untitled Research Paper"></h1>
+                    <p class="placeholder"
+                        data-placeholder="Start your research analysis here... Drag and drop images directly into this area.">
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let selectedTags = [];
+        const tagColors = {
+            'Architecture': 'blue',
+            'Core Logic': 'red',
+            'UX/Design': 'green',
+            'Hardware': 'yellow'
+        };
+
+        function toggleTag(tag, color) {
+            const btn = document.getElementById(`tag-${tag}`);
+            const isActive = selectedTags.some(t => t.name === tag);
+
+            const colorMap = { blue: 'blue', red: 'red', green: 'emerald', yellow: 'amber' };
+            const twColor = colorMap[color];
+
+            if (isActive) {
+                selectedTags = selectedTags.filter(t => t.name !== tag);
+                btn.className = `px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 border-${twColor}-500/20 text-${twColor}-500/40 hover:bg-${twColor}-500/5 transition-all`;
+            } else {
+                selectedTags.push({ name: tag, color: color });
+                btn.className = `px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-${twColor}-500 text-white border-transparent transition-all`;
+            }
+        }
+
+        function execCmd(command, value = null) {
+            document.execCommand(command, false, value);
+        }
+
+        // Image Drag and Drop
+        const editor = document.getElementById('blog-editor');
+
+        editor.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        editor.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imgHtml = `
+    <div class="editor-image-container inline" contenteditable="false">
+        <img src="${event.target.result}" style="width: 300px;">
+        <div class="image-controls">
+            <button class="control-btn" onclick="alignImg(this, 'float-left')">Left</button>
+            <button class="control-btn" onclick="alignImg(this, 'inline')">Center</button>
+            <button class="control-btn" onclick="alignImg(this, 'float-right')">Right</button>
+            <button class="control-btn" onclick="resizeImg(this, -50)">-</button>
+            <button class="control-btn" onclick="resizeImg(this, 50)">+</button>
+        </div>
+    </div>
+    `;
+                    document.execCommand('insertHTML', false, imgHtml);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function alignImg(btn, alignment) {
+            const container = btn.closest('.editor-image-container');
+            container.className = `editor-image-container ${alignment}`;
+        }
+
+        function resizeImg(btn, delta) {
+            const img = btn.closest('.editor-image-container').querySelector('img');
+            const currentWidth = img.clientWidth;
+            img.style.width = (currentWidth + delta) + 'px';
+        }
+
+        function publishBlog() {
+            const editorContent = document.getElementById('blog-editor').innerHTML;
+            const date = document.getElementById('current-date').innerText;
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = editorContent;
+            const titleElem = tempDiv.querySelector('h1');
+            const title = titleElem ? titleElem.innerText : 'Untitled';
+
+            // Remove title from content before saving
+            if (titleElem) titleElem.remove();
+            const content = tempDiv.innerHTML;
+
+            if (!title || !content.trim()) {
+                alert('Please provide a title and content.');
+                return;
+            }
+
+            const blogs = JSON.parse(localStorage.getItem('olm_blogs') || '[]');
+            blogs.unshift({
+                id: Date.now().toString(),
+                title,
+                tags: [...selectedTags],
+                content,
+                date,
+                isRich: true
+            });
+            localStorage.setItem('olm_blogs', JSON.stringify(blogs));
+            window.location.href = 'research.html';
+        }
+
+        function applyTheme() {
+            const theme = localStorage.getItem('vail_theme') || 'system';
+            const html = document.documentElement;
+            if (theme === 'system') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                html.classList.toggle('dark', prefersDark);
+            } else {
+                html.classList.toggle('dark', theme === 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('vail_theme') || 'system';
+            let nextTheme;
+            if (currentTheme === 'light') nextTheme = 'dark';
+            else if (currentTheme === 'dark') nextTheme = 'system';
+            else nextTheme = 'light';
+            localStorage.setItem('vail_theme', nextTheme);
+            applyTheme();
+        }
+
+        // Set current date
+        const now = new Date();
+        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        document.getElementById('current-date').innerText = `${months[now.getMonth()]} ${now.getFullYear()}`;
+
+        applyTheme();
+    </script>
+</body>
+
+</html>

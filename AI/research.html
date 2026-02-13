@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RESEARCH | OLM</title>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+
+    <!-- External Resources -->
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <style>
+        :root {
+            --accent-color: #3b82f6;
+            --chatbg-light: #ffffff;
+            --chatbg-dark: #09090b;
+        }
+
+        /* Fixed dark mode backgrounds and text colors */
+        html {
+            background-color: var(--chatbg-light);
+            transition: background-color 0.3s ease;
+        }
+
+        html.dark {
+            background-color: var(--chatbg-dark);
+        }
+
+        body {
+            background-color: transparent;
+            color: #1a1a1b;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: color 0.3s ease;
+        }
+
+        .dark body {
+            color: #f4f4f5;
+            /* zinc-100 */
+        }
+
+        .header-island {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 9999px;
+            padding: 2px 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 38px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+        }
+
+        .dark .header-island {
+            background: rgba(39, 39, 42, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .article-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid transparent;
+            padding: 40px 32px;
+            cursor: pointer;
+            position: relative;
+            border-radius: 24px;
+            margin: 0 -32px;
+        }
+
+        .article-card:hover {
+            transform: scale(1.01);
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .article-card {
+            border-color: transparent;
+        }
+
+        .dark .article-card:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        #reader-modal {
+            display: none;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        #reader-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            transform: translateY(40px) scale(0.98);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #reader-modal.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-body::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .article-container {
+            width: 95%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1024px) {
+            .article-container {
+                width: 60%;
+            }
+        }
+
+        /* Rich Content Support */
+        .rich-content h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .rich-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .rich-content p {
+            margin-bottom: 1.25rem;
+            line-height: 1.8;
+            color: inherit;
+        }
+
+        .rich-content ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .rich-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .rich-content b,
+        .rich-content strong {
+            font-weight: 800;
+        }
+
+        /* Image Alignment in Feed */
+        .editor-image-container {
+            display: block;
+            margin: 2rem 0;
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .editor-image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .editor-image-container.float-left {
+            float: left;
+            width: 45%;
+            margin-right: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .editor-image-container.float-right {
+            float: right;
+            width: 45%;
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .editor-image-container.inline {
+            width: 100%;
+        }
+
+        .image-controls {
+            display: none !important;
+        }
+
+        /* Hide editor controls on research page */
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full overflow-y-auto no-scrollbar">
+    <!-- Header -->
+    <header class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none sticky top-0">
+        <div class="flex items-center gap-2 pointer-events-auto">
+            <div class="header-island">
+                <a href="chat.html"
+                    class="flex items-center gap-2 px-3 py-1.5 text-xs lg:text-[13px] font-bold tracking-tight text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-all">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span class="hidden sm:inline">Back</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 pointer-events-auto">
+            <div class="header-island pr-2">
+                <div
+                    class="pl-4 h-full flex items-center justify-center text-black dark:text-white font-bold text-xs lg:text-[13px] tracking-tight">
+                    OLM Research
+                </div>
+                <div class="w-px h-1/2 bg-zinc-200 dark:bg-zinc-800 mx-2"></div>
+                <button onclick="toggleTheme()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black dark:text-white">
+                    <i class="fa-solid fa-circle-half-stroke text-[13px]"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="article-container pb-32">
+        <!-- Search and Filter Section -->
+        <div class="mt-8 mb-12 flex flex-col gap-6 animate-fade-in" style="animation-delay: 0.1s">
+            <div class="relative group">
+                <div
+                    class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-blue-500 transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input type="text" id="article-search" placeholder="Search research papers..."
+                    class="w-full bg-black/5 dark:bg-white/5 border border-transparent focus:border-blue-500/30 rounded-2xl py-4 pl-12 pr-4 outline-none transition-all text-sm font-medium tracking-tight"
+                    oninput="handleSearch()">
+            </div>
+
+            <!-- Tag Filter Island -->
+            <div class="flex flex-wrap gap-2" id="tag-cloud">
+                <!-- Tags injected via JS -->
+            </div>
+        </div>
+
+        <div id="article-feed" class="divide-y divide-zinc-100 dark:divide-zinc-800/50">
+            <!-- Articles will be rendered here -->
+        </div>
+    </main>
+
+    <!-- Immersive Reader Modal -->
+    <div id="reader-modal"
+        class="fixed inset-0 z-[200] flex items-center justify-center p-4 lg:p-8 backdrop-blur-2xl bg-white/40 dark:bg-black/40">
+        <div
+            class="modal-content w-full max-w-4xl max-h-[90vh] bg-white dark:bg-zinc-900 rounded-[32px] shadow-2xl overflow-hidden flex flex-col relative">
+            <button onclick="closeReader()"
+                class="absolute top-6 right-6 z-[10] w-10 h-10 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-black dark:hover:text-white transition-all hover:rotate-90">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-body overflow-y-auto p-8 lg:p-16 h-full">
+                <!-- Content injected via JS -->
+                <div id="modal-article-content" class="max-w-2xl mx-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_BLOGS = [];
+
+        let selectedTags = new Set();
+        let searchQuery = '';
+
+        function applyTheme() {
+            const theme = localStorage.getItem('vail_theme') || 'system';
+            const html = document.documentElement;
+
+            if (theme === 'system') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                html.classList.toggle('dark', prefersDark);
+            } else {
+                html.classList.toggle('dark', theme === 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('vail_theme') || 'system';
+            let nextTheme;
+            if (currentTheme === 'light') nextTheme = 'dark';
+            else if (currentTheme === 'dark') nextTheme = 'system';
+            else nextTheme = 'light';
+            localStorage.setItem('vail_theme', nextTheme);
+            applyTheme();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('article-search').value.toLowerCase();
+            renderBlogs();
+        }
+
+        function toggleTag(tag) {
+            if (selectedTags.has(tag)) {
+                selectedTags.delete(tag);
+            } else {
+                selectedTags.add(tag);
+            }
+            renderBlogs();
+            renderTagCloud();
+        }
+
+        function renderTagCloud() {
+            const cloud = document.getElementById('tag-cloud');
+            const tags = [
+                { name: 'Architecture', color: 'blue' },
+                { name: 'Core Logic', color: 'red' },
+                { name: 'UX/Design', color: 'emerald' },
+                { name: 'Hardware', color: 'amber' }
+            ];
+
+            cloud.innerHTML = tags.map(tag => {
+                const isActive = selectedTags.has(tag.name);
+                const twColor = tag.color;
+
+                return `
+                    <button onclick="toggleTag('${tag.name}')" 
+                        class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${isActive
+                        ? `bg-${twColor}-500 text-white shadow-lg shadow-${twColor}-500/30 scale-105`
+                        : `bg-black/5 dark:bg-white/5 text-${twColor}-500 hover:bg-black/10 dark:hover:bg-white/10`
+                    }">
+                        ${tag.name}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderBlogs() {
+            const feed = document.getElementById('article-feed');
+            if (!feed) return;
+
+            const customBlogs = JSON.parse(localStorage.getItem('olm_blogs') || '[]');
+            const allBlogs = [...customBlogs, ...DEFAULT_BLOGS];
+
+            const filteredLines = allBlogs.filter(blog => {
+                const matchesSearch = blog.title.toLowerCase().includes(searchQuery) ||
+                    (blog.content && blog.content.toLowerCase().includes(searchQuery));
+
+                const blogTags = (blog.tags || []).map(t => typeof t === 'string' ? t : t.name);
+                const matchesTags = selectedTags.size === 0 || Array.from(selectedTags).every(t => blogTags.includes(t));
+
+                return matchesSearch && matchesTags;
+            });
+
+            if (filteredLines.length === 0) {
+                feed.innerHTML = `
+                    <div class="py-24 text-center animate-fade-in">
+                        <i class="fa-solid fa-folder-open text-3xl text-zinc-200 dark:text-zinc-800 mb-4"></i>
+                        <p class="text-zinc-400 text-sm font-medium">404.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            feed.innerHTML = filteredLines.map((blog, i) => {
+                const tagsRaw = blog.tags || [{ name: blog.category || 'Research', color: 'blue' }];
+                const tagsHtml = tagsRaw.map(t => {
+                    const tagObj = typeof t === 'string' ? { name: t, color: 'blue' } : t;
+                    const colorMap = { blue: 'blue', red: 'red', green: 'emerald', yellow: 'amber' };
+                    const twColor = colorMap[tagObj.color] || 'blue';
+                    return `<span class="text-[10px] font-black uppercase tracking-[0.2em] text-${twColor}-500">${tagObj.name}</span>`;
+                }).join('');
+
+                return `
+                    <article class="article-card animate-fade-in group" style="animation-delay: ${i * 0.05}s" onclick="openReader('${blog.id}')">
+                        <div class="flex items-center justify-between mb-8">
+                            <div class="flex gap-2">
+                                ${tagsHtml}
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="text-[10px] font-bold text-zinc-400 opacity-60">${blog.date || 'RECENT'}</span>
+                            </div>
+                        </div>
+                        <h1 class="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 mb-8">${blog.title}</h1>
+                        <div class="rich-content line-clamp-3">
+                            ${blog.content}
+                        </div>
+                        <div class="mt-12 flex items-center gap-2 text-blue-500 text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-70 transition-opacity">
+                            <span>Read full paper</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function openReader(id) {
+            const customBlogs = JSON.parse(localStorage.getItem('olm_blogs') || '[]');
+            const allBlogs = [...customBlogs, ...DEFAULT_BLOGS];
+            const blog = allBlogs.find(b => b.id === id);
+
+            if (!blog) return;
+
+            const tagsRaw = blog.tags || [{ name: blog.category || 'Research', color: 'blue' }];
+            const tagsHtml = tagsRaw.map(t => {
+                const tagObj = typeof t === 'string' ? { name: t, color: 'blue' } : t;
+                const colorMap = { blue: 'blue', red: 'red', green: 'emerald', yellow: 'amber' };
+                const twColor = colorMap[tagObj.color] || 'blue';
+                return `<span class="text-[10px] font-black uppercase tracking-[0.2em] text-${twColor}-500">${tagObj.name}</span>`;
+            }).join('');
+
+            const contentHtml = `
+                <div class="flex gap-2 mb-8">${tagsHtml}</div>
+                <div class="text-xs font-bold text-zinc-400 mb-4 uppercase tracking-widest">${blog.date || 'RECENT'}</div>
+                <h1 class="text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-100 mb-12 leading-[1.1]">${blog.title}</h1>
+                <div class="rich-content text-lg lg:text-xl leading-relaxed text-zinc-800 dark:text-zinc-200">
+                    ${blog.content}
+                </div>
+            `;
+
+            document.getElementById('modal-article-content').innerHTML = contentHtml;
+            const modal = document.getElementById('reader-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+            document.body.style.overflow = 'hidden';
+
+            // Close on background click
+            modal.onclick = (e) => {
+                if (e.target === modal) closeReader();
+            };
+        }
+
+        function closeReader() {
+            const modal = document.getElementById('reader-modal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 500);
+        }
+
+        function deletePost(id) {
+            // Logic moved to management page
+        }
+
+        applyTheme();
+        renderTagCloud();
+        renderBlogs();
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if ((localStorage.getItem('vail_theme') || 'system') === 'system') applyTheme();
+        });
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'vail_theme') applyTheme();
+            if (e.key === 'olm_blogs') {
+                renderBlogs();
+                renderTagCloud();
+            }
+        });
+    </script>
+</body>
+
+</html>
