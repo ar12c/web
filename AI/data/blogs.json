@@ -1,0 +1,19 @@
+[
+    {
+        "id": "1771168324277",
+        "title": "Scaling Through Training.",
+        "tags": [
+            {
+                "name": "Architecture",
+                "color": "blue"
+            },
+            {
+                "name": "Hardware",
+                "color": "yellow"
+            }
+        ],
+        "content": "<div>Recently on OLM's training, I found out you could scale the model as the knowledge keeps increasing, with a larger brain size, increasing model from 256M to 500M.</div>",
+        "date": "FEB 2026",
+        "isRich": true
+    }
+]

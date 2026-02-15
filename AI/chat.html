@@ -1584,6 +1584,7 @@
         </div>
     </main>
 
+    <script src="updatenotes.js"></script>
     <script type="module">
             (async function () {
                 if (window.__OLM_INITIALIZED__) return;
@@ -1596,7 +1597,7 @@
 
                 const MODELS = {
                     OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM Stargaze", icon: UNIQUE_SVG_STAR },
-                    OLM2: { id: "ar12c/OkemoLLM", name: "OLM North Star", icon: UNIQUE_SVG_NORTH }
+                    OLM2: { id: "http://127.0.0.1:7860", name: "OLM North Star", icon: UNIQUE_SVG_NORTH }
                 };
 
                 const translations = {
@@ -1722,18 +1723,6 @@
                 let currentModel = MODELS.OLM2;
                 let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
                 let currentChatId = crypto.randomUUID();
-
-                const BUILD_NUMBER = 1002;
-                const CHANGELOG = {
-                    version: "1.0.2",
-                    build: BUILD_NUMBER,
-                    changes: [
-                        "Added sidebar search for chats",
-                        "Refined user icon rendering for better symmetry",
-                        "Implemented automatic changelog popups",
-                        "New hidden build management page for developers"
-                    ]
-                };
 
                 // Typing effect variables
                 let streamQueue = "";
@@ -2745,15 +2734,58 @@
                     });
                 };
 
-                const save = () => {
+                const save = async () => {
                     if (!chatHistory.length) return;
-                    allChats[currentChatId] = { id: currentChatId, title: chatHistory[0][0].substring(0, 30), history: chatHistory, timestamp: Date.now(), pinned: allChats[currentChatId]?.pinned || false };
+                    const cleanTitle = chatHistory[0][0].substring(0, 50);
+                    allChats[currentChatId] = {
+                        id: currentChatId,
+                        title: cleanTitle,
+                        history: chatHistory,
+                        timestamp: Date.now(),
+                        pinned: allChats[currentChatId]?.pinned || false
+                    };
                     localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
                     renderHistory();
                     window.updateStorageUsage();
+
                     // Sync to Google Drive if signed in
                     if (isGoogleSignedIn) {
                         window.syncChatsToGoogle();
+                    }
+
+                    // Local Sync to blogs.json
+                    try {
+                        const { Client } = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
+                        const client = await Client.connect("http://127.0.0.1:7860");
+
+                        // Fetch current blogs.json to merge
+                        let fileBlogs = [];
+                        try {
+                            const response = await fetch('data/blogs.json');
+                            if (response.ok) fileBlogs = await response.json();
+                        } catch (e) { console.warn("Could not fetch blogs.json for sync", e); }
+
+                        // Create a blog-formatted entry for this chat
+                        const chatBlogEntry = {
+                            id: "chat_" + currentChatId,
+                            title: "Chat: " + cleanTitle,
+                            tags: [{ name: 'Chat', color: 'blue' }],
+                            content: chatHistory.map(h => `**User:** ${h[0]}\n\n**Assistant:** ${h[1]}`).join('\n\n---\n\n'),
+                            date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase(),
+                            isRich: true,
+                            isChat: true
+                        };
+
+                        // Remove old version of this chat if exists
+                        fileBlogs = fileBlogs.filter(b => b.id !== chatBlogEntry.id);
+                        fileBlogs.unshift(chatBlogEntry);
+
+                        await client.predict("/save_blogs", {
+                            json_content: JSON.stringify(fileBlogs)
+                        });
+                        console.log("Chat persisted to local blogs.json");
+                    } catch (err) {
+                        console.error("Local file sync failed:", err);
                     }
                 };
 
@@ -3194,43 +3226,7 @@
                     }
 
                     renderHistory(); render(); updateUI();
-
-                    const checkChangelog = () => {
-                        const lastSeen = parseInt(localStorage.getItem('vail_last_seen_build') || '0');
-                        const remoteBuild = parseInt(localStorage.getItem('vail_remote_build') || BUILD_NUMBER.toString());
-
-                        if (remoteBuild > lastSeen) {
-                            window.showChangelog();
-                        }
-                    };
-
-                    window.showChangelog = (manual = false) => {
-                        const modal = document.getElementById('changelog-modal');
-                        if (!modal) return;
-
-                        const content = document.getElementById('changelog-content');
-                        const buildNum = localStorage.getItem('vail_remote_build') || BUILD_NUMBER;
-                        const changes = JSON.parse(localStorage.getItem('vail_remote_changelog') || JSON.stringify(CHANGELOG.changes));
-
-                        const verEl = document.getElementById('changelog-version');
-                        if (verEl) verEl.innerText = `Build ${buildNum}`;
-                        if (content) content.innerHTML = changes.map(change => `<li class="flex items-start gap-3 text-sm text-zinc-600 dark:text-zinc-400">
-                            <i class="fa-solid fa-circle-check text-[var(--accent-color)] mt-1 shrink-0"></i>
-                            <span>${change}</span>
-                        </li>`).join('');
-
-                        modal.classList.add('active');
-                        if (!manual) {
-                            localStorage.setItem('vail_last_seen_build', buildNum);
-                        }
-                    };
-
-                    window.closeChangelog = () => {
-                        const modal = document.getElementById('changelog-modal');
-                        if (modal) modal.classList.remove('active');
-                    };
-
-                    setTimeout(checkChangelog, 1000);
+                    setTimeout(window.checkChangelog, 1000);
                 };
 
                 if (document.readyState === 'loading') {

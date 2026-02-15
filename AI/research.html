@@ -240,6 +240,7 @@
             }
         }
     </style>
+    <script src="updatenotes.js"></script>
 </head>
 
 <body class="h-full overflow-y-auto no-scrollbar">
@@ -310,11 +311,13 @@
         </div>
     </div>
 
+    <script src="updatenotes.js"></script>
     <script>
         const DEFAULT_BLOGS = [];
 
         let selectedTags = new Set();
         let searchQuery = '';
+
 
         function applyTheme() {
             const theme = localStorage.getItem('vail_theme') || 'system';
@@ -378,12 +381,24 @@
             }).join('');
         }
 
-        function renderBlogs() {
+        async function renderBlogs() {
             const feed = document.getElementById('article-feed');
             if (!feed) return;
 
+            let defaultBlogs = [];
+            try {
+                const response = await fetch('data/blogs.json');
+                defaultBlogs = await response.json();
+            } catch (e) {
+                console.error("Failed to load blogs.json", e);
+            }
+
             const customBlogs = JSON.parse(localStorage.getItem('olm_blogs') || '[]');
-            const allBlogs = [...customBlogs, ...DEFAULT_BLOGS];
+
+            // Deduplicate by ID (LocalStorage wins)
+            const blogMap = new Map();
+            [...defaultBlogs, ...customBlogs].forEach(blog => blogMap.set(blog.id, blog));
+            const allBlogs = Array.from(blogMap.values()).reverse();
 
             const filteredLines = allBlogs.filter(blog => {
                 const matchesSearch = blog.title.toLowerCase().includes(searchQuery) ||
@@ -489,6 +504,7 @@
         applyTheme();
         renderTagCloud();
         renderBlogs();
+        setTimeout(window.checkChangelog, 1000);
 
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             if ((localStorage.getItem('vail_theme') || 'system') === 'system') applyTheme();
