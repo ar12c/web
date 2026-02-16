@@ -1,12 +1,9 @@
 const BUILD_NUMBER = 1002;
 const CHANGELOG = {
-    version: "1.0.2",
+    version: "1.0.3",
     build: BUILD_NUMBER,
     changes: [
-        "Added sidebar search for chats",
-        "Refined user icon rendering for better symmetry",
-        "Implemented automatic changelog popups",
-        "New hidden build management page for developers"
+        "OLM North Star has been updated to 1.1"
     ]
 };
 
