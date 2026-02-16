@@ -607,6 +607,10 @@
         }
 
         .thought-header {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 0;
             font-size: 0.65rem;
             font-weight: 800;
             color: #a1a1aa;
@@ -621,6 +625,7 @@
             cursor: pointer;
             /* Clickable again */
             transition: color 0.2s;
+            text-align: left;
         }
 
         .thought-header:hover {
@@ -1583,8 +1588,6 @@
 
         <div id="intelligence-flare"></div>
 
-        <div id="intelligence-flare"></div>
-
         <header
             class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none sticky top-0">
             <!-- Left: Sidebar Toggle (Mobile) -->
@@ -1651,7 +1654,7 @@
             <div class="w-full max-w-3xl mx-auto relative group">
                 <!-- Widened to 3xl -->
                 <div
-                    class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-0 border-zinc-700/50 rounded-2xl relative flex flex-col shadow-lg !overflow-visible">
+                    class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-0 border-zinc-700/50 rounded-2xl relative flex flex-col shadow-lg !overflow-visible pointer-events-auto">
 
                     <div class="relative flex-1">
                         <textarea id="user-input" placeholder="Type something..." rows="1"
