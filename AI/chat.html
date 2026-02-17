@@ -1974,6 +1974,19 @@
             // Initialize
             // window.initChatUI(); // Moved to DOMContentLoaded
 
+            // --- Toggle functions defined BEFORE await so they work on mobile immediately ---
+            let isWebSearch = false;
+            window.toggleSearch = () => {
+                isWebSearch = !isWebSearch;
+                if (typeof updateUI === 'function') updateUI();
+            };
+
+            let isThinkingEnabled = false;
+            window.toggleThinking = () => {
+                isThinkingEnabled = !isThinkingEnabled;
+                if (typeof updateUI === 'function') updateUI();
+            };
+
             const { Client } = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
 
             const UNIQUE_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
@@ -3022,17 +3035,8 @@
                 }
             };
 
-            let isWebSearch = false;
-            window.toggleSearch = () => {
-                isWebSearch = !isWebSearch;
-                updateUI();
-            };
-
-            let isThinkingEnabled = false;
-            window.toggleThinking = () => {
-                isThinkingEnabled = !isThinkingEnabled;
-                updateUI();
-            };
+            // toggleSearch and toggleThinking are defined earlier (before await import)
+            // so they work on mobile before the Gradio client finishes loading
 
             if (window.innerWidth < 1024) {
                 if (settings.hasCompletedTutorial) {
