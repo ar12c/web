@@ -1771,8 +1771,6 @@
         let els = {};
 
         (async function () {
-            if (window.__OLM_INITIALIZED__) return;
-            window.__OLM_INITIALIZED__ = true;
 
             // --- New UI Logic ---
             window.initChatUI = function () {
@@ -3832,6 +3830,13 @@
             } else {
                 window.initChatUI();
             }
+
+            // Re-initialize when page is restored from bfcache (mobile back/forward)
+            window.addEventListener('pageshow', (e) => {
+                if (e.persisted) {
+                    window.initChatUI();
+                }
+            });
         })();
         feather.replace();
     </script>
