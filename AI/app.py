@@ -128,8 +128,12 @@ load_model()
 
 # ================= GENERATION =================
 
-SYSTEM_PROMPT_THINK = "You are OLM North Star, a creative and analytical AI created by OkemoVail. You can think deeply inside <thought> tags, then provide a helpful and natural answer."
-SYSTEM_PROMPT_NO_THINK = "You are OLM North Star, a creative and analytical AI created by OkemoVail. Provide a helpful and natural answer directly."
+
+def get_system_prompt(use_thought):
+    """Selects the appropriate system prompt based on the thought toggle."""
+    if use_thought:
+        return "You are Polaris, a creative and analytical AI created by OkemoVail. You can think deeply inside <thought> tags, then provide a helpful and natural answer."
+    return "You are Polaris, a creative and analytical AI created by OkemoVail. Provide a helpful and natural answer directly."
 
 def extract_text(content):
     """Extract plain text from various Gradio content formats."""
@@ -157,7 +161,7 @@ def stream_chat(message, history, use_thought=True):
     model.eval()
     
     # Select system prompt based on thought toggle
-    instruction = SYSTEM_PROMPT_THINK if use_thought else SYSTEM_PROMPT_NO_THINK
+    instruction = get_system_prompt(use_thought)
     
     # Build prompt with ChatML format
     full_prompt = f"<|im_start|>system\n{instruction}<|im_end|>\n"
@@ -254,8 +258,8 @@ def clear_chat():
     return []
 
 # Simple Blocks interface
-with gr.Blocks(title="OLM North Star") as demo:
-    gr.Markdown("# 🌠 OLM North Star")
+with gr.Blocks(title="Polaris") as demo:
+    gr.Markdown("# 🌠 Polaris")
     
     chatbot = gr.Chatbot(height=500, label="Chat")
     thought_toggle = gr.Checkbox(value=True, visible=False, elem_id="thought-toggle", label="Use Thought")
