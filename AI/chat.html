@@ -38,6 +38,11 @@
             /* Natural off-white */
             --sidebar-bg: #f2f5f0;
             --input-bg: #ffffff;
+            --action-btn-color: #52525b;
+            /* zinc-600 for contrast */
+            --thinking-accent: color-mix(in srgb, var(--accent-color), black 20%);
+            --thinking-side: #94a3b8;
+            /* slate-400 */
         }
 
         .dark {
@@ -47,6 +52,11 @@
             --input-bg: #33302c;
             --fade-color: #23211f;
             --fade-gradient-stop: #23211f;
+            --action-btn-color: #e4e4e7;
+            /* zinc-200 for contrast */
+            --thinking-accent: color-mix(in srgb, var(--accent-color), white 35%);
+            --thinking-side: #4b5563;
+            /* gray-600 */
         }
 
         /* Chat Empty State */
@@ -683,10 +693,9 @@
 
         .thinking-text-gradient {
             font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-            /* Serif Font */
             font-size: 0.875rem;
             font-weight: 600;
-            background: linear-gradient(90deg, #9ca3af 0%, #111827 50%, #9ca3af 100%);
+            background: linear-gradient(90deg, var(--thinking-side) 0%, var(--thinking-accent) 50%, var(--thinking-side) 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -695,7 +704,7 @@
         }
 
         .dark .thinking-text-gradient {
-            background: linear-gradient(90deg, #4b5563 0%, #f9fafb 50%, #4b5563 100%);
+            background: linear-gradient(90deg, var(--thinking-side) 0%, var(--thinking-accent) 50%, var(--thinking-side) 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -1672,13 +1681,13 @@
                         <!-- Left: Web Search + Thought -->
                         <div class="flex items-center gap-1">
                             <button id="web-search-btn" onclick="window.toggleSearch()"
-                                class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer">
+                                class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer">
                                 <i data-feather="globe" class="w-4 h-4"></i>
                                 <span class="hidden sm:inline">Search</span>
                             </button>
 
                             <button id="thought-btn" onclick="window.toggleThinking()"
-                                class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer">
+                                class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" class="w-4 h-4">
@@ -1688,7 +1697,7 @@
                                     <path d="M9 21h6"></path>
                                     <path d="M12 21v1"></path>
                                 </svg>
-                                <span id="thought-btn-text" class="hidden sm:inline">Thought</span>
+                                <span id="thought-btn-text" class="hidden sm:inline">Think</span>
                             </button>
                         </div>
 
@@ -1697,7 +1706,7 @@
                             <!-- Model Selector Wrapper -->
                             <div class="relative z-50">
                                 <button id="model-selector-input" onclick="window.toggleMenu(event, 'model-menu-input')"
-                                    class="flex items-center gap-1.5 px-2 py-1 rounded text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors">
+                                    class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer">
                                     <div id="current-model-icon"
                                         class="w-3.5 h-3.5 text-current flex items-center justify-center">
                                         <svg class="w-full h-full stroke-[2px] stroke-current fill-none"
@@ -2004,9 +2013,16 @@
             const UNIQUE_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
             const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
 
+            // ================= CONFIGURATION =================
+            // Custom Backend URL from LocalStorage or override
+            // Default to user's specified ngrok URL
+            const CUSTOM_BACKEND_URL = localStorage.getItem('vail_custom_backend_url') || "https://uninnovating-kase-rebukingly.ngrok-free.dev";
+            // =============================================
+
             const MODELS = {
                 OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", icon: UNIQUE_SVG_STAR },
-                OLM2: { id: "ar12c/OkemoLLM", name: "Polaris 1.2", icon: UNIQUE_SVG_NORTH }
+                // Strictly use the configured backend URL for OLM2/Polaris
+                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.2", icon: UNIQUE_SVG_NORTH }
             };
 
             const translations = {
@@ -2070,7 +2086,7 @@
                     dust_collecting_header: "Dust Collecting",
                     discord_btn: "Latest developments",
                     language: "Language",
-                    thought_btn: "Thought"
+                    thought_btn: "Think"
                 },
                 zh: {
                     welcome_header: "有什麼我可以幫您的？",
@@ -2132,7 +2148,7 @@
                     dust_collecting_header: "陳年舊帳",
                     discord_btn: "最新開發動態",
                     language: "語言",
-                    thought_btn: "思考模式"
+                    thought_btn: "思考"
                 }
             };
 
@@ -2157,7 +2173,25 @@
             let streamQueue = "";
             let displayedContent = "";
             let typeInterval = null;
-            const TYPE_SPEED_MS = 50; // 50ms per character
+            const TYPE_SPEED_MS = 1; // ~3.5 chars/sec
+            let currentGenerationIsSearch = false;
+
+            // Expose debug function
+            window.debugConnection = async () => {
+                const url = currentModel.id + "/config";
+                console.log("Testing connection to config:", url);
+                try {
+                    const res = await fetch(url);
+                    console.log("Config fetch Status:", res.status);
+                    const text = await res.text();
+                    console.log("Config response preview:", text.substring(0, 100));
+                    if (res.ok) alert("Connection Successful! Check console for details.");
+                    else alert("Connection Failed with status: " + res.status);
+                } catch (e) {
+                    console.error("Connection Debug Error:", e);
+                    alert("Connection Failed: " + e.message);
+                }
+            };
 
             // Google API configuration
             const GOOGLE_CLIENT_ID = '937870221827-2l21bkkuhn0uo7nsco258484duv29rag.apps.googleusercontent.com';
@@ -2175,7 +2209,7 @@
                 lang: 'en',
                 sidebarMode: 'manual', // 'manual' or 'smart'
                 customAccents: [],
-                systemPrompt: 'You are VAIL, a helpful assistant. ALWAYS wrap ALL mathematical formulas strictly in $$ tags only.'
+                systemPrompt: 'You are Polaris, an AI assistant made by OkemoVail. ALWAYS wrap ALL mathematical formulas strictly in $$ tags only.'
             }));
 
             // Ensure newer settings keys exist for older localStorage payloads
@@ -2283,6 +2317,36 @@
             window.initChatUI = function () {
                 originalInit();
                 initLangButtons();
+
+                // Init settings input
+                const urlInput = document.getElementById('settings-backend-url');
+                if (urlInput) {
+                    urlInput.value = localStorage.getItem('vail_custom_backend_url') || "";
+                }
+                const sysPromptInput = document.getElementById('settings-system-prompt');
+                if (sysPromptInput) {
+                    sysPromptInput.value = settings.systemPrompt || "";
+                }
+            };
+
+            window.updateBackendUrlFromPanel = (val) => {
+                const cleanVal = val.trim().replace(/\/$/, ""); // Remove trailing slash
+                if (cleanVal) {
+                    localStorage.setItem('vail_custom_backend_url', cleanVal);
+                    // Update current model immediately if it was using dynamic
+                    // But simpler to just reload to ensure everything binds correctly
+                    if (confirm("Backend URL updated. Reload to apply?")) {
+                        window.location.reload();
+                    }
+                } else {
+                    localStorage.removeItem('vail_custom_backend_url');
+                    window.location.reload();
+                }
+            };
+
+            window.updateSystemPromptFromPanel = (val) => {
+                settings.systemPrompt = val;
+                saveSettings();
             };
 
             // Google Authentication Functions
@@ -3129,7 +3193,7 @@
                 window.updateStorageUsage();
             };
 
-            async function getGradioClient() { if (client) return client; client = await Client.connect(currentModel.id); return client; }
+            async function getGradioClient() { if (client) return client; client = await Client.connect(currentModel.id, { headers: { "ngrok-skip-browser-warning": "true" } }); return client; }
 
             window.handleAction = () => {
                 if (isGenerating) {
@@ -3147,7 +3211,7 @@
                 els.flare.classList.add('flare-active');
             };
 
-            window.sendMessage = async (txt = null) => {
+            window.sendMessage = async (txt = null, forceSearch = false) => {
                 console.log("sendMessage called, isGenerating:", isGenerating);
                 if (isGenerating) {
                     console.log("Blocked: still generating");
@@ -3162,20 +3226,27 @@
                     displayMsg = displayMsg.substring(8).trim();
                 }
 
-                // Prepend /search if in web search mode
-                if (isWebSearch && !msg.startsWith('/search')) {
-                    msg = '/search ' + msg;
-                }
+                // Removed legacy /search prepend logic as isWebSearch is now passed directly
+
 
                 window.triggerFlare();
+                if (typeInterval) {
+                    clearInterval(typeInterval);
+                    typeInterval = null;
+                }
+                streamQueue = "";
+                displayedContent = "";
                 els.input.value = ""; els.input.style.height = "auto";
 
                 // Init typing vars
-                streamQueue = "";
-                displayedContent = "";
+                // Debug log
+                console.log("Attempting to connect to:", currentModel.id);
+
                 let lastProse = null;
 
-                chatHistory.push([displayMsg, null]); render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+                chatHistory.push([displayMsg, null]);
+                currentGenerationIsSearch = isWebSearch || forceSearch;
+                render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
                 isGenerating = true; updateUI();
                 window.toggleSendIcon('stop');
                 try {
@@ -3185,8 +3256,8 @@
                     // Prepare history for Gradio Chatbot format (content must be a list of parts)
                     const formattedHistory = [];
                     for (const [u, a] of chatHistory.slice(0, -1)) {
-                        formattedHistory.push({ role: "user", content: [{ type: "text", text: u }] });
-                        if (a) formattedHistory.push({ role: "assistant", content: [{ type: "text", text: a }] });
+                        formattedHistory.push({ role: "user", content: u });
+                        if (a) formattedHistory.push({ role: "assistant", content: a });
                     }
 
                     const finalMsg = msg;
@@ -3194,11 +3265,16 @@
                     console.log("Calling /chat with message:", finalMsg, "history length:", formattedHistory.length);
 
                     // Streaming call
-                    const job = c.submit("/chat", {
-                        message: finalMsg,
-                        history: formattedHistory,
-                        use_thought: isThinkingEnabled
-                    });
+                    // Streaming call
+                    // IMPORTANT: Pass arguments as an array [msg, history, use_thought, web_search]
+                    // corresponding to the inputs of the 'chat' function in main.py
+                    const job = c.submit("/chat", [
+                        finalMsg,          // message
+                        formattedHistory,  // history
+                        isThinkingEnabled, // use_thought
+                        isWebSearch || forceSearch, // search_toggle
+                        settings.systemPrompt || "" // system_prompt
+                    ]);
 
                     currentJob = job;
 
@@ -3211,6 +3287,7 @@
                         }
 
                         // Process data events
+                        console.log("Stream event received:", event.type);
                         const chunk = event?.data || event;
                         if (chunk?.[0]) {
                             const newHistory = chunk[0];
@@ -3218,7 +3295,10 @@
 
                             // Get assistant's current content - handle various formats
                             let responseText = "";
-                            if (lastMsg?.role === "assistant") {
+                            if (Array.isArray(lastMsg) && lastMsg.length === 2) {
+                                // Handle Tuple [user, assistant]
+                                responseText = lastMsg[1] || "";
+                            } else if (lastMsg?.role === "assistant") {
                                 const content = lastMsg.content;
                                 if (typeof content === 'string') {
                                     responseText = content;
@@ -3287,7 +3367,7 @@
                                     const containerHtml = `
                                     <div class="thought-container">
                                         <div class="thought-header" onclick="window.toggleThought(this)">
-                                            <span>Hmmmm.</span>
+                                            <span>${isWebSearch ? "Surfing the web..." : "Hmmmm."}</span>
                                             <i data-feather="chevron-down" class="w-3 h-3 transition-transform duration-200 chevron-icon"></i>
                                             <span id="thought-timer-${chatHistory.length - 1}" class="text-[0.6rem] font-mono opacity-50 ml-2"></span>
                                         </div>
@@ -3329,10 +3409,14 @@
                             if (!typeInterval) {
                                 typeInterval = setInterval(() => {
                                     if (displayedContent.length < streamQueue.length) {
-                                        const charsToAdd = Math.floor(Math.random() * 2) + 1; // 1-2 chars randomly
+                                        const charsToAdd = 1;
                                         displayedContent = streamQueue.substring(0, displayedContent.length + charsToAdd);
                                         lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                                         if (lastProse) {
+                                            // Remove thinking placeholder if it exists
+                                            const thinkingPlaceholder = lastProse.querySelector('.thinking-container');
+                                            if (thinkingPlaceholder) thinkingPlaceholder.remove();
+
                                             let mainContentDiv = lastProse.querySelector('.main-response-content');
                                             if (!mainContentDiv) {
                                                 mainContentDiv = document.createElement('div');
@@ -3355,14 +3439,6 @@
                     }
 
                     console.log("Stream loop complete");
-                } catch (e) {
-                    if (e.message !== "The user cancelled the request.") {
-                        console.error("Chat error:", e);
-                        chatHistory[chatHistory.length - 1][1] = `${translations[settings.lang || 'en'].prompt_error}${e.message}`;
-                        render();
-                    }
-                }
-                finally {
                     // Wait for typewriter to finish revealing all buffered content
                     await new Promise(resolve => {
                         const waitForTyping = setInterval(() => {
@@ -3372,8 +3448,14 @@
                             }
                         }, TYPE_SPEED_MS);
                     });
-                    if (typeInterval) { clearInterval(typeInterval); typeInterval = null; }
+                    if (typeInterval) {
+                        clearInterval(typeInterval);
+                        typeInterval = null;
+                    }
+                    isGenerating = false;
+                    updateUI();
                     window.toggleSendIcon('send');
+                    console.log("Generation finished successfully");
                     document.querySelectorAll('.typing-cursor').forEach(c => c.remove());
                     lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                     if (lastProse && chatHistory[chatHistory.length - 1][1]) {
@@ -3390,7 +3472,7 @@
                             const thoughtHtml = `
                             <div class="thought-container">
                                 <div class="thought-header" onclick="window.toggleThought(this)">
-                                    <span>Hmmmm.</span>
+                                    <span>${isWebSearch ? "Surfing the web..." : "Hmmmm."}</span>
                                     <i data-feather="chevron-down" class="w-3 h-3 transition-transform duration-200 chevron-icon"></i>
                                     <span class="text-[0.6rem] font-mono opacity-50 ml-2">${duration}</span>
                                 </div>
@@ -3422,7 +3504,8 @@
                         actionRow.innerHTML = `
                             <div class="flex items-center gap-4">
                                 <button onclick="window.copyMsg(${chatHistory.length - 1}, this)" class="opacity-70 hover:opacity-100 transition-all" style="color: var(--accent-color)"><i data-feather="copy" class="w-4 h-4"></i></button>
-                                <button onclick="window.regenMsg(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
+                                <button onclick="window.regenMsg(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
+                                <button onclick="window.regenMsgWithSearch(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate with Web Search"><i data-feather="globe" class="w-4 h-4"></i></button>
                             </div>
                             <div class="hallucination-disclaimer">OLMs are prone to hallucinations, please double check.</div>
                         `;
@@ -3431,10 +3514,24 @@
                     }
                     currentJob = null;
                     client = null; // Force fresh connection for next message
-                    isGenerating = false;
                     console.log("Generation complete, ready for next message");
                     render();
+
                     updateUI();
+                } catch (e) {
+                    console.error("Chat Error:", e);
+                    if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1][1] === null) {
+                        chatHistory[chatHistory.length - 1][1] = "⚠️ Connection Error. Please verify main.py is running.";
+                    }
+                    render();
+                } finally {
+                    isGenerating = false;
+                    updateUI();
+                    window.toggleSendIcon('send');
+                    if (typeInterval) {
+                        clearInterval(typeInterval);
+                        typeInterval = null;
+                    }
                     save();
                 }
             };
@@ -3495,6 +3592,15 @@
             };
 
             window.regenMsg = (idx) => { if (!isGenerating) { const msg = chatHistory[idx][0]; chatHistory = chatHistory.slice(0, idx); window.sendMessage(msg); } };
+
+            window.regenMsgWithSearch = (idx) => {
+                if (!isGenerating) {
+                    const msg = chatHistory[idx][0];
+                    chatHistory = chatHistory.slice(0, idx);
+                    // Pass forceSearch=true to sendMessage
+                    window.sendMessage(msg, true);
+                }
+            };
 
             window.togglePin = (id) => {
                 if (allChats[id]) {
@@ -3588,7 +3694,7 @@
                 } else {
                     els.chatMsgs.innerHTML = chatHistory.map(([u, a], i) => `
                     <div class="user-row flex flex-col items-end">
-                        <div class="user-msg-bubble prose dark:prose-invert font-medium">${marked.parse(u)}</div>
+                        <div class="user-msg-bubble prose dark:prose-invert font-medium ml-auto text-justify">${marked.parse(u)}</div>
                         <div class="user-msg-actions">
                             <button class="user-msg-action-btn" onclick="window.copyUserMsg(${i}, this)" title="Copy"><i data-feather="copy" class="w-3 h-3"></i></button>
                             <button class="user-msg-action-btn" onclick="window.editMsg(${i})" title="Edit"><i data-feather="edit-2" class="w-3 h-3"></i></button>
@@ -3601,7 +3707,7 @@
                             if (!a) {
                                 return `
                                         <div class="thinking-container">
-                                            <span class="thinking-text-gradient">${dict.thinking}</span>
+                                            <span class="thinking-text-gradient">${currentGenerationIsSearch ? "Surfing the web..." : dict.thinking}</span>
                                         </div>
                                         `;
                             }
@@ -3612,7 +3718,7 @@
                                 html += `
                                          <div class="thought-container">
                                             <div class="thought-header" onclick="window.toggleThought(this)">
-                                                 <span>Hmmmm.</span>
+                                                 <span>${content.includes("Context from Web Search") ? "Surfing the web..." : "Hmmmm."}</span>
                                                  <i data-feather="chevron-down" class="w-3 h-3 transition-transform duration-200 chevron-icon"></i>
                                                  <span class="text-[0.6rem] font-mono opacity-50 ml-2"></span>
                                             </div>
@@ -3629,8 +3735,9 @@
                             ${a && !isGenerating ? `
                             <div class="flex items-center justify-between gap-4 mt-3 w-full animate-fade-in">
                                 <div class="flex items-center gap-4">
-                                    <button onclick="window.copyMsg(${i}, this)" class="opacity-70 hover:opacity-100 transition-all" style="color: var(--accent-color)"><i data-feather="copy" class="w-4 h-4"></i></button>
-                                    <button onclick="window.regenMsg(${i})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
+                                    <button onclick="window.copyMsg(${i}, this)" class="hover:scale-110 transition-all" style="color: var(--action-btn-color)" title="Copy"><i data-feather="copy" class="w-4 h-4"></i></button>
+                                    <button onclick="window.regenMsg(${i})" class="hover:scale-110 transition-all font-bold" style="color: var(--action-btn-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
+                                    <button onclick="window.regenMsgWithSearch(${i})" class="hover:scale-110 transition-all" style="color: var(--action-btn-color)" title="Regenerate with Web Search"><i data-feather="globe" class="w-4 h-4"></i></button>
                                 </div>
                                  <div class="hallucination-disclaimer">OLMs are prone to hallucinations, please double check.</div>
                             </div>` : ''}
@@ -3686,7 +3793,7 @@
                         if (els.input) els.input.placeholder = currentDict.input_placeholder;
                     } else {
                         // Inactive State
-                        els.searchBtn.className = "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-all";
+                        els.searchBtn.className = "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer";
                         els.searchBtn.style.backgroundColor = '';
                         els.searchBtn.style.color = '';
                         const icon = els.searchBtn.querySelector('svg') || els.searchBtn.querySelector('i');
@@ -3703,7 +3810,7 @@
                         thoughtBtn.style.backgroundColor = 'var(--accent-color)';
                         thoughtBtn.style.color = 'var(--accent-contrast)';
                     } else {
-                        thoughtBtn.className = "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-all cursor-pointer";
+                        thoughtBtn.className = "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer";
                         thoughtBtn.style.backgroundColor = '';
                         thoughtBtn.style.color = '';
                     }
@@ -4100,6 +4207,31 @@
                         </div>
                         <span id="settings-max-tokens-val"
                             class="text-[15px] font-mono text-zinc-500 w-12 text-right">256</span>
+                    </div>
+
+                    <div class="apple-list-item items-start pt-3 pb-3">
+                        <span class="text-[15px] font-medium w-1/3 mt-1">System Prompt</span>
+                        <div class="flex-1 flex flex-col px-4">
+                            <textarea id="settings-system-prompt" rows="3"
+                                class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-lg px-3 py-2 text-xs text-zinc-900 dark:text-white placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none"
+                                placeholder="Custom system instructions..."
+                                oninput="window.updateSystemPromptFromPanel(this.value)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="apple-section-title">Connection</div>
+                <div class="apple-list-group">
+                    <div class="apple-list-item">
+                        <div class="flex flex-col w-full">
+                            <span class="text-[15px] font-medium mb-1">Backend URL</span>
+                            <input type="text" id="settings-backend-url"
+                                class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                placeholder="https://... (e.g. ngrok)"
+                                onchange="window.updateBackendUrlFromPanel(this.value)">
+                            <span class="text-[11px] text-zinc-400 mt-1">Leave empty to use default local detection.
+                                Refreshes on change.</span>
+                        </div>
                     </div>
                 </div>
 
