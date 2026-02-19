@@ -61,13 +61,13 @@
 
         /* Chat Empty State */
         body.chat-empty #bottom-fade {
-            top: 50%;
-            bottom: auto;
-            transform: translateY(20%);
-            /* Sit below greeting */
+            bottom: 50%;
+            transform: translateY(60px);
+            /* Position input box below the greeting */
             padding-top: 0;
             background: transparent;
             pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body.chat-empty .input-box-wrap {
@@ -77,12 +77,15 @@
         body.chat-empty #welcome-state {
             opacity: 1;
             pointer-events: auto;
+            transform: translateY(-80px);
+            /* Lift greeting above the center */
         }
 
         body:not(.chat-empty) #welcome-state {
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s ease;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
         /* Typography improvements */
@@ -550,7 +553,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), top 0.5s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .history-btn-container {
@@ -1378,6 +1381,35 @@
         #research-page-overlay.active {
             display: flex;
         }
+
+        #welcome-logo-container {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 24px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #welcome-logo-container svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -1623,6 +1655,8 @@
         <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col relative">
             <div id="welcome-state"
                 class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center animate-fade-in z-0">
+                <!-- Model Logo -->
+                <div id="welcome-logo-container"></div>
                 <!-- Dynamic Greeting -->
                 <div class="mb-1 relative flex items-center justify-center">
 
@@ -1659,13 +1693,13 @@
                     </button>
                 </div>
             </div>
-            <div id="chat-messages" class="w-full max-w-3xl mx-auto flex flex-col pt-4 pb-48 px-4 relative gap-4 z-10">
+            <div id="chat-messages" class="w-full max-w-2xl mx-auto flex flex-col pt-4 pb-48 px-4 relative gap-4 z-10">
             </div>
         </div>
 
         <div id="bottom-fade"
             class="absolute bottom-0 left-0 w-full px-4 sm:px-4 z-40 sm:pb-5 pb-2 pt-12 transition-all duration-500">
-            <div class="w-full max-w-3xl mx-auto relative group">
+            <div class="w-full max-w-2xl mx-auto relative group">
                 <!-- Widened to 3xl -->
                 <div
                     class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-0 border-zinc-700/50 rounded-2xl relative flex flex-col shadow-lg !overflow-visible pointer-events-auto">
@@ -1824,6 +1858,7 @@
                 els.send = document.getElementById("send-btn");
                 els.icon = document.getElementById("send-btn-icon");
                 els.welcome = document.getElementById("welcome-state");
+                els.welcomeLogo = document.getElementById("welcome-logo-container");
                 els.hist = document.getElementById("history-list");
                 els.modMenu = document.getElementById("model-menu-input"); // Updated ID
                 els.noteMenu = document.getElementById("notes-menu");
@@ -3144,6 +3179,11 @@
             window.selectModel = (key) => {
                 currentModel = MODELS[key];
                 client = null;
+
+                // Update Welcome Logo
+                if (els.welcomeLogo) {
+                    els.welcomeLogo.innerHTML = currentModel.icon;
+                }
 
                 // Update UI Label
                 const nameEl = document.getElementById('current-model-name');
