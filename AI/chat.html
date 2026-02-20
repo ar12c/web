@@ -3593,7 +3593,7 @@
                 } catch (e) {
                     console.error("Chat Error:", e);
                     if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1][1] === null) {
-                        chatHistory[chatHistory.length - 1][1] = "⚠️ Connection Error. Please verify main.py is running.";
+                        chatHistory[chatHistory.length - 1][1] = "⚠️ Connection Error. Tell Okemo they're retarded or wait 20 mins for a scheduled restart.";
                     }
                     render();
                 } finally {
