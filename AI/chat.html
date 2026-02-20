@@ -1828,7 +1828,7 @@
                     "Let's build something great, [User].",
                     "The world awaits, [User].",
                     "What shall we explore, [User]?",
-                    "Big 1.3 update",
+                    "Beep Boop",
                     "Welcome back, [User].",
                     "Let's make today count, [User]."
                 ];
@@ -2049,9 +2049,9 @@
             const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
 
             // ================= CONFIGURATION =================
-            // Custom Backend URL from LocalStorage or override
-            // Default to user's specified ngrok URL
-            const CUSTOM_BACKEND_URL = localStorage.getItem('vail_custom_backend_url') || "https://uninnovating-kase-rebukingly.ngrok-free.dev";
+            // Supported: Ngrok, Pinggy (ssh -p 443 -R0:localhost:8000 a.pinggy.io), or Cloudflare
+            const DEFAULT_BACKEND_URL = "https://uninnovating-kase-rebukingly.ngrok-free.dev";
+            const CUSTOM_BACKEND_URL = localStorage.getItem('vail_custom_backend_url') || DEFAULT_BACKEND_URL;
             // =============================================
 
             const MODELS = {
@@ -3235,7 +3235,17 @@
                 window.updateStorageUsage();
             };
 
-            async function getGradioClient() { if (client) return client; client = await Client.connect(currentModel.id, { headers: { "ngrok-skip-browser-warning": "true" } }); return client; }
+            async function getGradioClient() {
+                if (client) return client;
+                client = await Client.connect(currentModel.id, {
+                    headers: {
+                        "ngrok-skip-browser-warning": "true",
+                        "bypass-tunnel-reminder": "true",
+                        "Bypass-Tunnel-Reminder": "true"
+                    }
+                });
+                return client;
+            }
 
             window.handleAction = () => {
                 console.log("handleAction: isGenerating?", isGenerating);
@@ -3591,9 +3601,9 @@
 
                     updateUI();
                 } catch (e) {
-                    console.error("Chat Error:", e);
+                    console.error("Chat Error Detail:", e);
                     if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1][1] === null) {
-                        chatHistory[chatHistory.length - 1][1] = "⚠️ Connection Error. Tell Okemo they're retarded or wait 20 mins for a scheduled restart.";
+                        chatHistory[chatHistory.length - 1][1] = `⚠️ Connection Error. [${e.message || 'Unknown'}] Check if your tunnel is running at ${currentModel.id}`;
                     }
                     render();
                 } finally {
