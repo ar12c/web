@@ -1980,7 +1980,7 @@
                     });
                 }
 
-                if (typeof renderHistory === 'function') renderHistory();
+                // renderHistory() moved to deferred boot sequence
                 if (typeof render === 'function') render();
                 if (typeof updateUI === 'function') updateUI();
 
@@ -2033,7 +2033,7 @@
                 if (typeof updateUI === 'function') updateUI();
             };
 
-            const { Client } = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
+            // Client is now lazily imported
 
             const UNIQUE_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
             const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
@@ -3307,6 +3307,7 @@
             // Legacy Gradio client (kept for backward compatibility)
             async function getGradioClient() {
                 if (client) return client;
+                const { Client } = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
                 client = await Client.connect(currentModel.id, {
                     headers: {
                         "ngrok-skip-browser-warning": "true",
@@ -4094,17 +4095,36 @@
                 }
             };
 
+            // Disable Native Scroll Restoration
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+
             // Initialize StorageController and load chats from IndexedDB
-            const bootApp = async () => {
-                await StorageController.init();
-                try {
-                    allChats = await StorageController.getAllChats();
-                } catch (e) {
-                    console.warn('[Boot] Could not load chats from IndexedDB:', e);
-                    allChats = {};
+            const bootApp = () => {
+                // Prioritize UI Frame
+                if (typeof window.initChatUI === 'function') {
+                    window.initChatUI();
                 }
-                window.initChatUI();
-                checkChangelog();
+
+                // The "Grace Period" Boot Sequence
+                setTimeout(async () => {
+                    await StorageController.init();
+                    try {
+                        allChats = await StorageController.getAllChats();
+                    } catch (e) {
+                        console.warn('[Boot] Could not load chats from IndexedDB:', e);
+                        allChats = {};
+                    }
+
+                    requestAnimationFrame(() => {
+                        if (typeof renderHistory === 'function') {
+                            renderHistory();
+                        }
+                    });
+
+                    checkChangelog();
+                }, 200);
             };
 
             if (document.readyState === 'loading') {
