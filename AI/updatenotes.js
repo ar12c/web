@@ -1,8 +1,9 @@
-const BUILD_NUMBER = 1002;
+const BUILD_NUMBER = 1003;
 const CHANGELOG = {
     version: "1.0.3",
     build: BUILD_NUMBER,
     changes: [
+        "Polaris has been updated to 1.4",
         "OLM North Star has been updated to 1.1"
     ]
 };

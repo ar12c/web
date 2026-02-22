@@ -24,39 +24,34 @@
 
     <style id="dynamic-accent-styles">
         :root {
-            /* Sage/Moss Theme */
-            --accent-color: #BFD7B5;
-            --accent-glow: rgba(191, 215, 181, 0.4);
+            /* Ocean Deep Theme */
+            --accent-color: #6C8EBF;
+            --accent-glow: rgba(108, 142, 191, 0.4);
             --accent-tint: rgba(0, 0, 0, 0);
             --sidebar-tint: rgba(0, 0, 0, 0);
-            --accent-contrast: #1a2e24;
-            --fade-color: #f9fbf8;
-            --fade-gradient-stop: #f9fbf8;
+            --accent-contrast: #f0f4fa;
+            --fade-color: #f5f7fb;
+            --fade-gradient-stop: #f5f7fb;
 
             /* Backgrounds */
-            --bg-color: #f9fbf8;
-            /* Natural off-white */
-            --sidebar-bg: #f2f5f0;
+            --bg-color: #f5f7fb;
+            --sidebar-bg: #edf0f7;
             --input-bg: #ffffff;
             --action-btn-color: #52525b;
-            /* zinc-600 for contrast */
             --thinking-accent: color-mix(in srgb, var(--accent-color), black 20%);
             --thinking-side: #94a3b8;
-            /* slate-400 */
         }
 
         .dark {
-            --accent-color: #5F634F;
-            --bg-color: #262523;
-            --sidebar-bg: #1e1d1b;
-            --input-bg: #33302c;
-            --fade-color: #23211f;
-            --fade-gradient-stop: #23211f;
+            --accent-color: #4A7AB5;
+            --bg-color: #12141a;
+            --sidebar-bg: #1a1c24;
+            --input-bg: #20222c;
+            --fade-color: #12141a;
+            --fade-gradient-stop: #12141a;
             --action-btn-color: #e4e4e7;
-            /* zinc-200 for contrast */
             --thinking-accent: color-mix(in srgb, var(--accent-color), white 35%);
             --thinking-side: #4b5563;
-            /* gray-600 */
         }
 
         /* Chat Empty State */
@@ -784,16 +779,6 @@
             transition: all 0.2s ease;
         }
 
-        .typing-cursor {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: currentColor;
-            margin-left: 4px;
-            animation: blink 1s step-end infinite;
-            vertical-align: middle;
-        }
 
         .hallucination-disclaimer {
             font-size: 0.75rem;
@@ -942,8 +927,8 @@
         #settings-panel {
             position: fixed;
             z-index: 3000;
-            background: #f2f2f7;
-            /* iOS Light Gray */
+            background: color-mix(in srgb, var(--accent-color) 5%, #f2f2f7);
+            /* iOS Light Gray with accent tint */
             display: none;
             flex-direction: row;
             left: 50%;
@@ -962,9 +947,9 @@
         }
 
         .dark #settings-panel {
-            background: #000000;
-            /* iOS Dark Black */
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: color-mix(in srgb, var(--accent-color) 4%, #000000);
+            /* iOS Dark Black with accent tint */
+            border: 1px solid color-mix(in srgb, var(--accent-color) 20%, rgba(255, 255, 255, 0.15));
         }
 
         #settings-panel.active {
@@ -976,8 +961,8 @@
         #settings-sidebar {
             width: 280px;
             flex-shrink: 0;
-            background: rgba(242, 242, 247, 0.8);
-            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            background: color-mix(in srgb, var(--accent-color) 6%, rgba(242, 242, 247, 0.8));
+            border-right: 1px solid color-mix(in srgb, var(--accent-color) 10%, rgba(0, 0, 0, 0.1));
             padding: 1rem;
             display: flex;
             flex-direction: column;
@@ -985,19 +970,19 @@
         }
 
         .dark #settings-sidebar {
-            background: rgba(0, 0, 0, 0.8);
-            border-right-color: rgba(255, 255, 255, 0.15);
+            background: color-mix(in srgb, var(--accent-color) 5%, rgba(0, 0, 0, 0.8));
+            border-right-color: color-mix(in srgb, var(--accent-color) 15%, rgba(255, 255, 255, 0.15));
         }
 
         #settings-content-area {
             flex: 1;
             overflow-y: auto;
             padding: 2rem;
-            background: #ffffff;
+            background: color-mix(in srgb, var(--accent-color) 3%, #ffffff);
         }
 
         .dark #settings-content-area {
-            background: #1c1c1e;
+            background: color-mix(in srgb, var(--accent-color) 4%, #1c1c1e);
         }
 
         .settings-nav-item {
@@ -1749,7 +1734,7 @@
                                             <circle cx="12" cy="12" r="3" class="fill-current stroke-none" />
                                         </svg>
                                     </div>
-                                    <span id="current-model-name">Polaris 1.3</span>
+                                    <span id="current-model-name">Polaris 1.4</span>
                                     <i data-feather="chevron-down" class="w-3 h-3"></i>
                                 </button>
 
@@ -1768,7 +1753,7 @@
                                                 </svg>
                                             </div>
                                             <div class="flex flex-col">
-                                                <span class="text-xs font-semibold">Polaris 1.3</span>
+                                                <span class="text-xs font-semibold">Polaris 1.4</span>
                                                 <span class="text-[10px] opacity-50">Deep reasoning</span>
                                             </div>
                                         </button>
@@ -1832,8 +1817,11 @@
                     "Welcome back, [User].",
                     "Let's make today count, [User]."
                 ];
-                const userName = (typeof settings !== 'undefined' && settings.userName && settings.userName !== 'Guest') ? settings.userName : 'User';
-                const randomGreeting = greetingQuotes[Math.floor(Math.random() * greetingQuotes.length)].replace(/\[User\]/g, userName);
+                const userName = (typeof settings !== 'undefined' && settings.userName && settings.userName !== 'Guest') ? settings.userName : null;
+                const displayName = userName || 'Guest';
+                const randomGreeting = userName
+                    ? greetingQuotes[Math.floor(Math.random() * greetingQuotes.length)].replace(/\[User\]/g, displayName)
+                    : ['Welcome back, Guest.', 'Good to see you, Guest.', 'What shall we explore, Guest?', 'Ready to create, Guest?'][Math.floor(Math.random() * 4)];
                 window.__currentRandomGreeting = randomGreeting;
 
                 const greetingEl = document.getElementById("welcome-greeting");
@@ -2049,15 +2037,16 @@
             const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
 
             // ================= CONFIGURATION =================
-            // Supported: Ngrok, Pinggy (ssh -p 443 -R0:localhost:8000 a.pinggy.io), or Cloudflare
-            const DEFAULT_BACKEND_URL = "https://uninnovating-kase-rebukingly.ngrok-free.dev";
+            // Cloudflare Tunnel: polarisapi.okemovail.com → http://0.0.0.0:8000
+            const CF_BACKEND_URL = 'https://polarisapi.okemovail.com';
+            const DEFAULT_BACKEND_URL = CF_BACKEND_URL;
             const CUSTOM_BACKEND_URL = localStorage.getItem('vail_custom_backend_url') || DEFAULT_BACKEND_URL;
             // =============================================
 
             const MODELS = {
                 OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", icon: UNIQUE_SVG_STAR },
                 // Strictly use the configured backend URL for OLM2/Polaris
-                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.3", icon: UNIQUE_SVG_NORTH }
+                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.4", icon: UNIQUE_SVG_NORTH }
             };
 
             const translations = {
@@ -2123,68 +2112,6 @@
                     language: "Language",
                     thought_btn: "Think"
                 },
-                zh: {
-                    welcome_header: "有什麼我可以幫您的？",
-                    new_conversation: "新對話",
-                    appearance: "介面外觀",
-                    clear_chats: "清除所有對話",
-                    profile: "個人檔案",
-                    settings: "設定",
-                    photo: "上傳照片",
-                    update: "儲存並更新",
-                    zoom: "縮放",
-                    display_name: "顯示名稱",
-                    creativity: "創意程度",
-                    accent: "主題顏色",
-                    erase_data: "清除所有數據",
-                    search: "網路搜尋",
-                    protocol_stats: "協定統計",
-                    ui_opt: "介面優化",
-                    opt_1: "渐变式思考合成",
-                    opt_2: "兩步式入職流程",
-                    opt_3: "數學公式僅支援 $$ 分隔符號",
-                    model_north: "OLM 北極星",
-                    model_stargaze: "OLM 1",
-                    model_fast: "快速合成",
-                    model_deep: "深度推理",
-                    onboarding_welcome: "歡迎使用",
-                    onboarding_setup: "檔案設定",
-                    theme_light: "淺色",
-                    theme_dark: "深色",
-                    theme_system: "系統",
-                    onboarding_disclaimer: "OLM 是本機優先的應用程式...",
-                    onboarding_continue: "繼續",
-                    onboarding_guest: "以訪客身份進入",
-                    tutorial: "新手教學",
-                    onboarding_using: "如何使用 OLM",
-                    onboarding_quickstart: "快速上手指南",
-                    onboarding_prompting: "提問技巧",
-                    onboarding_prompting_desc: "模型目前處於早期測試階段...",
-                    onboarding_settings_desc: "您可以在設定中隨時編輯頭像、名稱和主題。",
-                    onboarding_complete: "完成設定",
-                    onboarding_back: "返回上一步",
-                    cat_creative: "創意撰寫",
-                    cat_visual: "視覺呈現",
-                    ex_writing: "科幻故事",
-                    ex_summary: "火星殖民地",
-                    ex_code: "Python 爬蟲",
-                    ex_inspiration: "斯多葛智慧",
-                    input_placeholder: "傳送訊息給 OLM...",
-                    thinking: "諗下sin...",
-                    terminated: "程序已終止",
-                    no_history: "404.",
-                    prompt_error: "⚠️ 服務錯誤：",
-                    welcome_back: "有什麼我可以幫您的，",
-                    storage_used: "儲存空間已使用：",
-                    pinned_header: "已固定",
-                    today_header: "今天",
-                    yesterday_header: "昨天",
-                    last_week_header: "過去 7 天",
-                    dust_collecting_header: "陳年舊帳",
-                    discord_btn: "最新開發動態",
-                    language: "語言",
-                    thought_btn: "思考"
-                }
             };
 
             let client = null, chatHistory = [], isGenerating = false, currentJob = null;
@@ -2192,15 +2119,15 @@
             let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
             let currentChatId = crypto.randomUUID();
 
-            const BUILD_NUMBER = 1002;
+            const BUILD_NUMBER = 1003;
             const CHANGELOG = {
-                version: "1.0.2",
+                version: "1.0.3",
                 build: BUILD_NUMBER,
                 changes: [
+                    "Polaris has been updated to 1.4",
                     "Added sidebar search for chats",
                     "Refined user icon rendering for better symmetry",
-                    "Implemented automatic changelog popups",
-                    "New hidden build management page for developers"
+                    "Implemented automatic changelog popups"
                 ]
             };
 
@@ -2296,19 +2223,8 @@
 
             window.updateLangButtons = (lang) => {
                 const btnEn = document.getElementById('btn-lang-en');
-                const btnZh = document.getElementById('btn-lang-zh');
-                if (btnEn && btnZh) {
-                    btnEn.classList.toggle('bg-white', lang === 'en');
-                    btnEn.classList.toggle('dark:bg-zinc-600', lang === 'en');
-                    btnEn.classList.toggle('shadow-sm', lang === 'en');
-                    btnEn.classList.toggle('text-zinc-900', lang === 'en');
-                    btnEn.classList.toggle('dark:text-white', lang === 'en');
-
-                    btnZh.classList.toggle('bg-white', lang === 'zh');
-                    btnZh.classList.toggle('dark:bg-zinc-600', lang === 'zh');
-                    btnZh.classList.toggle('shadow-sm', lang === 'zh');
-                    btnZh.classList.toggle('text-zinc-900', lang === 'zh');
-                    btnZh.classList.toggle('dark:text-white', lang === 'zh');
+                if (btnEn) {
+                    btnEn.classList.add('bg-white', 'dark:bg-zinc-600', 'shadow-sm', 'text-zinc-900', 'dark:text-white');
                 }
             };
 
@@ -3235,6 +3151,15 @@
                 window.updateStorageUsage();
             };
 
+            // OpenAI API compatible client with tunnel support
+            async function getOpenAIClient() {
+                // Always use the configured backend URL (Cloudflare tunnel)
+                const baseUrl = CUSTOM_BACKEND_URL.split('/gradio')[0].split('/chat')[0].split('/v1')[0];
+                console.log('Using backend URL:', baseUrl);
+                return baseUrl;
+            }
+
+            // Legacy Gradio client (kept for backward compatibility)
             async function getGradioClient() {
                 if (client) return client;
                 client = await Client.connect(currentModel.id, {
@@ -3331,246 +3256,132 @@
                 isGenerating = true; updateUI();
                 window.toggleSendIcon('stop');
                 try {
-                    const c = await getGradioClient();
-                    console.log("Client connected successfully");
+                    // Use OpenAI API format (/v1/chat/completions) with SSE streaming
+                    const baseUrl = await getOpenAIClient();
+                    console.log("Connecting to OpenAI Stream at:", baseUrl + "/v1/chat/completions");
 
-                    // Prepare history for Gradio Chatbot format (content must be a list of parts)
-                    const formattedHistory = [];
-                    for (const [u, a] of chatHistory.slice(0, -1)) {
-                        formattedHistory.push({ role: "user", content: u });
-                        if (a) formattedHistory.push({ role: "assistant", content: a });
+                    // Prepare messages in OpenAI format
+                    const messages = [];
+                    if (settings.systemPrompt) {
+                        messages.push({ role: "system", content: settings.systemPrompt });
+                    } else {
+                        messages.push({ role: "system", content: "You are Polaris, a creative and analytical AI created by Okemo. Think deeply inside <thought> tags, then provide a helpful and natural answer." });
                     }
 
-                    const finalMsg = msg;
+                    for (const [u, a] of chatHistory.slice(0, -1)) {
+                        messages.push({ role: "user", content: u });
+                        if (a) messages.push({ role: "assistant", content: a });
+                    }
+                    messages.push({ role: "user", content: msg });
 
-                    console.log("Calling /chat with message:", finalMsg, "history length:", formattedHistory.length);
+                    const response = await fetch(baseUrl + "/v1/chat/completions", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "ngrok-skip-browser-warning": "true",
+                            "bypass-tunnel-reminder": "true"
+                        },
+                        body: JSON.stringify({
+                            model: "polaris-local",
+                            messages: messages,
+                            temperature: settings.temp || 0.35,
+                            stream: true,
+                            web_search: currentGenerationIsSearch,
+                            use_thought: isThinkingEnabled
+                        })
+                    });
 
-                    // Streaming call
-                    // Streaming call
-                    // IMPORTANT: Pass arguments as an array [msg, history, use_thought, web_search]
-                    // corresponding to the inputs of the 'chat' function in main.py
-                    const job = c.submit("/chat", [
-                        finalMsg,          // message
-                        formattedHistory,  // history
-                        isThinkingEnabled, // use_thought
-                        isWebSearch || forceSearch, // search_toggle
-                        settings.systemPrompt || "", // system_prompt
-                        currentJobId       // job_id
-                    ]);
+                    if (!response.ok) {
+                        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+                    }
 
-                    currentJob = job;
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let responseText = "";
+                    let buffer = "";
 
-                    // Process streaming chunks
-                    for await (const event of job) {
-                        // Check for completion status
-                        if (event?.type === "status" && event?.stage === "complete") {
-                            console.log("Generation complete (status event)");
-                            break;
-                        }
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
 
-                        // Process data events
-                        console.log("Stream event received:", event.type);
-                        const chunk = event?.data || event;
-                        if (chunk?.[0]) {
-                            const newHistory = chunk[0];
-                            const lastMsg = newHistory[newHistory.length - 1];
+                        buffer += decoder.decode(value, { stream: true });
+                        const lines = buffer.split("\n");
+                        buffer = lines.pop(); // Keep partial line
 
-                            // Get assistant's current content - handle various formats
-                            let responseText = "";
-                            if (Array.isArray(lastMsg) && lastMsg.length === 2) {
-                                // Handle Tuple [user, assistant]
-                                responseText = lastMsg[1] || "";
-                            } else if (lastMsg?.role === "assistant") {
-                                const content = lastMsg.content;
-                                if (typeof content === 'string') {
-                                    responseText = content;
-                                } else if (Array.isArray(content)) {
-                                    responseText = content.map(c => c.text || c).join("");
-                                } else if (content?.text) {
-                                    responseText = content.text;
-                                }
-                            } else if (typeof lastMsg?.content === 'string') {
-                                responseText = lastMsg.content;
-                            } else if (Array.isArray(lastMsg?.content)) {
-                                responseText = lastMsg.content.map(c => c.text || c).join("");
-                            }
+                        for (const line of lines) {
+                            const cleanLine = line.trim();
+                            if (!cleanLine || !cleanLine.startsWith("data: ")) continue;
+                            const dataStr = cleanLine.substring(6).trim();
+                            if (dataStr === "[DONE]") break;
 
-                            responseText = String(responseText || "");
+                            try {
+                                const data = JSON.parse(dataStr);
+                                const delta = data.choices[0].delta.content || "";
+                                responseText += delta;
+                                // Strip control tokens from display
+                                responseText = responseText.replace(/<\|im_end\|?>/g, '').replace(/<\|im_start\|?>/g, '').replace(/<\|endoftext\|?>/g, '');
 
-                            // Check for __DONE__ signal from backend
-                            let isDone = false;
-                            if (responseText.endsWith("__DONE__")) {
-                                responseText = responseText.replace("__DONE__", "").trim();
-                                isDone = true;
-                                console.log("Received __DONE__ signal from backend");
-                            }
-
-                            // Strip stop tokens
-                            const stopPatterns = ["<|im_end|>", "<|im_end", "<|im_", "<|im", "<|i", "<|"];
-                            for (const pattern of stopPatterns) {
-                                if (responseText.includes(pattern)) {
-                                    responseText = responseText.split(pattern)[0].trim();
-                                    break;
-                                }
-                            }
-
-                            // --- LIVE THOUGHT PARSING (ROBUST) ---
-                            let thoughtContent = null;
-                            let mainContent = responseText;
-                            let isThinking = false;
-
-                            // Regex to match complete or partial thought tags, handling encoded entities
-                            const thoughtMatch = responseText.match(/(?:<|&lt;)thought(?:[\s\S]*?)(?:>|&gt;)([\s\S]*?)(?:(?:<|&lt;)\/thought(?:>|&gt;))/i);
-                            const thoughtOpen = responseText.match(/(?:<|&lt;)thought(?:[\s\S]*?)(?:>|&gt;)([\s\S]*)/i);
-
-                            if (thoughtMatch) {
-                                thoughtContent = thoughtMatch[1].trim();
-                                mainContent = responseText.replace(thoughtMatch[0], "").trim();
-                                isThinking = false;
-                            } else if (thoughtOpen) {
-                                thoughtContent = thoughtOpen[1].trim();
-                                mainContent = responseText.replace(thoughtOpen[0], "").trim();
-                                isThinking = true;
-                            }
-
-                            chatHistory[chatHistory.length - 1][1] = responseText;
-
-                            // --- RENDER THOUGHT ---
-                            const lastRow = els.chatMsgs.lastElementChild;
-                            if (lastRow && thoughtContent) {
-                                let thoughtContainer = lastRow.querySelector('.thought-container');
-                                if (!thoughtContainer) {
-                                    // Inject container if missing
-                                    const prose = lastRow.querySelector('.prose-target');
-                                    // Remove any "Thinking..." placeholder if it exists
-                                    const thinkingPlaceholder = prose.querySelector('.thinking-container');
+                                // Update UI in real-time
+                                const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
+                                if (lastProse) {
+                                    // Remove initial thinking placeholder if it exists
+                                    const thinkingPlaceholder = lastProse.querySelector('.thinking-container');
                                     if (thinkingPlaceholder) thinkingPlaceholder.remove();
 
-                                    const containerHtml = `
-                                    <div class="thought-container">
-                                        <div class="thought-header" onclick="window.toggleThought(this)">
-                                            <span>${isWebSearch ? "Surfing the web..." : "Hmmmm."}</span>
-                                            <i data-feather="chevron-down" class="w-3 h-3 transition-transform duration-200 chevron-icon"></i>
-                                            <span id="thought-timer-${chatHistory.length - 1}" class="text-[0.6rem] font-mono opacity-50 ml-2"></span>
-                                        </div>
-                                        <div class="thought-content expanded">
-                                            <div class="thought-body whitespace-pre-wrap"></div>
-                                        </div>
-                                    </div>
-                                    <div class="main-response-content"></div>`;
-                                    prose.innerHTML = containerHtml; // Use innerHTML to set the initial structure
-                                    thoughtContainer = lastRow.querySelector('.thought-container');
-                                    feather.replace();
+                                    const { thought, content } = parseThought(responseText);
 
-                                    // Start Timer
-                                    if (!window._thoughtTimers) window._thoughtTimers = {};
-                                    if (!window._thoughtTimers[chatHistory.length - 1]) {
-                                        const startTime = Date.now();
-                                        const timerEl = document.getElementById(`thought-timer-${chatHistory.length - 1}`);
-                                        window._thoughtTimers[chatHistory.length - 1] = setInterval(() => {
-                                            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-                                            if (timerEl) timerEl.innerText = `${elapsed}s`;
-                                        }, 100);
-                                    }
-                                }
-
-                                // Update content
-                                const body = thoughtContainer.querySelector('.thought-body');
-                                if (body) body.innerText = thoughtContent;
-                            }
-
-                            // Stop timer if thought closed
-                            if (!isThinking && window._thoughtTimers?.[chatHistory.length - 1]) {
-                                clearInterval(window._thoughtTimers[chatHistory.length - 1]);
-                                delete window._thoughtTimers[chatHistory.length - 1];
-                            }
-
-                            // Buffer main content for typewriter
-                            streamQueue = mainContent;
-
-                            if (!typeInterval) {
-                                typeInterval = setInterval(() => {
-                                    if (displayedContent.length < streamQueue.length) {
-                                        const charsToAdd = 1;
-                                        displayedContent = streamQueue.substring(0, displayedContent.length + charsToAdd);
-                                        lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
-                                        if (lastProse) {
-                                            // Remove thinking placeholder if it exists
-                                            const thinkingPlaceholder = lastProse.querySelector('.thinking-container');
-                                            if (thinkingPlaceholder) thinkingPlaceholder.remove();
-
-                                            let mainContentDiv = lastProse.querySelector('.main-response-content');
-                                            if (!mainContentDiv) {
-                                                mainContentDiv = document.createElement('div');
-                                                mainContentDiv.className = 'main-response-content';
-                                                lastProse.appendChild(mainContentDiv);
-                                            }
-                                            mainContentDiv.innerHTML = marked.parse(displayedContent + '<span class="typing-cursor"></span>');
-                                            applyContentFeatures(mainContentDiv);
+                                    // Thought Box Logic
+                                    let thoughtContainer = lastProse.querySelector('.thought-container');
+                                    if (thought) {
+                                        if (!thoughtContainer) {
+                                            const thoughtHtml = `
+                                                <div class="thought-container">
+                                                    <div class="thought-header" onclick="window.toggleThought(this)">
+                                                        <span>${currentGenerationIsSearch ? "Surfing the web..." : "Hmmmm."}</span>
+                                                        <i data-feather="chevron-down" class="w-3 h-3 transition-transform duration-200 chevron-icon"></i>
+                                                    </div>
+                                                    <div class="thought-content expanded">
+                                                        <div class="thought-body whitespace-pre-wrap"></div>
+                                                    </div>
+                                                </div>`;
+                                            lastProse.insertAdjacentHTML('afterbegin', thoughtHtml);
+                                            feather.replace();
+                                            thoughtContainer = lastProse.querySelector('.thought-container');
                                         }
-                                        els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+                                        const body = thoughtContainer.querySelector('.thought-body');
+                                        if (body) body.innerText = thought;
                                     }
-                                }, TYPE_SPEED_MS);
-                            }
 
-                            if (isDone) {
-                                console.log("Generation complete (backend signal)");
-                                break;
+                                    // Main Content Logic
+                                    let mainContentDiv = lastProse.querySelector('.main-response-content');
+                                    if (!mainContentDiv) {
+                                        mainContentDiv = document.createElement('div');
+                                        mainContentDiv.className = 'main-response-content';
+                                        lastProse.appendChild(mainContentDiv);
+                                    }
+
+                                    // Only show content if it's non-empty or thought is closed
+                                    if (content.trim()) {
+                                        mainContentDiv.innerHTML = marked.parse(content);
+                                        applyContentFeatures(mainContentDiv);
+                                    }
+                                    els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
+                                }
+                            } catch (e) {
+                                console.warn("SSE stream parse error:", e);
                             }
                         }
                     }
 
-                    console.log("Stream loop complete");
-                    // Wait for typewriter to finish revealing all buffered content
-                    await new Promise(resolve => {
-                        const waitForTyping = setInterval(() => {
-                            if (displayedContent.length >= streamQueue.length) {
-                                clearInterval(waitForTyping);
-                                resolve();
-                            }
-                        }, TYPE_SPEED_MS);
-                    });
-                    if (typeInterval) {
-                        clearInterval(typeInterval);
-                        typeInterval = null;
-                    }
+                    // Finalize response
+                    chatHistory[chatHistory.length - 1][1] = responseText;
                     isGenerating = false;
                     updateUI();
                     window.toggleSendIcon('send');
-                    console.log("Generation finished successfully");
-                    document.querySelectorAll('.typing-cursor').forEach(c => c.remove());
-                    lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
-                    if (lastProse && chatHistory[chatHistory.length - 1][1]) {
-                        // Robust parse
-                        const { thought, content } = parseThought(chatHistory[chatHistory.length - 1][1]);
 
-                        // Ensure thought container state is right
-                        let thoughtContainer = lastProse.querySelector('.thought-container');
-                        if (thought && !thoughtContainer) {
-                            // Re-inject if somehow missing (safety)
-                            const duration = window._thoughtTimers?.[chatHistory.length - 1] ?
-                                document.getElementById(`thought-timer-${chatHistory.length - 1}`)?.innerText : '';
-
-                            const thoughtHtml = `
-                            <div class="thought-container">
-                                <div class="thought-header" onclick="window.toggleThought(this)">
-                                    <span>${isWebSearch ? "Surfing the web..." : "Hmmmm."}</span>
-                                    <i data-feather="chevron-down" class="w-3 h-3 transition-transform duration-200 chevron-icon"></i>
-                                    <span class="text-[0.6rem] font-mono opacity-50 ml-2">${duration}</span>
-                                </div>
-                                <div class="thought-content expanded">
-                                    <div class="thought-body whitespace-pre-wrap">${thought}</div>
-                                </div>
-                            </div>`;
-                            lastProse.insertAdjacentHTML('afterbegin', thoughtHtml);
-                            feather.replace();
-                        } else if (thought && thoughtContainer) {
-                            // Sync final thought text
-                            const body = thoughtContainer.querySelector('.thought-body');
-                            if (body) body.innerText = thought;
-                        }
-
-                        // Final update to main content
+                    const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
+                    if (lastProse && responseText) {
+                        const { thought, content } = parseThought(responseText);
                         let mainContentDiv = lastProse.querySelector('.main-response-content');
                         if (!mainContentDiv) {
                             mainContentDiv = document.createElement('div');
@@ -3580,25 +3391,25 @@
                         mainContentDiv.innerHTML = marked.parse(content);
                         applyContentFeatures(mainContentDiv);
 
-                        // Add disclaimer and icons row
-                        const actionRow = document.createElement('div');
-                        actionRow.className = 'flex items-center justify-between gap-4 mt-3 w-full animate-fade-in';
-                        actionRow.innerHTML = `
-                            <div class="flex items-center gap-4">
-                                <button onclick="window.copyMsg(${chatHistory.length - 1}, this)" class="opacity-70 hover:opacity-100 transition-all" style="color: var(--accent-color)"><i data-feather="copy" class="w-4 h-4"></i></button>
-                                <button onclick="window.regenMsg(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
-                                <button onclick="window.regenMsgWithSearch(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate with Web Search"><i data-feather="globe" class="w-4 h-4"></i></button>
-                            </div>
-                            <div class="hallucination-disclaimer">OLMs are prone to hallucinations, please double check.</div>
-                        `;
-                        lastProse.parentNode.appendChild(actionRow);
-                        feather.replace();
+                        // Add action icons row
+                        if (!lastProse.parentNode.querySelector('.flex.items-center.justify-between')) {
+                            const actionRow = document.createElement('div');
+                            actionRow.className = 'flex items-center justify-between gap-4 mt-3 w-full animate-fade-in';
+                            actionRow.innerHTML = `
+                                <div class="flex items-center gap-4">
+                                    <button onclick="window.copyMsg(${chatHistory.length - 1}, this)" class="opacity-70 hover:opacity-100 transition-all" style="color: var(--accent-color)"><i data-feather="copy" class="w-4 h-4"></i></button>
+                                    <button onclick="window.regenMsg(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
+                                    <button onclick="window.regenMsgWithSearch(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate with Web Search"><i data-feather="globe" class="w-4 h-4"></i></button>
+                                </div>
+                                <div class="hallucination-disclaimer">OLMs are prone to hallucinations, please double check.</div>
+                            `;
+                            lastProse.parentNode.appendChild(actionRow);
+                            feather.replace();
+                        }
                     }
                     currentJob = null;
-                    client = null; // Force fresh connection for next message
-                    console.log("Generation complete, ready for next message");
+                    console.log("Streaming complete");
                     render();
-
                     updateUI();
                 } catch (e) {
                     console.error("Chat Error Detail:", e);
@@ -3711,6 +3522,12 @@
                 render();
                 updateUI();
                 renderHistory();
+                // On mobile, close the sidebar so the chat is visible
+                if (window.innerWidth < 1024 && els.sidebar) {
+                    els.sidebar.classList.add('mobile-hidden');
+                    const overlay = document.getElementById('sidebar-overlay');
+                    if (overlay) overlay.classList.remove('active');
+                }
             };
 
             window.filterChats = (query) => {
@@ -3761,6 +3578,12 @@
 
             const render = () => {
                 const isWelcome = chatHistory.length === 0;
+                // Toggle chat-empty class for mobile — this controls the centered layout
+                if (isWelcome) {
+                    document.body.classList.add('chat-empty');
+                } else {
+                    document.body.classList.remove('chat-empty');
+                }
                 els.welcome.style.display = isWelcome ? 'flex' : 'none';
                 els.chatMsgs.style.display = isWelcome ? 'none' : 'flex';
                 const dict = translations[settings.lang || 'en'];
@@ -3769,7 +3592,10 @@
                     // Preserve the random greeting set by initChatUI; only override if not yet set
                     if (!window.__currentRandomGreeting) {
                         const welcomeName = settings.userName;
-                        els.greeting.innerText = (welcomeName && welcomeName !== "Guest") ? `${dict.welcome_back}${welcomeName}?` : dict.welcome_header;
+                        const isGuest = !welcomeName || welcomeName === 'Guest';
+                        els.greeting.innerText = isGuest
+                            ? 'Welcome back, Guest.'
+                            : `${dict.welcome_back}${welcomeName}?`;
                     } else {
                         els.greeting.innerText = window.__currentRandomGreeting;
                     }
@@ -3941,12 +3767,14 @@
             window.factoryReset = () => { localStorage.clear(); window.location.reload(); };
 
             window.handleCustomAccentChangeNew = (val) => {
+                // Apply color in real-time as user picks
+                window.updateAccent(val);
                 const btn = document.getElementById('pending-custom-color');
-                const dot = document.getElementById('pending-color-dot');
-                if (btn && dot) {
+                if (btn) {
                     btn.style.display = 'flex';
                     btn.setAttribute('data-color', val);
-                    dot.style.background = val;
+                    btn.style.borderColor = val;
+                    btn.style.background = `color-mix(in srgb, ${val} 10%, transparent)`;
                 }
             };
 
@@ -4211,9 +4039,7 @@
                         <div
                             class="flex bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700">
                             <button id="btn-lang-en" onclick="window.setLang('en')"
-                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">English</button>
-                            <button id="btn-lang-zh" onclick="window.setLang('zh')"
-                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">中文</button>
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm bg-white dark:bg-zinc-600 text-zinc-900 dark:text-white">English</button>
                         </div>
                     </div>
 
@@ -4227,8 +4053,9 @@
                         </div>
                         <!-- Pending New Theme -->
                         <div id="pending-custom-color" onclick="window.addSelectedCustomColorNew()"
-                            class="mb-3 hidden cursor-pointer h-10 w-full rounded-lg bg-blue-50 dark:bg-blue-900/20 border-dashed border-2 border-blue-300 flex items-center justify-center text-blue-500 text-xs font-bold">
-                            Save Selected Color
+                            class="mb-3 hidden cursor-pointer h-10 w-full rounded-lg border-dashed border-2 flex items-center justify-center text-xs font-bold"
+                            style="border-color: var(--accent-color); color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) 10%, transparent);">
+                            Save This Color
                         </div>
                         <div id="theme-list-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                     </div>
@@ -4309,7 +4136,7 @@
                             <span class="text-[15px] font-medium mb-1">Backend URL</span>
                             <input type="text" id="settings-backend-url"
                                 class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="https://... (e.g. ngrok)"
+                                placeholder="https://... (e.g. localtunnel)"
                                 onchange="window.updateBackendUrlFromPanel(this.value)">
                             <span class="text-[11px] text-zinc-400 mt-1">Leave empty to use default local detection.
                                 Refreshes on change.</span>
