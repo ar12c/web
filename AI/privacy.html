@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — OLM</title>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0e1117;
+            color: #e4e4e7;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74, 122, 181, 0.15) 0%, transparent 70%);
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(74, 122, 181, 0.4);
+        }
+
+        .emoji-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            background: rgba(74, 122, 181, 0.15);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.2rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(74, 122, 181, 0.15);
+            color: #7aa3d4;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .tldr-box {
+            background: linear-gradient(135deg, rgba(74, 122, 181, 0.12), rgba(74, 122, 181, 0.05));
+            border: 1px solid rgba(74, 122, 181, 0.25);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a1a1aa;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
+            margin: 2.5rem 0;
+        }
+
+        .fun-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.9rem;
+            color: #a1a1aa;
+            line-height: 1.6;
+        }
+
+        .fun-list li:last-child {
+            border-bottom: none;
+        }
+
+        .fun-list li .bullet {
+            color: #4A7AB5;
+            font-weight: 900;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #f4f4f5;
+            margin-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #d4d4d8;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .highlight {
+            color: #7aa3d4;
+            font-weight: 700;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <div class="relative">
+        <div class="hero-glow"></div>
+
+        <div class="max-w-2xl mx-auto px-5 py-12 relative z-10">
+
+            <!-- Nav -->
+            <div class="flex items-center justify-between mb-12 fade-up">
+                <a href="chat.html" class="back-btn">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    Back to OLM
+                </a>
+                <span class="text-xs font-bold text-zinc-600 uppercase tracking-widest">OLM / Okemo</span>
+            </div>
+
+            <!-- Hero -->
+            <div class="text-center mb-12 fade-up delay-1">
+                <div class="text-5xl mb-4">🔐</div>
+                <h1 class="text-4xl font-black text-white mb-3 tracking-tight">Privacy Policy</h1>
+                <p class="text-zinc-400 text-sm max-w-md mx-auto leading-relaxed">
+                    The legal stuff — but we promise it's actually readable. No legalese, no tricks, no shadiness. Just
+                    vibes and transparency.
+                </p>
+                <p class="text-zinc-600 text-xs mt-3">Last updated: February 2026 · ~3 min read</p>
+            </div>
+
+            <!-- TL;DR Box -->
+            <div class="tldr-box fade-up delay-2">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-lg">⚡</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-blue-400">TL;DR — The Quick
+                        Version</span>
+                </div>
+                <ul class="space-y-2 text-sm text-zinc-300">
+                    <li>🙅 We don't sell your data. Ever.</li>
+                    <li>💾 Your chats live in <strong>your browser</strong>, not our servers.</li>
+                    <li>🔍 We don't track you, stalk you, or profile you.</li>
+                    <li>🌐 Web search queries might touch a third-party search API.</li>
+                    <li>😌 It's a small project run by humans who also hate creepy data practices.</li>
+                </ul>
+            </div>
+
+            <!-- Sections -->
+            <div class="fade-up delay-3">
+
+                <!-- Section 1 -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🏠</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Storage</div>
+                            <h2>Your data lives at home (your browser)</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Everything you type into OLM — your chat history, display name, profile picture,
+                                settings — is stored using <span class="highlight">localStorage</span> on your own
+                                device. We literally cannot see it. Your conversations never leave your machine unless
+                                you send a message to our backend for an AI response. That's just... how it has to work.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🤖</div>
+                        <div class="flex-1">
+                            <div class="section-tag">AI Messages</div>
+                            <h2>What happens when you send a message</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+                                When you hit send, your message (and conversation context) travels to our backend server
+                                to generate a response. Here's the honest breakdown:
+                            </p>
+                            <ul class="fun-list">
+                                <li><span class="bullet">→</span> Your message text is sent to our inference server
+                                    (Polaris).</li>
+                                <li><span class="bullet">→</span> We do <strong class="text-white">not</strong> log,
+                                    store, or archive your messages after the response is sent.</li>
+                                <li><span class="bullet">→</span> The backend is a fresh request each time — no
+                                    persistent user identity on our end.</li>
+                                <li><span class="bullet">→</span> If web search is enabled, your query may be sent to a
+                                    search API to fetch results.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🍪</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Cookies & Tracking</div>
+                            <h2>We don't do cookies (the creepy kind)</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                No analytics trackers. No third-party ad network pixels. No "we noticed you looked at
+                                something once and now we're haunting you" vibes. OLM doesn't use cookies at all —
+                                preference storage is all localStorage, which stays on your device. If GitHub Pages (our
+                                host) sets any cookies, that's between you and GitHub, not us.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4 -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🔑</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Google Sign-In</div>
+                            <h2>Optional Google auth</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                You can optionally sign in with Google. If you do, we receive your public profile info
+                                (name, profile picture, email) from Google's OAuth. We use it only to display your nice
+                                avatar and name inside the app — locally. We don't send it anywhere else or store it on
+                                a server. You can continue as a Guest at any time and lose nothing.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5 -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">👶</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Age</div>
+                            <h2>Kids & minors</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                OLM is intended for users 13 and older. If you're under 13, please ask a parent or
+                                guardian before using this service. We don't knowingly collect data from children under
+                                13 — and given how our data model works, we're not really "collecting" from anyone, but
+                                still. Rules are rules.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6 -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">📬</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Contact</div>
+                            <h2>Have questions? Talk to us.</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                Got concerns, spotted something weird, or just want to say hi? Hit us up on Discord or
+                                open an issue on GitHub. We're a small crew and we actually respond.
+                            </p>
+                            <div class="flex gap-3 mt-4">
+                                <a href="https://discord.gg/BxjTsjvR8Z" target="_blank"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5865F2]/20 text-[#7983f5] text-xs font-bold border border-[#5865F2]/30 hover:bg-[#5865F2]/30 transition-all">
+                                    <i class="fa-brands fa-discord"></i> Discord
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Footer note -->
+                <div class="text-center">
+                    <p class="text-zinc-600 text-xs leading-relaxed">
+                        This policy applies to OLM (chat.html and associated services) operated by Okemo / ar12c.<br>
+                        We may update this occasionally. Major changes will be noted in the changelog.
+                    </p>
+                    <div class="flex items-center justify-center gap-4 mt-6">
+                        <a href="chat.html"
+                            class="text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition-colors">← Back to
+                            OLM</a>
+                        <span class="text-zinc-700">·</span>
+                        <a href="tos.html"
+                            class="text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition-colors">Terms of
+                            Service →</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

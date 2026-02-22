@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service — OLM</title>
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0e1117;
+            color: #e4e4e7;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .emoji-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            background: rgba(168, 85, 247, 0.12);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.2rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(168, 85, 247, 0.12);
+            color: #c084fc;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .tldr-box {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.04));
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a1a1aa;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.08), transparent);
+            margin: 2.5rem 0;
+        }
+
+        .fun-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.9rem;
+            color: #a1a1aa;
+            line-height: 1.6;
+        }
+
+        .fun-list li:last-child {
+            border-bottom: none;
+        }
+
+        .fun-list li .bullet {
+            color: #a855f7;
+            font-weight: 900;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .do-box {
+            background: rgba(34, 197, 94, 0.06);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+        }
+
+        .dont-box {
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+        }
+
+        .do-box li,
+        .dont-box li {
+            font-size: 0.875rem;
+            color: #a1a1aa;
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #f4f4f5;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight {
+            color: #c084fc;
+            font-weight: 700;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <div class="relative">
+        <div class="hero-glow"></div>
+
+        <div class="max-w-2xl mx-auto px-5 py-12 relative z-10">
+
+            <!-- Nav -->
+            <div class="flex items-center justify-between mb-12 fade-up">
+                <a href="chat.html" class="back-btn">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    Back to OLM
+                </a>
+                <span class="text-xs font-bold text-zinc-600 uppercase tracking-widest">OLM / Okemo</span>
+            </div>
+
+            <!-- Hero -->
+            <div class="text-center mb-12 fade-up delay-1">
+                <div class="text-5xl mb-4">📜</div>
+                <h1 class="text-4xl font-black text-white mb-3 tracking-tight">Terms of Service</h1>
+                <p class="text-zinc-400 text-sm max-w-md mx-auto leading-relaxed">
+                    Relax — this isn't a 47-page document designed to trick you. We kept it human. By using OLM, you
+                    agree to these terms. (Yes, that's legally real, but we made it painless.)
+                </p>
+                <p class="text-zinc-600 text-xs mt-3">Last updated: February 2026 · ~4 min read</p>
+            </div>
+
+            <!-- TL;DR Box -->
+            <div class="tldr-box fade-up delay-2">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-lg">⚡</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-purple-400">TL;DR — The Quick
+                        Version</span>
+                </div>
+                <ul class="space-y-2 text-sm text-zinc-300">
+                    <li>✅ Use OLM for legal, creative, and helpful things.</li>
+                    <li>🚫 Don't use it to harm people, spread misinformation, or generate illegal content.</li>
+                    <li>🤝 We provide this for free — please don't abuse it.</li>
+                    <li>🧠 AI can be wrong. Double-check important stuff.</li>
+                    <li>🔄 We can update these terms. We'll let you know if we do.</li>
+                </ul>
+            </div>
+
+            <!-- Sections -->
+            <div class="fade-up delay-3">
+
+                <!-- Section 1: Acceptance -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🤝</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Acceptance</div>
+                            <h2>By using OLM, you agree to this</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                When you open OLM and start chatting, you're agreeing to these Terms. It's kind of like
+                                clicking "I agree" on a popup — except we actually told you what's in here. If you do
+                                <em>not</em> agree, that's totally fine, just close the tab. No hard feelings. 👋
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: What you can / can't do -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">⚖️</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Acceptable Use</div>
+                            <h2>The golden rules</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed mb-4">OLM is a tool for good. Here's the
+                                simple breakdown:</p>
+
+                            <p class="text-xs font-black uppercase tracking-widest text-green-400 mb-2">✅ You CAN</p>
+                            <div class="do-box mb-4">
+                                <ul class="space-y-0.5">
+                                    <li><span class="text-green-400">✓</span> Use OLM for creative writing, coding,
+                                        research, and learning</li>
+                                    <li><span class="text-green-400">✓</span> Ask it questions — even dumb ones, we're
+                                        not judging</li>
+                                    <li><span class="text-green-400">✓</span> Share OLM with friends, family, and people
+                                        who need help</li>
+                                    <li><span class="text-green-400">✓</span> Use it commercially for personal
+                                        productivity</li>
+                                </ul>
+                            </div>
+
+                            <p class="text-xs font-black uppercase tracking-widest text-red-400 mb-2">🚫 You CANNOT</p>
+                            <div class="dont-box">
+                                <ul class="space-y-0.5">
+                                    <li><span class="text-red-400">✗</span> Use it to generate illegal content of any
+                                        kind</li>
+                                    <li><span class="text-red-400">✗</span> Try to jailbreak, reverse-engineer, or
+                                        attack our servers</li>
+                                    <li><span class="text-red-400">✗</span> Spam the backend with automated requests at
+                                        scale</li>
+                                    <li><span class="text-red-400">✗</span> Impersonate OLM or Okemo to deceive people
+                                    </li>
+                                    <li><span class="text-red-400">✗</span> Use it to harass, threaten, or harm
+                                        individuals</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: AI Accuracy -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🧠</div>
+                        <div class="flex-1">
+                            <div class="section-tag">AI Disclaimer</div>
+                            <h2>Polaris is smart, but not omniscient</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                OLM is powered by Polaris, an AI model built by Okemo. It's genuinely impressive at a
+                                lot of things! But AI models can <span class="highlight">hallucinate</span> — that's the
+                                technical term for "make stuff up with complete confidence." Always verify important
+                                information from authoritative sources. Don't rely on OLM for medical, legal, or
+                                financial decisions without consulting a real professional. We're not liable for
+                                decisions made based on AI output.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Availability -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🛠️</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Service Availability</div>
+                            <h2>We're building this on evenings and weekends</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                OLM is a passion project. The backend might go down occasionally. Servers get updated.
+                                APIs break. Life happens. We'll do our best to keep things running, but we can't
+                                guarantee 100% uptime or availability. If OLM is down, go touch grass and come back
+                                later. It'll be back. 🌱
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: IP -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">©️</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Intellectual Property</div>
+                            <h2>What's ours, what's yours</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                The OLM interface, branding, and Polaris model belong to Okemo / ar12c. Any content
+                                <em>you</em> generate using OLM — that's yours. We don't claim rights to your chats or
+                                creative output. Go build something cool with it.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Changes -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">🔄</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Updates</div>
+                            <h2>We might change these terms</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                If we make significant changes to these terms, we'll let you know through the in-app
+                                changelog. Continued use after an update means you're cool with the new terms. We won't
+                                sneak anything shady in — promise. Pinky promise, even. 🤙
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 7: Contact -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <div class="emoji-badge">📬</div>
+                        <div class="flex-1">
+                            <div class="section-tag">Contact</div>
+                            <h2>Got beef? Let's talk.</h2>
+                            <p class="text-zinc-400 text-sm leading-relaxed">
+                                If you have questions about these terms or want to report abuse, reach out. We're
+                                friendly humans who care about this project.
+                            </p>
+                            <div class="flex gap-3 mt-4">
+                                <a href="https://discord.gg/BxjTsjvR8Z" target="_blank"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5865F2]/20 text-[#7983f5] text-xs font-bold border border-[#5865F2]/30 hover:bg-[#5865F2]/30 transition-all">
+                                    <i class="fa-brands fa-discord"></i> Discord
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Footer -->
+                <div class="text-center">
+                    <p class="text-zinc-600 text-xs leading-relaxed">
+                        These Terms of Service govern your use of OLM and associated services operated by Okemo /
+                        ar12c.<br>
+                        Governing law: common sense, good faith, and wherever Okemo is domiciled.
+                    </p>
+                    <div class="flex items-center justify-center gap-4 mt-6">
+                        <a href="privacy.html"
+                            class="text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition-colors">← Privacy
+                            Policy</a>
+                        <span class="text-zinc-700">·</span>
+                        <a href="chat.html"
+                            class="text-xs font-semibold text-zinc-500 hover:text-zinc-300 transition-colors">Back to
+                            OLM →</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

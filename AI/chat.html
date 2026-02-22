@@ -326,9 +326,10 @@
         }
 
         .code-copy-btn {
-            position: absolute;
+            position: sticky;
             top: 0.5rem;
             right: 0.5rem;
+            float: right;
             width: 32px;
             height: 32px;
             display: flex;
@@ -342,6 +343,9 @@
             opacity: 0.6;
             transition: opacity 0.2s ease, background 0.2s ease;
             z-index: 10;
+            margin-top: -0.25rem;
+            margin-bottom: -32px;
+            flex-shrink: 0;
         }
 
         .prose pre:hover .code-copy-btn {
@@ -716,67 +720,98 @@
             }
         }
 
+        /* ===== FULL-SCREEN ONBOARDING ===== */
         #onboarding-overlay {
             position: fixed;
             inset: 0;
             z-index: 2000;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(8px);
+            background: var(--bg-color, #f9fbf8);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             animation: fadeIn 0.4s ease-out;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
+            overflow: hidden;
         }
 
         .dark #onboarding-overlay {
-            background: rgba(13, 13, 13, 0.5);
+            background: #0d0d0d;
         }
 
         #onboarding-overlay.hidden {
             display: none !important;
         }
 
-        #onboarding-overlay {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+        /* Desktop: side-by-side (form LEFT, image RIGHT) */
+        @media (min-width: 768px) {
+            #onboarding-overlay {
+                flex-direction: row;
+            }
         }
 
+        /* Side image — hidden on mobile, right half on desktop */
+        #onboarding-side-img {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            #onboarding-side-img {
+                display: block;
+                flex: 1;
+                min-width: 0;
+                object-fit: cover;
+                height: 100%;
+                order: 2;
+                /* image goes RIGHT */
+            }
+        }
+
+        /* Form card — fills screen on mobile, left half on desktop */
         .onboarding-card {
-            width: 95%;
-            height: 70vh;
-            max-height: 700px;
-            max-width: 1200px;
-            border-radius: 24px;
-            background: white;
-            border: none;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            animation: fadeIn 0.3s ease-out;
+            width: 100%;
+            padding: 2rem 1.5rem;
             position: relative;
             z-index: 2100;
-            overflow: hidden;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            flex: 1;
+            box-sizing: border-box;
         }
 
-        .dark .onboarding-card {
-            background: #141414;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        @media (min-width: 768px) {
+            .onboarding-card {
+                flex: 1;
+                max-width: 50%;
+                padding: 3rem 2.5rem;
+                order: 1;
+                /* form goes LEFT */
+            }
+        }
+
+        .onboarding-inner {
+            width: 100%;
+            max-width: 380px;
         }
 
         #onboarding-pfp-preview {
-            width: 56px;
-            height: 56px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
             overflow: hidden;
-            background: #f4f4f5;
-            border: 2px dashed #e4e4e7;
+            background: color-mix(in srgb, var(--accent-color) 10%, #f4f4f5);
+            border: 2px dashed color-mix(in srgb, var(--accent-color) 40%, #e4e4e7);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .dark #onboarding-pfp-preview {
+            background: color-mix(in srgb, var(--accent-color) 10%, #1e1e1e);
+            border-color: color-mix(in srgb, var(--accent-color) 30%, #27272a);
         }
 
 
@@ -901,21 +936,17 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Settings Backdrop Overlay */
+        /* ===== POLARIS SETTINGS MODAL ===== */
         #settings-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             z-index: 2990;
-            /* Below settings panel (3000) */
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: none;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
         }
 
         #settings-overlay.active {
@@ -923,231 +954,258 @@
             opacity: 1;
         }
 
-        /* Apple Settings Style */
         #settings-panel {
             position: fixed;
             z-index: 3000;
-            background: color-mix(in srgb, var(--accent-color) 5%, #f2f2f7);
-            /* iOS Light Gray with accent tint */
             display: none;
-            flex-direction: row;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(0.95);
-            width: 90%;
-            max-width: 960px;
-            height: 80vh;
-            max-height: 700px;
-            border-radius: 24px;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            flex-direction: column;
             opacity: 0;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            /* Mobile: full-screen */
+            inset: 0;
+            border-radius: 0;
+            background: var(--bg-color, #f9fbf8);
+            overflow: hidden;
         }
 
         .dark #settings-panel {
-            background: color-mix(in srgb, var(--accent-color) 4%, #000000);
-            /* iOS Dark Black with accent tint */
-            border: 1px solid color-mix(in srgb, var(--accent-color) 20%, rgba(255, 255, 255, 0.15));
+            background: #0f0f0f;
         }
 
         #settings-panel.active {
             display: flex;
             opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
         }
 
-        #settings-sidebar {
-            width: 280px;
-            flex-shrink: 0;
-            background: color-mix(in srgb, var(--accent-color) 6%, rgba(242, 242, 247, 0.8));
-            border-right: 1px solid color-mix(in srgb, var(--accent-color) 10%, rgba(0, 0, 0, 0.1));
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            backdrop-filter: blur(20px);
+        /* Desktop: centered card */
+        @media (min-width: 768px) {
+            #settings-panel {
+                inset: auto;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) scale(0.96);
+                width: min(92vw, 560px);
+                max-height: 88vh;
+                border-radius: 24px;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.06);
+                overflow: hidden;
+            }
+
+            .dark #settings-panel {
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.07);
+            }
+
+            #settings-panel.active {
+                transform: translate(-50%, -50%) scale(1);
+            }
         }
 
-        .dark #settings-sidebar {
-            background: color-mix(in srgb, var(--accent-color) 5%, rgba(0, 0, 0, 0.8));
-            border-right-color: color-mix(in srgb, var(--accent-color) 15%, rgba(255, 255, 255, 0.15));
-        }
-
+        /* Settings inner scroll area */
         #settings-content-area {
             flex: 1;
             overflow-y: auto;
-            padding: 2rem;
-            background: color-mix(in srgb, var(--accent-color) 3%, #ffffff);
+            padding: 0 0 env(safe-area-inset-bottom, 0) 0;
         }
 
-        .dark #settings-content-area {
-            background: color-mix(in srgb, var(--accent-color) 4%, #1c1c1e);
-        }
-
-        .settings-nav-item {
+        /* Settings Tab Navigation (horizontal pill row) */
+        .polaris-tab-bar {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #71717a;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            margin-bottom: 4px;
-        }
-
-        .dark .settings-nav-item {
-            color: #a1a1aa;
-        }
-
-        .settings-nav-item:hover {
+            gap: 4px;
+            padding: 4px;
             background: rgba(0, 0, 0, 0.04);
-            color: #18181b;
+            border-radius: 14px;
+            margin: 0 1.25rem 1.5rem;
         }
 
-        .dark .settings-nav-item:hover {
-            background: rgba(255, 255, 255, 0.04);
-            color: #ffffff;
+        .dark .polaris-tab-bar {
+            background: rgba(255, 255, 255, 0.06);
         }
 
-        .settings-nav-item.active {
-            background: var(--accent-color);
-            color: var(--accent-contrast);
-        }
-
-        /* Apple Sidebar Item */
-        .apple-nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background 0.15s;
-            margin-bottom: 2px;
-        }
-
-        .dark .apple-nav-item {
-            color: #fff;
-        }
-
-        .apple-nav-item:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .dark .apple-nav-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .apple-nav-item.active {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .dark .apple-nav-item.active {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .apple-icon-box {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
+        .polaris-tab-btn {
+            flex: 1;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        /* Apple Profile Card (Sidebar Top) */
-        .apple-profile-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: transparent;
+            gap: 6px;
             border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #71717a;
             cursor: pointer;
-            transition: background 0.15s;
-            margin-bottom: 24px;
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
         }
 
-        .apple-profile-card:hover,
-        .apple-profile-card.active {
-            background: rgba(0, 0, 0, 0.05);
+        .dark .polaris-tab-btn {
+            color: #a1a1aa;
         }
 
-        .dark .apple-profile-card:hover,
-        .dark .apple-profile-card.active {
-            background: rgba(255, 255, 255, 0.1);
+        .polaris-tab-btn.active {
+            background: var(--accent-color);
+            color: var(--accent-contrast);
+            box-shadow: 0 2px 8px var(--accent-glow);
         }
 
-        /* Apple Grouped List */
-        .apple-section-title {
-            font-size: 13px;
+        /* Settings Section */
+        .polaris-section {
+            padding: 0 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .settings-tab-content>.polaris-section:first-child {
+            padding-top: 1.25rem;
+        }
+
+        .polaris-section-label {
+            font-size: 10px;
+            font-weight: 800;
             text-transform: uppercase;
-            color: #6c6c70;
-            margin-bottom: 8px;
-            padding-left: 16px;
-            font-weight: 400;
+            letter-spacing: 0.1em;
+            color: #a1a1aa;
+            margin-bottom: 10px;
+            padding-left: 4px;
         }
 
-        .dark .apple-section-title {
-            color: #8e8e93;
-        }
-
-        .apple-list-group {
-            background: #fff;
-            border-radius: 10px;
+        .polaris-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 24px;
+            backdrop-filter: blur(8px);
         }
 
-        .dark .apple-list-group {
-            background: #2c2c2e;
+        .dark .polaris-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.07);
         }
 
-        .apple-list-item {
+        .polaris-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            /* Separator */
-            font-size: 16px;
-            color: #000;
+            padding: 14px 16px;
+            min-height: 52px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            gap: 12px;
         }
 
-        .dark .apple-list-item {
-            color: #fff;
-            border-bottom-color: rgba(255, 255, 255, 0.1);
+        .dark .polaris-row {
+            border-bottom-color: rgba(255, 255, 255, 0.05);
         }
 
-        .apple-list-item:last-child {
+        .polaris-row:last-child {
             border-bottom: none;
         }
 
-        .apple-search-bar {
-            background: rgba(118, 118, 128, 0.12);
-            color: #8e8e93;
-            border-radius: 10px;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
-            margin-bottom: 16px;
+        .polaris-row-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #18181b;
+            flex-shrink: 0;
         }
 
-        .dark .apple-search-bar {
-            background: rgba(118, 118, 128, 0.24);
+        .dark .polaris-row-label {
+            color: #f4f4f5;
+        }
+
+        /* Theme Item — vertical list with glow icon */
+        .polaris-theme-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            min-height: 68px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: background 0.15s ease;
+            border: none;
+            width: 100%;
+            background: transparent;
+            text-align: left;
+        }
+
+        .dark .polaris-theme-item {
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .polaris-theme-item:last-child {
+            border-bottom: none;
+        }
+
+        .polaris-theme-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .dark .polaris-theme-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .polaris-theme-item.active-theme {
+            background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+        }
+
+        .polaris-theme-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .polaris-theme-icon.glow-active {
+            box-shadow: 0 0 0 3px var(--accent-color), 0 0 20px var(--accent-glow);
+        }
+
+        .polaris-theme-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            flex-shrink: 0;
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* Apple-style list items kept for backward compat but hidden */
+        .apple-section-title {
+            display: none;
+        }
+
+        .apple-list-group {
+            display: none;
+        }
+
+        .apple-list-item {
+            display: none;
+        }
+
+        .apple-nav-item {
+            display: none;
+        }
+
+        .apple-profile-card {
+            display: none;
+        }
+
+        .apple-icon-box {
+            display: none;
+        }
+
+        .settings-nav-item {
+            display: none;
+        }
+
+        #settings-sidebar {
+            display: none !important;
         }
 
 
@@ -1166,64 +1224,8 @@
         }
 
 
-        @media (max-width: 1023px) {
-            #settings-panel.active {
-                left: 0 !important;
-                top: 0 !important;
-                transform: none !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                max-width: 100vw !important;
-                max-height: 100vh !important;
-                border-radius: 0 !important;
-                border: none !important;
-                z-index: 3500;
-                flex-direction: column;
-                overflow: hidden;
-            }
-
-            #settings-sidebar {
-                width: 100%;
-                height: auto;
-                flex-direction: column;
-                overflow-x: hidden;
-                padding: 1rem;
-                border-right: none;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-                max-height: 200px;
-                /* Limit height on mobile */
-                overflow-y: auto;
-            }
-
-            .dark #settings-sidebar {
-                border-bottom-color: rgba(255, 255, 255, 0.05);
-            }
-
-            .settings-nav-item {
-                white-space: nowrap;
-                padding: 8px 16px;
-                background: rgba(0, 0, 0, 0.03);
-                margin-right: 8px;
-                margin-bottom: 0;
-            }
-
-            .dark .settings-nav-item {
-                background: rgba(255, 255, 255, 0.03);
-            }
-
-            #settings-content-area {
-                padding: 1.5rem;
-                background: #f2f2f7;
-            }
-
-            .dark #settings-content-area {
-                background: #000;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            /* Settings panel positioning removed to keep it centered */
-        }
+        /* Settings panel is full-screen on mobile by default (see #settings-panel above) */
+        /* On desktop (>=768px) it becomes a centered card (see media query above) */
 
         #pfp-workspace {
             width: 100%;
@@ -1405,113 +1407,110 @@
     <div id="sidebar-hover-trigger"></div>
 
     <div id="onboarding-overlay" class="hidden">
+        <!-- Form card (LEFT on desktop, full-screen on mobile) -->
         <div class="onboarding-card">
-            <!-- Left Side: Content -->
-            <div class="w-full lg:w-1/2 flex-shrink-0 p-8 flex flex-col relative justify-center">
-                <button onclick="window.toggleLanguage()" class="lang-btn">
-                    <i data-feather="globe" class="w-4 h-4 mr-1"></i> <span class="lang-text">中文</span>
+            <div class="onboarding-inner">
+
+                <!-- Logo -->
+                <div class="flex flex-col items-center mb-8">
+                    <svg class="h-6 w-auto mb-5" viewBox="0 0 1080 332.95" xmlns="http://www.w3.org/2000/svg"
+                        style="color: var(--accent-color);">
+                        <path fill="currentColor"
+                            d="M0,131.14L275.33,25.93v59.67S49.73,165.69,49.73,165.69l225.61,79.83v61.51S0,201.81,0,201.81v-70.67Z" />
+                        <path fill="currentColor"
+                            d="M1080,201.81l-275.33,105.21v-59.67s225.6-79.83,225.6-79.83l-225.6-80.09V25.93s275.33,105.21,275.33,105.21v70.67Z" />
+                        <circle fill="currentColor" cx="540" cy="166.48" r="166.48" />
+                    </svg>
+                    <p class="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.3em]"
+                        data-t="onboarding_welcome">Welcome to OLM</p>
+                </div>
+
+                <!-- Google Sign-In (primary CTA) -->
+                <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
+                    class="w-full flex items-center justify-center gap-2.5 min-h-[52px] px-5 rounded-2xl font-bold text-sm transition-all shadow-lg hover:brightness-110 active:scale-[0.98] mb-4"
+                    style="background-color: var(--accent-color); color: var(--accent-contrast);">
+                    <img id="google-pfp-onboarding"
+                        class="w-7 h-7 rounded-full object-cover hidden border-2 border-white/30" src="" alt="">
+                    <span id="google-btn-text-onboarding">
+                        <i class="fa-brands fa-google mr-2"></i>Continue with Google
+                    </span>
                 </button>
 
-                <!-- Step 1 -->
-                <div id="onboarding-step-1" class="tutorial-step active flex-1 flex flex-col justify-center">
-                    <div class="text-center mb-8">
-                        <p class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.3em] mb-2"
-                            data-t="onboarding_welcome">Welcome</p>
-                        <h1
-                            class="select-none font-black italic text-4xl tracking-tight text-zinc-900 dark:text-white uppercase mb-1">
-                            V<span class="vail-logo-ai gradient-mode">AI</span>L</h1>
+                <p class="text-center text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-5">OLM has no
+                    limits for all accounts</p>
+
+                <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 mb-5"></div>
+
+                <!-- Profile Setup -->
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="relative flex-shrink-0"
+                        onclick="document.getElementById('onboarding-pfp-input').click()">
+                        <div id="onboarding-pfp-preview">
+                            <i data-feather="camera" class="text-zinc-400 w-5 h-5"></i>
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] border-2 border-white dark:border-[#0d0d0d] shadow-md"
+                            style="background: var(--accent-color);">
+                            <i data-feather="plus" class="w-3 h-3"></i>
+                        </div>
                     </div>
+                    <div class="flex-1">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1.5"
+                            data-t="display_name">Display Name</label>
+                        <input type="text" id="onboarding-name" placeholder="Name or Alias"
+                            class="w-full bg-zinc-100 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 min-h-[48px] text-sm font-bold focus:outline-none transition-all placeholder-zinc-400"
+                            style="--tw-ring-color: var(--accent-color);"
+                            onfocus="this.style.borderColor='var(--accent-color)'" onblur="this.style.borderColor=''">
+                    </div>
+                    <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*"
+                        onchange="window.handleOnboardingPfp(event)">
+                </div>
 
-                    <div class="space-y-6 max-w-sm mx-auto w-full">
-                        <!-- 1. Google Auth at Top -->
-                        <div>
-                            <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
-                                class="w-full flex items-center justify-center gap-2 px-4 py-3 text-xs font-bold rounded-lg transition-all shadow-lg hover:brightness-110 active:scale-[0.98]"
-                                style="background-color: var(--accent-color); color: var(--accent-contrast);">
-                                <span id="google-btn-text-onboarding"><i class="fa-brands fa-google mr-2.5"></i>Continue
-                                    with Google</span>
-                            </button>
-                        </div>
-
-                        <!-- 2. Limits Text -->
-                        <div class="text-center">
-                            <p class="text-[10px] font-bold text-zinc-400/80 uppercase tracking-wider">OLM has no limits
-                                for all accounts</p>
-                        </div>
-
-                        <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
-
-                        <!-- 3. Local Profile Setup -->
-                        <div class="flex items-center gap-4 w-full">
-                            <div class="relative group cursor-pointer flex-shrink-0"
-                                onclick="document.getElementById('onboarding-pfp-input').click()">
-                                <div id="onboarding-pfp-preview"><i data-feather="camera"
-                                        class="text-zinc-400 w-5 h-5"></i>
-                                </div>
-                                <div
-                                    class="absolute bottom-0 right-0 w-6 h-6 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-zinc-900 text-[10px] border-2 border-white dark:border-[#141414] shadow-md">
-                                    <i data-feather="plus" class="w-4 h-4"></i>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <label
-                                    class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1"
-                                    data-t="display_name">Display Name</label>
-                                <input type="text" id="onboarding-name" placeholder="Name or Alias"
-                                    class="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-3 text-sm font-bold focus:border-blue-500 outline-none transition-all">
-                            </div>
-                            <input type="file" id="onboarding-pfp-input" class="hidden" accept="image/*"
-                                onchange="window.handleOnboardingPfp(event)">
-                        </div>
-
-                        <div>
-                            <label
-                                class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 px-1 text-center"
-                                data-t="appearance">Appearance</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <button onclick="window.setTheme('light')"
-                                    class="flex items-center justify-center gap-2 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
-                                        data-feather="sun" class="w-4 h-4"></i> <span
-                                        data-t="theme_light">Light</span></button>
-                                <button onclick="window.setTheme('system')"
-                                    class="flex items-center justify-center gap-2 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
-                                        data-feather="monitor" class="w-4 h-4"></i> <span
-                                        data-t="theme_system">System</span></button>
-                                <button onclick="window.setTheme('dark')"
-                                    class="flex items-center justify-center gap-2 py-3 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-xs font-bold"><i
-                                        data-feather="moon" class="w-4 h-4"></i> <span
-                                        data-t="theme_dark">Dark</span></button>
-                            </div>
-                        </div>
-
-                        <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/50"></div>
-
-                        <!-- 4. Continue Buttons -->
-                        <div class="flex flex-col gap-3">
-                            <button onclick="window.completeOnboarding()"
-                                class="w-full flex items-center justify-center py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl text-center"
-                                data-t="onboarding_complete">Complete Setup</button>
-                            <button onclick="window.continueAsGuest()"
-                                class="w-full flex items-center justify-center py-2 text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] hover:text-zinc-900 dark:hover:text-white transition-colors text-center"
-                                data-t="onboarding_guest">Continue as Guest</button>
-                            <a href="https://discord.gg/BxjTsjvR8Z" target="_blank" rel="noopener noreferrer"
-                                class="w-full flex items-center justify-center gap-2 py-3 bg-[#5865F2] text-white rounded-lg font-bold text-xs hover:brightness-110 active:scale-[0.98] transition-all shadow-lg text-center">
-                                <i class="fa-brands fa-discord text-base"></i>
-                                <span>Development Progress</span>
-                            </a>
-                        </div>
+                <!-- Appearance -->
+                <div class="mb-5">
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 text-center"
+                        data-t="appearance">Appearance</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="window.setTheme('light')"
+                            class="flex items-center justify-center gap-2 min-h-[48px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 hover:border-[var(--accent-color)] transition-all text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                            <i data-feather="sun" class="w-4 h-4"></i> <span data-t="theme_light">Light</span>
+                        </button>
+                        <button onclick="window.setTheme('system')"
+                            class="flex items-center justify-center gap-2 min-h-[48px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 hover:border-[var(--accent-color)] transition-all text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                            <i data-feather="monitor" class="w-4 h-4"></i> <span data-t="theme_system">System</span>
+                        </button>
+                        <button onclick="window.setTheme('dark')"
+                            class="flex items-center justify-center gap-2 min-h-[48px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 hover:border-[var(--accent-color)] transition-all text-xs font-bold text-zinc-700 dark:text-zinc-300">
+                            <i data-feather="moon" class="w-4 h-4"></i> <span data-t="theme_dark">Dark</span>
+                        </button>
                     </div>
                 </div>
 
+                <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 mb-5"></div>
 
-            </div>
+                <!-- Action Buttons -->
+                <div class="flex flex-col gap-3">
+                    <button onclick="window.completeOnboarding()"
+                        class="w-full flex items-center justify-center min-h-[52px] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl"
+                        data-t="onboarding_complete">Complete Setup</button>
+                    <button onclick="window.continueAsGuest()"
+                        class="w-full flex items-center justify-center min-h-[44px] text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] hover:text-zinc-900 dark:hover:text-white transition-colors"
+                        data-t="onboarding_guest">Continue as Guest</button>
+                    <p class="text-center text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">
+                        Already have an account? <button onclick="window.goToSettingsLogin()"
+                            class="text-[var(--accent-color)] hover:underline">Log in via Settings</button>
+                    </p>
+                    <a href="https://discord.gg/BxjTsjvR8Z" target="_blank" rel="noopener noreferrer"
+                        class="w-full flex items-center justify-center gap-2 min-h-[48px] bg-[#5865F2] text-white rounded-2xl font-bold text-xs hover:brightness-110 active:scale-[0.98] transition-all shadow-lg">
+                        <i class="fa-brands fa-discord text-base"></i>
+                        <span>Development Progress</span>
+                    </a>
+                </div>
 
-            <!-- Right Side: Image -->
-            <div
-                class="hidden lg:flex w-1/2 flex-shrink-0 bg-zinc-50 dark:bg-zinc-900/50 items-center justify-center border-l border-zinc-100 dark:border-zinc-800 relative overflow-hidden p-0">
-                <img src="../src/OLM.png" class="w-full h-full object-cover">
             </div>
         </div>
+
+        <!-- Side image (RIGHT on desktop, hidden on mobile) -->
+        <img id="onboarding-side-img" src="../src/OLM.png" alt="OLM" />
     </div>
 
     <aside id="sidebar"
@@ -1520,10 +1519,13 @@
         <div id="sidebar-full-content" class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
             <div class="mb-6 lg:mb-4 px-2 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <svg class="h-4 w-auto text-zinc-900 dark:text-white" viewBox="0 0 715.4 357.7"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M42,357.7c0-174.36,141.34-315.7,315.7-315.7s315.7,141.34,315.7,315.7" fill="none"
-                            stroke="currentColor" stroke-miterlimit="10" stroke-width="84" />
+                    <svg class="h-4 w-auto" viewBox="0 0 1080 332.95" xmlns="http://www.w3.org/2000/svg"
+                        style="color: var(--accent-color);">
+                        <path fill="currentColor"
+                            d="M0,131.14L275.33,25.93v59.67S49.73,165.69,49.73,165.69l225.61,79.83v61.51S0,201.81,0,201.81v-70.67Z" />
+                        <path fill="currentColor"
+                            d="M1080,201.81l-275.33,105.21v-59.67s225.6-79.83,225.6-79.83l-225.6-80.09V25.93s275.33,105.21,275.33,105.21v70.67Z" />
+                        <circle fill="currentColor" cx="540" cy="166.48" r="166.48" />
                     </svg>
                 </div>
                 <button
@@ -1566,7 +1568,7 @@
                     </button>
                     <div class="flex flex-col items-end opacity-40 text-[8px] font-black uppercase tracking-tighter">
                         <span data-t="storage_used">Storage Used:</span>
-                        <span id="storage-display" class="font-mono">0.0000 GB</span>
+                        <span id="storage-display-sidebar" class="font-mono">—</span>
                     </div>
                 </div>
             </div>
@@ -1734,7 +1736,7 @@
                                             <circle cx="12" cy="12" r="3" class="fill-current stroke-none" />
                                         </svg>
                                     </div>
-                                    <span id="current-model-name">Polaris 1.4</span>
+                                    <span id="current-model-name">Polaris 1.5</span>
                                     <i data-feather="chevron-down" class="w-3 h-3"></i>
                                 </button>
 
@@ -1753,7 +1755,7 @@
                                                 </svg>
                                             </div>
                                             <div class="flex flex-col">
-                                                <span class="text-xs font-semibold">Polaris 1.4</span>
+                                                <span class="text-xs font-semibold">Polaris 1.5</span>
                                                 <span class="text-[10px] opacity-50">Deep reasoning</span>
                                             </div>
                                         </button>
@@ -1863,7 +1865,7 @@
                 els.miniAvatarDisplay = document.getElementById('mini-avatar-display');
                 els.pfpMovableImg = document.getElementById('pfp-movable-img');
                 els.pfpWorkspace = document.getElementById('pfp-workspace');
-                els.storageDisplay = document.getElementById('storage-display');
+                els.storageDisplay = document.getElementById('storage-display'); // settings panel display
                 els.flare = document.getElementById('intelligence-flare');
                 els.savedAccents = document.getElementById('saved-accents');
 
@@ -2046,7 +2048,7 @@
             const MODELS = {
                 OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", icon: UNIQUE_SVG_STAR },
                 // Strictly use the configured backend URL for OLM2/Polaris
-                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.4", icon: UNIQUE_SVG_NORTH }
+                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.5", icon: UNIQUE_SVG_NORTH }
             };
 
             const translations = {
@@ -2114,22 +2116,137 @@
                 },
             };
 
+            // ============================================================
+            // StorageController — async IndexedDB with localStorage fallback
+            // ============================================================
+            const StorageController = (() => {
+                const DB_NAME = 'polaris_db';
+                const DB_VERSION = 1;
+                const STORE_CHATS = 'chats';
+                let db = null;
+                let _sessionOnly = false;
+                let _sessionCache = {};
+
+                const openDB = () => new Promise((resolve, reject) => {
+                    if (db) { resolve(db); return; }
+                    try {
+                        const req = indexedDB.open(DB_NAME, DB_VERSION);
+                        req.onupgradeneeded = (e) => {
+                            const idb = e.target.result;
+                            if (!idb.objectStoreNames.contains(STORE_CHATS)) {
+                                idb.createObjectStore(STORE_CHATS, { keyPath: 'id' });
+                            }
+                        };
+                        req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+                        req.onerror = (e) => reject(e.target.error);
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+
+                const init = async () => {
+                    try {
+                        await openDB();
+                        _sessionOnly = false;
+                        const badge = document.getElementById('storage-mode-badge');
+                        if (badge) badge.textContent = 'IndexedDB (persistent)';
+                    } catch (err) {
+                        console.warn('[StorageController] IndexedDB unavailable, using session-only mode:', err);
+                        _sessionOnly = true;
+                        const badge = document.getElementById('storage-mode-badge');
+                        if (badge) badge.textContent = 'Session-Only (private mode)';
+                    }
+                };
+
+                const getAllChats = async () => {
+                    if (_sessionOnly) return { ..._sessionCache };
+                    try {
+                        const idb = await openDB();
+                        return new Promise((resolve, reject) => {
+                            const tx = idb.transaction(STORE_CHATS, 'readonly');
+                            const req = tx.objectStore(STORE_CHATS).getAll();
+                            req.onsuccess = () => {
+                                const map = {};
+                                (req.result || []).forEach(c => { map[c.id] = c; });
+                                resolve(map);
+                            };
+                            req.onerror = () => reject(req.error);
+                        });
+                    } catch (err) {
+                        console.error('[StorageController] getAllChats error:', err);
+                        return {};
+                    }
+                };
+
+                const saveChat = async (chat) => {
+                    if (_sessionOnly) { _sessionCache[chat.id] = chat; return; }
+                    try {
+                        const idb = await openDB();
+                        return new Promise((resolve, reject) => {
+                            const tx = idb.transaction(STORE_CHATS, 'readwrite');
+                            tx.objectStore(STORE_CHATS).put(chat);
+                            tx.oncomplete = resolve;
+                            tx.onerror = () => reject(tx.error);
+                        });
+                    } catch (err) {
+                        console.error('[StorageController] saveChat error:', err);
+                    }
+                };
+
+                const deleteChat = async (id) => {
+                    if (_sessionOnly) { delete _sessionCache[id]; return; }
+                    try {
+                        const idb = await openDB();
+                        return new Promise((resolve, reject) => {
+                            const tx = idb.transaction(STORE_CHATS, 'readwrite');
+                            tx.objectStore(STORE_CHATS).delete(id);
+                            tx.oncomplete = resolve;
+                            tx.onerror = () => reject(tx.error);
+                        });
+                    } catch (err) {
+                        console.error('[StorageController] deleteChat error:', err);
+                    }
+                };
+
+                const clearAll = async () => {
+                    if (_sessionOnly) { _sessionCache = {}; return; }
+                    try {
+                        const idb = await openDB();
+                        return new Promise((resolve, reject) => {
+                            const tx = idb.transaction(STORE_CHATS, 'readwrite');
+                            tx.objectStore(STORE_CHATS).clear();
+                            tx.oncomplete = resolve;
+                            tx.onerror = () => reject(tx.error);
+                        });
+                    } catch (err) {
+                        console.error('[StorageController] clearAll error:', err);
+                    }
+                };
+
+                // Background storage size estimate (non-blocking)
+                const estimateSize = async () => {
+                    try {
+                        if (navigator.storage && navigator.storage.estimate) {
+                            const est = await navigator.storage.estimate();
+                            return est.usage || 0;
+                        }
+                        // Fallback: count session cache size
+                        const json = JSON.stringify(_sessionCache);
+                        return new Blob([json]).size;
+                    } catch { return 0; }
+                };
+
+                return { init, getAllChats, saveChat, deleteChat, clearAll, estimateSize, isSessionOnly: () => _sessionOnly };
+            })();
+
+            // ============================================================
+            // Strip model control tokens before any text is rendered to the user
+            const sanitizeText = (t) => (t || '').replace(/<\|im_end\|?>/g, '').replace(/<\|im_start\|?>/g, '').replace(/<\|endoftext\|?>/g, '').trim();
+
             let client = null, chatHistory = [], isGenerating = false, currentJob = null;
             let currentModel = MODELS.OLM2;
-            let allChats = JSON.parse(localStorage.getItem('vail_history_v4') || '{}');
+            let allChats = {};
             let currentChatId = crypto.randomUUID();
-
-            const BUILD_NUMBER = 1003;
-            const CHANGELOG = {
-                version: "1.0.3",
-                build: BUILD_NUMBER,
-                changes: [
-                    "Polaris has been updated to 1.4",
-                    "Added sidebar search for chats",
-                    "Refined user icon rendering for better symmetry",
-                    "Implemented automatic changelog popups"
-                ]
-            };
 
             // Typing effect variables
             let streamQueue = "";
@@ -2189,15 +2306,21 @@
                 return `rgba(${r}, ${g}, ${b}, ${alpha})`;
             };
 
-            window.updateStorageUsage = () => {
-                let storageSize = 0;
-                for (let k in localStorage) {
-                    if (Object.prototype.hasOwnProperty.call(localStorage, k)) {
-                        storageSize += ((localStorage[k].length + k.length) * 2);
-                    }
+            window.updateStorageUsage = async () => {
+                try {
+                    const bytes = await StorageController.estimateSize();
+                    const mbVal = bytes / (1024 * 1024);
+                    const label = mbVal < 1 ? `${(bytes / 1024).toFixed(1)} KB` : `${mbVal.toFixed(2)} MB`;
+                    const d1 = document.getElementById('storage-display');
+                    const d2 = document.getElementById('storage-display-sidebar');
+                    if (d1) d1.innerText = label;
+                    if (d2) d2.innerText = label;
+                } catch (e) {
+                    const d1 = document.getElementById('storage-display');
+                    const d2 = document.getElementById('storage-display-sidebar');
+                    if (d1) d1.innerText = '—';
+                    if (d2) d2.innerText = '—';
                 }
-                const gbVal = storageSize / (1024 * 1024 * 1024);
-                if (els.storageDisplay) els.storageDisplay.innerText = `${gbVal.toFixed(6)} GB`;
             };
 
             window.applyTranslations = () => {
@@ -2350,38 +2473,78 @@
                         googleAccessToken = tokenResponse.access_token;
                         isGoogleSignedIn = true;
 
-                        // Load Google API Client Library
-                        await gapi.load('client', async () => {
-                            await gapi.client.init({
-                                apiKey: 'AIzaSyDWRLN1WkR2YQc0U2OMUSUSF1RMYGDq5-A',
-                                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+                        // 1. Fetch User Profile Info FIRST (no gapi dependency)
+                        const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                            headers: { Authorization: `Bearer ${googleAccessToken}` }
+                        }).then(res => res.json());
+
+                        if (userInfo) {
+                            settings.userName = userInfo.name || settings.userName;
+
+                            // Fetch PFP as data-URL for offline use (graceful CORS fallback)
+                            if (userInfo.picture) {
+                                try {
+                                    const picResp = await fetch(userInfo.picture);
+                                    const blob = await picResp.blob();
+                                    settings.userPic = await new Promise(res => {
+                                        const r = new FileReader();
+                                        r.onload = () => res(r.result);
+                                        r.readAsDataURL(blob);
+                                    });
+                                } catch {
+                                    settings.userPic = userInfo.picture;
+                                }
+                            }
+                        }
+
+                        // 2. Immediately save and update UI
+                        saveSettings();
+                        updateProfileUI();
+                        updateGoogleAuthButton();
+
+                        // 3. Update onboarding preview and auto-complete if visible
+                        const onboardingEl = document.getElementById('onboarding-overlay');
+                        const isOnboarding = onboardingEl && !onboardingEl.classList.contains('hidden');
+                        if (isOnboarding) {
+                            const preview = document.getElementById('onboarding-pfp-preview');
+                            if (preview && settings.userPic) preview.innerHTML = `<img src="${settings.userPic}" class="w-full h-full object-cover">`;
+                            const nameInput = document.getElementById('onboarding-name');
+                            if (nameInput) nameInput.value = settings.userName;
+
+                            // Show PFP + name in the Google button
+                            const googlePfp = document.getElementById('google-pfp-onboarding');
+                            if (googlePfp && settings.userPic) {
+                                googlePfp.src = settings.userPic;
+                                googlePfp.classList.remove('hidden');
+                            }
+                            const btnText = document.getElementById('google-btn-text-onboarding');
+                            if (btnText) btnText.innerHTML = `Signed in as ${settings.userName}`;
+
+                            // Auto-complete onboarding — go straight to chat
+                            setTimeout(() => window.finalizeOnboarding(), 800);
+                        }
+
+                        // 4. Load gapi + Drive sync in background (non-blocking)
+                        const loadGapi = () => new Promise((resolve) => {
+                            if (typeof gapi === 'undefined') { resolve(); return; }
+                            gapi.load('client', async () => {
+                                try {
+                                    await gapi.client.init({
+                                        apiKey: 'AIzaSyDWRLN1WkR2YQc0U2OMUSUSF1RMYGDq5-A',
+                                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+                                    });
+                                    gapi.client.setToken({ access_token: googleAccessToken });
+                                    await window.ensureGoogleDriveFolder();
+                                    await window.loadChatsFromGoogle();
+                                    await window.syncChatsToGoogle();
+                                    console.log('Drive sync complete for:', settings.userName);
+                                } catch (driveErr) {
+                                    console.error('Drive Sync Error:', driveErr);
+                                }
+                                resolve();
                             });
-
-                            gapi.client.setToken({ access_token: googleAccessToken });
-
-                            // Fetch User Profile Info manually since we don't have ID token claim
-                            const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                                headers: { Authorization: `Bearer ${googleAccessToken}` }
-                            }).then(res => res.json());
-
-                            if (userInfo) {
-                                settings.userName = userInfo.name;
-                                settings.userPic = userInfo.picture;
-                            }
-
-                            saveSettings();
-                            updateProfileUI();
-                            updateGoogleAuthButton();
-
-                            try {
-                                await window.ensureGoogleDriveFolder();
-                                await window.loadChatsFromGoogle();
-                                await window.syncChatsToGoogle();
-                                console.log('Profile loaded and Drive sync complete for:', settings.userName);
-                            } catch (driveErr) {
-                                console.error('Drive Sync Error:', driveErr);
-                            }
                         });
+                        loadGapi(); // fire-and-forget
 
                     } catch (error) {
                         console.error('Error handling Google Sign-In:', error);
@@ -2446,7 +2609,10 @@
                                 }
                             }
                             if (merged) {
-                                localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+                                // Persist merged chats to IndexedDB
+                                for (const chatId in allChats) {
+                                    await StorageController.saveChat(allChats[chatId]);
+                                }
                                 renderHistory();
                                 render();
                             }
@@ -2530,25 +2696,26 @@
             };
 
             window.updateGoogleAuthButton = () => {
-                // Update settings panel button
-                const btn = document.getElementById('google-auth-btn');
-                const btnText = document.getElementById('google-btn-text');
-                if (btn && btnText) {
-                    if (isGoogleSignedIn) {
-                        btnText.innerHTML = feather.icons.check.toSvg({ class: 'w-4 h-4 mr-1' }) + 'Signed in';
-                    } else {
-                        btnText.innerHTML = '<i class="fa-brands fa-google mr-1"></i>Sign in with Google';
-                    }
+                // Update settings panel Google status text
+                const statusText = document.getElementById('google-status-text');
+                if (statusText) {
+                    statusText.innerText = isGoogleSignedIn ? 'Connected' : 'Not connected';
+                    statusText.className = isGoogleSignedIn ? 'text-xs text-green-500' : 'text-xs text-zinc-400';
                 }
 
-                // Update onboarding button
-                const onboardingBtn = document.getElementById('google-auth-btn-onboarding');
+                // Update onboarding button (PFP + name)
                 const onboardingBtnText = document.getElementById('google-btn-text-onboarding');
-                if (onboardingBtn && onboardingBtnText) {
+                const googlePfp = document.getElementById('google-pfp-onboarding');
+                if (onboardingBtnText) {
                     if (isGoogleSignedIn) {
-                        onboardingBtnText.innerHTML = feather.icons.check.toSvg({ class: 'w-4 h-4 mr-1' }) + 'Signed in';
+                        onboardingBtnText.innerHTML = `Signed in as ${settings.userName || 'User'}`;
+                        if (googlePfp && settings.userPic) {
+                            googlePfp.src = settings.userPic;
+                            googlePfp.classList.remove('hidden');
+                        }
                     } else {
-                        onboardingBtnText.innerHTML = '<i class="fa-brands fa-google mr-1"></i>Sign in with Google';
+                        onboardingBtnText.innerHTML = '<i class="fa-brands fa-google mr-2"></i>Continue with Google';
+                        if (googlePfp) googlePfp.classList.add('hidden');
                     }
                 }
             };
@@ -2594,7 +2761,7 @@
 
                 updateUI();
                 renderHistory();
-                if (window.renderCustomAccents) window.renderCustomAccents();
+                if (window.renderThemes) window.renderThemes();
             };
 
             window.toggleSidebar = () => {
@@ -2630,8 +2797,8 @@
                 const darkBtn = document.getElementById('btn-theme-dark');
                 const systemBtn = document.getElementById('btn-theme-system');
 
-                const resetClass = "px-3 py-1.5 rounded-md text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
-                const activeClass = "px-3 py-1.5 rounded-md text-xs font-bold transition-all bg-white dark:bg-zinc-600 text-black dark:text-white shadow-sm";
+                const resetClass = "min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
+                const activeClass = "min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all bg-white dark:bg-zinc-600 text-zinc-900 dark:text-white shadow-sm";
 
                 if (lightBtn) lightBtn.className = mode === 'light' ? activeClass : resetClass;
                 if (darkBtn) darkBtn.className = mode === 'dark' ? activeClass : resetClass;
@@ -2656,7 +2823,6 @@
                 }
 
                 if (isActive) {
-                    // Default to General tab (Apple style preference)
                     window.openSettingsTab('general');
 
                     // Populate Inputs
@@ -2682,18 +2848,17 @@
                     if (toggleBtn) {
                         const thumb = toggleBtn.querySelector('div');
                         if (settings.sidebarMode === 'smart') {
-                            toggleBtn.classList.replace('bg-zinc-200', 'bg-green-500');
-                            toggleBtn.classList.replace('dark:bg-zinc-700', 'bg-green-500');
-                            thumb.style.transform = 'translateX(20px)';
+                            toggleBtn.classList.remove('bg-zinc-200', 'dark:bg-zinc-700');
+                            toggleBtn.classList.add('bg-green-500');
+                            if (thumb) thumb.style.transform = 'translateX(22px)';
                         } else {
                             toggleBtn.classList.remove('bg-green-500');
                             toggleBtn.classList.add('bg-zinc-200', 'dark:bg-zinc-700');
-                            thumb.style.transform = 'translateX(0)';
+                            if (thumb) thumb.style.transform = 'translateX(0)';
                         }
                     }
 
-                    els.pfpMovableImg.src = settings.userPic || '';
-                    applyMovableStyles();
+                    if (els.pfpMovableImg) { els.pfpMovableImg.src = settings.userPic || ''; applyMovableStyles(); }
 
                     // New Custom Color Logic Reset
                     const newPreviewBtn = document.getElementById('pending-custom-color');
@@ -2706,25 +2871,14 @@
             };
 
             window.openSettingsTab = (tabName) => {
-                // 1. Update Sidebar Active State
-                document.querySelectorAll('.apple-nav-item').forEach(el => {
-                    // Check if the click matches the tab
-                    const span = el.querySelector('span');
-                    const isMatch = span && span.innerText.toLowerCase().includes(tabName);
-                    // However, General matches 'general' but button says 'General'
-                    if (tabName === 'general' && span.innerText === 'General') el.classList.add('active');
-                    else if (tabName === 'intelligence' && span.innerText === 'Intelligence') el.classList.add('active');
-                    else el.classList.remove('active');
+                // Update polaris tab buttons
+                document.querySelectorAll('.polaris-tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
                 });
+                const activeBtn = document.getElementById(`ptab-btn-${tabName}`);
+                if (activeBtn) activeBtn.classList.add('active');
 
-                // Profile Card Active State
-                const profileCard = document.querySelector('.apple-profile-card');
-                if (profileCard) {
-                    if (tabName === 'profile') profileCard.classList.add('active');
-                    else profileCard.classList.remove('active');
-                }
-
-                // 2. Show Content
+                // Show content
                 document.querySelectorAll('.settings-tab-content').forEach(el => {
                     el.classList.add('hidden');
                     el.classList.remove('block');
@@ -2746,7 +2900,7 @@
                 if (settings.sidebarMode === 'smart') {
                     toggleBtn.classList.remove('bg-zinc-200', 'dark:bg-zinc-700');
                     toggleBtn.classList.add('bg-green-500');
-                    thumb.style.transform = 'translateX(20px)';
+                    thumb.style.transform = 'translateX(22px)';
                 } else {
                     toggleBtn.classList.remove('bg-green-500');
                     toggleBtn.classList.add('bg-zinc-200', 'dark:bg-zinc-700');
@@ -2856,6 +3010,17 @@
                 window.finalizeOnboarding();
             };
 
+            window.goToSettingsLogin = () => {
+                // Hide onboarding
+                if (els.onboarding) {
+                    els.onboarding.classList.add('hidden');
+                    document.body.classList.remove('onboarding-active');
+                }
+                // Open settings modal to profile/account tab
+                window.toggleSettingsPanel();
+                window.openSettingsTab('profile');
+            };
+
             window.finalizeOnboarding = () => {
                 settings.hasCompletedTutorial = true;
                 saveSettings();
@@ -2954,15 +3119,14 @@
                 if (confirm('Remove all custom colors?')) {
                     settings.customAccents = [];
                     saveSettings();
-                    window.renderCustomAccents();
-                    // Restore current accent color
+                    window.renderThemes();
                     window.updateAccent(settings.accent || 'auto');
                 }
             };
 
             const saveSettings = () => {
                 localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
-                window.updateStorageUsage();
+                window.updateStorageUsage(); // async, non-blocking
             };
 
             const updateProfileUI = () => {
@@ -3000,31 +3164,15 @@
                     settingsNameInput.value = settings.userName || '';
                 }
 
-                // Update Apple Sidebar Profile Card
+                // Update Settings Header Profile Card
                 const sidebarCardName = document.getElementById('settings-sidebar-name-card');
                 if (sidebarCardName) sidebarCardName.innerText = currentName;
 
                 const sidebarCardPfp = document.getElementById('settings-sidebar-pfp-card');
                 if (sidebarCardPfp) renderAvatar(sidebarCardPfp, 48, true);
 
-                const googleStatusBadge = document.getElementById('google-status-badge');
-                const googleStatusText = document.getElementById('google-status-text');
-                const googleSyncCheck = document.getElementById('google-sync-check');
-
-                if (googleStatusText) {
-                    if (isGoogleSignedIn) {
-                        googleStatusText.innerText = 'Signed In';
-                        googleStatusText.className = 'text-green-500';
-                        if (googleSyncCheck) googleSyncCheck.classList.remove('hidden');
-                    } else {
-                        googleStatusText.innerText = 'Not Signed In';
-                        googleStatusText.className = 'text-zinc-400';
-                        if (googleSyncCheck) googleSyncCheck.classList.add('hidden');
-                    }
-                }
-
-                const settingsPfpDisplay = document.getElementById('settings-pfp-display');
-                if (settingsPfpDisplay) renderAvatar(settingsPfpDisplay, 96, true);
+                // Sync Google auth button state
+                window.updateGoogleAuthButton();
 
                 // Render themes whenever profile UI updates (often accompanies state changes)
                 if (window.renderThemes) window.renderThemes();
@@ -3139,13 +3287,10 @@
                 render(); updateUI();
             };
 
-            window.clearAll = () => {
+            window.clearAll = async () => {
                 allChats = {};
-                localStorage.setItem('vail_history_v4', '{}');
-                // Also delete from Google Drive if signed in
-                if (isGoogleSignedIn) {
-                    window.deleteChatsFromGoogle();
-                }
+                await StorageController.clearAll();
+                if (isGoogleSignedIn) window.deleteChatsFromGoogle();
                 window.resetChat();
                 renderHistory();
                 window.updateStorageUsage();
@@ -3362,7 +3507,7 @@
 
                                     // Only show content if it's non-empty or thought is closed
                                     if (content.trim()) {
-                                        mainContentDiv.innerHTML = marked.parse(content);
+                                        mainContentDiv.innerHTML = marked.parse(sanitizeText(content));
                                         applyContentFeatures(mainContentDiv);
                                     }
                                     els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
@@ -3373,7 +3518,8 @@
                         }
                     }
 
-                    // Finalize response
+                    // Finalize response — strip any leaked control tokens before saving
+                    responseText = sanitizeText(responseText);
                     chatHistory[chatHistory.length - 1][1] = responseText;
                     isGenerating = false;
                     updateUI();
@@ -3388,7 +3534,7 @@
                             mainContentDiv.className = 'main-response-content';
                             lastProse.appendChild(mainContentDiv);
                         }
-                        mainContentDiv.innerHTML = marked.parse(content);
+                        mainContentDiv.innerHTML = marked.parse(sanitizeText(content));
                         applyContentFeatures(mainContentDiv);
 
                         // Add action icons row
@@ -3441,20 +3587,24 @@
                         btn.innerHTML = feather.icons.check.toSvg({ class: 'w-4 h-4' });
                         setTimeout(() => btn.innerHTML = feather.icons.copy.toSvg({ class: 'w-4 h-4' }), 2000);
                     };
-                    pre.appendChild(btn);
+                    pre.prepend(btn);
                 });
             };
 
-            const save = () => {
+            const save = async () => {
                 if (!chatHistory.length) return;
-                allChats[currentChatId] = { id: currentChatId, title: chatHistory[0][0].substring(0, 30), history: chatHistory, timestamp: Date.now(), pinned: allChats[currentChatId]?.pinned || false };
-                localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+                const chat = {
+                    id: currentChatId,
+                    title: chatHistory[0][0].substring(0, 30),
+                    history: chatHistory,
+                    timestamp: Date.now(),
+                    pinned: allChats[currentChatId]?.pinned || false
+                };
+                allChats[currentChatId] = chat;
+                await StorageController.saveChat(chat);
                 renderHistory();
                 window.updateStorageUsage();
-                // Sync to Google Drive if signed in
-                if (isGoogleSignedIn) {
-                    window.syncChatsToGoogle();
-                }
+                if (isGoogleSignedIn) window.syncChatsToGoogle();
             };
 
             window.copyMsg = (idx, btnEl) => {
@@ -3495,17 +3645,17 @@
                 }
             };
 
-            window.togglePin = (id) => {
+            window.togglePin = async (id) => {
                 if (allChats[id]) {
                     allChats[id].pinned = !allChats[id].pinned;
-                    localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+                    await StorageController.saveChat(allChats[id]);
                     renderHistory();
                 }
             };
 
-            window.delChat = (id) => {
+            window.delChat = async (id) => {
                 delete allChats[id];
-                localStorage.setItem('vail_history_v4', JSON.stringify(allChats));
+                await StorageController.deleteChat(id);
                 if (id === currentChatId) {
                     currentChatId = crypto.randomUUID();
                     chatHistory = [];
@@ -3602,7 +3752,7 @@
                 } else {
                     els.chatMsgs.innerHTML = chatHistory.map(([u, a], i) => `
                     <div class="user-row flex flex-col items-end">
-                        <div class="user-msg-bubble prose dark:prose-invert font-medium ml-auto text-justify">${marked.parse(u)}</div>
+                        <div class="user-msg-bubble prose dark:prose-invert font-medium ml-auto text-justify">${marked.parse(sanitizeText(u))}</div>
                         <div class="user-msg-actions">
                             <button class="user-msg-action-btn" onclick="window.copyUserMsg(${i}, this)" title="Copy"><i data-feather="copy" class="w-3 h-3"></i></button>
                             <button class="user-msg-action-btn" onclick="window.editMsg(${i})" title="Edit"><i data-feather="edit-2" class="w-3 h-3"></i></button>
@@ -3636,7 +3786,7 @@
                                             </div>
                                         </div>`;
                             }
-                            html += `<div class="main-response-content">${marked.parse(content)}</div>`;
+                            html += `<div class="main-response-content">${marked.parse(sanitizeText(content))}</div>`;
                             return html;
                         })()}
                             </div>
@@ -3764,7 +3914,11 @@
                 window.sendMessage("/search " + query);
             };
 
-            window.factoryReset = () => { localStorage.clear(); window.location.reload(); };
+            window.factoryReset = async () => {
+                await StorageController.clearAll();
+                localStorage.clear();
+                window.location.reload();
+            };
 
             window.handleCustomAccentChangeNew = (val) => {
                 // Apply color in real-time as user picks
@@ -3810,68 +3964,159 @@
                 if (!container) return;
 
                 const currentAccent = settings.accent || 'auto';
+
+                // Fun Polaris theme names with glow colors
                 const PRESETS = [
-                    { color: 'auto', name: 'Sage/Moss', isAuto: true },
-                    { color: '#3b82f6', name: 'Electric Blue' },
-                    { color: '#a855f7', name: 'Cosmic Purple' },
-                    { color: '#22c55e', name: 'Lush Green' },
-                    { color: '#f97316', name: 'Vitamin C' },
-                    { color: '#ef4444', name: 'Code Red' }
+                    {
+                        color: 'auto',
+                        name: 'Sage Whisper',
+                        desc: 'Earthy & calm',
+                        isAuto: true,
+                        iconBg: 'linear-gradient(135deg, #5F634F, #BFD7B5)',
+                        glowColor: '#BFD7B5'
+                    },
+                    {
+                        color: '#3b82f6',
+                        name: 'Midnight in Paris',
+                        desc: 'Deep & electric',
+                        iconBg: 'linear-gradient(135deg, #1d4ed8, #60a5fa)',
+                        glowColor: '#3b82f6'
+                    },
+                    {
+                        color: '#a855f7',
+                        name: 'Electric Lemonade',
+                        desc: 'Vivid & playful',
+                        iconBg: 'linear-gradient(135deg, #7c3aed, #c084fc)',
+                        glowColor: '#a855f7'
+                    },
+                    {
+                        color: '#f97316',
+                        name: 'Vitamin C',
+                        desc: 'Warm & energetic',
+                        iconBg: 'linear-gradient(135deg, #ea580c, #fdba74)',
+                        glowColor: '#f97316'
+                    },
+                    {
+                        color: '#22c55e',
+                        name: 'Lush Green',
+                        desc: 'Fresh & alive',
+                        iconBg: 'linear-gradient(135deg, #16a34a, #86efac)',
+                        glowColor: '#22c55e'
+                    }
                 ];
 
                 let html = '';
 
-                // Render Presets
-                PRESETS.forEach(theme => {
-                    const isActive = currentAccent === theme.color;
-                    const colorStyle = theme.isAuto ? 'background: #52525b;' : `background: ${theme.color};`;
+                const renderThemeItem = ({ color, name, desc, isAuto, iconBg, glowColor }, index, isCustom = false) => {
+                    const isActive = currentAccent === color;
+                    const glowStyle = isActive
+                        ? `box-shadow: 0 0 0 3px ${glowColor}, 0 0 22px ${glowColor}55;`
+                        : '';
+                    const checkHtml = isActive
+                        ? `<div class="polaris-theme-check ml-auto shrink-0">${feather.icons.check.toSvg({ class: 'w-3 h-3', style: 'color: var(--accent-contrast)' })}</div>`
+                        : '';
+                    const deleteBtn = isCustom
+                        ? `<div onclick="event.stopPropagation(); window.removeCustomAccent(${index})" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 ml-2 opacity-0 group-hover:opacity-100 transition-all text-zinc-400 hover:text-red-500 shrink-0"><i data-feather="trash-2" class="w-3.5 h-3.5"></i></div>`
+                        : '';
 
-                    html += `
-                        <button onclick="window.updateAccent('${theme.color}')" class="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${isActive ? 'bg-zinc-100 dark:bg-zinc-800 shadow-inner ring-1 ring-zinc-200 dark:ring-zinc-700' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'}">
-                            <div class="w-5 h-5 rounded-full flex items-center justify-center shadow-sm" style="${colorStyle}">
-                                ${theme.isAuto ? feather.icons.aperture.toSvg({ class: 'w-3 h-3 text-white' }) : ''}
+                    return `
+                        <button onclick="window.updateAccent('${color}')"
+                            class="polaris-theme-item group ${isActive ? 'active-theme' : ''}">
+                            <div class="polaris-theme-icon shrink-0" style="background: ${iconBg}; ${glowStyle}">
+                                ${isAuto ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>` : ''}
                             </div>
-                            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">${theme.name}</span>
-                            ${isActive ? feather.icons.check.toSvg({ class: 'w-3 h-3 ml-auto text-blue-500' }) : ''}
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-sm font-bold text-zinc-900 dark:text-white leading-tight">${name}</span>
+                                <span class="text-[11px] text-zinc-400 leading-tight mt-0.5">${desc || ''}</span>
+                            </div>
+                            ${checkHtml}
+                            ${deleteBtn}
                         </button>`;
+                };
+
+                PRESETS.forEach((theme) => {
+                    html += renderThemeItem(theme, -1, false);
                 });
 
-                // Render Custom
                 if (settings.customAccents && Array.isArray(settings.customAccents)) {
                     settings.customAccents.forEach((item, index) => {
                         const color = typeof item === 'string' ? item : item.color;
                         const name = typeof item === 'string' ? 'Custom Color' : item.name;
-                        const isActive = currentAccent === color;
-
-                        html += `
-                            <button onclick="window.updateAccent('${color}')" class="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${isActive ? 'bg-zinc-100 dark:bg-zinc-800 shadow-inner ring-1 ring-zinc-200 dark:ring-zinc-700' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50'} group">
-                                <div class="w-5 h-5 rounded-full shadow-sm" style="background: ${color}"></div>
-                                <div class="text-left">
-                                     <span class="block text-xs font-bold text-zinc-700 dark:text-zinc-300 leading-tight">${name}</span>
-                                </div>
-                                ${isActive ? feather.icons.check.toSvg({ class: 'w-3 h-3 ml-auto text-blue-500' }) : ''}
-                                <div onclick="event.stopPropagation(); window.removeCustomAccent(${index})" class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 ml-${isActive ? '2' : 'auto'} opacity-0 group-hover:opacity-100 transition-all text-zinc-400 hover:text-red-500">
-                                    <i data-feather="trash-2" class="w-3 h-3"></i>
-                                </div>
-                            </button>`;
+                        html += renderThemeItem({
+                            color,
+                            name,
+                            desc: 'Your custom color',
+                            iconBg: color,
+                            glowColor: color
+                        }, index, true);
                     });
                 }
 
                 container.innerHTML = html;
+                feather.replace();
             };
 
 
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', window.initChatUI);
-            } else {
+            // Changelog
+            const BUILD_NUMBER = 1004;
+            const CHANGELOG = {
+                version: "1.0.4",
+                build: BUILD_NUMBER,
+                changes: [
+                    "Polaris has been updated to 1.5",
+                    "Storage system upgraded to IndexedDB (async, non-blocking)",
+                    "New Polaris settings modal — mobile-first design",
+                    "Fun theme names: Sage Whisper, Midnight in Paris, Electric Lemonade, Vitamin C, Lush Green"
+                ]
+            };
+
+            window.showChangelog = () => {
+                const modal = document.getElementById('changelog-modal');
+                if (!modal) return;
+                const versionEl = document.getElementById('changelog-version');
+                const contentEl = document.getElementById('changelog-content');
+                if (versionEl) versionEl.innerText = `Build ${CHANGELOG.build} · v${CHANGELOG.version}`;
+                if (contentEl) contentEl.innerHTML = CHANGELOG.changes.map(c => `<li class="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300"><span class="mt-1 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></span>${c}</li>`).join('');
+                modal.classList.add('active');
+                localStorage.setItem('vail_last_seen_build', String(BUILD_NUMBER));
+            };
+
+            window.closeChangelog = () => {
+                const modal = document.getElementById('changelog-modal');
+                if (modal) modal.classList.remove('active');
+            };
+
+            const checkChangelog = () => {
+                const lastSeen = parseInt(localStorage.getItem('vail_last_seen_build') || '0');
+                if (BUILD_NUMBER > lastSeen) {
+                    setTimeout(() => window.showChangelog(), 1200);
+                }
+            };
+
+            // Initialize StorageController and load chats from IndexedDB
+            const bootApp = async () => {
+                await StorageController.init();
+                try {
+                    allChats = await StorageController.getAllChats();
+                } catch (e) {
+                    console.warn('[Boot] Could not load chats from IndexedDB:', e);
+                    allChats = {};
+                }
                 window.initChatUI();
+                checkChangelog();
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bootApp);
+            } else {
+                bootApp();
             }
 
             // Re-initialize when page is restored from bfcache (mobile back/forward)
             window.addEventListener('pageshow', (e) => {
                 if (e.persisted) {
-                    window.initChatUI();
+                    bootApp();
                 }
             });
         })();
@@ -3880,279 +4125,295 @@
     <!-- Settings Overlay -->
     <div id="settings-overlay" onclick="window.toggleSettingsPanel()"></div>
 
-    <!--settings-->
+    <!-- ===== POLARIS SETTINGS MODAL ===== -->
     <div id="settings-panel">
-        <!-- Mobile close button -->
-        <button onclick="window.toggleSettingsPanel()"
-            class="lg:hidden absolute top-4 right-4 z-[3100] w-10 h-10 flex items-center justify-center rounded-full bg-zinc-200/80 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all">
-            <i data-feather="x" class="w-5 h-5"></i>
-        </button>
-        <!-- Sidebar Navigation -->
-        <div id="settings-sidebar" class="no-scrollbar">
-
-            <!-- Profile Card (Top) -->
-
-            <!-- Profile Card (Top) -->
-            <div class="apple-profile-card" onclick="window.openSettingsTab('profile')">
+        <!-- Header Bar -->
+        <div class="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
+            <div class="flex items-center gap-3">
+                <!-- Profile avatar (small) -->
                 <div id="settings-sidebar-pfp-card"
-                    class="w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden shrink-0">
-                    <!-- Img injected by JS -->
+                    class="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden shrink-0 cursor-pointer"
+                    onclick="window.openSettingsTab('profile')">
                 </div>
-                <div class="flex flex-col min-w-0">
-                    <span id="settings-sidebar-name-card"
-                        class="text-[15px] font-semibold text-zinc-900 dark:text-white truncate">User</span>
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400">Settings</p>
+                    <p id="settings-sidebar-name-card"
+                        class="text-sm font-bold text-zinc-900 dark:text-white leading-tight">User</p>
                 </div>
             </div>
-
-            <!-- Nav Items -->
-            <nav class="flex flex-col gap-1">
-                <div class="apple-nav-item active" onclick="window.openSettingsTab('general')">
-                    <div class="apple-icon-box bg-gray-400">
-                        <i data-feather="settings" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <span data-t="settings_general">General</span>
-                </div>
-
-                <div class="apple-nav-item" onclick="window.openSettingsTab('intelligence')">
-                    <div class="apple-icon-box bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
-                        <i data-feather="cpu" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <span>Model</span>
-                </div>
-            </nav>
-
-            <div class="mt-auto px-2 pb-2">
-                <button onclick="window.toggleSettingsPanel()"
-                    class="w-full py-3 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors text-left flex items-center gap-2 pl-2">
-                    <i data-feather="arrow-left" class="w-4 h-4"></i> Back to Chat
-                </button>
-            </div>
+            <button onclick="window.toggleSettingsPanel()"
+                class="w-11 h-11 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all active:scale-95">
+                <i data-feather="x" class="w-5 h-5"></i>
+            </button>
         </div>
 
-        <!-- Content Area -->
+        <!-- Tab Bar -->
+        <div class="polaris-tab-bar shrink-0">
+            <button class="polaris-tab-btn active" id="ptab-btn-general" onclick="window.openSettingsTab('general')">
+                <i data-feather="sliders" class="w-3.5 h-3.5"></i> General
+            </button>
+            <button class="polaris-tab-btn" id="ptab-btn-profile" onclick="window.openSettingsTab('profile')">
+                <i data-feather="user" class="w-3.5 h-3.5"></i> Profile
+            </button>
+            <button class="polaris-tab-btn" id="ptab-btn-intelligence" onclick="window.openSettingsTab('intelligence')">
+                <i data-feather="cpu" class="w-3.5 h-3.5"></i> Model
+            </button>
+        </div>
+
+        <!-- Scrollable Content -->
         <div id="settings-content-area" class="no-scrollbar">
 
-            <!-- TAB: PROFILE -->
+            <!-- ── TAB: GENERAL ── -->
+            <div id="tab-general" class="settings-tab-content">
 
-            <!-- TAB: PROFILE -->
-            <div id="tab-profile" class="settings-tab-content animate-fade-in hidden">
-                <h2 class="text-3xl font-bold mb-6 text-zinc-900 dark:text-white">Profile</h2>
+                <!-- Appearance -->
+                <div class="polaris-section">
+                    <p class="polaris-section-label">Appearance</p>
+                    <div class="polaris-card">
+                        <div class="polaris-row">
+                            <span class="polaris-row-label">Mode</span>
+                            <div
+                                class="flex bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-700/50 gap-0.5">
+                                <button id="btn-theme-light" onclick="window.setTheme('light')"
+                                    class="min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700">Light</button>
+                                <button id="btn-theme-system" onclick="window.setTheme('system')"
+                                    class="min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700">System</button>
+                                <button id="btn-theme-dark" onclick="window.setTheme('dark')"
+                                    class="min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700">Dark</button>
+                            </div>
+                        </div>
+                        <div class="polaris-row">
+                            <span class="polaris-row-label" data-t="language">Language</span>
+                            <div
+                                class="flex bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-700/50">
+                                <button id="btn-lang-en" onclick="window.setLang('en')"
+                                    class="min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all bg-white dark:bg-zinc-600 text-zinc-900 dark:text-white shadow-sm">English</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="apple-section-title">Personal Information</div>
-                <div class="apple-list-group">
-                    <!-- PFP Editor -->
-                    <div class="p-6 border-b border-zinc-100 dark:border-white/5">
-                        <div class="flex flex-col md:flex-row gap-6 items-center">
-                            <div class="relative group">
+                <!-- Themes -->
+                <div class="polaris-section">
+                    <div class="flex items-center justify-between mb-2.5">
+                        <p class="polaris-section-label mb-0">Accent Theme</p>
+                        <div class="flex items-center gap-2">
+                            <button onclick="document.getElementById('custom-accent-picker-new').click()"
+                                class="text-[11px] font-bold px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-[var(--accent-color)] hover:text-[var(--accent-color)] transition-all min-h-[32px]">
+                                + Custom
+                            </button>
+                            <input type="color" id="custom-accent-picker-new"
+                                oninput="window.handleCustomAccentChangeNew(this.value)" class="hidden">
+                        </div>
+                    </div>
+                    <!-- Pending save banner -->
+                    <div id="pending-custom-color" onclick="window.addSelectedCustomColorNew()"
+                        class="mb-3 hidden cursor-pointer min-h-[44px] w-full rounded-xl border-2 border-dashed flex items-center justify-center text-xs font-bold gap-2 transition-all"
+                        style="border-color: var(--accent-color); color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) 8%, transparent);">
+                        <i data-feather="plus-circle" class="w-4 h-4"></i> Save This Color
+                    </div>
+                    <div class="polaris-card" id="theme-list-container">
+                        <!-- Themes rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="polaris-section">
+                    <p class="polaris-section-label">Sidebar</p>
+                    <div class="polaris-card">
+                        <div class="polaris-row">
+                            <div class="flex flex-col gap-0.5">
+                                <span class="polaris-row-label">Smart Autohide</span>
+                                <span class="text-[11px] text-zinc-400">Hover left edge to reveal.</span>
+                            </div>
+                            <button id="toggle-smart-sidebar" onclick="window.toggleSmartSidebar()"
+                                class="w-12 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 relative transition-colors duration-300 cursor-pointer shrink-0">
+                                <div
+                                    class="w-5 h-5 rounded-full bg-white absolute top-1 left-1 shadow-md transition-transform duration-300 transform">
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Storage -->
+                <div class="polaris-section">
+                    <p class="polaris-section-label">Storage</p>
+                    <div class="polaris-card">
+                        <div class="polaris-row">
+                            <div class="flex flex-col gap-0.5">
+                                <span class="polaris-row-label">Chat History</span>
+                                <span id="storage-mode-badge" class="text-[11px] text-zinc-400">IndexedDB</span>
+                            </div>
+                            <span id="storage-display" class="text-xs font-mono text-zinc-400">0.00 MB</span>
+                        </div>
+                        <div class="polaris-row">
+                            <span class="polaris-row-label text-red-500">Clear All Chats</span>
+                            <button onclick="window.clearAll()"
+                                class="min-h-[44px] px-4 rounded-xl text-xs font-bold text-red-500 border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── TAB: PROFILE ── -->
+            <div id="tab-profile" class="settings-tab-content hidden">
+
+                <!-- PFP Editor -->
+                <div class="polaris-section">
+                    <p class="polaris-section-label">Avatar</p>
+                    <div class="polaris-card">
+                        <div class="p-5 flex flex-col sm:flex-row gap-5 items-center">
+                            <div class="relative shrink-0">
                                 <div id="pfp-workspace" class="shadow-inner ring-1 ring-zinc-900/5 dark:ring-white/10"
                                     style="width: 100px; height: 100px; border-radius: 50%;"
                                     onpointerdown="window.pfpDragStart(event)">
                                     <img id="pfp-movable-img" src="" alt="">
                                     <div id="pfp-mask"></div>
                                 </div>
-                                <div class="absolute bottom-0 right-0">
-                                    <button onclick="document.getElementById('pfp-upload-settings').click()"
-                                        class="w-8 h-8 rounded-full bg-blue-500 shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
-                                        <i data-feather="camera" class="w-3 h-3"></i>
-                                    </button>
-                                </div>
+                                <button onclick="document.getElementById('pfp-upload-settings').click()"
+                                    class="absolute bottom-0 right-0 w-9 h-9 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
+                                    style="background: var(--accent-color);">
+                                    <i data-feather="camera" class="w-4 h-4"></i>
+                                </button>
                             </div>
-
                             <div class="flex-1 w-full">
                                 <label
-                                    class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1 block">Display
+                                    class="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">Display
                                     Name</label>
                                 <input type="text" id="settings-name-input-new"
-                                    class="w-full bg-transparent text-xl font-bold text-zinc-900 dark:text-white focus:outline-none placeholder-zinc-300"
-                                    placeholder="Your Name" oninput="window.updateSettingsFromPanel()">
+                                    class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-xl px-4 min-h-[48px] text-base font-bold text-zinc-900 dark:text-white focus:outline-none focus:ring-2 transition-all placeholder-zinc-300 dark:placeholder-zinc-600"
+                                    style="--tw-ring-color: var(--accent-color);" placeholder="Your Name"
+                                    oninput="window.updateSettingsFromPanel()">
                             </div>
                         </div>
                         <input type="file" id="pfp-upload-settings" class="hidden" accept="image/*"
                             onchange="window.handleProfilePicUpload(event)">
-                    </div>
 
-                    <div class="apple-list-item">
-                        <div class="flex items-center gap-3 w-full justify-between">
-                            <span class="text-sm font-medium">Zoom Profile Picture <span id="scale-val"
-                                    class="text-xs text-zinc-400 ml-1">1.0x</span></span>
-                            <div class="w-1/2 max-w-[200px] flex items-center gap-2">
+                        <!-- Zoom slider -->
+                        <div class="polaris-row flex-col items-start gap-3">
+                            <div class="flex items-center justify-between w-full">
+                                <span class="polaris-row-label">Zoom <span id="scale-val"
+                                        class="text-xs text-zinc-400 font-mono ml-1">1.0x</span></span>
+                                <button onclick="window.resetPfpPosition()"
+                                    class="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all">
+                                    <i data-feather="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-3 w-full">
                                 <span class="text-[10px] text-zinc-400">0.5x</span>
                                 <input type="range" id="pfp-zoom-slider"
-                                    class="flex-1 h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                                    min="0.5" max="3.0" step="0.1" value="1.0"
-                                    oninput="window.updatePfpScale(this.value)">
+                                    class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                                    style="accent-color: var(--accent-color);" min="0.5" max="3.0" step="0.1"
+                                    value="1.0" oninput="window.updatePfpScale(this.value)">
                                 <span class="text-[10px] text-zinc-400">3.0x</span>
                             </div>
-                            <button onclick="window.resetPfpPosition()"
-                                class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm"
-                                title="Reset Position">
-                                <i data-feather="rotate-ccw" class="w-3 h-3"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="apple-section-title">Account</div>
-                <div class="apple-list-group">
-                    <div class="apple-list-item cursor-pointer hover:bg-zinc-50 dark:hover:bg-white/5"
-                        onclick="window.initGoogleAuth()">
-                        <div class="flex items-center gap-3">
+                <!-- Account -->
+                <div class="polaris-section">
+                    <p class="polaris-section-label">Account</p>
+                    <div class="polaris-card">
+                        <button class="polaris-theme-item" onclick="window.initGoogleAuth()">
                             <div
-                                class="w-7 h-7 rounded-md bg-white border border-zinc-200 flex items-center justify-center">
-                                <i class="fa-brands fa-google text-zinc-700"></i>
+                                class="w-10 h-10 rounded-full bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 flex items-center justify-center shrink-0 shadow-sm">
+                                <i class="fa-brands fa-google text-zinc-600 dark:text-zinc-300 text-base"></i>
                             </div>
-                            <div class="flex flex-col">
-                                <span class="text-[15px] font-medium">Google Account</span>
-                                <span id="google-btn-text-settings" class="text-[12px] text-zinc-500">Not
-                                    connected</span>
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-sm font-semibold text-zinc-900 dark:text-white">Google Account</span>
+                                <span id="google-status-text" class="text-xs text-zinc-400">Not connected</span>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span id="google-status-text" class="text-sm text-zinc-400">Sign In</span>
-                            <i data-feather="chevron-right" class="w-3 h-3 text-zinc-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: GENERAL (Merged Appearance + Sidebar) -->
-            <div id="tab-general" class="settings-tab-content animate-fade-in block">
-                <h2 class="text-3xl font-bold mb-6 text-zinc-900 dark:text-white">General</h2>
-
-                <div class="apple-section-title">Appearance</div>
-                <div class="apple-list-group">
-                    <div class="apple-list-item">
-                        <span class="text-[15px] font-medium">Dark Mode</span>
-                        <div
-                            class="flex bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700">
-                            <button id="btn-theme-light" onclick="window.setTheme('light')"
-                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">Light</button>
-                            <button id="btn-theme-system" onclick="window.setTheme('system')"
-                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">System</button>
-                            <button id="btn-theme-dark" onclick="window.setTheme('dark')"
-                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm">Dark</button>
-                        </div>
-                    </div>
-
-                    <div class="apple-list-item">
-                        <span class="text-[15px] font-medium" data-t="language">Language</span>
-                        <div
-                            class="flex bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700">
-                            <button id="btn-lang-en" onclick="window.setLang('en')"
-                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all hover:bg-white dark:hover:bg-zinc-700 shadow-sm bg-white dark:bg-zinc-600 text-zinc-900 dark:text-white">English</button>
-                        </div>
-                    </div>
-
-                    <div class="p-4 border-t border-zinc-100 dark:border-white/5">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-[15px] font-medium">Accent Color</span>
-                            <button onclick="document.getElementById('custom-accent-picker-new').click()"
-                                class="text-xs text-blue-500 font-medium">Custom...</button>
-                            <input type="color" id="custom-accent-picker-new"
-                                oninput="window.handleCustomAccentChangeNew(this.value)" class="hidden">
-                        </div>
-                        <!-- Pending New Theme -->
-                        <div id="pending-custom-color" onclick="window.addSelectedCustomColorNew()"
-                            class="mb-3 hidden cursor-pointer h-10 w-full rounded-lg border-dashed border-2 flex items-center justify-center text-xs font-bold"
-                            style="border-color: var(--accent-color); color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) 10%, transparent);">
-                            Save This Color
-                        </div>
-                        <div id="theme-list-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
-                    </div>
-                </div>
-
-                <div class="apple-section-title">Sidebar</div>
-                <div class="apple-list-group">
-                    <div class="apple-list-item">
-                        <div class="flex flex-col">
-                            <span class="text-[15px] font-medium">Smart Autohide</span>
-                            <span class="text-[12px] text-zinc-400">Hide sidebar to focus. Hover left edge to
-                                reveal.</span>
-                        </div>
-                        <button id="toggle-smart-sidebar" onclick="window.toggleSmartSidebar()"
-                            class="w-11 h-6 rounded-full bg-zinc-200 dark:bg-zinc-700 relative transition-colors duration-300 cursor-pointer">
-                            <div
-                                class="w-5 h-5 rounded-full bg-white absolute top-0.5 left-0.5 shadow-md transition-transform duration-300 transform">
-                            </div>
+                            <i data-feather="chevron-right" class="w-4 h-4 text-zinc-300 ml-auto shrink-0"></i>
+                        </button>
+                        <button id="google-auth-btn" class="hidden polaris-theme-item">
+                            <!-- JS-managed -->
                         </button>
                     </div>
                 </div>
+
             </div>
 
-            <!-- TAB: INTELLIGENCE -->
-            <div id="tab-intelligence" class="settings-tab-content animate-fade-in hidden">
-                <h2 class="text-3xl font-bold mb-6 text-zinc-900 dark:text-white">Intelligence</h2>
+            <!-- ── TAB: INTELLIGENCE ── -->
+            <div id="tab-intelligence" class="settings-tab-content hidden">
 
-                <div class="apple-section-title">Model Parameters</div>
-                <div class="apple-list-group">
-                    <div class="apple-list-item">
-                        <span class="text-[15px] font-medium w-1/3">Temperature</span>
-                        <div class="flex-1 flex flex-col px-4">
+                <!-- Model Parameters -->
+                <div class="polaris-section">
+                    <p class="polaris-section-label">Model Parameters</p>
+                    <div class="polaris-card">
+                        <div class="polaris-row">
+                            <span class="polaris-row-label w-28 shrink-0">Temperature</span>
                             <input type="range" id="settings-param-temp" min="0" max="1" step="0.01"
-                                class="w-full h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                                style="accent-color: var(--accent-color);"
                                 oninput="window.updateTempFromPanel(this.value)">
+                            <span id="settings-temp-val"
+                                class="text-sm font-mono text-zinc-400 w-10 text-right shrink-0">0.30</span>
                         </div>
-                        <span id="settings-temp-val"
-                            class="text-[15px] font-mono text-zinc-500 w-12 text-right">0.30</span>
-                    </div>
-
-                    <div class="apple-list-item">
-                        <span class="text-[15px] font-medium w-1/3">Top-P</span>
-                        <div class="flex-1 flex flex-col px-4">
+                        <div class="polaris-row">
+                            <span class="polaris-row-label w-28 shrink-0">Top-P</span>
                             <input type="range" id="settings-param-top-p" min="0" max="1" step="0.01"
-                                class="w-full h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                                style="accent-color: var(--accent-color);"
                                 oninput="window.updateTopPFromPanel(this.value)">
+                            <span id="settings-top-p-val"
+                                class="text-sm font-mono text-zinc-400 w-10 text-right shrink-0">0.90</span>
                         </div>
-                        <span id="settings-top-p-val"
-                            class="text-[15px] font-mono text-zinc-500 w-12 text-right">0.90</span>
-                    </div>
-
-                    <div class="apple-list-item">
-                        <span class="text-[15px] font-medium w-1/3">Max Tokens</span>
-                        <div class="flex-1 flex flex-col px-4">
+                        <div class="polaris-row">
+                            <span class="polaris-row-label w-28 shrink-0">Max Tokens</span>
                             <input type="range" id="settings-param-max-tokens" min="64" max="2048" step="64"
-                                class="w-full h-1 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                                style="accent-color: var(--accent-color);"
                                 oninput="window.updateMaxTokensFromPanel(this.value)">
+                            <span id="settings-max-tokens-val"
+                                class="text-sm font-mono text-zinc-400 w-10 text-right shrink-0">256</span>
                         </div>
-                        <span id="settings-max-tokens-val"
-                            class="text-[15px] font-mono text-zinc-500 w-12 text-right">256</span>
-                    </div>
-
-                    <div class="apple-list-item items-start pt-3 pb-3">
-                        <span class="text-[15px] font-medium w-1/3 mt-1">System Prompt</span>
-                        <div class="flex-1 flex flex-col px-4">
-                            <textarea id="settings-system-prompt" rows="3"
-                                class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-lg px-3 py-2 text-xs text-zinc-900 dark:text-white placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none"
+                        <div class="p-4 flex flex-col gap-2 border-t border-zinc-100 dark:border-white/5">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">System
+                                Prompt</label>
+                            <textarea id="settings-system-prompt" rows="4"
+                                class="w-full bg-zinc-100 dark:bg-zinc-800/80 rounded-xl px-4 py-3 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:ring-2 outline-none transition-all resize-none min-h-[100px]"
+                                style="--tw-ring-color: var(--accent-color);"
                                 placeholder="Custom system instructions..."
                                 oninput="window.updateSystemPromptFromPanel(this.value)"></textarea>
                         </div>
                     </div>
                 </div>
 
-                <div class="apple-section-title">Connection</div>
-                <div class="apple-list-group">
-                    <div class="apple-list-item">
-                        <div class="flex flex-col w-full">
-                            <span class="text-[15px] font-medium mb-1">Backend URL</span>
+                <!-- Connection -->
+                <div class="polaris-section">
+                    <p class="polaris-section-label">Connection</p>
+                    <div class="polaris-card">
+                        <div class="p-4 flex flex-col gap-2">
+                            <label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Backend
+                                URL</label>
                             <input type="text" id="settings-backend-url"
-                                class="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="https://... (e.g. localtunnel)"
+                                class="w-full bg-zinc-100 dark:bg-zinc-800/80 rounded-xl px-4 min-h-[48px] text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:ring-2 outline-none transition-all"
+                                style="--tw-ring-color: var(--accent-color);"
+                                placeholder="https://... (leave empty for default)"
                                 onchange="window.updateBackendUrlFromPanel(this.value)">
-                            <span class="text-[11px] text-zinc-400 mt-1">Leave empty to use default local detection.
-                                Refreshes on change.</span>
+                            <span class="text-[11px] text-zinc-400">Leave empty to use default. Reloads on
+                                change.</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="apple-section-title">Danger Zone</div>
-                <div class="apple-list-group">
-                    <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()"
-                        class="w-full text-left apple-list-item text-red-500 font-medium hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
-                        Erase All Data
-                    </button>
+                <!-- Danger Zone -->
+                <div class="polaris-section pb-8">
+                    <p class="polaris-section-label">Danger Zone</p>
+                    <div class="polaris-card">
+                        <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()"
+                            class="w-full polaris-row justify-center text-red-500 font-semibold text-sm hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors min-h-[52px]">
+                            <i data-feather="trash-2" class="w-4 h-4 mr-2"></i> Erase All Data
+                        </button>
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
     <!-- Research Page Overlay -->
