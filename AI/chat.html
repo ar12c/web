@@ -1719,6 +1719,16 @@
 
                         <!-- Right: Model + Send -->
                         <div class="flex items-center gap-2">
+                            <!-- Account/Sync Status (Consolidated) -->
+                            <div id="input-account-status"
+                                class="hidden items-center gap-2 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 border border-zinc-200/50 dark:border-zinc-700/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all cursor-pointer"
+                                onclick="window.toggleSettingsPanel()">
+                                <img id="input-google-pfp" class="w-4 h-4 rounded-full object-cover hidden shadow-sm"
+                                    src="" alt="">
+                                <span id="input-google-name" class="hidden sm:inline opacity-70"></span>
+                                <div id="input-sync-status" class="w-1.5 h-1.5 rounded-full bg-zinc-300"></div>
+                            </div>
+
                             <!-- Model Selector Wrapper -->
                             <div class="relative z-50">
                                 <button id="model-selector-input" onclick="window.toggleMenu(event, 'model-menu-input')"
@@ -1792,6 +1802,16 @@
 
 
     <script type="module">
+        // --- 1. Fast Synchronous Boot (Prevents "undefined" on mobile) ---
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+        // High-priority global wrappers
+        window.toggleSidebar = () => console.warn("Sidebar not ready");
+        window.resetChat = () => console.warn("Chat not ready");
+        window.sendMessage = () => console.warn("Chat not ready");
+        window.handleAction = () => console.warn("Action not ready");
+        window.toggleSettingsPanel = () => console.warn("Settings not ready");
+
         // Global State
         let els = {};
 
@@ -2297,7 +2317,7 @@
                 lang: 'en',
                 sidebarMode: 'manual', // 'manual' or 'smart'
                 customAccents: [],
-                systemPrompt: 'You are Polaris, an AI assistant made by OkemoVail. ALWAYS wrap ALL mathematical formulas strictly in $$ tags only.'
+                systemPrompt: 'You are Polaris, a specialized research assistant. You MUST use $$ delimiters for ALL mathematical notation and equations. NO EXCEPTIONS. Do not use [ ] or ( ) for blocks or inline math; use $$ for everything.'
             }));
 
             // Ensure newer settings keys exist for older localStorage payloads
@@ -2709,6 +2729,28 @@
                 if (statusText) {
                     statusText.innerText = isGoogleSignedIn ? 'Connected' : 'Not connected';
                     statusText.className = isGoogleSignedIn ? 'text-xs text-green-500' : 'text-xs text-zinc-400';
+                }
+
+                // Update input area account status
+                const inputAccountStatus = document.getElementById('input-account-status');
+                const inputGooglePfp = document.getElementById('input-google-pfp');
+                const inputGoogleName = document.getElementById('input-google-name');
+                const inputSyncStatus = document.getElementById('input-sync-status');
+
+                if (inputAccountStatus) {
+                    if (isGoogleSignedIn) {
+                        inputAccountStatus.classList.remove('hidden');
+                        inputAccountStatus.classList.add('flex');
+                        if (inputGooglePfp && settings.userPic) {
+                            inputGooglePfp.src = settings.userPic;
+                            inputGooglePfp.classList.remove('hidden');
+                        }
+                        if (inputGoogleName) inputGoogleName.innerText = (settings.userName || 'User').split(' ')[0];
+                        if (inputSyncStatus) inputSyncStatus.className = 'w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]';
+                    } else {
+                        inputAccountStatus.classList.add('hidden');
+                        inputAccountStatus.classList.remove('flex');
+                    }
                 }
 
                 // Update onboarding button (PFP + name)
@@ -4112,10 +4154,7 @@
                 }
             };
 
-            // Disable Native Scroll Restoration
-            if ('scrollRestoration' in history) {
-                history.scrollRestoration = 'manual';
-            }
+            // Disable Native Scroll Restoration - MOVED TO TOP
 
             // Initialize StorageController and load chats from IndexedDB
             const bootApp = () => {
@@ -4135,11 +4174,15 @@
                         allChats = {};
                     }
 
-                    requestAnimationFrame(() => {
-                        if (typeof renderHistory === 'function') {
-                            renderHistory();
-                        }
-                    });
+                    if (typeof window.requestIdleCallback === 'function') {
+                        window.requestIdleCallback(() => {
+                            if (typeof renderHistory === 'function') renderHistory();
+                        });
+                    } else {
+                        setTimeout(() => {
+                            if (typeof renderHistory === 'function') renderHistory();
+                        }, 500);
+                    }
 
                     checkChangelog();
                 }, 200);
