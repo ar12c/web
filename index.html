@@ -1,787 +1,233 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>OkemoVail</title>
-  <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
-
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
-
-  <!-- Fonts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OkemoVail | AI & Design</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
-      darkMode: 'class',
+      darkMode: 'media',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Inter"', 'sans-serif'],
-          },
           colors: {
-            brand: {
-              primary: '#000000',
-              secondary: '#666666',
-            }
+            moss: '#5F634F',
+            sage: '#BFD7B5',
+            paper: '#F9F9F7',
+            obsidian: '#0C0D0B', // Custom dark mode background
           },
-          borderRadius: {
-            'dia': '1.5rem',
-            'dia-lg': '2.5rem',
-            'dia-full': '100px',
+          fontFamily: {
+            serif: ['Century', '"Century Schoolbook"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
           },
-          animation: {
-            'chroma-sweep': 'chroma-sweep 0.9s ease-in-out forwards',
-            'border-sweep': 'border-gradient-sweep 4s ease-in-out infinite',
-            'spin-slow': 'spin 8s linear infinite',
-          },
-          keyframes: {
-            'chroma-sweep': {
-              '0%': { 'background-position': '100% 0', filter: 'blur(1px)' },
-              '100%': { 'background-position': '0 0', filter: 'blur(0)' },
-            },
-            'border-gradient-sweep': {
-              '0%': { left: '-150%' },
-              '50%': { left: '100%' },
-              '50.1%': { left: '-150%' },
-              '100%': { left: '-150%' }
-            }
-          }
         }
       }
     }
   </script>
-
   <style>
-    :root {
-      --bg-base: #f8f8f8;
-      --text-main: rgba(0, 0, 0, 0.85);
-      --text-secondary: rgba(0, 0, 0, 0.60);
-      --stroke-light: rgba(0, 0, 0, 0.06);
-    }
-
-    .dark {
-      --bg-base: #0f0f0f;
-      --text-main: rgba(255, 255, 255, 0.90);
-      --text-secondary: rgba(255, 255, 255, 0.70);
-      --stroke-light: rgba(255, 255, 255, 0.10);
-    }
-
     body {
-      background-color: var(--bg-base);
-      color: var(--text-main);
-      font-family: 'Inter', sans-serif;
-      -webkit-font-smoothing: antialiased;
+      background-color: #F9F9F7;
+      color: #1a1a1a;
+      scroll-behavior: smooth;
     }
 
-    /* Fixed Canvas for Three.js */
-    #starfield {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    .ghost-pfp {
-      position: fixed;
-      z-index: 1000;
-      border-radius: 50%;
-      overflow: hidden;
-      pointer-events: none;
-      /* Initial state hidden, managed by JS */
-      opacity: 0;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .dark .ghost-pfp {
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .nav-links-container {
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .chroma-text {
-      background-image: linear-gradient(90deg, #000 0, #000 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
-      background-size: 300% 100%;
-      background-position: 100% 0;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: chroma-sweep 1.2s cubic-bezier(0.87, 0, 0.13, 1) forwards;
-    }
-
-    .dark .chroma-text {
-      background-image: linear-gradient(90deg, #fff 0, #fff 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
-    }
-
-    @keyframes chroma-sweep {
-      0% {
-        background-position: 100% 0;
-        filter: blur(2px);
-      }
-
-      100% {
-        background-position: 0 0;
-        filter: blur(0);
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #0C0D0B;
+        color: #F9F9F7;
       }
     }
 
-    /* Slower chroma sweep for emphasis */
-    .chroma-text-slow {
-      background-image: linear-gradient(90deg, #000 0, #000 20%, #c679c4 30%, #fa3d1d 35%, #ffb005 40%, #e1e1fe 45%, #0358f7 50%, #ffffff 55%, transparent 60%, transparent);
-      background-size: 400% 100%;
-      background-position: 100% 0;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      /* Animation handled by JS class toggle */
+    .serif-text {
+      font-family: 'Century', 'Century Schoolbook', serif;
     }
 
-    .dark .chroma-text-slow {
-      background-image: linear-gradient(90deg, #fff 0, #fff 33.33%, #c679c4 40%, #fa3d1d 45%, #ffb005 50%, #e1e1fe 55%, #0358f7 60%, transparent 66.67%, transparent);
+    .fade-in {
+      animation: fadeIn 1s ease-out forwards;
     }
 
-    /* Transition class for cycling text */
-    .cycling-text-transition {
-      transition: opacity 0.5s ease-in-out;
-      opacity: 1;
-    }
-
-    .cycling-text-transition.fade-out {
-      opacity: 0;
-    }
-
-    .pfp-orbit {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      padding: 4px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #c679c4, #fa3d1d, #ffb005, #0358f7);
-      margin-top: 2rem;
-      animation: rotate 10s linear infinite;
-    }
-
-    /* Animation class for toggling */
-    .chroma-text-slow.animate {
-      animation: chroma-sweep 4s cubic-bezier(0.87, 0, 0.13, 1) forwards;
-    }
-
-    @keyframes rotate {
+    @keyframes fadeIn {
       from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .pfp-image {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--bg-base);
-      transform: rotate(-360deg);
-      /* Counter-rotate to keep image upright */
-      animation: counter-rotate 10s linear infinite;
-    }
-
-    @keyframes counter-rotate {
-      from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(-360deg);
-      }
-    }
-
-    .scroll-reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      filter: blur(10px);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .scroll-reveal.active {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
-
-    .dia-card {
-      background: var(--bg-base);
-      border: 1px solid var(--stroke-light);
-      border-radius: 2.5rem;
-      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-
-    .dia-card:hover {
-      border-color: rgba(0, 0, 0, 0.12);
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .dark .dia-card:hover {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .dia-btn-outline {
-      border: 1px solid var(--stroke-light);
-      border-radius: 100px;
-      font-weight: 700;
-      transition: all 0.2s;
-    }
-
-    .dia-btn-outline:hover {
-      background: var(--text-main);
-      color: var(--bg-base);
-      border-color: var(--text-main);
-    }
-
-    /* Intelligence Flair Animation */
-    #intelligence-flare {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 60vh;
-      background: radial-gradient(circle at bottom,
-          rgba(198, 121, 196, 0.45) 0%,
-          /* #c679c4 */
-          rgba(250, 61, 29, 0.35) 25%,
-          /* #fa3d1d */
-          rgba(255, 176, 5, 0.25) 50%,
-          /* #ffb005 */
-          rgba(3, 88, 247, 0.15) 75%,
-          /* #0358f7 */
-          transparent 90%);
-      border-radius: 100% 100% 0 0;
-      filter: blur(60px);
-      pointer-events: none;
-      z-index: 5;
-      opacity: 0;
-      transform: translateY(100%) scaleX(0.8);
-      mix-blend-mode: screen;
-    }
-
-    .flare-active {
-      animation: shoot-flare-futuristic 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes shoot-flare-futuristic {
-      0% {
-        transform: translateY(100%) translateX(0) scaleX(0.5);
         opacity: 0;
-        filter: blur(60px);
+        transform: translateY(10px);
       }
 
-      10% {
+      to {
         opacity: 1;
-        transform: translateY(50%) translateX(0) scaleX(1);
-        filter: blur(40px);
-      }
-
-      100% {
-        /* Shoot up and arc slightly right */
-        transform: translateY(-200%) translateX(20%) scaleX(2) rotate(10deg);
-        opacity: 0;
-        filter: blur(80px);
+        transform: translateY(0);
       }
     }
 
-    /* Nav Brand Animation */
-    #nav-brand {
-      transition: opacity 0.3s ease, transform 0.3s ease;
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #BFD7B5;
+      border-radius: 10px;
+    }
+
+    #mobile-menu-overlay {
+      clip-path: circle(0% at top right);
+      transition: clip-path 0.5s ease-in-out;
+    }
+
+    #mobile-menu-overlay.active {
+      clip-path: circle(150% at top right);
     }
   </style>
 </head>
 
-<body class="overflow-x-hidden">
+<body class="font-sans antialiased transition-colors duration-500">
 
-  <!-- Ghost PFP for Flying Animation -->
-  <div id="ghost-pfp" class="ghost-pfp w-8 h-8 opacity-0">
-    <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="Ghost PFP" class="w-full h-full object-cover">
-  </div>
-
-  <!-- Three.js Background Canvas -->
-  <canvas id="starfield"></canvas>
-  <!-- Fallback/Base Background -->
-  <div class="fixed inset-0 z-[-2] bg-[var(--bg-base)] transition-colors duration-500"></div>
-
+  <!-- Navigation -->
   <nav
-    class="fixed top-0 inset-x-0 z-[100] px-8 md:px-6 py-4 flex items-center justify-between pointer-events-auto bg-[var(--bg-base)]/80 backdrop-blur-md border-b border-black/5 dark:border-white/10">
-    <div class="flex items-center gap-8 relative">
-      <a href="#" id="nav-brand" class="flex items-center gap-3 group opacity-0 pointer-events-none -translate-y-2">
-        <img src="src/OLM.svg" alt="OLM" class="h-5 w-auto dark:invert group-hover:scale-110 transition-transform">
-        <span class="text-sm font-bold tracking-tight">OkemoVail</span>
-      </a>
-      <div id="nav-links" class="nav-links-container hidden md:flex gap-6 text-[13px] font-semibold opacity-50">
-        <a href="#skills" class="hover:opacity-100 transition-opacity">Skills</a>
-        <a href="#about" class="hover:opacity-100 transition-opacity">About</a>
+    class="fixed top-0 w-full z-50 bg-paper/80 dark:bg-obsidian/80 backdrop-blur-md border-b border-moss/10 dark:border-sage/10">
+    <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="/" class="serif-text text-2xl font-medium text-moss dark:text-sage tracking-tight">okemovail.</a>
+      <div class="hidden md:flex space-x-10 text-sm font-medium text-moss/80 dark:text-sage/80">
+        <a href="#work" class="hover:text-moss dark:hover:text-sage transition-colors">Projects</a>
+        <a href="/okemoai.html" class="hover:text-moss dark:hover:text-sage transition-colors">Okemo AI</a>
+        <a href="https://github.com/ar12c" target="_blank"
+          class="hover:text-moss dark:hover:text-sage transition-colors">GitHub</a>
       </div>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <!-- Dark Mode Toggle -->
-      <button id="theme-toggle" class="dia-card px-3 py-2 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
-        title="Toggle dark mode">
-        <i class="fa-solid fa-moon text-base dark:hidden"></i>
-        <i class="fa-solid fa-sun text-base hidden dark:inline"></i>
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="md:hidden text-amber-600 dark:text-amber-400 p-2 focus:outline-none">
+        <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m4 6h16" />
+        </svg>
+        <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
-
-      <a href="https://github.com/OkemoVail" target="_blank"
-        class="flex items-center gap-2 dia-card px-5 py-2 text-[13px] font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-all">
-        <i class="fa-brands fa-github text-base"></i>
-        <span>Connect</span>
-      </a>
     </div>
   </nav>
 
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu-overlay"
+    class="fixed inset-0 z-40 bg-paper dark:bg-obsidian md:hidden flex flex-col items-center justify-center space-y-8 text-2xl serif-text text-moss dark:text-sage">
+    <a href="#work" class="mobile-link">Projects</a>
+    <a href="/okemoai.html" class="mobile-link">Okemo AI</a>
+    <a href="https://github.com/ar12c" target="_blank" class="mobile-link">GitHub</a>
+  </div>
 
+  <main class="max-w-5xl mx-auto px-6 pt-32">
 
-  <main class="relative z-10 w-full overflow-hidden">
-
-    <!-- Hero & Cycling Wrapper - Fullscreen Section -->
-    <div class="relative overflow-hidden min-h-screen flex flex-col justify-center gap-8">
-      <!-- Absolute Marquee Sidebars (Scoped to current fullheight section) -->
-
-      <!-- Intelligence Flare -->
-      <div id="intelligence-flare"></div>
-
-      <!-- Hero Content -->
-      <div class="px-6 text-center relative z-10">
-        <div class="flex flex-col md:flex-row items-center justify-center gap-12 scroll-reveal active">
-          <div class="pfp-orbit" id="hero-pfp-container">
-            <img src="https://avatars.githubusercontent.com/u/179893130?v=4" alt="OkemoVail" class="pfp-image"
-              id="hero-pfp">
-          </div>
-          <div class="text-center md:text-left">
-            <h1 class="pt-10 text-5xl md:text-8xl font-black tracking-tighter">
-              Hi, I'm <span class="chroma-text">OkemoVail</span>
-            </h1>
-          </div>
-        </div>
+    <!-- Hero Section -->
+    <section class="py-20 md:py-32 fade-in">
+      <!-- Profile Picture -->
+      <div class="mb-10">
+        <img
+          src="https://avatars.githubusercontent.com/u/179893130?s=400&u=d8a0d805e4137f21f0dd19fcf5163a1c746f02fd&v=4"
+          alt="OkemoVail Profile"
+          class="w-24 h-24 rounded-2xl border border-moss/10 dark:border-sage/20 shadow-sm grayscale hover:grayscale-0 transition-all duration-700 bg-sage/20 object-cover">
       </div>
 
-      <!-- Cycling Chroma Text Content -->
-      <div class="px-6 relative z-10 scale-90 origin-center">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-2xl md:text-3xl font-bold tracking-tight leading-tight rounded-3xl p-8 inline-block">
-            <span id="cycling-word" class="chroma-text-slow animate block cycling-text-transition mb-2">Speed</span>
-            <span class="block opacity-60">isn't a problem</span>
-          </h2>
-        </div>
+      <h1 class="serif-text text-5xl md:text-7xl text-moss dark:text-sage mb-4">
+        Hey, I'm OkemoVail</h1>
+      </p>
+      <div class="mt-12 flex flex-wrap gap-4">
+        <a href="#work"
+          class="bg-moss dark:bg-sage text-paper dark:text-obsidian px-8 py-3 rounded-full font-medium hover:opacity-90 transition-all shadow-sm">Explore
+          Projects</a>
+        <a href="https://github.com/ar12c" target="_blank"
+          class="border border-moss/20 dark:border-sage/30 text-moss dark:text-sage px-8 py-3 rounded-full font-medium hover:bg-sage/10 transition-all">GitHub
+          Profile</a>
       </div>
-    </div>
+    </section>
 
-    <!-- AI Section: OLM North Star -->
-    <section
-      class="min-h-screen flex flex-col justify-center py-20 px-6 border-y border-black/5 dark:border-white/10 relative overflow-hidden">
-      <!-- Background subtle gradient -->
+    <!-- Quote Section -->
+    <section class="py-16 md:py-24 border-t border-moss/10 dark:border-sage/10 italic text-center">
+      <blockquote class="serif-text text-3xl md:text-4xl text-moss/60 dark:text-sage/60 max-w-2xl mx-auto leading-snug">
+        "Stay Hungry, Stay Foolish"
+      </blockquote>
+      <cite class="block mt-4 text-xs uppercase tracking-[0.2em] font-bold text-stone-400">— Steve Jobs</cite>
+    </section>
+
+    <!-- Featured Work -->
+    <section id="work" class="py-20 border-t border-moss/10 dark:border-sage/10">
+      <div class="flex items-baseline justify-between mb-16">
+        <h2 class="serif-text text-4xl text-moss dark:text-paper">AI & Engineering</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- Project 1: Polaris -->
+        <div class="group cursor-pointer">
+          <div
+            class="aspect-[4/5] bg-moss/5 dark:bg-white/5 border border-moss/5 dark:border-white/5 rounded-2xl overflow-hidden mb-6 relative flex items-center justify-center">
+            <img src="src/OLM.png" alt="Polaris AI"
+              class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+          </div>
+          <h3 class="serif-text text-3xl text-moss dark:text-paper mb-2">Polaris</h3>
+          <p class="text-stone-500 dark:text-stone-400 leading-relaxed mb-6">An advanced AI research project exploring
+            refined interaction models and contextual awareness.</p>
+          <a href="/okemoai.html"
+            class="inline-block border border-moss/20 dark:border-sage/30 text-moss dark:text-sage px-5 py-2 rounded-full text-xs font-medium hover:bg-sage/10 transition-all shadow-sm">
+            Enter into OkemoAI
+          </a>
+        </div>
+
+      </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-moss/10 dark:border-sage/10">
       <div
-        class="absolute inset-0 bg-gradient-to-b from-transparent via-brand-secondary/5 to-transparent pointer-events-none">
-      </div>
-
-      <div class="max-w-4xl mx-auto text-center space-y-8 md:space-y-12 scroll-reveal relative z-10">
-        <div class="inline-flex w-24 h-24 items-center justify-center">
-          <img src="src/OLM.svg" alt="OLM Logo" class="w-20 h-20 invert-0 dark:invert">
-        </div>
-        <h3 class="text-5xl md:text-7xl font-black tracking-tighter chroma-text">Use OLM</h3>
-        <p class="text-xl md:text-2xl opacity-60 font-medium leading-relaxed max-w-2xl mx-auto">
-          Experience the latest in AI technology with OLM North Star. A powerful language model designed for
-          intelligence and creativity.
-        </p>
-        <div class="pt-8">
-          <a href="/AI/chat.html"
-            class="dia-card px-10 py-5 text-xl font-bold hover:scale-105 transition-transform inline-flex items-center gap-4 shadow-lg shadow-brand-primary/10">
-            <i class="fa-solid fa-rocket text-2xl"></i>
-            <span>Launch OLM North Star</span>
-          </a>
+        class="flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400 gap-6">
+        <p>© 2024 OKEMOVAIL.COM</p>
+        <div class="flex space-x-8">
+          <a href="https://github.com/ar12c" target="_blank"
+            class="hover:text-moss dark:hover:text-sage transition-colors">Github</a>
+          <a href="/okemoai.html" class="hover:text-moss dark:hover:text-sage transition-colors">Okemo AI</a>
         </div>
       </div>
-    </section>
-
-    <!-- Foundry (Skills) Section - List View -->
-    <section id="foundry" class="min-h-screen flex flex-col justify-center py-20 px-6 max-w-5xl mx-auto">
-      <div class="mb-24 scroll-reveal">
-        <span
-          class="text-brand-secondary font-black uppercase text-[11px] tracking-[0.6em] flex items-center gap-3 mb-6">
-          <span class="w-12 h-[1px] bg-brand-secondary/30"></span> 02 // Stack Forge
-        </span>
-        <h2 class="text-6xl md:text-[8rem] font-black tracking-tighter leading-tight">
-          Technical <br />
-          <span class="text-black/10 dark:text-white/10">Foundry.</span>
-        </h2>
-      </div>
-
-      <div class="space-y-4">
-        <!-- List Item 1 -->
-        <div
-          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal">
-          <div class="flex items-center gap-8">
-            <span class="text-xs font-mono opacity-30">01</span>
-            <h3
-              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
-              Python</h3>
-          </div>
-          <span
-            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Core</span>
-        </div>
-
-        <!-- List Item 2 -->
-        <div
-          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:100ms]">
-          <div class="flex items-center gap-8">
-            <span class="text-xs font-mono opacity-30">02</span>
-            <h3
-              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
-              TypeScript</h3>
-          </div>
-          <span
-            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Architecture</span>
-        </div>
-
-        <!-- List Item 3 -->
-        <div
-          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:200ms]">
-          <div class="flex items-center gap-8">
-            <span class="text-xs font-mono opacity-30">03</span>
-            <h3
-              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
-              Three.js</h3>
-          </div>
-          <span
-            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Visual
-            Experience</span>
-        </div>
-
-        <!-- List Item 4 -->
-        <div
-          class="group relative flex flex-col md:flex-row md:items-center justify-between p-8 md:py-8 py-6 gap-4 md:gap-0 border-b border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/[0.02] dark:hover:bg-white/[0.05] transition-colors scroll-reveal [transition-delay:300ms]">
-          <div class="flex items-center gap-8">
-            <span class="text-xs font-mono opacity-30">04</span>
-            <h3
-              class="text-3xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-300">
-              Tailwind</h3>
-          </div>
-          <span
-            class="text-xs font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">Design
-            System</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonial / Contact Grid -->
-    <section id="about"
-      class="min-h-screen flex flex-col justify-center py-40 border-y border-black/5 dark:border-white/10 relative">
-      <div class="max-w-4xl mx-auto space-y-12 scroll-reveal text-center">
-        <h2 class="text-6xl md:text-[10rem] font-black tracking-tighter leading-none mb-10 chroma-text">Do it all.
-        </h2>
-        <div class="mb-12 space-y-4">
-          <p class="text-2xl md:text-3xl font-medium italic opacity-60">"Stay Hungry, Stay Foolish"</p>
-          <p class="text-xs font-black uppercase tracking-[0.2em] opacity-30">— Steve Jobs</p>
-        </div>
-        <div class="flex justify-center">
-          <a href="https://github.com/OkemoVail" target="_blank"
-            class="dia-card px-10 py-5 text-2xl font-black hover:scale-105 transition-transform flex items-center gap-4">
-            <i class="fa-brands fa-github text-3xl"></i>
-            <span>Get in touch</span>
-          </a>
-        </div>
-        <!-- Removed "Currently available..." text based on user request -->
-      </div>
-    </section>
+    </footer>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="py-24 border-t border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/50 backdrop-blur-sm">
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12">
-
-      <div class="col-span-2 lg:col-span-1 space-y-6">
-        <a href="#" class="text-xl font-black flex items-center gap-2">
-          OkemoVail
-        </a>
-      </div>
-
-      <div class="space-y-4">
-        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Architectures</h4>
-        <ul class="space-y-3 text-[13px] font-medium opacity-60">
-          <li><a href="/AI/chat.html" class="hover:opacity-100 transition-opacity">OLM North Star</a></li>
-          <li><a href="#" class="hover:opacity-100 transition-opacity">OLM Stargaze</a></li>
-        </ul>
-      </div>
-
-
-
-      <div class="space-y-4">
-        <h4 class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">Connect</h4>
-        <ul class="space-y-3 text-[13px] font-medium opacity-60">
-          <li><a href="https://github.com/OkemoVail" class="hover:opacity-100 transition-opacity">Github</a></li>
-          <li><a href="https://youtube.com/@SochiVail" class="hover:opacity-100 transition-opacity">Youtube</a></li>
-        </ul>
-      </div>
-
-    </div>
-
-
-  </footer>
-
   <script>
-    // Scroll Reveal & Chroma Sweep Intersection Observer
-    const observerOptions = {
-      threshold: 0.2
-    };
-
+    const observerOptions = { threshold: 0.1 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('active');
+          entry.target.classList.add('fade-in');
+          observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
 
-    document.querySelectorAll('.scroll-reveal, .chroma-text').forEach(el => observer.observe(el));
+    document.querySelectorAll('section, footer').forEach(el => {
+      el.style.opacity = '0';
+      observer.observe(el);
+    });
 
-    // Cycling Word Animation (strictly synced)
-    const words = [
-      "Speed",
-      "Logic",
-      "Scale",
-      "Design",
-      "Privacy",
-      "Integrity"
-    ];
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
 
-    let currentIndex = 0;
-    const cyclingWord = document.getElementById('cycling-word');
-    const flare = document.getElementById('intelligence-flare');
-
-    function cycleWord() {
-      // 1. Fade out text
-      cyclingWord.classList.add('fade-out');
-
-      // 2. Wait for fade out (500ms)
-      setTimeout(() => {
-        // Change text
-        currentIndex = (currentIndex + 1) % words.length;
-        cyclingWord.textContent = words[currentIndex];
-
-        // 3. Trigger Text Animations
-
-        // Text Chroma Animation: Remove -> Force Reflow -> Add
-        cyclingWord.classList.remove('animate');
-        void cyclingWord.offsetWidth; // Force reflow
-        cyclingWord.classList.add('animate');
-
-        // Fade in text
-        cyclingWord.classList.remove('fade-out');
-
-        // Intelligence Flair: Trigger 1.5s after text appears
-        if (flare) {
-          setTimeout(() => {
-            flare.classList.remove('flare-active');
-            void flare.offsetWidth; // Force reflow
-            flare.classList.add('flare-active');
-          }, 1500);
-        }
-
-      }, 500);
+    function toggleMenu() {
+      mobileMenuOverlay.classList.toggle('active');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+      document.body.classList.toggle('overflow-hidden');
     }
 
-    // Initial trigger
-    setInterval(cycleWord, 5000);
-
-    // Dark Mode Toggle
-    const themeToggle = document.getElementById('theme-toggle');
-    const htmlElement = document.documentElement;
-
-    const currentTheme = localStorage.getItem('theme') || 'dark';
-    htmlElement.classList.toggle('dark', currentTheme === 'dark');
-
-    function updateStarColor(isDark) {
-      if (!window.starsMaterial) return;
-      if (isDark) {
-        window.starsMaterial.color.setHex(0xffffff); // White stars
-        window.starsMaterial.opacity = 0.8;
-      } else {
-        window.starsMaterial.color.setHex(0x000000); // Black stars
-        window.starsMaterial.opacity = 0.4;
-      }
-    }
-
-    themeToggle.addEventListener('click', () => {
-      const isDark = htmlElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      updateStarColor(isDark);
-    });
-
-    // Nav Brand Scroll Logic & Flying PFP
-    const navBrand = document.getElementById('nav-brand');
-    const navLinks = document.getElementById('nav-links');
-    const heroPfpContainer = document.getElementById('hero-pfp-container');
-    const ghostPfp = document.getElementById('ghost-pfp');
-
-    window.addEventListener('scroll', () => {
-      const scrollY = window.scrollY;
-      const triggerPoint = 100;
-
-      if (scrollY > triggerPoint) {
-        // Scrolled Down State
-        navBrand.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
-
-        if (navLinks) {
-          navLinks.style.transform = 'translateX(0)';
-        }
-
-        if (ghostPfp) ghostPfp.style.opacity = '0';
-        if (heroPfpContainer) heroPfpContainer.style.opacity = '0';
-
-      } else {
-        // Top State (Transition Zone)
-        navBrand.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
-
-        if (navLinks) {
-          // Move links left to occupy empty space
-          navLinks.style.transform = 'translateX(-140px)'; // Approx width of brand
-        }
-
-        // Flying PFP Logic
-        if (heroPfpContainer && ghostPfp && navBrand) {
-          const navPfpDiv = navBrand.querySelector('div');
-
-          if (navPfpDiv) {
-            const heroRect = heroPfpContainer.getBoundingClientRect();
-            // We need the Nav target rect. Since Nav is fixed, finding the rect might be tricky if it's hidden/transformed.
-            // But it is present in DOM.
-            // However, navBrand has '-translate-y-2'. This affects rect.
-            // We can approximate or use values.
-            // Or, we can rely on the fact that when we want to dock, the navBrand is about to appear.
-            const navRect = navPfpDiv.getBoundingClientRect();
-
-            // Calculate progress (0 at top, 1 at triggerPoint)
-            let progress = scrollY / triggerPoint;
-            progress = Math.min(Math.max(progress, 0), 1);
-
-            // Smoothstep ease
-            const t = progress * progress * (3 - 2 * progress);
-
-            // Interpolate
-            // Note: bounding client rects are relative to viewport, which is what we want for fixed ghost
-            const top = heroRect.top + (navRect.top - heroRect.top) * t;
-            const left = heroRect.left + (navRect.left - heroRect.left) * t;
-            const width = heroRect.width + (navRect.width - heroRect.width) * t;
-            const height = heroRect.height + (navRect.height - heroRect.height) * t;
-
-            if (scrollY > 5) {
-              ghostPfp.style.opacity = '1';
-              ghostPfp.style.top = `${top}px`;
-              ghostPfp.style.left = `${left}px`;
-              ghostPfp.style.width = `${width}px`;
-              ghostPfp.style.height = `${height}px`;
-
-              heroPfpContainer.style.opacity = '0';
-            } else {
-              ghostPfp.style.opacity = '0';
-              heroPfpContainer.style.opacity = '1';
-            }
-          }
-        }
-      }
-    });
-
-    // Three.js Starry Night Background
-    const canvas = document.getElementById('starfield');
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    // Create Stars
-    const starsGeometry = new THREE.BufferGeometry();
-    const starsCount = 700;
-    const posArray = new Float32Array(starsCount * 3);
-
-    for (let i = 0; i < starsCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 15; // Spread
-    }
-
-    starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
-    // Material
-    window.starsMaterial = new THREE.PointsMaterial({
-      size: 0.02,
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.8,
-    });
-
-    // Initialize correct color
-    updateStarColor(htmlElement.classList.contains('dark'));
-
-    const starsMesh = new THREE.Points(starsGeometry, window.starsMaterial);
-    scene.add(starsMesh);
-
-    camera.position.z = 2;
-
-    // Animation Loop logic
-    let mouseX = 0;
-    let mouseY = 0;
-
-    document.addEventListener('mousemove', (event) => {
-      mouseX = event.clientX * 0.0001;
-      mouseY = event.clientY * 0.0001;
-    });
-
-    const clock = new THREE.Clock();
-
-    function animate() {
-      requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
-
-      starsMesh.rotation.y = elapsedTime * 0.05;
-      starsMesh.rotation.x += (mouseY - starsMesh.rotation.x) * 0.05;
-      starsMesh.rotation.y += (mouseX - starsMesh.rotation.y) * 0.05;
-
-      renderer.render(scene, camera);
-    }
-
-    animate();
-
-    // Resize Handler
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // Simple smooth scroll for anchors
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-          behavior: 'smooth'
-        });
-      });
-    });
+    mobileMenuBtn.addEventListener('click', toggleMenu);
+    mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
   </script>
 </body>
 

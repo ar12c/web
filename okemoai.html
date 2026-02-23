@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OkemoAI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'media',
+            theme: {
+                extend: {
+                    colors: {
+                        moss: '#5F634F',
+                        sage: '#BFD7B5',
+                        paper: '#F9F9F7',
+                        obsidian: '#0C0D0B',
+                    },
+                    fontFamily: {
+                        serif: ['Century', '"Century Schoolbook"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            background-color: #F9F9F7;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #5F634F;
+        }
+
+        .serif-text {
+            font-family: 'Century', 'Century Schoolbook', serif;
+        }
+
+        .mesh-gradient {
+            background-color: #F9F9F7;
+            background-image:
+                radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.3) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.2) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #0C0D0B;
+                color: #BFD7B5;
+            }
+
+            .mesh-gradient {
+                background-color: #0C0D0B;
+                background-image:
+                    radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.1) 0px, transparent 50%),
+                    radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
+                    radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.05) 0px, transparent 50%);
+            }
+
+            ::selection {
+                background-color: #5F634F;
+                color: #fff;
+            }
+        }
+
+        ::selection {
+            background-color: #BFD7B5;
+            color: #000;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const App = () => {
+            return (
+                <div className="mesh-gradient min-h-screen w-full flex text-moss dark:text-sage font-sans">
+
+                    {/* Sidebar */}
+                    <aside className="w-[200px] flex-shrink-0 p-8 flex flex-col fixed h-full z-10 border-r border-moss/10 dark:border-sage/10 bg-paper/20 dark:bg-obsidian/20 backdrop-blur-sm">
+                        <div className="mb-12">
+                            <div className="flex items-center gap-3 font-medium text-2xl serif-text tracking-tight text-moss dark:text-sage">
+                                <img src="src/OLM.svg" alt="OLM Logo" className="w-7 h-7 dark:invert opacity-80" />
+                                okemovail.
+                            </div>
+                        </div>
+                        <nav className="flex flex-col gap-6 text-moss/50 dark:text-sage/40 font-medium text-sm">
+                            <a href="AI/research.html" className="hover:text-moss dark:hover:text-sage transition-colors text-moss dark:text-sage font-semibold">Research</a>
+                            <a href="AI/tos.html" className="hover:text-moss dark:hover:text-sage transition-colors">Terms</a>
+                            <a href="AI/privacy.html" className="hover:text-moss dark:hover:text-sage transition-colors">Privacy</a>
+                        </nav>
+                        <div className="mt-auto">
+                            <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400">© 2026 OKEMOVAIL</p>
+                        </div>
+                    </aside>
+
+                    {/* Main Content Area */}
+                    <main className="flex-1 ml-[200px] flex flex-col min-h-screen relative p-8 pb-32">
+
+                        {/* Header */}
+                        <header className="flex justify-end items-center mb-10 bg-transparent relative z-20">
+                            <div>
+                                <a href="AI/chat.html">
+                                    <button className="px-6 py-2 rounded-full border border-moss/20 dark:border-sage/30 font-medium text-sm text-moss dark:text-sage hover:bg-moss hover:text-paper dark:hover:bg-sage dark:hover:text-obsidian transition-all shadow-sm">
+                                        Log in <i className="fa-solid fa-arrow-right ml-1 opacity-70 text-xs"></i>
+                                    </button>
+                                </a>
+                            </div>
+                        </header>
+
+                        {/* Content Grid */}
+                        <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-[1200px] w-full mx-auto">
+
+                            {/* Hero Card */}
+                            <div className="lg:col-span-2 bg-paper/60 dark:bg-obsidian/40 backdrop-blur-xl rounded-[32px] p-10 md:p-14 flex flex-col justify-between border border-moss/10 dark:border-sage/10 shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-sage/20 dark:bg-sage/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-sage/30 dark:group-hover:bg-sage/10 transition-colors"></div>
+
+                                <div className="self-start relative z-10">
+                                    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-paper/80 dark:bg-obsidian/60 backdrop-blur-md border border-moss/10 dark:border-sage/20 shadow-sm text-[10px] uppercase tracking-widest font-bold text-moss dark:text-sage">
+                                        <div className="w-2 h-2 rounded-full bg-sage shadow-[0_0_8px_rgba(191,215,181,0.8)] animate-pulse"></div>
+                                        Thinking
+                                    </div>
+                                </div>
+
+                                <div className="mt-auto relative z-10">
+                                    <h1 className="serif-text text-[5rem] lg:text-[7rem] font-medium tracking-tighter mb-6 text-moss dark:text-sage leading-[0.9]">
+                                        Polaris 1.5
+                                    </h1>
+                                    <p className="text-xl md:text-2xl text-stone-500 dark:text-stone-400 max-w-lg font-normal leading-relaxed">
+                                        A new stepping stone in reasoning and discovery. Designed to think before it answers.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Poster / Feature Column */}
+                            <div className="lg:col-span-1 border border-moss/10 dark:border-sage/10 bg-paper/40 dark:bg-obsidian/20 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-sm hover:shadow-md transition-all relative group">
+                                <img src="src/OLM.png" alt="OLM Poster" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-moss/20 dark:from-obsidian/60 to-transparent pointer-events-none"></div>
+                            </div>
+                        </div>
+                    </main>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

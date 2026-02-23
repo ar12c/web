@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RESEARCH | OLM</title>
+    <title>Research - OkemoAI</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
     <!-- External Resources -->
@@ -15,136 +15,77 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class'
+            darkMode: 'media',
+            theme: {
+                extend: {
+                    colors: {
+                        moss: '#5F634F',
+                        sage: '#BFD7B5',
+                        paper: '#F9F9F7',
+                        obsidian: '#0C0D0B',
+                    },
+                    fontFamily: {
+                        serif: ['Century', '"Century Schoolbook"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
         }
     </script>
 
     <style>
-        :root {
-            --accent-color: #3b82f6;
-            --chatbg-light: #ffffff;
-            --chatbg-dark: #09090b;
-        }
-
-        /* Fixed dark mode backgrounds and text colors */
-        html {
-            background-color: var(--chatbg-light);
-            transition: background-color 0.3s ease;
-        }
-
-        html.dark {
-            background-color: var(--chatbg-dark);
-        }
-
         body {
-            background-color: transparent;
-            color: #1a1a1b;
+            background-color: #F9F9F7;
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
-            transition: color 0.3s ease;
+            color: #5F634F;
         }
 
-        .dark body {
-            color: #f4f4f5;
-            /* zinc-100 */
+        .serif-text {
+            font-family: 'Century', 'Century Schoolbook', serif;
         }
 
-        .header-island {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 9999px;
-            padding: 2px 4px;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            height: 38px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: auto;
-        }
-
-        .dark .header-island {
-            background: rgba(39, 39, 42, 0.4);
-            border-color: rgba(255, 255, 255, 0.1);
+        .mesh-gradient {
+            background-color: #F9F9F7;
+            background-image:
+                radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.3) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.2) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
 
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #0C0D0B;
+                color: #BFD7B5;
+            }
+
+            .mesh-gradient {
+                background-color: #0C0D0B;
+                background-image:
+                    radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.1) 0px, transparent 50%),
+                    radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
+                    radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.05) 0px, transparent 50%);
+            }
+
+            #reader-modal {
+                background-color: rgba(0, 0, 0, 0.6);
+            }
+
+            .modal-content {
+                background-color: #0C0D0B;
+                border-color: rgba(191, 215, 181, 0.1);
+            }
+        }
+
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
-        }
-
-        .article-card {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid transparent;
-            padding: 40px 32px;
-            cursor: pointer;
-            position: relative;
-            border-radius: 24px;
-            margin: 0 -32px;
-        }
-
-        .article-card:hover {
-            transform: scale(1.01);
-            background: rgba(0, 0, 0, 0.02);
-            border-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .dark .article-card {
-            border-color: transparent;
-        }
-
-        .dark .article-card:hover {
-            background: rgba(255, 255, 255, 0.02);
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        #reader-modal {
-            display: none;
-            opacity: 0;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: none;
-        }
-
-        #reader-modal.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            transform: translateY(40px) scale(0.98);
-            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        #reader-modal.active .modal-content {
-            transform: translateY(0) scale(1);
-        }
-
-        .modal-body::-webkit-scrollbar {
-            display: none;
-        }
-
-        .modal-body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .article-container {
-            width: 95%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        @media (min-width: 1024px) {
-            .article-container {
-                width: 60%;
-            }
         }
 
         /* Rich Content Support */
@@ -169,59 +110,10 @@
             color: inherit;
         }
 
-        .rich-content ul {
-            list-style-type: disc;
-            margin-left: 1.5rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .rich-content li {
-            margin-bottom: 0.5rem;
-        }
-
         .rich-content b,
         .rich-content strong {
             font-weight: 800;
         }
-
-        /* Image Alignment in Feed */
-        .editor-image-container {
-            display: block;
-            margin: 2rem 0;
-            width: 100%;
-            border-radius: 1rem;
-            overflow: hidden;
-        }
-
-        .editor-image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .editor-image-container.float-left {
-            float: left;
-            width: 45%;
-            margin-right: 2rem;
-            margin-top: 0.5rem;
-        }
-
-        .editor-image-container.float-right {
-            float: right;
-            width: 45%;
-            margin-left: 2rem;
-            margin-top: 0.5rem;
-        }
-
-        .editor-image-container.inline {
-            width: 100%;
-        }
-
-        .image-controls {
-            display: none !important;
-        }
-
-        /* Hide editor controls on research page */
 
         .animate-fade-in {
             animation: fadeIn 0.6s ease-out forwards;
@@ -239,73 +131,104 @@
                 transform: translateY(0);
             }
         }
+
+        #reader-modal {
+            display: none;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        #reader-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            transform: translateY(40px) scale(0.98);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #reader-modal.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
     </style>
-    <script src="updatenotes.js"></script>
 </head>
 
-<body class="h-full overflow-y-auto no-scrollbar">
-    <!-- Header -->
-    <header class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none sticky top-0">
-        <div class="flex items-center gap-2 pointer-events-auto">
-            <div class="header-island">
-                <a href="chat.html"
-                    class="flex items-center gap-2 px-3 py-1.5 text-xs lg:text-[13px] font-bold tracking-tight text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-all">
-                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
-                    <span class="hidden sm:inline">Back</span>
+<body
+    class="mesh-gradient h-full overflow-y-auto no-scrollbar selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-black dark:selection:text-white">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside
+            class="w-[200px] flex-shrink-0 p-8 flex flex-col fixed h-full z-20 border-r border-gray-200/40 dark:border-white/5 bg-white/20 dark:bg-black/20 backdrop-blur-sm">
+            <div class="mb-12">
+                <a href="../okemoai.html"
+                    class="flex items-center gap-3 font-bold text-xl tracking-tight text-gray-900 dark:text-white">
+                    <img src="../src/OLM.svg" alt="OLM Logo" class="w-7 h-7 dark:invert" />
+                    OkemoAI
                 </a>
             </div>
-        </div>
+            <nav class="flex flex-col gap-6 text-gray-400 dark:text-gray-500 font-medium text-sm">
+                <a href="#"
+                    class="hover:text-black dark:hover:text-white transition-colors text-black dark:text-white font-semibold">Research</a>
+                <a href="tos.html" class="hover:text-black dark:hover:text-white transition-colors">Terms</a>
+                <a href="privacy.html" class="hover:text-black dark:hover:text-white transition-colors">Privacy</a>
+            </nav>
+            <div class="mt-auto">
+                <p class="text-xs text-gray-400 dark:text-gray-600 font-medium">© 2026 OkemoAI</p>
+            </div>
+        </aside>
 
-        <div class="flex items-center gap-2 pointer-events-auto">
-            <div class="header-island pr-2">
-                <div
-                    class="pl-4 h-full flex items-center justify-center text-black dark:text-white font-bold text-xs lg:text-[13px] tracking-tight">
-                    OLM Research
+        <!-- Main Content -->
+        <main class="flex-1 ml-[200px] p-8 md:p-12 lg:p-20 pb-40">
+            <header class="max-w-4xl mx-auto mb-16 flex justify-between items-center text-gray-900 dark:text-white">
+                <h1 class="text-4xl md:text-5xl font-black tracking-tighter">Research</h1>
+                <div class="flex items-center gap-4">
+                    <a href="chat.html"
+                        class="px-5 py-2 rounded-full border border-gray-300 dark:border-white/10 font-semibold text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black hover:border-black dark:hover:border-white transition-all">
+                        Launch Polaris <i class="fa-solid fa-arrow-right ml-1 opacity-70"></i>
+                    </a>
                 </div>
-                <div class="w-px h-1/2 bg-zinc-200 dark:bg-zinc-800 mx-2"></div>
-                <button onclick="toggleTheme()"
-                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all text-black dark:text-white">
-                    <i class="fa-solid fa-circle-half-stroke text-[13px]"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+            </header>
 
-    <main class="article-container pb-32">
-        <!-- Search and Filter Section -->
-        <div class="mt-8 mb-12 flex flex-col gap-6 animate-fade-in" style="animation-delay: 0.1s">
-            <div class="relative group">
-                <div
-                    class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-blue-500 transition-colors">
-                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            <div class="max-w-4xl mx-auto">
+                <!-- Search Pill -->
+                <div class="mb-12 animate-fade-in" style="animation-delay: 0.1s">
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-y-0 left-6 flex items-center pointer-events-none text-moss/30 dark:text-sage/30 group-focus-within:text-moss dark:group-focus-within:text-sage transition-colors">
+                            <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                        </div>
+                        <input type="text" id="article-search" placeholder="Search papers, updates, and architecture..."
+                            class="w-full bg-paper/70 dark:bg-obsidian/40 backdrop-blur-xl border border-moss/10 dark:border-sage/10 shadow-sm rounded-full py-5 pl-16 pr-8 outline-none transition-all text-lg font-medium placeholder-stone-400 dark:placeholder-stone-600 text-moss dark:text-sage focus:shadow-md dark:focus:shadow-none"
+                            oninput="handleSearch()">
+                    </div>
                 </div>
-                <input type="text" id="article-search" placeholder="Search research papers..."
-                    class="w-full bg-black/5 dark:bg-white/5 border border-transparent focus:border-blue-500/30 rounded-2xl py-4 pl-12 pr-4 outline-none transition-all text-sm font-medium tracking-tight"
-                    oninput="handleSearch()">
+
+                <!-- Tag Cloud -->
+                <div class="flex flex-wrap gap-3 mb-16 animate-fade-in" style="animation-delay: 0.2s" id="tag-cloud">
+                    <!-- Tags injected via JS -->
+                </div>
+
+                <!-- Article Feed -->
+                <div id="article-feed" class="flex flex-col gap-8">
+                    <!-- Articles injected via JS -->
+                </div>
             </div>
+        </main>
+    </div>
 
-            <!-- Tag Filter Island -->
-            <div class="flex flex-wrap gap-2" id="tag-cloud">
-                <!-- Tags injected via JS -->
-            </div>
-        </div>
-
-        <div id="article-feed" class="divide-y divide-zinc-100 dark:divide-zinc-800/50">
-            <!-- Articles will be rendered here -->
-        </div>
-    </main>
-
-    <!-- Immersive Reader Modal -->
+    <!-- Reader Modal -->
     <div id="reader-modal"
-        class="fixed inset-0 z-[200] flex items-center justify-center p-4 lg:p-8 backdrop-blur-2xl bg-white/40 dark:bg-black/40">
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 backdrop-blur-2xl bg-white/40">
         <div
-            class="modal-content w-full max-w-4xl max-h-[90vh] bg-white dark:bg-zinc-900 rounded-[32px] shadow-2xl overflow-hidden flex flex-col relative">
+            class="modal-content w-full max-w-5xl max-h-[90vh] bg-white/95 backdrop-blur-3xl rounded-[40px] shadow-[0_32px_80px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col relative border border-white">
             <button onclick="closeReader()"
-                class="absolute top-6 right-6 z-[10] w-10 h-10 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-black dark:hover:text-white transition-all hover:rotate-90">
-                <i class="fa-solid fa-xmark"></i>
+                class="absolute top-8 right-8 z-[10] w-12 h-12 flex items-center justify-center rounded-full bg-black text-white hover:scale-110 active:scale-95 transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <div class="modal-body overflow-y-auto p-8 lg:p-16 h-full">
-                <!-- Content injected via JS -->
+            <div class="overflow-y-auto p-12 md:p-20 h-full no-scrollbar">
                 <div id="modal-article-content" class="max-w-2xl mx-auto"></div>
             </div>
         </div>
@@ -313,32 +236,19 @@
 
     <script src="updatenotes.js"></script>
     <script>
-        const DEFAULT_BLOGS = [];
-
         let selectedTags = new Set();
         let searchQuery = '';
+        let DEFAULT_BLOGS = [];
 
-
-        function applyTheme() {
-            const theme = localStorage.getItem('vail_theme') || 'system';
-            const html = document.documentElement;
-
-            if (theme === 'system') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                html.classList.toggle('dark', prefersDark);
-            } else {
-                html.classList.toggle('dark', theme === 'dark');
+        async function loadBlogs() {
+            try {
+                const response = await fetch('data/blogs.json');
+                DEFAULT_BLOGS = await response.json();
+                renderBlogs();
+                renderTagCloud();
+            } catch (e) {
+                console.error("Failed to load blogs.json", e);
             }
-        }
-
-        function toggleTheme() {
-            const currentTheme = localStorage.getItem('vail_theme') || 'system';
-            let nextTheme;
-            if (currentTheme === 'light') nextTheme = 'dark';
-            else if (currentTheme === 'dark') nextTheme = 'system';
-            else nextTheme = 'light';
-            localStorage.setItem('vail_theme', nextTheme);
-            applyTheme();
         }
 
         function handleSearch() {
@@ -358,6 +268,8 @@
 
         function renderTagCloud() {
             const cloud = document.getElementById('tag-cloud');
+            if (!cloud) return;
+
             const tags = [
                 { name: 'Architecture', color: 'blue' },
                 { name: 'Core Logic', color: 'red' },
@@ -367,13 +279,14 @@
 
             cloud.innerHTML = tags.map(tag => {
                 const isActive = selectedTags.has(tag.name);
-                const twColor = tag.color;
+                const colorMap = { blue: 'bg-sage/10 text-moss', red: 'bg-red-50 text-red-500', emerald: 'bg-emerald-50 text-emerald-500', amber: 'bg-amber-50 text-amber-500' };
+                const activeColorMap = { blue: 'bg-moss text-paper', red: 'bg-red-500 text-white', emerald: 'bg-emerald-500 text-white', amber: 'bg-amber-500 text-white' };
 
                 return `
                     <button onclick="toggleTag('${tag.name}')" 
-                        class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${isActive
-                        ? `bg-${twColor}-500 text-white shadow-lg shadow-${twColor}-500/30 scale-105`
-                        : `bg-black/5 dark:bg-white/5 text-${twColor}-500 hover:bg-black/10 dark:hover:bg-white/10`
+                        class="px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all ${isActive
+                        ? `${activeColorMap[tag.color]} shadow-md scale-105`
+                        : `${colorMap[tag.color]} dark:bg-sage/5 dark:text-sage/60 hover:bg-paper dark:hover:bg-obsidian`
                     }">
                         ${tag.name}
                     </button>
@@ -381,23 +294,13 @@
             }).join('');
         }
 
-        async function renderBlogs() {
+        function renderBlogs() {
             const feed = document.getElementById('article-feed');
             if (!feed) return;
 
-            let defaultBlogs = [];
-            try {
-                const response = await fetch('data/blogs.json');
-                defaultBlogs = await response.json();
-            } catch (e) {
-                console.error("Failed to load blogs.json", e);
-            }
-
             const customBlogs = JSON.parse(localStorage.getItem('olm_blogs') || '[]');
-
-            // Deduplicate by ID (LocalStorage wins)
             const blogMap = new Map();
-            [...defaultBlogs, ...customBlogs].forEach(blog => blogMap.set(blog.id, blog));
+            [...DEFAULT_BLOGS, ...customBlogs].forEach(blog => blogMap.set(blog.id, blog));
             const allBlogs = Array.from(blogMap.values()).reverse();
 
             const filteredLines = allBlogs.filter(blog => {
@@ -412,9 +315,8 @@
 
             if (filteredLines.length === 0) {
                 feed.innerHTML = `
-                    <div class="py-24 text-center animate-fade-in">
-                        <i class="fa-solid fa-folder-open text-3xl text-zinc-200 dark:text-zinc-800 mb-4"></i>
-                        <p class="text-zinc-400 text-sm font-medium">404.</p>
+                    <div class="py-32 text-center animate-fade-in">
+                        <p class="text-gray-400 text-lg font-medium">No papers found matching your search.</p>
                     </div>
                 `;
                 return;
@@ -424,32 +326,39 @@
                 const tagsRaw = blog.tags || [{ name: blog.category || 'Research', color: 'blue' }];
                 const tagsHtml = tagsRaw.map(t => {
                     const tagObj = typeof t === 'string' ? { name: t, color: 'blue' } : t;
-                    const colorMap = { blue: 'blue', red: 'red', green: 'emerald', yellow: 'amber' };
-                    const twColor = colorMap[tagObj.color] || 'blue';
-                    return `<span class="text-[10px] font-black uppercase tracking-[0.2em] text-${twColor}-500">${tagObj.name}</span>`;
+                    const colorMap = { blue: 'text-blue-500', red: 'text-red-500', green: 'text-emerald-500', amber: 'text-amber-500' };
+                    return `<span class="text-[11px] font-black uppercase tracking-[0.2em] ${colorMap[tagObj.color] || 'text-blue-500'}">${tagObj.name}</span>`;
                 }).join('');
 
                 return `
-                    <article class="article-card animate-fade-in group" style="animation-delay: ${i * 0.05}s" onclick="openReader('${blog.id}')">
-                        <div class="flex items-center justify-between mb-8">
-                            <div class="flex gap-2">
+                    <article class="bg-paper/60 dark:bg-obsidian/40 backdrop-blur-xl rounded-[32px] p-10 border border-moss/10 dark:border-sage/10 shadow-sm hover:shadow-md transition-all cursor-pointer group animate-fade-in" 
+                        style="animation-delay: ${i * 0.1}s" 
+                        onclick="openReader('${blog.id}')">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex gap-4">
                                 ${tagsHtml}
                             </div>
-                            <div class="flex items-center gap-4">
-                                <span class="text-[10px] font-bold text-zinc-400 opacity-60">${blog.date || 'RECENT'}</span>
+                            <span class="text-[10px] font-bold uppercase tracking-[0.1em] text-stone-400">${blog.date || 'RECENT'}</span>
+                        </div>
+                        <h2 class="serif-text text-3xl font-medium tracking-tight text-moss dark:text-sage mb-6 group-hover:text-moss dark:group-hover:text-sage transition-colors leading-tight">${blog.title}</h2>
+                        <div class="rich-content line-clamp-3 text-stone-500 dark:text-stone-400 text-lg font-normal mb-10">
+                            ${stripHtml(blog.content)}
+                        </div>
+                        <div class="flex items-center gap-3 text-moss dark:text-sage font-bold text-[10px] uppercase tracking-widest">
+                            <span>Read Paper</span>
+                            <div class="w-8 h-8 rounded-full bg-moss dark:bg-sage text-paper dark:text-obsidian flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
                             </div>
-                        </div>
-                        <h1 class="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 mb-8">${blog.title}</h1>
-                        <div class="rich-content line-clamp-3">
-                            ${blog.content}
-                        </div>
-                        <div class="mt-12 flex items-center gap-2 text-blue-500 text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-70 transition-opacity">
-                            <span>Read full paper</span>
-                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </div>
                     </article>
                 `;
             }).join('');
+        }
+
+        function stripHtml(html) {
+            let tmp = document.createElement("DIV");
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
         }
 
         function openReader(id) {
@@ -462,16 +371,15 @@
             const tagsRaw = blog.tags || [{ name: blog.category || 'Research', color: 'blue' }];
             const tagsHtml = tagsRaw.map(t => {
                 const tagObj = typeof t === 'string' ? { name: t, color: 'blue' } : t;
-                const colorMap = { blue: 'blue', red: 'red', green: 'emerald', yellow: 'amber' };
-                const twColor = colorMap[tagObj.color] || 'blue';
-                return `<span class="text-[10px] font-black uppercase tracking-[0.2em] text-${twColor}-500">${tagObj.name}</span>`;
+                const colorMap = { blue: 'text-blue-500', red: 'text-red-500', green: 'text-emerald-500', amber: 'text-amber-500' };
+                return `<span class="text-[11px] font-black uppercase tracking-[0.2em] ${colorMap[tagObj.color] || 'text-blue-500'}">${tagObj.name}</span>`;
             }).join('');
 
             const contentHtml = `
-                <div class="flex gap-2 mb-8">${tagsHtml}</div>
-                <div class="text-xs font-bold text-zinc-400 mb-4 uppercase tracking-widest">${blog.date || 'RECENT'}</div>
-                <h1 class="text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-100 mb-12 leading-[1.1]">${blog.title}</h1>
-                <div class="rich-content text-lg lg:text-xl leading-relaxed text-zinc-800 dark:text-zinc-200">
+                <div class="flex gap-4 mb-8">${tagsHtml}</div>
+                <div class="text-[10px] font-bold text-stone-400 mb-6 uppercase tracking-widest">${blog.date || 'RECENT'}</div>
+                <h1 class="serif-text text-5xl md:text-6xl font-medium tracking-tight text-moss dark:text-sage mb-12 leading-[1.1]">${blog.title}</h1>
+                <div class="rich-content text-xl leading-relaxed text-stone-600 dark:text-stone-300 font-normal">
                     ${blog.content}
                 </div>
             `;
@@ -482,7 +390,6 @@
             setTimeout(() => modal.classList.add('active'), 10);
             document.body.style.overflow = 'hidden';
 
-            // Close on background click
             modal.onclick = (e) => {
                 if (e.target === modal) closeReader();
             };
@@ -494,26 +401,15 @@
             setTimeout(() => {
                 modal.style.display = 'none';
                 document.body.style.overflow = '';
-            }, 500);
+            }, 600);
         }
 
-        function deletePost(id) {
-            // Logic moved to management page
-        }
+        loadBlogs();
 
-        applyTheme();
-        renderTagCloud();
-        renderBlogs();
-        setTimeout(window.checkChangelog, 1000);
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            if ((localStorage.getItem('vail_theme') || 'system') === 'system') applyTheme();
-        });
+        // Listen for storage changes to sync across tabs
         window.addEventListener('storage', (e) => {
-            if (e.key === 'vail_theme') applyTheme();
             if (e.key === 'olm_blogs') {
                 renderBlogs();
-                renderTagCloud();
             }
         });
     </script>

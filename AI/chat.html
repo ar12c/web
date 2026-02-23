@@ -56,11 +56,6 @@
 
         /* Chat Empty State */
         body.chat-empty #bottom-fade {
-            bottom: 50%;
-            transform: translateY(60px);
-            /* Position input box below the greeting */
-            padding-top: 0;
-            background: transparent;
             pointer-events: none;
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -72,8 +67,8 @@
         body.chat-empty #welcome-state {
             opacity: 1;
             pointer-events: auto;
-            transform: translateY(-80px);
-            /* Lift greeting above the center */
+            transform: translateY(0);
+            /* Center greeting */
         }
 
         body:not(.chat-empty) #welcome-state {
@@ -2167,8 +2162,21 @@
                             const req = tx.objectStore(STORE_CHATS).getAll();
                             req.onsuccess = () => {
                                 const map = {};
-                                (req.result || []).forEach(c => { map[c.id] = c; });
-                                resolve(map);
+                                const raw = req.result || [];
+                                let i = 0;
+                                const processChunk = () => {
+                                    const end = Math.min(i + 50, raw.length);
+                                    for (; i < end; i++) {
+                                        const c = raw[i];
+                                        map[c.id] = c;
+                                    }
+                                    if (i < raw.length) {
+                                        setTimeout(processChunk, 0);
+                                    } else {
+                                        resolve(map);
+                                    }
+                                };
+                                processChunk();
                             };
                             req.onerror = () => reject(req.error);
                         });
@@ -2735,23 +2743,20 @@
                 const blended = accRgb.map((c, i) => Math.round(c * alphaVal + bgBase[i] * (1 - alphaVal)));
                 const fadeGradientStop = `rgb(${blended[0]}, ${blended[1]}, ${blended[2]})`;
 
-                document.getElementById('dynamic-accent-styles').innerHTML = `
-                :root {
-                    --accent-color: ${finalColor};
-                    --accent-glow: ${hexToRgba(finalColor, 0.4)};
-                    --accent-tint: ${hexToRgba(finalColor, isAuto ? 0.02 : 0.10)};
-                    --sidebar-tint: ${hexToRgba(finalColor, isAuto ? 0.01 : 0.07)};
-                    --accent-contrast: ${isAuto ? (isDark ? '#d4dcd0' : '#1a2e24') : (isDark ? '#d4dcd0' : '#1a2e24')};
-                    --fade-color: ${isDark ? '#0d0d0d' : '#f9fbf8'};
-                    --fade-gradient-stop: ${fadeGradientStop};
-                    --bg-color: ${isDark ? '#262523' : '#f9fbf8'};
-                    --sidebar-bg: ${isDark ? '#1e1d1b' : '#f2f5f0'};
-                    --input-bg: ${isDark ? '#33302c' : '#ffffff'};
-                    --action-btn-color: ${isDark ? '#e4e4e7' : '#52525b'};
-                    --thinking-accent: ${isDark ? `color-mix(in srgb, ${finalColor}, white 35%)` : `color-mix(in srgb, ${finalColor}, black 20%)`};
-                    --thinking-side: ${isDark ? '#4b5563' : '#94a3b8'};
-                }
-            `;
+                const root = document.documentElement;
+                root.style.setProperty('--accent-color', finalColor);
+                root.style.setProperty('--accent-glow', hexToRgba(finalColor, 0.4));
+                root.style.setProperty('--accent-tint', hexToRgba(finalColor, isAuto ? 0.02 : 0.10));
+                root.style.setProperty('--sidebar-tint', hexToRgba(finalColor, isAuto ? 0.01 : 0.07));
+                root.style.setProperty('--accent-contrast', isAuto ? (isDark ? '#d4dcd0' : '#1a2e24') : (isDark ? '#d4dcd0' : '#1a2e24'));
+                root.style.setProperty('--fade-color', isDark ? '#0d0d0d' : '#f9fbf8');
+                root.style.setProperty('--fade-gradient-stop', fadeGradientStop);
+                root.style.setProperty('--bg-color', isDark ? '#262523' : '#f9fbf8');
+                root.style.setProperty('--sidebar-bg', isDark ? '#1e1d1b' : '#f2f5f0');
+                root.style.setProperty('--input-bg', isDark ? '#33302c' : '#ffffff');
+                root.style.setProperty('--action-btn-color', isDark ? '#e4e4e7' : '#52525b');
+                root.style.setProperty('--thinking-accent', isDark ? `color-mix(in srgb, ${finalColor}, white 35%)` : `color-mix(in srgb, ${finalColor}, black 20%)`);
+                root.style.setProperty('--thinking-side', isDark ? '#4b5563' : '#94a3b8');
                 if (els.logoAi) els.logoAi.classList.toggle('gradient-mode', isAuto);
 
                 // Save accent color immediately
@@ -3491,7 +3496,7 @@
                                                     </div>
                                                 </div>`;
                                             lastProse.insertAdjacentHTML('afterbegin', thoughtHtml);
-                                            feather.replace();
+                                            feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, thoughtContainer);
                                             thoughtContainer = lastProse.querySelector('.thought-container');
                                         }
                                         const body = thoughtContainer.querySelector('.thought-body');
@@ -3551,7 +3556,7 @@
                                 <div class="hallucination-disclaimer">OLMs are prone to hallucinations, please double check.</div>
                             `;
                             lastProse.parentNode.appendChild(actionRow);
-                            feather.replace();
+                            feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, actionRow);
                         }
                     }
                     currentJob = null;
@@ -3613,7 +3618,7 @@
                 navigator.clipboard.writeText(content);
                 const originalHTML = btnEl.innerHTML;
                 btnEl.innerHTML = feather.icons.check.toSvg({ class: 'w-4 h-4' });
-                setTimeout(() => { btnEl.innerHTML = originalHTML; feather.replace(); }, 2000);
+                setTimeout(() => { btnEl.innerHTML = originalHTML; }, 2000);
             };
 
             window.copyUserMsg = (idx, btnEl) => {
@@ -3621,7 +3626,7 @@
                 navigator.clipboard.writeText(content);
                 const originalHTML = btnEl.innerHTML;
                 btnEl.innerHTML = feather.icons.check.toSvg({ class: 'w-3 h-3' });
-                setTimeout(() => { btnEl.innerHTML = originalHTML; feather.replace(); }, 2000);
+                setTimeout(() => { btnEl.innerHTML = originalHTML; }, 2000);
             };
 
             window.editMsg = (idx) => {
@@ -3686,6 +3691,12 @@
             };
 
             const renderHistory = (query = "") => {
+                if (window.__lastHistoryQuery !== query) {
+                    window.__historyRenderLimit = 20;
+                    window.__lastHistoryQuery = query;
+                }
+                window.__historyRenderLimit = window.__historyRenderLimit || 20;
+
                 const sortedChats = Object.values(allChats).sort((a, b) => b.timestamp - a.timestamp);
                 const currentLang = settings.lang || 'en';
                 const dict = translations[currentLang];
@@ -3695,12 +3706,15 @@
                 const weekStartTs = dayStartTs - (86400000 * 7);
                 const filteredChats = query ? sortedChats.filter(c => c.title.toLowerCase().includes(query)) : sortedChats;
 
+                const visibleChats = filteredChats.slice(0, window.__historyRenderLimit);
+                const hasMore = filteredChats.length > visibleChats.length;
+
                 const groupsMap = {
-                    pinned: { title: dict.pinned_header, items: filteredChats.filter(c => c.pinned) },
-                    today: { title: dict.today_header, items: filteredChats.filter(c => !c.pinned && c.timestamp >= dayStartTs) },
-                    yesterday: { title: dict.yesterday_header, items: filteredChats.filter(c => !c.pinned && c.timestamp >= yestStartTs && c.timestamp < dayStartTs) },
-                    last_week: { title: dict.last_week_header, items: filteredChats.filter(c => !c.pinned && c.timestamp >= weekStartTs && c.timestamp < yestStartTs) },
-                    dust_collecting: { title: dict.dust_collecting_header, items: filteredChats.filter(c => !c.pinned && c.timestamp < weekStartTs) }
+                    pinned: { title: dict.pinned_header, items: visibleChats.filter(c => c.pinned) },
+                    today: { title: dict.today_header, items: visibleChats.filter(c => !c.pinned && c.timestamp >= dayStartTs) },
+                    yesterday: { title: dict.yesterday_header, items: visibleChats.filter(c => !c.pinned && c.timestamp >= yestStartTs && c.timestamp < dayStartTs) },
+                    last_week: { title: dict.last_week_header, items: visibleChats.filter(c => !c.pinned && c.timestamp >= weekStartTs && c.timestamp < yestStartTs) },
+                    dust_collecting: { title: dict.dust_collecting_header, items: visibleChats.filter(c => !c.pinned && c.timestamp < weekStartTs) }
                 };
                 let finalHtml = '';
                 for (let gKey in groupsMap) {
@@ -3723,8 +3737,11 @@
                         });
                     }
                 }
+                if (hasMore) {
+                    finalHtml += `<div class="p-4 text-center"><button onclick="window.__historyRenderLimit += 20; renderHistory(window.__lastHistoryQuery)" class="text-xs font-medium text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 transition-colors">Load More</button></div>`;
+                }
                 els.hist.innerHTML = finalHtml || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">${dict.no_history}</div>`;
-                feather.replace();
+                feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, els.hist);
             };
 
             const render = () => {
@@ -3802,7 +3819,7 @@
                             </div>` : ''}
                         </div>
                     </div>`).join('');
-                    feather.replace();
+                    feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, els.chatMsgs);
                     els.chatMsgs.querySelectorAll('.prose-target').forEach(applyContentFeatures);
                 }
             };
@@ -4054,7 +4071,7 @@
                 }
 
                 container.innerHTML = html;
-                feather.replace();
+                feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, container);
             };
 
 
@@ -4110,6 +4127,7 @@
                 // The "Grace Period" Boot Sequence
                 setTimeout(async () => {
                     await StorageController.init();
+                    await new Promise(r => setTimeout(r, 0));
                     try {
                         allChats = await StorageController.getAllChats();
                     } catch (e) {
