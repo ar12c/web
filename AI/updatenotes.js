@@ -62,7 +62,6 @@ function createChangelogModal() {
                 </div>
                 
                 <ul id="changelog-content" style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:1rem; margin-bottom:2rem;">
-                    <!-- Changes injected via JS -->
                 </ul>
 
                 <button onclick="window.closeChangelog()" 

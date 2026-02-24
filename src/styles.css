@@ -4,7 +4,7 @@
 
 
 
-/* Vertical gradient sweep from bottom to top */
+
 @keyframes gradient-sweep-y {
 0% {
 background-position: 50% 120%;
@@ -24,18 +24,18 @@ will-change: background-position;
 }
 
 
-/* Vertical scrolling gradient */
+
 .animate-gradient {
 min-height: 200px;
 
-/* Vertical gradient so colors stack top→bottom */
+
   background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #ff6b6b);
   background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
 
-/* Make the gradient taller to create room to scroll */
+
 background-size: 100% 300%;
 
-/* Animate background-position's Y axis */
+
 animation: animatedgradientY 6s ease infinite;
 }
 
@@ -54,13 +54,13 @@ background-position: 0% 0%;
 .animate-gradient-alt {
   min-height: 200px;
 
-  /* Vertical gradient so colors stack top→bottom */
+  
   background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
 
-  /* Make the gradient taller to create room to scroll */
+  
   background-size: 100% 300%;
 
-  /* Animate background-position's Y axis */
+  
   animation: animatedgradientY2 7s ease infinite;
 }
 
@@ -83,8 +83,8 @@ background-size: 200%;
 -webkit-animation: animatedgradient2 3s linear infinite forwards;
 -moz-animation: animatedgradient2 3s linear infinite forwards;
 animation: animatedgradient2 3s linear infinite forwards;
-color: transparent; /* Make the text itself transparent */
--webkit-background-clip: text; /* Clip the background to the text */
+color: transparent; 
+-webkit-background-clip: text; 
 background-clip: text;
 
 }
@@ -123,13 +123,13 @@ position: fixed;
 }
 
 #fact-container {
-/* Add these for the transition */
+
 opacity: 0;
 transform: translateY(-10px);
 transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-/* Remove any explicit height settings that might be interfering */
-/* height: auto; (This is usually the default, but ensure it's not overridden) */
-overflow: hidden; /* Helps with potential layout shifts during transition */
+
+
+overflow: hidden; 
 }
 
 #fact-container.show {
@@ -142,8 +142,8 @@ font-family: 'Inter', sans-serif;
 
 }
 
-/* styles.css */
-/* Existing */
+
+
 
 .fade-in-blur {
   animation: fadeInBlur 0.4s ease-out forwards;
@@ -162,12 +162,12 @@ font-family: 'Inter', sans-serif;
   }
 }
 
-/* Text fade + blur - This block applies to ALL modes */
+
 .fade-in-text {
   animation: fadeInText 2s ease-out forwards;
 }
 
-/* Keyframes must be defined globally, outside the .dark selector */
+
 @keyframes fadeInText {
   0% {
     opacity: 0;

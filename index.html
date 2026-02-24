@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OkemoVail</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
             moss: '#5F634F',
             sage: '#BFD7B5',
             paper: '#F9F9F7',
-            obsidian: '#0C0D0B', // Custom dark mode background
+            obsidian: '#0C0D0B', 
           },
           fontFamily: {
             serif: ['Century', '"Century Schoolbook"', 'serif'],
@@ -88,7 +88,7 @@
 
 <body class="font-sans antialiased transition-colors duration-500">
 
-  <!-- Navigation -->
+  
   <nav
     class="fixed top-0 w-full z-50 bg-paper/80 dark:bg-obsidian/80 backdrop-blur-md border-b border-moss/10 dark:border-sage/10">
     <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -99,7 +99,7 @@
         <a href="https://github.com/ar12c" target="_blank"
           class="hover:text-moss dark:hover:text-sage transition-colors">GitHub</a>
       </div>
-      <!-- Mobile Menu Button -->
+      
       <button id="mobile-menu-btn" class="md:hidden text-amber-600 dark:text-amber-400 p-2 focus:outline-none">
         <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
@@ -113,7 +113,7 @@
     </div>
   </nav>
 
-  <!-- Mobile Menu Overlay -->
+  
   <div id="mobile-menu-overlay"
     class="fixed inset-0 z-40 bg-paper dark:bg-obsidian md:hidden flex flex-col items-center justify-center space-y-8 text-2xl serif-text text-moss dark:text-sage">
     <a href="#work" class="mobile-link">Projects</a>
@@ -123,9 +123,9 @@
 
   <main class="max-w-5xl mx-auto px-6 pt-32">
 
-    <!-- Hero Section -->
+    
     <section class="py-20 md:py-32 fade-in">
-      <!-- Profile Picture -->
+      
       <div class="mb-10">
         <img
           src="https://avatars.githubusercontent.com/u/179893130?s=400&u=d8a0d805e4137f21f0dd19fcf5163a1c746f02fd&v=4"
@@ -146,7 +146,7 @@
       </div>
     </section>
 
-    <!-- Quote Section -->
+    
     <section class="py-16 md:py-24 border-t border-moss/10 dark:border-sage/10 italic text-center">
       <blockquote class="serif-text text-3xl md:text-4xl text-moss/60 dark:text-sage/60 max-w-2xl mx-auto leading-snug">
         "Stay Hungry, Stay Foolish"
@@ -154,14 +154,14 @@
       <cite class="block mt-4 text-xs uppercase tracking-[0.2em] font-bold text-stone-400">— Steve Jobs</cite>
     </section>
 
-    <!-- Featured Work -->
+    
     <section id="work" class="py-20 border-t border-moss/10 dark:border-sage/10">
       <div class="flex items-baseline justify-between mb-16">
         <h2 class="serif-text text-4xl text-moss dark:text-paper">AI & Engineering</h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <!-- Project 1: Polaris -->
+        
         <div class="group cursor-pointer">
           <div
             class="aspect-[4/5] bg-moss/5 dark:bg-white/5 border border-moss/5 dark:border-white/5 rounded-2xl overflow-hidden mb-6 relative flex items-center justify-center">
@@ -181,7 +181,7 @@
       </div>
     </section>
 
-    <!-- Footer -->
+    
     <footer class="py-12 border-t border-moss/10 dark:border-sage/10">
       <div
         class="flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400 gap-6">
@@ -212,7 +212,7 @@
       observer.observe(el);
     });
 
-    // Mobile Menu Toggle
+    
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
     const menuIcon = document.getElementById('menu-icon');

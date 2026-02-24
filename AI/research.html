@@ -7,12 +7,12 @@
     <title>Research - OkemoAI</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
-    <!-- External Resources -->
-    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    
+    <script></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script></script>
     <script>
         tailwind.config = {
             darkMode: 'media',
@@ -88,7 +88,7 @@
             scrollbar-width: none;
         }
 
-        /* Rich Content Support */
+        
         .rich-content h1 {
             font-size: 2.25rem;
             font-weight: 800;
@@ -159,7 +159,7 @@
     class="mesh-gradient h-full overflow-y-auto no-scrollbar selection:bg-blue-100 dark:selection:bg-blue-900 selection:text-black dark:selection:text-white">
 
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
+        
         <aside
             class="w-[200px] flex-shrink-0 p-8 flex flex-col fixed h-full z-20 border-r border-gray-200/40 dark:border-white/5 bg-white/20 dark:bg-black/20 backdrop-blur-sm">
             <div class="mb-12">
@@ -180,7 +180,7 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
+        
         <main class="flex-1 ml-[200px] p-8 md:p-12 lg:p-20 pb-40">
             <header class="max-w-4xl mx-auto mb-16 flex justify-between items-center text-gray-900 dark:text-white">
                 <h1 class="text-4xl md:text-5xl font-black tracking-tighter">Research</h1>
@@ -193,7 +193,7 @@
             </header>
 
             <div class="max-w-4xl mx-auto">
-                <!-- Search Pill -->
+                
                 <div class="mb-12 animate-fade-in" style="animation-delay: 0.1s">
                     <div class="relative group">
                         <div
@@ -206,20 +206,20 @@
                     </div>
                 </div>
 
-                <!-- Tag Cloud -->
+                
                 <div class="flex flex-wrap gap-3 mb-16 animate-fade-in" style="animation-delay: 0.2s" id="tag-cloud">
-                    <!-- Tags injected via JS -->
+                    
                 </div>
 
-                <!-- Article Feed -->
+                
                 <div id="article-feed" class="flex flex-col gap-8">
-                    <!-- Articles injected via JS -->
+                    
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Reader Modal -->
+    
     <div id="reader-modal"
         class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 backdrop-blur-2xl bg-white/40">
         <div
@@ -234,7 +234,7 @@
         </div>
     </div>
 
-    <script src="updatenotes.js"></script>
+    <script></script>
     <script>
         let selectedTags = new Set();
         let searchQuery = '';
@@ -406,7 +406,7 @@
 
         loadBlogs();
 
-        // Listen for storage changes to sync across tabs
+        
         window.addEventListener('storage', (e) => {
             if (e.key === 'olm_blogs') {
                 renderBlogs();

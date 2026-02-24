@@ -23,13 +23,13 @@ factButton.addEventListener('click', () => {
     const randomIndex = Math.floor(Math.random() * catFacts.length);
     const newFact = catFacts[randomIndex];
 
-    // Remove the 'show' class before updating content to trigger the transition again
+    
     factContainer.classList.remove('show');
 
-    // Wait for a short moment to allow the fade-out to start
+    
     setTimeout(() => {
         factContainer.textContent = newFact;
-        // Add the 'show' class to trigger the fade-in and slide-up
+        
         factContainer.classList.add('show');
-    }, 50); // Adjust the delay as needed
+    }, 50); 
 });
