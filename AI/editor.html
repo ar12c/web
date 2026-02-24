@@ -7,7 +7,7 @@
     <title>EDITOR | OLM</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
-    <!-- External Resources -->
+    
     <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -23,7 +23,7 @@
         :root {
             --accent-color: #3b82f6;
             --chatbg-light: #f3f4f6;
-            /* Lighter Docs-like background */
+            
             --chatbg-dark: #09090b;
             --paper-light: #ffffff;
             --paper-dark: #18181b;
@@ -51,10 +51,10 @@
 
         .dark body {
             color: #f4f4f5;
-            /* zinc-100 */
+            
         }
 
-        /* Island Styling */
+        
         .header-island {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(16px);
@@ -76,7 +76,7 @@
             border-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* Toolbar */
+        
         .editor-toolbar {
             background: var(--toolbar-light);
             border: 1px solid rgba(0, 0, 0, 0.08);
@@ -123,7 +123,7 @@
             color: var(--accent-color);
         }
 
-        /* Paper */
+        
         .editor-container {
             max-width: 900px;
             margin: 0 auto;
@@ -149,14 +149,14 @@
             outline: none;
         }
 
-        /* Placeholder */
+        
         .placeholder:empty:before {
             content: attr(data-placeholder);
             color: #a1a1aa;
             cursor: text;
         }
 
-        /* Image Wrapping & Resizing */
+        
         .editor-image-container {
             position: relative;
             display: inline-block;
@@ -220,7 +220,7 @@
             margin: 20px auto;
         }
 
-        /* Typography fixes */
+        
         #blog-editor h1 {
             font-size: 2.5rem;
             font-weight: 800;
@@ -262,7 +262,7 @@
 </head>
 
 <body class="h-full overflow-y-auto no-scrollbar">
-    <!-- Header -->
+    
     <header
         class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none fixed top-0 left-0 right-0">
         <div class="flex items-center gap-2 pointer-events-auto">
@@ -298,7 +298,7 @@
 
     <main class="pt-24 lg:pt-28 pb-32">
         <div class="editor-container">
-            <!-- Toolbar -->
+            
             <div class="flex justify-center mb-6 sticky top-20 z-40">
                 <div class="editor-toolbar">
                     <button onclick="execCmd('bold')" class="toolbar-btn" title="Bold"><i
@@ -326,7 +326,7 @@
                 </div>
             </div>
 
-            <!-- Paper -->
+            
             <div class="editor-paper" id="drop-zone overflow-hidden">
                 <div class="flex flex-col gap-6 mb-12">
                     <div class="flex items-center justify-between">
@@ -389,7 +389,7 @@
             document.execCommand(command, false, value);
         }
 
-        // Image Drag and Drop
+        
         const editor = document.getElementById('blog-editor');
 
         editor.addEventListener('dragover', (e) => {
@@ -484,12 +484,12 @@
                 isRich: true
             };
 
-            // 1. Update LocalStorage (Reliable fallback)
+            
             const localBlogs = JSON.parse(localStorage.getItem('olm_blogs') || '[]');
             localBlogs.unshift(newBlog);
             localStorage.setItem('olm_blogs', JSON.stringify(localBlogs));
 
-            // 2. Update File System (Direct Persistence)
+            
             if (blogsFileHandle) {
                 try {
                     if (statusMsg) {
@@ -497,7 +497,7 @@
                         statusMsg.style.opacity = "1";
                     }
 
-                    // Verify permissions
+                    
                     const options = { mode: 'readwrite' };
                     if (await blogsFileHandle.queryPermission(options) !== 'granted') {
                         if (await blogsFileHandle.requestPermission(options) !== 'granted') {
@@ -505,15 +505,15 @@
                         }
                     }
 
-                    // Read current content
+                    
                     const file = await blogsFileHandle.getFile();
                     const text = await file.text();
                     let fileBlogs = text.trim() ? JSON.parse(text) : [];
 
-                    // Add new entry
+                    
                     fileBlogs.unshift(newBlog);
 
-                    // Write back
+                    
                     const writable = await blogsFileHandle.createWritable();
                     await writable.write(JSON.stringify(fileBlogs, null, 2));
                     await writable.close();
@@ -555,7 +555,7 @@
             applyTheme();
         }
 
-        // Set current date
+        
         const now = new Date();
         const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
         document.getElementById('current-date').innerText = `${months[now.getMonth()]} ${now.getFullYear()}`;

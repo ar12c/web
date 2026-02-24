@@ -4,7 +4,7 @@
   100% { background-position: 0% 300%; }
 }
 
-/* Generic animated gradient utility */
+
 .animate-gradient {
   background: linear-gradient(180deg, #ff6b6b, #f7d794, #54a0ff, #a454ff, #ff6b6b);
   background-size: 100% 300%;
@@ -29,7 +29,7 @@
       transform-origin: left;
     }
 
-    /* --- Dropdown Animations --- */
+    
     #menu-toggle i {
       transition: transform 0.2s ease-in-out;
     }
@@ -37,7 +37,7 @@
       transform: rotate(0deg);
     }
 
-    /* --- Plus Menu Icon --- */
+    
     #plus-icon {
       transition: transform 0.2s ease-in-out;
     }
@@ -52,7 +52,7 @@
       accent-color: #ef4444;
     }
 
-    /* --- Input Bar Grid Layout --- */
+    
     #input-bar-container {
       display: grid;
       grid-template-columns: 1fr auto;
