@@ -8,23 +8,23 @@
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
 
-
-    <script></script>
-    <script></script>
+    <!-- External Resources -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script></script>
-    <script></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <script></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
 
-    <script></script>
-    <script></script>
-
-    <style>
+    <style id="dynamic-accent-styles">
         :root {
-
+            /* Ocean Deep Theme */
             --accent-color: #6C8EBF;
             --accent-glow: rgba(108, 142, 191, 0.4);
             --accent-tint: rgba(0, 0, 0, 0);
@@ -33,7 +33,7 @@
             --fade-color: #F9F9F7;
             --fade-gradient-stop: #F9F9F7;
 
-
+            /* Backgrounds */
             --bg-color: #F9F9F7;
             --sidebar-bg: #F2F2F0;
             --input-bg: #F9F9F7;
@@ -54,7 +54,7 @@
             --thinking-side: #4b5563;
         }
 
-
+        /* Chat Empty State */
         body.chat-empty #bottom-fade {
             pointer-events: none;
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -68,7 +68,7 @@
             opacity: 1;
             pointer-events: auto;
             transform: translateY(0);
-
+            /* Center greeting */
         }
 
         body:not(.chat-empty) #welcome-state {
@@ -78,12 +78,12 @@
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-
+        /* Typography improvements */
         body {
             line-height: 1.6;
-
+            /* More breathing room */
             letter-spacing: 0.01em;
-
+            /* Natural spacing */
         }
     </style>
 
@@ -141,7 +141,7 @@
             left: 0;
             z-index: 2500;
             width: 100%;
-
+            /* Fullscreen on mobile */
             transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -450,7 +450,7 @@
             animation: rotate-gradient 3s linear infinite;
         }
 
-
+        /* Prevent logo movement and distractions during generation */
         body.is-generating .vail-logo-ai,
         body.is-generating #active-model-icon,
         body.is-generating #active-model-icon svg,
@@ -462,7 +462,7 @@
             transition: none !important;
         }
 
-
+        /* Hide flare during generation to prevent "moving blob" distraction */
         body.is-generating #intelligence-flare {
             display: none !important;
             opacity: 0 !important;
@@ -607,7 +607,7 @@
             box-sizing: border-box;
         }
 
-
+        /* Thought Process Styling - Minimalist Expandable */
         .thought-container {
             margin-bottom: 1.5rem;
             padding-left: 2px;
@@ -621,48 +621,48 @@
             font-size: 0.65rem;
             font-weight: 800;
             font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-
+            /* Serif Font */
             color: #a1a1aa;
-
-
+            /* zinc-400 */
+            /* text-transform: uppercase; Remove uppercase for "Hmmmm." */
             letter-spacing: 0.05em;
-
+            /* Reduced letter spacing for serif */
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 8px;
             user-select: none;
             cursor: pointer;
-
+            /* Clickable again */
             transition: color 0.2s;
             text-align: left;
         }
 
         .thought-header:hover {
             color: #71717a;
-
+            /* zinc-500 */
         }
 
         html.dark .thought-header {
             color: #71717a;
-
+            /* zinc-500 */
         }
 
         html.dark .thought-header:hover {
             color: #a1a1aa;
-
+            /* zinc-400 */
         }
 
         .thought-content {
             font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-
+            /* Serif Font */
             font-size: 0.9rem;
-
+            /* Slightly larger for serif readability */
             line-height: 1.6;
             color: #71717a;
-
+            /* zinc-500 */
             display: none;
-
+            /* Collapsible default? or Open? content.classList.add('expanded') makes it block */
         }
 
         .thought-content.expanded {
@@ -684,7 +684,7 @@
 
         html.dark .thought-content {
             color: #a1a1aa;
-
+            /* zinc-400 */
         }
 
 
@@ -715,7 +715,7 @@
             }
         }
 
-
+        /* ===== FULL-SCREEN ONBOARDING ===== */
         #onboarding-overlay {
             position: fixed;
             inset: 0;
@@ -735,14 +735,14 @@
             display: none !important;
         }
 
-
+        /* Desktop: side-by-side (form LEFT, image RIGHT) */
         @media (min-width: 768px) {
             #onboarding-overlay {
                 flex-direction: row;
             }
         }
 
-
+        /* Side image — hidden on mobile, right half on desktop */
         #onboarding-side-img {
             display: none;
         }
@@ -755,11 +755,11 @@
                 object-fit: cover;
                 height: 100%;
                 order: 2;
-
+                /* image goes RIGHT */
             }
         }
 
-
+        /* Form card — fills screen on mobile, left half on desktop */
         .onboarding-card {
             width: 100%;
             padding: 2rem 1.5rem;
@@ -780,7 +780,7 @@
                 max-width: 50%;
                 padding: 3rem 2.5rem;
                 order: 1;
-
+                /* form goes LEFT */
             }
         }
 
@@ -899,7 +899,7 @@
             cursor: move;
         }
 
-
+        /* Changelog Modal */
         #changelog-modal {
             position: fixed;
             inset: 0;
@@ -931,7 +931,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-
+        /* ===== POLARIS SETTINGS MODAL ===== */
         #settings-overlay {
             position: fixed;
             inset: 0;
@@ -956,7 +956,7 @@
             flex-direction: column;
             opacity: 0;
             transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
+            /* Mobile: full-screen */
             inset: 0;
             border-radius: 0;
             background: var(--bg-color, #f9fbf8);
@@ -972,7 +972,7 @@
             opacity: 1;
         }
 
-
+        /* Desktop: centered card */
         @media (min-width: 768px) {
             #settings-panel {
                 inset: auto;
@@ -995,14 +995,14 @@
             }
         }
 
-
+        /* Settings inner scroll area */
         #settings-content-area {
             flex: 1;
             overflow-y: auto;
             padding: 0 0 env(safe-area-inset-bottom, 0) 0;
         }
 
-
+        /* Settings Tab Navigation (horizontal pill row) */
         .polaris-tab-bar {
             display: flex;
             gap: 4px;
@@ -1043,7 +1043,7 @@
             box-shadow: 0 2px 8px var(--accent-glow);
         }
 
-
+        /* Settings Section */
         .polaris-section {
             padding: 0 1.25rem;
             margin-bottom: 1.75rem;
@@ -1105,7 +1105,7 @@
             color: #f4f4f5;
         }
 
-
+        /* Theme Item — vertical list with glow icon */
         .polaris-theme-item {
             display: flex;
             align-items: center;
@@ -1170,7 +1170,7 @@
             box-shadow: 0 0 8px var(--accent-glow);
         }
 
-
+        /* Apple-style list items kept for backward compat but hidden */
         .apple-section-title {
             display: none;
         }
@@ -1204,23 +1204,23 @@
         }
 
 
-
+        /* Smart Sidebar Hover Trigger */
         #sidebar-hover-trigger {
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
             width: 30px;
-
+            /* Increased width for better detection */
             z-index: 2400;
-
+            /* Just below sidebar */
             display: none;
-
+            /* Enabled via JS */
         }
 
 
-
-
+        /* Settings panel is full-screen on mobile by default (see #settings-panel above) */
+        /* On desktop (>=768px) it becomes a centered card (see media query above) */
 
         #pfp-workspace {
             width: 100%;
@@ -1274,7 +1274,7 @@
             background: rgba(0, 0, 0, 0.6);
         }
 
-
+        /* Hide sidebar completely while onboarding is active */
         body.onboarding-active #sidebar {
             display: none !important;
         }
@@ -1312,7 +1312,7 @@
             color: var(--accent-contrast);
         }
 
-
+        /* Header Island Styles */
         .header-island {
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(16px);
@@ -1402,11 +1402,11 @@
     <div id="sidebar-hover-trigger"></div>
 
     <div id="onboarding-overlay" class="hidden">
-
+        <!-- Form card (LEFT on desktop, full-screen on mobile) -->
         <div class="onboarding-card">
             <div class="onboarding-inner">
 
-
+                <!-- Logo -->
                 <div class="flex flex-col items-center mb-8">
                     <svg class="h-6 w-auto mb-5" viewBox="0 0 1080 332.95" xmlns="http://www.w3.org/2000/svg"
                         style="color: var(--accent-color);">
@@ -1420,7 +1420,7 @@
                         data-t="onboarding_welcome">Welcome to OLM</p>
                 </div>
 
-
+                <!-- Google Sign-In (primary CTA) -->
                 <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
                     class="w-full flex items-center justify-center gap-2.5 min-h-[52px] px-5 rounded-2xl font-bold text-sm transition-all shadow-lg hover:brightness-110 active:scale-[0.98] mb-4"
                     style="background-color: var(--accent-color); color: var(--accent-contrast);">
@@ -1436,7 +1436,7 @@
 
                 <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 mb-5"></div>
 
-
+                <!-- Profile Setup -->
                 <div class="flex items-center gap-4 mb-5">
                     <div class="relative flex-shrink-0"
                         onclick="document.getElementById('onboarding-pfp-input').click()">
@@ -1460,7 +1460,7 @@
                         onchange="window.handleOnboardingPfp(event)">
                 </div>
 
-
+                <!-- Appearance -->
                 <div class="mb-5">
                     <label class="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 text-center"
                         data-t="appearance">Appearance</label>
@@ -1482,7 +1482,7 @@
 
                 <div class="w-full h-px bg-zinc-100 dark:bg-zinc-800/60 mb-5"></div>
 
-
+                <!-- Action Buttons -->
                 <div class="flex flex-col gap-3">
                     <button onclick="window.completeOnboarding()"
                         class="w-full flex items-center justify-center min-h-[52px] bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-xl"
@@ -1504,13 +1504,13 @@
             </div>
         </div>
 
-
+        <!-- Side image (RIGHT on desktop, hidden on mobile) -->
         <img id="onboarding-side-img" src="../src/OLM.png" alt="OLM" />
     </div>
 
     <aside id="sidebar"
         class="mobile-hidden fixed lg:static inset-y-0 left-0 w-72 lg:w-60 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none transition-all duration-300">
-
+        <!-- Full Sidebar View -->
         <div id="sidebar-full-content" class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
             <div class="mb-6 lg:mb-4 px-2 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -1534,7 +1534,7 @@
                     data-t="new_conversation">New Conversation</span><i data-feather="plus"
                     class="w-3 h-3"></i></button>
 
-
+            <!-- Search Bar -->
             <div class="mb-4 lg:mb-3 relative group">
                 <i data-feather="search"
                     class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 w-3 h-3 pointer-events-none group-focus-within:text-[var(--accent-color)] transition-colors"></i>
@@ -1587,7 +1587,7 @@
             </div>
         </div>
 
-
+        <!-- Mini Sidebar View (Desktop Collapsed Only) -->
         <div id="sidebar-mini-content" class="hidden lg:flex flex-col items-center h-full py-4 gap-6">
             <div class="flex flex-col items-center gap-4">
                 <button onclick="window.toggleSidebar()"
@@ -1601,7 +1601,7 @@
             <div class="flex flex-col items-center gap-4 pb-2">
                 <div id="mini-avatar-display" class="cursor-pointer w-10 h-10 rounded-xl overflow-hidden shrink-0"
                     onclick="event.stopPropagation(); window.toggleSettingsPanel()">
-
+                    <!-- Avatar injected via updateProfileUI -->
                 </div>
                 <button onclick="event.stopPropagation(); window.toggleSettingsPanel()"
                     class="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
@@ -1618,28 +1618,28 @@
 
         <header
             class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none sticky top-0">
-
+            <!-- Left: Sidebar Toggle (Mobile) -->
             <div class="flex items-center gap-2 pointer-events-auto">
                 <button id="menu-toggle-btn" onclick="window.toggleSidebar()"
                     class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden"><i
                         data-feather="sidebar" class="w-4 h-4"></i></button>
             </div>
 
+            <!-- Top Center: Free Plan Pill -->
+            <!-- Removed per user request -->
 
-
-
-
+            <!-- Right: User/Profile (Minimal) -->
             <div class="flex items-center gap-2 pointer-events-auto">
-
+                <!-- Minimal profile or settings trigger could go here if needed, keeping empty for now to match screenshot clean look -->
             </div>
         </header>
 
         <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col relative">
             <div id="welcome-state"
                 class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center animate-fade-in z-0">
-
+                <!-- Model Logo -->
                 <div id="welcome-logo-container"></div>
-
+                <!-- Dynamic Greeting -->
                 <div class="mb-1 relative flex items-center justify-center">
 
                     <h2 id="welcome-greeting"
@@ -1648,10 +1648,10 @@
                         Welcome back</h2>
                 </div>
 
-
+                <!-- Input Box Placeholder Position (The actual input box will be moved here via CSS when chat is empty) -->
                 <div class="w-full max-w-2xl h-8"></div>
 
-
+                <!-- Action/Preset Chips -->
                 <div class="flex flex-wrap items-center justify-center gap-2 mt-1 max-w-2xl">
                     <button
                         onclick="window.sendMessage('Write a highly detailed and creative science fiction short story about a time traveler from the year 3025 who accidentally gets stranded in the middle of a bustling metropolis in the year 2024. Describe their initial confusion, the primitive technology they encounter, and their desperate attempt to blend in without altering the timeline.')"
@@ -1682,7 +1682,7 @@
         <div id="bottom-fade"
             class="absolute bottom-0 left-0 w-full px-4 sm:px-4 z-40 sm:pb-5 pb-2 pt-12 transition-all duration-500">
             <div class="w-full max-w-2xl mx-auto relative group">
-
+                <!-- Widened to 3xl -->
                 <div
                     class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-0 border-zinc-700/50 rounded-2xl relative flex flex-col shadow-lg !overflow-visible pointer-events-auto">
 
@@ -1691,10 +1691,10 @@
                             class="w-full bg-transparent px-4 py-3 pl-4 pr-4 outline-none resize-none text-base max-h-[200px] no-scrollbar leading-relaxed text-zinc-900 dark:text-[#ececec] placeholder-zinc-400 dark:placeholder-zinc-500 font-sans min-h-[56px]"></textarea>
                     </div>
 
-
+                    <!-- Bottom Controls -->
                     <div class="flex items-center justify-between px-3 pb-2 pt-1">
 
-
+                        <!-- Left: Web Search + Thought -->
                         <div class="flex items-center gap-1">
                             <button id="web-search-btn" onclick="window.toggleSearch()"
                                 class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer">
@@ -1717,9 +1717,9 @@
                             </button>
                         </div>
 
-
+                        <!-- Right: Model + Send -->
                         <div class="flex items-center gap-2">
-
+                            <!-- Account/Sync Status (Consolidated) -->
                             <div id="input-account-status"
                                 class="hidden items-center gap-2 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 border border-zinc-200/50 dark:border-zinc-700/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all cursor-pointer"
                                 onclick="window.toggleSettingsPanel()">
@@ -1729,7 +1729,7 @@
                                 <div id="input-sync-status" class="w-1.5 h-1.5 rounded-full bg-zinc-300"></div>
                             </div>
 
-
+                            <!-- Model Selector Wrapper -->
                             <div class="relative z-50">
                                 <button id="model-selector-input" onclick="window.toggleMenu(event, 'model-menu-input')"
                                     class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer">
@@ -1745,7 +1745,7 @@
                                     <i data-feather="chevron-down" class="w-3 h-3"></i>
                                 </button>
 
-
+                                <!-- Model Menu (Dropdown) -->
                                 <div id="model-menu-input"
                                     class="absolute bottom-full right-0 mb-2 w-48 bg-white dark:bg-[#1e1d1b] border border-zinc-200 dark:border-zinc-700/50 rounded-xl shadow-xl backdrop-blur-xl opacity-0 invisible transition-all duration-200 z-50 transform origin-bottom-right">
                                     <div class="p-1 flex flex-col gap-1">
@@ -1781,7 +1781,7 @@
                                 </div>
                             </div>
 
-
+                            <!-- Send / Stop Button -->
                             <button id="send-btn" onclick="window.handleAction()" disabled
                                 class="w-10 h-10 flex items-center justify-center rounded-xl opacity-50 cursor-not-allowed hover:opacity-100 transition-all ml-2 shadow-[0_0_15px_var(--accent-glow)] active:scale-95"
                                 style="background-color: var(--accent-color); color: var(--accent-contrast)">
@@ -1800,25 +1800,25 @@
 
 
 
-    <script>
-
+    <script type="module">
+        // --- 1. Fast Synchronous Boot (Prevents "undefined" on mobile) ---
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-
+        // High-priority global wrappers
         window.toggleSidebar = () => console.warn("Sidebar not ready");
         window.resetChat = () => console.warn("Chat not ready");
         window.sendMessage = () => console.warn("Chat not ready");
         window.handleAction = () => console.warn("Action not ready");
         window.toggleSettingsPanel = () => console.warn("Settings not ready");
 
-
+        // Global State
         let els = {};
 
         (async function () {
 
-
+            // --- New UI Logic ---
             window.initChatUI = function () {
-
+                // Greeting quotes for the big center text — [User] is replaced with the actual user name
                 const greetingQuotes = [
                     "How can I help you today, [User]?",
                     "[User] returns!",
@@ -1843,19 +1843,19 @@
                 const greetingEl = document.getElementById("welcome-greeting");
                 if (greetingEl) greetingEl.innerText = randomGreeting;
 
-
+                // Static Input Placeholder
                 const inputEl = document.getElementById('user-input');
                 if (inputEl) {
                     inputEl.placeholder = "Type something...";
                 }
 
-
+                // Check if empty
                 const history = document.getElementById("chat-messages");
                 if (!history || history.children.length === 0) {
                     document.body.classList.add("chat-empty");
                 }
 
-
+                // --- Merged Init Logic ---
                 els.chatCont = document.getElementById("chat-container");
                 els.chatMsgs = document.getElementById("chat-messages");
                 els.input = document.getElementById("user-input");
@@ -1864,9 +1864,9 @@
                 els.welcome = document.getElementById("welcome-state");
                 els.welcomeLogo = document.getElementById("welcome-logo-container");
                 els.hist = document.getElementById("history-list");
-                els.modMenu = document.getElementById("model-menu-input");
+                els.modMenu = document.getElementById("model-menu-input"); // Updated ID
                 els.noteMenu = document.getElementById("notes-menu");
-                els.searchBtn = document.getElementById("web-search-btn");
+                els.searchBtn = document.getElementById("web-search-btn"); // Updated ID
                 els.actIcon = document.getElementById('active-model-icon');
                 els.sidebar = document.getElementById('sidebar');
                 els.sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -1879,7 +1879,7 @@
                 els.miniAvatarDisplay = document.getElementById('mini-avatar-display');
                 els.pfpMovableImg = document.getElementById('pfp-movable-img');
                 els.pfpWorkspace = document.getElementById('pfp-workspace');
-                els.storageDisplay = document.getElementById('storage-display');
+                els.storageDisplay = document.getElementById('storage-display'); // settings panel display
                 els.flare = document.getElementById('intelligence-flare');
                 els.savedAccents = document.getElementById('saved-accents');
 
@@ -1905,7 +1905,7 @@
                 }
                 window.updateThemeButtons(theme);
 
-
+                // IMPORTANT: Use the saved settings.accent or 'auto'
                 window.updateAccent(settings.accent || 'auto');
                 if (typeof updateProfileUI === 'function') updateProfileUI();
                 if (window.renderThemes) window.renderThemes();
@@ -1913,7 +1913,7 @@
                 if (els.input) {
                     els.input.oninput = () => {
                         els.input.style.height = 'auto';
-
+                        // Enlarge maximum height to 600px
                         const newHeight = Math.min(els.input.scrollHeight, 600);
                         els.input.style.height = newHeight + 'px';
                         if (typeof updateUI === 'function') updateUI();
@@ -1938,7 +1938,7 @@
                     }
                 };
 
-
+                // Dismiss model menu when clicking anywhere outside (bypasses stopPropagation)
                 document.addEventListener('click', (e) => {
                     const modelMenu = document.getElementById('model-menu-input');
                     const modelBtn = document.getElementById('model-selector-input');
@@ -1949,19 +1949,19 @@
                             modelMenu.style.opacity = '0';
                         }
                     }
-                }, true);
+                }, true); // useCapture: true to fire before stopPropagation
 
                 if (window.applyTranslations) window.applyTranslations();
                 if (window.updateStorageUsage) window.updateStorageUsage();
                 if (window.updateGoogleAuthButton) window.updateGoogleAuthButton();
+                // applySidebarMode(); // This might be undefined if defined after? applySidebarMode is defined at 2376. initChatUI is at 1642.
 
-
-
+                // Set default model
                 if (window.selectModel) window.selectModel('OLM2');
+                // Wait, functions declared with const are not hoisted.
+                // I need to confirm applySidebarMode is available.
 
-
-
-
+                // Smart Sidebar Events
                 const trigger = document.getElementById('sidebar-hover-trigger');
                 let hideTimeout;
 
@@ -1984,17 +1984,17 @@
                     });
 
                     els.sidebar.addEventListener('mouseleave', () => {
-
+                        // Only auto-hide if smart mode is ON and menu is NOT open (e.g. pinned)
                         if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024 && !els.settingsPanel.classList.contains('active')) {
                             hideTimeout = setTimeout(() => {
                                 document.body.classList.add('sidebar-collapsed');
                                 if (typeof updateUI === 'function') updateUI();
-                            }, 300);
+                            }, 300); // Small delay to prevent flickering
                         }
                     });
                 }
 
-
+                // renderHistory() moved to deferred boot sequence
                 if (typeof render === 'function') render();
                 if (typeof updateUI === 'function') updateUI();
 
@@ -2010,31 +2010,31 @@
                 setTimeout(checkChangelog, 1000);
             };
 
-
+            // Hook into existing sendMessage or handleAction to remove empty class
             const originalSendMessage = window.sendMessage;
             window.sendMessage = function (msg) {
                 document.body.classList.remove("chat-empty");
                 originalSendMessage(msg);
             };
 
-
+            // Override resetChat to restore empty state
             const originalResetChat = window.resetChat;
             window.resetChat = function () {
                 if (originalResetChat) originalResetChat();
-
+                // Force clear if original didn't (it should have)
                 const history = document.getElementById("chat-messages");
                 if (history) history.innerHTML = "";
 
                 document.body.classList.add("chat-empty");
-
+                // Re-randomize greeting
                 if (window.initChatUI) window.initChatUI();
             };
 
+            // Initialize
+            // Initialize
+            // window.initChatUI(); // Moved to DOMContentLoaded
 
-
-
-
-
+            // --- Toggle functions defined BEFORE await so they work on mobile immediately ---
             let isWebSearch = false;
             window.toggleSearch = () => {
                 isWebSearch = !isWebSearch;
@@ -2047,21 +2047,21 @@
                 if (typeof updateUI === 'function') updateUI();
             };
 
-
+            // Client is now lazily imported
 
             const UNIQUE_SVG_NORTH = `<svg class="w-full h-full stroke-[2px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2V22M2 12H22M19.07 4.93L4.93 19.07M19.07 19.07L4.93 4.93" /><circle cx="12" cy="12" r="3" class="fill-current stroke-none" /></svg>`;
             const UNIQUE_SVG_STAR = `<svg class="w-full h-full stroke-[2.5px] stroke-current fill-none" viewBox="0 0 24 24"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z" /></svg>`;
 
-
-
+            // ================= CONFIGURATION =================
+            // Cloudflare Tunnel: polarisapi.okemovail.com → http://0.0.0.0:8000
             const CF_BACKEND_URL = 'https://polarisapi.okemovail.com';
             const DEFAULT_BACKEND_URL = CF_BACKEND_URL;
             const CUSTOM_BACKEND_URL = localStorage.getItem('vail_custom_backend_url') || DEFAULT_BACKEND_URL;
-
+            // =============================================
 
             const MODELS = {
                 OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", icon: UNIQUE_SVG_STAR },
-
+                // Strictly use the configured backend URL for OLM2/Polaris
                 OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.5", icon: UNIQUE_SVG_NORTH }
             };
 
@@ -2130,9 +2130,9 @@
                 },
             };
 
-
-
-
+            // ============================================================
+            // StorageController — async IndexedDB with localStorage fallback
+            // ============================================================
             const StorageController = (() => {
                 const DB_NAME = 'polaris_db';
                 const DB_VERSION = 1;
@@ -2250,14 +2250,14 @@
                     }
                 };
 
-
+                // Background storage size estimate (non-blocking)
                 const estimateSize = async () => {
                     try {
                         if (navigator.storage && navigator.storage.estimate) {
                             const est = await navigator.storage.estimate();
                             return est.usage || 0;
                         }
-
+                        // Fallback: count session cache size
                         const json = JSON.stringify(_sessionCache);
                         return new Blob([json]).size;
                     } catch { return 0; }
@@ -2266,8 +2266,8 @@
                 return { init, getAllChats, saveChat, deleteChat, clearAll, estimateSize, isSessionOnly: () => _sessionOnly };
             })();
 
-
-
+            // ============================================================
+            // Strip model control tokens before any text is rendered to the user
             const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '').trim();
 
             let client = null, chatHistory = [], isGenerating = false, currentJob = null;
@@ -2275,15 +2275,15 @@
             let allChats = {};
             let currentChatId = crypto.randomUUID();
 
-
+            // Typing effect variables
             let streamQueue = "";
             let displayedContent = "";
             let typeInterval = null;
-            const TYPE_SPEED_MS = 1;
+            const TYPE_SPEED_MS = 1; // ~3.5 chars/sec
             let currentGenerationIsSearch = false;
             let currentJobId = null;
 
-
+            // Expose debug function
             window.debugConnection = async () => {
                 const url = currentModel.id + "/config";
                 console.log("Testing connection to config:", url);
@@ -2300,7 +2300,7 @@
                 }
             };
 
-
+            // Google API configuration
             const GOOGLE_CLIENT_ID = '937870221827-2l21bkkuhn0uo7nsco258484duv29rag.apps.googleusercontent.com';
             let googleAccessToken = localStorage.getItem('google_access_token') || null;
             let googleDriveFolderId = localStorage.getItem('google_drive_folder_id') || null;
@@ -2314,17 +2314,17 @@
                 accent: 'auto', userName: '', userPic: '',
                 pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
                 lang: 'en',
-                sidebarMode: 'manual',
+                sidebarMode: 'manual', // 'manual' or 'smart'
                 customAccents: [],
                 systemPrompt: 'You are Polaris, a specialized research assistant. You MUST use $$ delimiters for ALL mathematical notation and equations. NO EXCEPTIONS. Do not use [ ] or ( ) for blocks or inline math; use $$ for everything.'
             }));
 
-
+            // Ensure newer settings keys exist for older localStorage payloads
             if (!Array.isArray(settings.customAccents)) {
                 settings.customAccents = [];
             }
 
-
+            // Populate global els
             els = {};
 
             const hexToRgba = (hex, alpha) => {
@@ -2378,22 +2378,22 @@
                 }
             };
 
-
+            // Initialize buttons on load
             const initLangButtons = () => {
                 window.updateLangButtons(settings.lang || 'en');
             };
 
-
+            // Hook into initChatUI
             const originalInit = window.initChatUI;
-
-
+            // Helper to parsing thought content
+            // Helper to parsing thought content - Robust Regex
             const parseThought = (text) => {
-
+                // Matches <thought>...</thought> with optional attributes, case-insensitive, and handling encoded brackets
                 const thoughtRegex = /(?:<|&lt;)thought(?:[\s\S]*?)(?:>|&gt;)([\s\S]*?)(?:(?:<|&lt;)\/thought(?:>|&gt;)|$)/i;
                 const match = text.match(thoughtRegex);
                 if (match) {
                     const thoughtContent = match[1].trim();
-
+                    // Remove the entire match from the text to get "content"
                     const remainingText = text.replace(match[0], '').trim();
                     return { thought: thoughtContent, content: remainingText };
                 }
@@ -2420,7 +2420,7 @@
                 originalInit();
                 initLangButtons();
 
-
+                // Init settings input
                 const urlInput = document.getElementById('settings-backend-url');
                 if (urlInput) {
                     urlInput.value = localStorage.getItem('vail_custom_backend_url') || "";
@@ -2432,11 +2432,11 @@
             };
 
             window.updateBackendUrlFromPanel = (val) => {
-                const cleanVal = val.trim().replace(/\/$/, "");
+                const cleanVal = val.trim().replace(/\/$/, ""); // Remove trailing slash
                 if (cleanVal) {
                     localStorage.setItem('vail_custom_backend_url', cleanVal);
-
-
+                    // Update current model immediately if it was using dynamic
+                    // But simpler to just reload to ensure everything binds correctly
                     if (confirm("Backend URL updated. Reload to apply?")) {
                         window.location.reload();
                     }
@@ -2451,13 +2451,13 @@
                 saveSettings();
             };
 
-
+            // Google Authentication Functions
             let tokenClient;
 
-
+            // Google Authentication Functions
             window.initGoogleAuth = async () => {
                 if (isGoogleSignedIn) {
-
+                    // Sign out
                     googleAccessToken = null;
                     googleDriveFolderId = null;
                     isGoogleSignedIn = false;
@@ -2466,12 +2466,12 @@
                     updateGoogleAuthButton();
                     console.log('Signed out from Google');
 
-
+                    // Revoke token if possible (optional but good practice)
                     if (googleAccessToken) {
                         google.accounts.oauth2.revoke(googleAccessToken, () => { console.log('Token revoked') });
                     }
                 } else {
-
+                    // Sign In
                     if (!tokenClient) {
                         tokenClient = google.accounts.oauth2.initTokenClient({
                             client_id: GOOGLE_CLIENT_ID,
@@ -2500,7 +2500,7 @@
                         googleAccessToken = tokenResponse.access_token;
                         isGoogleSignedIn = true;
 
-
+                        // 1. Fetch User Profile Info FIRST (no gapi dependency)
                         const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                             headers: { Authorization: `Bearer ${googleAccessToken}` }
                         }).then(res => res.json());
@@ -2508,7 +2508,7 @@
                         if (userInfo) {
                             settings.userName = userInfo.name || settings.userName;
 
-
+                            // Fetch PFP as data-URL for offline use (graceful CORS fallback)
                             if (userInfo.picture) {
                                 try {
                                     const picResp = await fetch(userInfo.picture);
@@ -2524,12 +2524,12 @@
                             }
                         }
 
-
+                        // 2. Immediately save and update UI
                         saveSettings();
                         updateProfileUI();
                         updateGoogleAuthButton();
 
-
+                        // 3. Update onboarding preview and auto-complete if visible
                         const onboardingEl = document.getElementById('onboarding-overlay');
                         const isOnboarding = onboardingEl && !onboardingEl.classList.contains('hidden');
                         if (isOnboarding) {
@@ -2538,7 +2538,7 @@
                             const nameInput = document.getElementById('onboarding-name');
                             if (nameInput) nameInput.value = settings.userName;
 
-
+                            // Show PFP + name in the Google button
                             const googlePfp = document.getElementById('google-pfp-onboarding');
                             if (googlePfp && settings.userPic) {
                                 googlePfp.src = settings.userPic;
@@ -2547,11 +2547,11 @@
                             const btnText = document.getElementById('google-btn-text-onboarding');
                             if (btnText) btnText.innerHTML = `Signed in as ${settings.userName}`;
 
-
+                            // Auto-complete onboarding — go straight to chat
                             setTimeout(() => window.finalizeOnboarding(), 800);
                         }
 
-
+                        // 4. Load gapi + Drive sync in background (non-blocking)
                         const loadGapi = () => new Promise((resolve) => {
                             if (typeof gapi === 'undefined') { resolve(); return; }
                             gapi.load('client', async () => {
@@ -2571,7 +2571,7 @@
                                 resolve();
                             });
                         });
-                        loadGapi();
+                        loadGapi(); // fire-and-forget
 
                     } catch (error) {
                         console.error('Error handling Google Sign-In:', error);
@@ -2580,7 +2580,7 @@
             };
             window.ensureGoogleDriveFolder = async () => {
                 try {
-
+                    // Check if folder already exists
                     if (googleDriveFolderId) return;
 
                     const response = await gapi.client.drive.files.list({
@@ -2593,7 +2593,7 @@
                         googleDriveFolderId = response.result.files[0].id;
                         localStorage.setItem('google_drive_folder_id', googleDriveFolderId);
                     } else {
-
+                        // Create new folder
                         const createResponse = await gapi.client.drive.files.create({
                             resource: {
                                 name: 'OLM-Chats',
@@ -2627,7 +2627,7 @@
 
                         const remoteData = response.result;
                         if (remoteData && remoteData.chats) {
-
+                            // Merge logic: If remote timestamp > local, or local missing, update local
                             let merged = false;
                             for (const chatId in remoteData.chats) {
                                 if (!allChats[chatId] || remoteData.chats[chatId].timestamp > (allChats[chatId].timestamp || 0)) {
@@ -2636,7 +2636,7 @@
                                 }
                             }
                             if (merged) {
-
+                                // Persist merged chats to IndexedDB
                                 for (const chatId in allChats) {
                                     await StorageController.saveChat(allChats[chatId]);
                                 }
@@ -2654,7 +2654,7 @@
                 if (!isGoogleSignedIn || !googleDriveFolderId) return;
 
                 try {
-
+                    // Save current chat data as JSON to Drive
                     const timestamp = new Date().toISOString();
                     const fileContent = JSON.stringify({
                         chats: allChats,
@@ -2664,7 +2664,7 @@
 
                     const blob = new Blob([fileContent], { type: 'application/json' });
 
-
+                    // Check if backup file exists
                     const listResponse = await gapi.client.drive.files.list({
                         q: `name='olm_backup.json' and '${googleDriveFolderId}' in parents and trashed=false`,
                         spaces: 'drive',
@@ -2672,14 +2672,14 @@
                     });
 
                     if (listResponse.result.files && listResponse.result.files.length > 0) {
-
+                        // Update existing file
                         const fileId = listResponse.result.files[0].id;
                         await gapi.client.drive.files.update({
                             fileId: fileId,
                             media: blob
                         });
                     } else {
-
+                        // Create new file
                         await gapi.client.drive.files.create({
                             resource: {
                                 name: 'olm_backup.json',
@@ -2700,14 +2700,14 @@
                 if (!isGoogleSignedIn || !googleDriveFolderId) return;
 
                 try {
-
+                    // List all files in the OLM folder
                     const listResponse = await gapi.client.drive.files.list({
                         q: `'${googleDriveFolderId}' in parents and trashed=false`,
                         spaces: 'drive',
                         fields: 'files(id)'
                     });
 
-
+                    // Delete all files
                     if (listResponse.result.files) {
                         for (const file of listResponse.result.files) {
                             await gapi.client.drive.files.delete({
@@ -2723,14 +2723,14 @@
             };
 
             window.updateGoogleAuthButton = () => {
-
+                // Update settings panel Google status text
                 const statusText = document.getElementById('google-status-text');
                 if (statusText) {
                     statusText.innerText = isGoogleSignedIn ? 'Connected' : 'Not connected';
                     statusText.className = isGoogleSignedIn ? 'text-xs text-green-500' : 'text-xs text-zinc-400';
                 }
 
-
+                // Update input area account status
                 const inputAccountStatus = document.getElementById('input-account-status');
                 const inputGooglePfp = document.getElementById('input-google-pfp');
                 const inputGoogleName = document.getElementById('input-google-name');
@@ -2752,7 +2752,7 @@
                     }
                 }
 
-
+                // Update onboarding button (PFP + name)
                 const onboardingBtnText = document.getElementById('google-btn-text-onboarding');
                 const googlePfp = document.getElementById('google-pfp-onboarding');
                 if (onboardingBtnText) {
@@ -2778,7 +2778,7 @@
                     document.getElementById('custom-accent-picker').value = color;
                 }
 
-                const bgBase = isDark ? [12, 13, 11] : [249, 249, 247];
+                const bgBase = isDark ? [12, 13, 11] : [249, 249, 247]; // Match #0C0D0B and #F9F9F7
                 const accRgb = [parseInt(finalColor.slice(1, 3), 16), parseInt(finalColor.slice(3, 5), 16), parseInt(finalColor.slice(5, 7), 16)];
                 const alphaVal = isAuto ? 0.02 : 0.10;
                 const blended = accRgb.map((c, i) => Math.round(c * alphaVal + bgBase[i] * (1 - alphaVal)));
@@ -2800,9 +2800,9 @@
                 root.style.setProperty('--thinking-side', isDark ? '#4b5563' : '#94a3b8');
                 if (els.logoAi) els.logoAi.classList.toggle('gradient-mode', isAuto);
 
-
+                // Save accent color immediately
                 saveSettings();
-
+                // Sync to Google if signed in
                 if (isGoogleSignedIn) window.syncChatsToGoogle();
 
                 updateUI();
@@ -2830,7 +2830,7 @@
                 window.updateThemeButtons(mode);
             };
 
-
+            // Listen for system theme changes
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
                 if (localStorage.getItem('vail_theme') === 'system') {
                     document.documentElement.classList.toggle('dark', e.matches);
@@ -2861,7 +2861,7 @@
 
                 const isActive = els.settingsPanel.classList.toggle('active');
 
-
+                // Toggle Overlay
                 const overlay = document.getElementById('settings-overlay');
                 if (overlay) {
                     if (isActive) overlay.classList.add('active');
@@ -2871,11 +2871,11 @@
                 if (isActive) {
                     window.openSettingsTab('general');
 
-
+                    // Populate Inputs
                     const nameInput = document.getElementById('settings-name-input-new');
                     if (nameInput) nameInput.value = settings.userName;
 
-
+                    // Populate Intelligence Tab Values
                     if (document.getElementById('settings-param-temp')) {
                         document.getElementById('settings-param-temp').value = settings.temp;
                         document.getElementById('settings-temp-val').innerText = settings.temp.toFixed(2);
@@ -2889,7 +2889,7 @@
                         document.getElementById('settings-max-tokens-val').innerText = settings.max_tokens || 256;
                     }
 
-
+                    // Sidebar Settings
                     const toggleBtn = document.getElementById('toggle-smart-sidebar');
                     if (toggleBtn) {
                         const thumb = toggleBtn.querySelector('div');
@@ -2906,25 +2906,25 @@
 
                     if (els.pfpMovableImg) { els.pfpMovableImg.src = settings.userPic || ''; applyMovableStyles(); }
 
-
+                    // New Custom Color Logic Reset
                     const newPreviewBtn = document.getElementById('pending-custom-color');
                     if (newPreviewBtn) newPreviewBtn.style.display = 'none';
 
-
+                    // Restore current accent color
                     window.updateAccent(settings.accent || 'auto');
                     if (window.renderThemes) window.renderThemes();
                 }
             };
 
             window.openSettingsTab = (tabName) => {
-
+                // Update polaris tab buttons
                 document.querySelectorAll('.polaris-tab-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 const activeBtn = document.getElementById(`ptab-btn-${tabName}`);
                 if (activeBtn) activeBtn.classList.add('active');
 
-
+                // Show content
                 document.querySelectorAll('.settings-tab-content').forEach(el => {
                     el.classList.add('hidden');
                     el.classList.remove('block');
@@ -2940,7 +2940,7 @@
                 settings.sidebarMode = settings.sidebarMode === 'smart' ? 'manual' : 'smart';
                 saveSettings();
 
-
+                // Update Button UI
                 const toggleBtn = document.getElementById('toggle-smart-sidebar');
                 const thumb = toggleBtn.querySelector('div');
                 if (settings.sidebarMode === 'smart') {
@@ -2961,11 +2961,11 @@
                 const trigger = document.getElementById('sidebar-hover-trigger');
 
                 if (isSmart) {
-
+                    // Collapse sidebar initially if smart mode is on
                     if (window.innerWidth >= 1024) document.body.classList.add('sidebar-collapsed');
                     if (trigger) trigger.style.display = 'block';
                 } else {
-
+                    // If switching to manual, ensure manual control works (stay collapsed or not)
                     if (trigger) trigger.style.display = 'none';
                 }
                 updateUI();
@@ -3003,7 +3003,7 @@
                 settings.pfpY = 0;
                 settings.pfpScale = 1.0;
 
-
+                // Update slider UI
                 const slider = document.getElementById('pfp-zoom-slider');
                 if (slider) slider.value = "1.0";
                 const label = document.getElementById('scale-val');
@@ -3057,12 +3057,12 @@
             };
 
             window.goToSettingsLogin = () => {
-
+                // Hide onboarding
                 if (els.onboarding) {
                     els.onboarding.classList.add('hidden');
                     document.body.classList.remove('onboarding-active');
                 }
-
+                // Open settings modal to profile/account tab
                 window.toggleSettingsPanel();
                 window.openSettingsTab('profile');
             };
@@ -3119,7 +3119,7 @@
                 const hex = color.toLowerCase();
                 if (!/^#([0-9a-f]{6})$/.test(hex)) return;
                 if (!Array.isArray(settings.customAccents)) settings.customAccents = [];
-
+                // Check if this color already exists
                 const exists = settings.customAccents.some(item => {
                     const c = typeof item === 'string' ? item : item.color;
                     return c === hex;
@@ -3132,7 +3132,7 @@
             };
 
             window.handleCustomAccentChange = (value) => {
-
+                // Just preview the color, don't add it yet
                 if (value && /^#([0-9a-f]{6})$/i.test(value)) {
                     const previewEl = document.getElementById('custom-color-preview');
                     const addBtn = document.getElementById('add-custom-color-btn');
@@ -3144,7 +3144,7 @@
                         addBtn.style.display = 'flex';
                         addBtn.setAttribute('data-color', value.toLowerCase());
                     }
-
+                    // Apply temporarily for preview
                     window.updateAccent(value);
                 }
             };
@@ -3154,7 +3154,7 @@
                 const color = addBtn?.getAttribute('data-color');
                 if (color) {
                     window.addCustomAccent(color);
-
+                    // Hide preview and button after adding
                     const previewEl = document.getElementById('custom-color-preview');
                     if (previewEl) previewEl.style.display = 'none';
                     if (addBtn) addBtn.style.display = 'none';
@@ -3172,7 +3172,7 @@
 
             const saveSettings = () => {
                 localStorage.setItem('vail_settings_v4', JSON.stringify(settings));
-                window.updateStorageUsage();
+                window.updateStorageUsage(); // async, non-blocking
             };
 
             const updateProfileUI = () => {
@@ -3186,7 +3186,7 @@
                         const ratio = size / 280, scale = settings.pfpScale || 1.0;
                         const tx = (settings.pfpX || 0) * ratio, ty = (settings.pfpY || 0) * ratio;
 
-
+                        // Always use transform logic for consistent scaling
                         targetEl.innerHTML = `<div class="relative overflow-hidden rounded-full bg-black" style="width:100%;height:100%;"><img src="${settings.userPic}" class="absolute left-1/2 top-1/2" style="max-width:none; height:${size}px; transform: translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale});"></div>`;
                     } else {
                         targetEl.className = `w-full h-full rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center font-bold relative overflow-hidden`;
@@ -3204,23 +3204,23 @@
                 renderAvatar(els.avatarDisplay, 32);
                 renderAvatar(els.miniAvatarDisplay, 32);
 
-
+                // Update Settings Panel Profile
                 const settingsNameInput = document.getElementById('settings-name-input-new');
                 if (settingsNameInput) {
                     settingsNameInput.value = settings.userName || '';
                 }
 
-
+                // Update Settings Header Profile Card
                 const sidebarCardName = document.getElementById('settings-sidebar-name-card');
                 if (sidebarCardName) sidebarCardName.innerText = currentName;
 
                 const sidebarCardPfp = document.getElementById('settings-sidebar-pfp-card');
                 if (sidebarCardPfp) renderAvatar(sidebarCardPfp, 48, true);
 
-
+                // Sync Google auth button state
                 window.updateGoogleAuthButton();
 
-
+                // Render themes whenever profile UI updates (often accompanies state changes)
                 if (window.renderThemes) window.renderThemes();
             };
 
@@ -3230,10 +3230,10 @@
                 if (menu) {
                     const isActive = menu.classList.contains('active') || menu.style.visibility === 'visible';
 
-
+                    // Close others
                     window.closeAllMenus();
 
-
+                    // Toggle current
                     if (!isActive) {
                         menu.classList.add('active');
                         menu.style.visibility = 'visible';
@@ -3260,8 +3260,8 @@
                 }
             };
 
-
-
+            // toggleSearch and toggleThinking are defined earlier (before await import)
+            // so they work on mobile before the Gradio client finishes loading
 
             if (window.innerWidth < 1024) {
                 if (settings.hasCompletedTutorial) {
@@ -3270,13 +3270,13 @@
                 }
             }
 
-
+            // Helper to toggle Send/Stop icon
             window.toggleSendIcon = (state) => {
                 const btn = document.getElementById('send-btn');
                 const iconWrapper = document.getElementById('send-icon-wrapper');
                 if (!btn || !iconWrapper) return;
 
-
+                // Single source of truth is window.handleAction
                 btn.onclick = window.handleAction;
 
                 if (state === 'stop') {
@@ -3290,20 +3290,20 @@
                 currentModel = MODELS[key];
                 client = null;
 
-
+                // Update Welcome Logo
                 if (els.welcomeLogo) {
                     els.welcomeLogo.innerHTML = currentModel.icon;
                 }
 
-
+                // Update UI Label
                 const nameEl = document.getElementById('current-model-name');
                 if (nameEl) nameEl.innerText = currentModel.name;
 
-
+                // Update Icon
                 const iconEl = document.getElementById('current-model-icon');
                 if (iconEl) iconEl.innerHTML = currentModel.icon;
 
-
+                // Highlight active model in menu
                 const btns = document.querySelectorAll('#model-menu-input button');
                 btns.forEach(btn => {
                     btn.style.color = '';
@@ -3324,7 +3324,7 @@
                 if (isGenerating && currentJob) currentJob.cancel();
                 currentChatId = crypto.randomUUID(); chatHistory = []; isGenerating = false;
 
-
+                // Force clear DOM
                 const history = document.getElementById("chat-messages");
                 if (history) history.innerHTML = "";
                 document.body.classList.add("chat-empty");
@@ -3342,15 +3342,15 @@
                 window.updateStorageUsage();
             };
 
-
+            // OpenAI API compatible client with tunnel support
             async function getOpenAIClient() {
-
+                // Always use the configured backend URL (Cloudflare tunnel)
                 const baseUrl = CUSTOM_BACKEND_URL.split('/gradio')[0].split('/chat')[0].split('/v1')[0];
                 console.log('Using backend URL:', baseUrl);
                 return baseUrl;
             }
 
-
+            // Legacy Gradio client (kept for backward compatibility)
             async function getGradioClient() {
                 if (client) return client;
                 const { Client } = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
@@ -3369,11 +3369,11 @@
                 if (isGenerating) {
                     console.log("🛑 Stop button clicked. Terminating job:", currentJobId);
 
-
+                    // 1. Immediate UI Reset
                     isGenerating = false;
                     window.toggleSendIcon('send');
 
-
+                    // 2. Safe Backend Signal (Absolute URL)
                     if (currentJobId) {
                         try {
                             const baseUrl = currentModel.id.split('/gradio')[0];
@@ -3387,7 +3387,7 @@
                         } catch (e) { console.error("Failed to construct kill URL:", e); }
                     }
 
-
+                    // 3. Safe Internal Gradio Cancel
                     try { if (currentJob) currentJob.cancel(); } catch (e) { console.warn("Internal Gradio cancel failed (safe to ignore):", e); }
 
                     if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1][1] === null) {
@@ -3416,13 +3416,13 @@
                 let msg = txt || els.input.value.trim();
                 if (!msg) return;
 
-
+                // Clean display message (never shows /search prefix)
                 let displayMsg = msg;
                 if (displayMsg.startsWith('/search ')) {
                     displayMsg = displayMsg.substring(8).trim();
                 }
 
-
+                // Removed legacy /search prepend logic as isWebSearch is now passed directly
 
 
                 window.triggerFlare();
@@ -3434,8 +3434,8 @@
                 displayedContent = "";
                 els.input.value = ""; els.input.style.height = "auto";
 
-
-
+                // Init typing vars
+                // Debug log
                 console.log("Attempting to connect to:", currentModel.id);
 
                 let lastProse = null;
@@ -3448,11 +3448,11 @@
                 isGenerating = true; updateUI();
                 window.toggleSendIcon('stop');
                 try {
-
+                    // Use OpenAI API format (/v1/chat/completions) with SSE streaming
                     const baseUrl = await getOpenAIClient();
                     console.log("Connecting to OpenAI Stream at:", baseUrl + "/v1/chat/completions");
 
-
+                    // Prepare messages in OpenAI format
                     const messages = [];
                     if (settings.systemPrompt) {
                         messages.push({ role: "system", content: settings.systemPrompt });
@@ -3498,7 +3498,7 @@
 
                         buffer += decoder.decode(value, { stream: true });
                         const lines = buffer.split("\n");
-                        buffer = lines.pop();
+                        buffer = lines.pop(); // Keep partial line
 
                         for (const line of lines) {
                             const cleanLine = line.trim();
@@ -3510,19 +3510,19 @@
                                 const data = JSON.parse(dataStr);
                                 const delta = data.choices[0].delta.content || "";
                                 responseText += delta;
-
+                                // Strip control tokens from display
                                 responseText = responseText.replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '');
 
-
+                                // Update UI in real-time
                                 const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');
                                 if (lastProse) {
-
+                                    // Remove initial thinking placeholder if it exists
                                     const thinkingPlaceholder = lastProse.querySelector('.thinking-container');
                                     if (thinkingPlaceholder) thinkingPlaceholder.remove();
 
                                     const { thought, content } = parseThought(responseText);
 
-
+                                    // Thought Box Logic
                                     let thoughtContainer = lastProse.querySelector('.thought-container');
                                     if (thought) {
                                         if (!thoughtContainer) {
@@ -3544,7 +3544,7 @@
                                         if (body) body.innerText = thought;
                                     }
 
-
+                                    // Main Content Logic
                                     let mainContentDiv = lastProse.querySelector('.main-response-content');
                                     if (!mainContentDiv) {
                                         mainContentDiv = document.createElement('div');
@@ -3552,7 +3552,7 @@
                                         lastProse.appendChild(mainContentDiv);
                                     }
 
-
+                                    // Only show content if it's non-empty or thought is closed
                                     if (content.trim()) {
                                         mainContentDiv.innerHTML = marked.parse(sanitizeText(content));
                                         applyContentFeatures(mainContentDiv);
@@ -3565,7 +3565,7 @@
                         }
                     }
 
-
+                    // Finalize response — strip any leaked control tokens before saving
                     responseText = sanitizeText(responseText);
                     chatHistory[chatHistory.length - 1][1] = responseText;
                     isGenerating = false;
@@ -3584,7 +3584,7 @@
                         mainContentDiv.innerHTML = marked.parse(sanitizeText(content));
                         applyContentFeatures(mainContentDiv);
 
-
+                        // Add action icons row
                         if (!lastProse.parentNode.querySelector('.flex.items-center.justify-between')) {
                             const actionRow = document.createElement('div');
                             actionRow.className = 'flex items-center justify-between gap-4 mt-3 w-full animate-fade-in';
@@ -3687,7 +3687,7 @@
                 if (!isGenerating) {
                     const msg = chatHistory[idx][0];
                     chatHistory = chatHistory.slice(0, idx);
-
+                    // Pass forceSearch=true to sendMessage
                     window.sendMessage(msg, true);
                 }
             };
@@ -3719,7 +3719,7 @@
                 render();
                 updateUI();
                 renderHistory();
-
+                // On mobile, close the sidebar so the chat is visible
                 if (window.innerWidth < 1024 && els.sidebar) {
                     els.sidebar.classList.add('mobile-hidden');
                     const overlay = document.getElementById('sidebar-overlay');
@@ -3787,7 +3787,7 @@
 
             const render = () => {
                 const isWelcome = chatHistory.length === 0;
-
+                // Toggle chat-empty class for mobile — this controls the centered layout
                 if (isWelcome) {
                     document.body.classList.add('chat-empty');
                 } else {
@@ -3798,7 +3798,7 @@
                 const dict = translations[settings.lang || 'en'];
 
                 if (isWelcome) {
-
+                    // Preserve the random greeting set by initChatUI; only override if not yet set
                     if (!window.__currentRandomGreeting) {
                         const welcomeName = settings.userName;
                         const isGuest = !welcomeName || welcomeName === 'Guest';
@@ -3839,7 +3839,7 @@
                                                  <i data-feather="chevron-down" class="w-3 h-3 transition-transform duration-200 chevron-icon"></i>
                                                  <span class="text-[0.6rem] font-mono opacity-50 ml-2"></span>
                                             </div>
-                                            
+                                            <!-- Default collapsed for history items -->
                                             <div class="thought-content">
                                                 <div class="thought-body whitespace-pre-wrap">${thought}</div>
                                             </div>
@@ -3901,7 +3901,7 @@
 
                 if (els.searchBtn) {
                     if (isWebSearch) {
-
+                        // Active State
                         els.searchBtn.className = "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold transition-all shadow-md border border-transparent";
                         els.searchBtn.style.backgroundColor = 'var(--accent-color)';
                         els.searchBtn.style.color = 'var(--accent-contrast)';
@@ -3909,7 +3909,7 @@
                         if (icon) icon.outerHTML = feather.icons.globe.toSvg({ class: 'w-4 h-4' });
                         if (els.input) els.input.placeholder = currentDict.input_placeholder;
                     } else {
-
+                        // Inactive State
                         els.searchBtn.className = "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer";
                         els.searchBtn.style.backgroundColor = '';
                         els.searchBtn.style.color = '';
@@ -3919,7 +3919,7 @@
                     }
                 }
 
-
+                // Update Thought Button State
                 const thoughtBtn = document.getElementById('thought-btn');
                 if (thoughtBtn) {
                     if (isThinkingEnabled) {
@@ -3936,7 +3936,7 @@
                 if (thoughtBtnText) thoughtBtnText.innerText = currentDict.thought_btn;
 
 
-
+                // Research Button visibility logic
                 const researchBtn = document.getElementById('research-island-container');
                 if (researchBtn) {
                     if (chatHistory.length === 0 && !isGenerating) {
@@ -3980,7 +3980,7 @@
             };
 
             window.handleCustomAccentChangeNew = (val) => {
-
+                // Apply color in real-time as user picks
                 window.updateAccent(val);
                 const btn = document.getElementById('pending-custom-color');
                 if (btn) {
@@ -4006,7 +4006,7 @@
             window.removeCustomAccent = (index) => {
                 if (confirm('Delete this theme?')) {
                     if (settings.customAccents && settings.customAccents[index]) {
-
+                        // If deleting active accent, revert to auto
                         const accToDelete = typeof settings.customAccents[index] === 'string' ? settings.customAccents[index] : settings.customAccents[index].color;
                         if (settings.accent === accToDelete) {
                             window.updateAccent('auto');
@@ -4024,7 +4024,7 @@
 
                 const currentAccent = settings.accent || 'auto';
 
-
+                // Fun Polaris theme names with glow colors
                 const PRESETS = [
                     {
                         color: 'auto',
@@ -4124,7 +4124,7 @@
 
 
 
-
+            // Changelog
             const BUILD_NUMBER = 1004;
             const CHANGELOG = {
                 version: "1.0.4",
@@ -4160,16 +4160,16 @@
                 }
             };
 
+            // Disable Native Scroll Restoration - MOVED TO TOP
 
-
-
+            // Initialize StorageController and load chats from IndexedDB
             const bootApp = () => {
-
+                // Prioritize UI Frame
                 if (typeof window.initChatUI === 'function') {
                     window.initChatUI();
                 }
 
-
+                // The "Grace Period" Boot Sequence
                 setTimeout(async () => {
                     await StorageController.init();
                     await new Promise(r => setTimeout(r, 0));
@@ -4200,7 +4200,7 @@
                 bootApp();
             }
 
-
+            // Re-initialize when page is restored from bfcache (mobile back/forward)
             window.addEventListener('pageshow', (e) => {
                 if (e.persisted) {
                     bootApp();
@@ -4209,15 +4209,15 @@
         })();
         feather.replace();
     </script>
-
+    <!-- Settings Overlay -->
     <div id="settings-overlay" onclick="window.toggleSettingsPanel()"></div>
 
-
+    <!-- ===== POLARIS SETTINGS MODAL ===== -->
     <div id="settings-panel">
-
+        <!-- Header Bar -->
         <div class="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
             <div class="flex items-center gap-3">
-
+                <!-- Profile avatar (small) -->
                 <div id="settings-sidebar-pfp-card"
                     class="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden shrink-0 cursor-pointer"
                     onclick="window.openSettingsTab('profile')">
@@ -4234,7 +4234,7 @@
             </button>
         </div>
 
-
+        <!-- Tab Bar -->
         <div class="polaris-tab-bar shrink-0">
             <button class="polaris-tab-btn active" id="ptab-btn-general" onclick="window.openSettingsTab('general')">
                 <i data-feather="sliders" class="w-3.5 h-3.5"></i> General
@@ -4247,13 +4247,13 @@
             </button>
         </div>
 
-
+        <!-- Scrollable Content -->
         <div id="settings-content-area" class="no-scrollbar">
 
-
+            <!-- ── TAB: GENERAL ── -->
             <div id="tab-general" class="settings-tab-content">
 
-
+                <!-- Appearance -->
                 <div class="polaris-section">
                     <p class="polaris-section-label">Appearance</p>
                     <div class="polaris-card">
@@ -4280,7 +4280,7 @@
                     </div>
                 </div>
 
-
+                <!-- Themes -->
                 <div class="polaris-section">
                     <div class="flex items-center justify-between mb-2.5">
                         <p class="polaris-section-label mb-0">Accent Theme</p>
@@ -4293,18 +4293,18 @@
                                 oninput="window.handleCustomAccentChangeNew(this.value)" class="hidden">
                         </div>
                     </div>
-
+                    <!-- Pending save banner -->
                     <div id="pending-custom-color" onclick="window.addSelectedCustomColorNew()"
                         class="mb-3 hidden cursor-pointer min-h-[44px] w-full rounded-xl border-2 border-dashed flex items-center justify-center text-xs font-bold gap-2 transition-all"
                         style="border-color: var(--accent-color); color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) 8%, transparent);">
                         <i data-feather="plus-circle" class="w-4 h-4"></i> Save This Color
                     </div>
                     <div class="polaris-card" id="theme-list-container">
-
+                        <!-- Themes rendered by JS -->
                     </div>
                 </div>
 
-
+                <!-- Sidebar -->
                 <div class="polaris-section">
                     <p class="polaris-section-label">Sidebar</p>
                     <div class="polaris-card">
@@ -4323,7 +4323,7 @@
                     </div>
                 </div>
 
-
+                <!-- Storage -->
                 <div class="polaris-section">
                     <p class="polaris-section-label">Storage</p>
                     <div class="polaris-card">
@@ -4346,10 +4346,10 @@
 
             </div>
 
-
+            <!-- ── TAB: PROFILE ── -->
             <div id="tab-profile" class="settings-tab-content hidden">
 
-
+                <!-- PFP Editor -->
                 <div class="polaris-section">
                     <p class="polaris-section-label">Avatar</p>
                     <div class="polaris-card">
@@ -4380,7 +4380,7 @@
                         <input type="file" id="pfp-upload-settings" class="hidden" accept="image/*"
                             onchange="window.handleProfilePicUpload(event)">
 
-
+                        <!-- Zoom slider -->
                         <div class="polaris-row flex-col items-start gap-3">
                             <div class="flex items-center justify-between w-full">
                                 <span class="polaris-row-label">Zoom <span id="scale-val"
@@ -4402,7 +4402,7 @@
                     </div>
                 </div>
 
-
+                <!-- Account -->
                 <div class="polaris-section">
                     <p class="polaris-section-label">Account</p>
                     <div class="polaris-card">
@@ -4418,17 +4418,17 @@
                             <i data-feather="chevron-right" class="w-4 h-4 text-zinc-300 ml-auto shrink-0"></i>
                         </button>
                         <button id="google-auth-btn" class="hidden polaris-theme-item">
-
+                            <!-- JS-managed -->
                         </button>
                     </div>
                 </div>
 
             </div>
 
-
+            <!-- ── TAB: INTELLIGENCE ── -->
             <div id="tab-intelligence" class="settings-tab-content hidden">
 
-
+                <!-- Model Parameters -->
                 <div class="polaris-section">
                     <p class="polaris-section-label">Model Parameters</p>
                     <div class="polaris-card">
@@ -4471,7 +4471,7 @@
                     </div>
                 </div>
 
-
+                <!-- Connection -->
                 <div class="polaris-section">
                     <p class="polaris-section-label">Connection</p>
                     <div class="polaris-card">
@@ -4489,7 +4489,7 @@
                     </div>
                 </div>
 
-
+                <!-- Danger Zone -->
                 <div class="polaris-section pb-8">
                     <p class="polaris-section-label">Danger Zone</p>
                     <div class="polaris-card">
@@ -4503,7 +4503,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Research Page Overlay -->
     <div id="research-page-overlay">
         <div class="flex-1 flex flex-col items-center justify-center p-6 max-w-4xl mx-auto w-full relative">
             <button onclick="window.closeResearchPage()"
@@ -4557,7 +4557,7 @@
             </div>
         </div>
     </div>
-
+    <!-- Changelog Modal -->
     <div id="changelog-modal">
         <div class="changelog-card">
             <div class="p-8">
@@ -4573,7 +4573,7 @@
                 </div>
 
                 <ul id="changelog-content" class="space-y-4 mb-8">
-
+                    <!-- Changes injected via JS -->
                 </ul>
 
                 <button onclick="window.closeChangelog()"

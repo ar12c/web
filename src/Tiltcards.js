@@ -6,7 +6,7 @@ cards.forEach((card) => {
     boxShadow: null,
   };
 
-  
+  // Enable GPU acceleration for smoother animations
   card.style.willChange = "transform, box-shadow";
 
   card.addEventListener("mouseenter", () => {
@@ -28,7 +28,7 @@ cards.forEach((card) => {
     const deltaX = pointerX - cardCenterX;
     const deltaY = pointerY - cardCenterY;
 
-    const rotationX = (deltaY / halfHeight) * -5; 
+    const rotationX = (deltaY / halfHeight) * -5; // max tilt ~5deg
     const rotationY = (deltaX / halfWidth) * 5;
 
     card.style.transform = `
@@ -38,7 +38,7 @@ cards.forEach((card) => {
       scale(1.015)
     `;
 
-    
+    // Subtle light effect based on mouse position
     const lightX = 50 + (deltaX / width) * 20; 
     const lightY = 50 + (deltaY / height) * 20;
     card.style.boxShadow = `

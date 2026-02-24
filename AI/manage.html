@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Research | OLM North Star</title>
-    <script></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,7 +59,7 @@
 </head>
 
 <body class="bg-[#fafafa] dark:bg-[#0a0a0a] transition-colors duration-500 overflow-x-hidden">
-    
+    <!-- Header -->
     <header class="fixed top-0 left-0 w-full z-[100] px-6 py-8 pointer-events-none">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="header-island">
@@ -92,7 +92,7 @@
         </div>
 
         <div id="manage-list" class="flex flex-col gap-4">
-            
+            <!-- List injected via JS -->
         </div>
 
         <div id="empty-state" class="hidden py-24 text-center">
@@ -104,7 +104,7 @@
         </div>
     </main>
 
-    <script></script>
+    <script src="updatenotes.js"></script>
     <script>
         let blogsFileHandle = null;
 
@@ -191,11 +191,11 @@
             const blogs = JSON.parse(localStorage.getItem('olm_blogs') || '[]');
             const updated = blogs.filter(b => b.id !== id);
 
-            
+            // 1. Update LocalStorage
             localStorage.setItem('olm_blogs', JSON.stringify(updated));
             renderList();
 
-            
+            // 2. Sync with file system if handle exists
             if (blogsFileHandle) {
                 try {
                     const statusMsg = document.getElementById('status-msg');
