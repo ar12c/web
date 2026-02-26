@@ -688,30 +688,29 @@
         }
 
 
-        .thinking-text-gradient {
+        .thinking-text-gradient,
+        .dark .thinking-text-gradient {
             font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
             font-size: 0.875rem;
             font-weight: 600;
-            background: linear-gradient(90deg, var(--thinking-side) 0%, var(--thinking-accent) 50%, var(--thinking-side) 100%);
-            background-size: 200% auto;
+            background: linear-gradient(90deg, var(--thinking-side) 20%, var(--thinking-accent) 50%, var(--thinking-side) 80%);
+            background-size: 300% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: thinking-shimmer 2s linear infinite;
-        }
-
-        .dark .thinking-text-gradient {
-            background: linear-gradient(90deg, var(--thinking-side) 0%, var(--thinking-accent) 50%, var(--thinking-side) 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: thinking-shimmer 2s linear infinite;
+            animation: thinking-shimmer 2.5s ease-in-out infinite;
         }
 
         @keyframes thinking-shimmer {
-            to {
+
+            0%,
+            20% {
                 background-position: 200% center;
+            }
+
+            80%,
+            100% {
+                background-position: -100% center;
             }
         }
 
