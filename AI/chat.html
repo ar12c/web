@@ -2177,25 +2177,29 @@
                     try {
                         const idb = await openDB();
                         return new Promise((resolve, reject) => {
+                            const map = {};
                             const tx = idb.transaction(STORE_CHATS, 'readonly');
-                            const req = tx.objectStore(STORE_CHATS).getAll();
-                            req.onsuccess = () => {
-                                const map = {};
-                                const raw = req.result || [];
-                                let i = 0;
-                                const processChunk = () => {
-                                    const end = Math.min(i + 50, raw.length);
-                                    for (; i < end; i++) {
-                                        const c = raw[i];
-                                        map[c.id] = c;
-                                    }
-                                    if (i < raw.length) {
-                                        setTimeout(processChunk, 0);
+                            const store = tx.objectStore(STORE_CHATS);
+                            const req = store.openCursor();
+                            let count = 0;
+
+                            req.onsuccess = (e) => {
+                                const cursor = e.target.result;
+                                if (cursor) {
+                                    map[cursor.value.id] = cursor.value;
+                                    count++;
+
+                                    if (count % 20 === 0) {
+                                        // Yield to main thread every 20 records
+                                        setTimeout(() => {
+                                            cursor.continue();
+                                        }, 0);
                                     } else {
-                                        resolve(map);
+                                        cursor.continue();
                                     }
-                                };
-                                processChunk();
+                                } else {
+                                    resolve(map);
+                                }
                             };
                             req.onerror = () => reject(req.error);
                         });
@@ -2629,19 +2633,40 @@
                         if (remoteData && remoteData.chats) {
 
                             let merged = false;
-                            for (const chatId in remoteData.chats) {
-                                if (!allChats[chatId] || remoteData.chats[chatId].timestamp > (allChats[chatId].timestamp || 0)) {
-                                    allChats[chatId] = remoteData.chats[chatId];
-                                    merged = true;
+                            const remoteChatKeys = Object.keys(remoteData.chats);
+
+                            // Process remote chats in chunks to avoid blocking
+                            for (let i = 0; i < remoteChatKeys.length; i += 50) {
+                                const chunkKeys = remoteChatKeys.slice(i, i + 50);
+                                for (const chatId of chunkKeys) {
+                                    if (!allChats[chatId] || remoteData.chats[chatId].timestamp > (allChats[chatId].timestamp || 0)) {
+                                        allChats[chatId] = remoteData.chats[chatId];
+                                        merged = true;
+                                    }
                                 }
+                                await new Promise(resolve => setTimeout(resolve, 0)); // Yield to main thread
                             }
+
                             if (merged) {
 
-                                for (const chatId in allChats) {
-                                    await StorageController.saveChat(allChats[chatId]);
+                                const localChatKeys = Object.keys(allChats);
+                                for (let i = 0; i < localChatKeys.length; i += 50) {
+                                    const chunkKeys = localChatKeys.slice(i, i + 50);
+                                    for (const chatId of chunkKeys) {
+                                        await StorageController.saveChat(allChats[chatId]);
+                                    }
+                                    await new Promise(resolve => setTimeout(resolve, 0)); // Yield to main thread
                                 }
-                                renderHistory();
-                                render();
+
+                                if (typeof requestAnimationFrame === 'function') {
+                                    requestAnimationFrame(() => {
+                                        renderHistory();
+                                        render();
+                                    });
+                                } else {
+                                    renderHistory();
+                                    render();
+                                }
                             }
                         }
                     }
@@ -2656,6 +2681,13 @@
                 try {
 
                     const timestamp = new Date().toISOString();
+
+                    // Construct fileContent without freezing thread if allChats is huge
+                    // Stringify can be heavy, but JSON stringify usually is fast enough for <10MB. 
+                    // To be completely safe against OOM or freezing, we could chunk building the string, 
+                    // but for now we yield before JSON.stringify and Blob creation.
+                    await new Promise(resolve => setTimeout(resolve, 10));
+
                     const fileContent = JSON.stringify({
                         chats: allChats,
                         settings: settings,
@@ -3638,7 +3670,7 @@
                 });
             };
 
-            const save = async () => {
+            const save = () => {
                 if (!chatHistory.length) return;
                 const chat = {
                     id: currentChatId,
@@ -3648,10 +3680,26 @@
                     pinned: allChats[currentChatId]?.pinned || false
                 };
                 allChats[currentChatId] = chat;
-                await StorageController.saveChat(chat);
-                renderHistory();
-                window.updateStorageUsage();
-                if (isGoogleSignedIn) window.syncChatsToGoogle();
+
+                // Fire and forget storage update without awaiting to avoid blocking UI execution path
+                StorageController.saveChat(chat).then(() => {
+                    // Updating UI elements after storage commitment
+                    if (typeof requestIdleCallback === 'function') {
+                        requestIdleCallback(() => {
+                            renderHistory();
+                            window.updateStorageUsage();
+                            if (isGoogleSignedIn) window.syncChatsToGoogle();
+                        });
+                    } else {
+                        setTimeout(() => {
+                            renderHistory();
+                            window.updateStorageUsage();
+                            if (isGoogleSignedIn) window.syncChatsToGoogle();
+                        }, 100);
+                    }
+                }).catch(err => {
+                    console.error('Save failed:', err);
+                });
             };
 
             window.copyMsg = (idx, btnEl) => {
@@ -3757,32 +3805,58 @@
                     last_week: { title: dict.last_week_header, items: visibleChats.filter(c => !c.pinned && c.timestamp >= weekStartTs && c.timestamp < yestStartTs) },
                     dust_collecting: { title: dict.dust_collecting_header, items: visibleChats.filter(c => !c.pinned && c.timestamp < weekStartTs) }
                 };
+
                 let finalHtml = '';
-                for (let gKey in groupsMap) {
+                const renderGroup = (gKeyIndex, groupKeys) => {
+                    if (gKeyIndex >= groupKeys.length) {
+                        if (hasMore) {
+                            finalHtml += `<div class="p-4 text-center"><button onclick="window.__historyRenderLimit += 20; renderHistory(window.__lastHistoryQuery)" class="text-xs font-medium text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 transition-colors">Load More</button></div>`;
+                        }
+                        els.hist.innerHTML = finalHtml || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">${dict.no_history}</div>`;
+                        feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, els.hist);
+                        return;
+                    }
+
+                    const gKey = groupKeys[gKeyIndex];
                     if (groupsMap[gKey].items.length > 0) {
                         finalHtml += `<div class="history-section-header">${groupsMap[gKey].title}</div>`;
-                        groupsMap[gKey].items.forEach(c => {
-                            finalHtml += `
-                        <div class="history-btn-container ${c.id === currentChatId ? 'history-item-active' : ''} rounded-xl group">
-                            <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-2.5 rounded-lg text-xs font-medium truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">${c.title}</button>
-                            <div class="flex items-center gap-1 pr-1">
-                                <button onclick="event.stopPropagation(); window.togglePin('${c.id}')" class="history-action-btn ${c.pinned ? 'pinned-active' : ''}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 ${c.pinned ? 'fill-current' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="17" x2="12" y2="22"></line>
-                                        <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
-                                    </svg>
-                                </button>
-                                <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500"><i data-feather="trash-2" class="w-3 h-3"></i></button>
-                            </div>
-                        </div>`;
-                        });
+
+                        let itemIndex = 0;
+                        const items = groupsMap[gKey].items;
+
+                        const renderItemsChunk = () => {
+                            const chunkEnd = Math.min(itemIndex + 10, items.length);
+                            for (; itemIndex < chunkEnd; itemIndex++) {
+                                const c = items[itemIndex];
+                                finalHtml += `
+                                <div class="history-btn-container ${c.id === currentChatId ? 'history-item-active' : ''} rounded-xl group">
+                                    <button onclick="window.loadChat('${c.id}')" class="flex-1 text-left px-3 py-2.5 rounded-lg text-xs font-medium truncate ${c.id === currentChatId ? '' : 'text-zinc-500 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50'}">${c.title}</button>
+                                    <div class="flex items-center gap-1 pr-1">
+                                        <button onclick="event.stopPropagation(); window.togglePin('${c.id}')" class="history-action-btn ${c.pinned ? 'pinned-active' : ''}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 ${c.pinned ? 'fill-current' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="12" y1="17" x2="12" y2="22"></line>
+                                                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+                                            </svg>
+                                        </button>
+                                        <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500"><i data-feather="trash-2" class="w-3 h-3"></i></button>
+                                    </div>
+                                </div>`;
+                            }
+
+                            if (itemIndex < items.length) {
+                                requestAnimationFrame(renderItemsChunk);
+                            } else {
+                                requestAnimationFrame(() => renderGroup(gKeyIndex + 1, groupKeys));
+                            }
+                        };
+                        requestAnimationFrame(renderItemsChunk);
+                    } else {
+                        requestAnimationFrame(() => renderGroup(gKeyIndex + 1, groupKeys));
                     }
-                }
-                if (hasMore) {
-                    finalHtml += `<div class="p-4 text-center"><button onclick="window.__historyRenderLimit += 20; renderHistory(window.__lastHistoryQuery)" class="text-xs font-medium text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 transition-colors">Load More</button></div>`;
-                }
-                els.hist.innerHTML = finalHtml || `<div class="p-8 text-center text-[10px] font-bold opacity-20 uppercase tracking-widest mt-10">${dict.no_history}</div>`;
-                feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, els.hist);
+                };
+
+                const groupKeys = Object.keys(groupsMap);
+                requestAnimationFrame(() => renderGroup(0, groupKeys));
             };
 
             const render = () => {
