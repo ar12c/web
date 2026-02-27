@@ -2869,10 +2869,14 @@
             };
 
             window.toggleSidebar = () => {
+                const sb = els.sidebar || document.getElementById('sidebar');
+                const overlay = els.sidebarOverlay || document.getElementById('sidebar-overlay');
+                if (!sb) return;
+
                 if (window.innerWidth < 1024) {
-                    const isHidden = els.sidebar.classList.contains('mobile-hidden');
-                    els.sidebar.classList.toggle('mobile-hidden');
-                    els.sidebarOverlay.style.display = isHidden ? 'block' : 'none';
+                    const isHidden = sb.classList.contains('mobile-hidden');
+                    sb.classList.toggle('mobile-hidden');
+                    if (overlay) overlay.style.display = isHidden ? 'block' : 'none';
                 } else {
                     document.body.classList.toggle('sidebar-collapsed');
                     updateUI();
@@ -3322,9 +3326,11 @@
 
 
             if (window.innerWidth < 1024) {
-                if (settings.hasCompletedTutorial) {
-                    els.sidebar.classList.add('mobile-hidden');
-                    els.sidebarOverlay.style.display = 'none';
+                if (settings && settings.hasCompletedTutorial) {
+                    const sb = document.getElementById('sidebar');
+                    const sbOverlay = document.getElementById('sidebar-overlay');
+                    if (sb) sb.classList.add('mobile-hidden');
+                    if (sbOverlay) sbOverlay.style.display = 'none';
                 }
             }
 
