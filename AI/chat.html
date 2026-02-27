@@ -723,24 +723,24 @@
             font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
             font-size: 0.875rem;
             font-weight: 600;
-            background: linear-gradient(90deg, var(--thinking-side) 20%, var(--thinking-accent) 50%, var(--thinking-side) 80%);
-            background-size: 300% auto;
+            background: linear-gradient(90deg, var(--thinking-side) 0%, var(--thinking-accent) 50%, var(--thinking-side) 100%);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: thinking-shimmer 2.5s ease-in-out infinite;
+            animation: thinking-shimmer 2.5s linear infinite;
         }
 
         @keyframes thinking-shimmer {
 
             0%,
             20% {
-                background-position: 200% center;
+                background-position-x: 200%;
             }
 
             80%,
             100% {
-                background-position: 0% center;
+                background-position-x: 0%;
             }
         }
 
@@ -1710,11 +1710,11 @@
         <div class="w-full max-w-2xl mx-auto relative group">
 
             <div
-                class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-0 rounded-2xl relative flex flex-col shadow-lg !overflow-visible pointer-events-auto">
+                class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-0 rounded-[28px] relative flex flex-col shadow-lg !overflow-visible pointer-events-auto">
 
                 <div class="relative flex-1">
                     <textarea id="user-input" placeholder="Type something..." rows="1"
-                        class="w-full bg-transparent px-4 py-3 pl-4 pr-4 outline-none resize-none text-base max-h-[200px] no-scrollbar leading-relaxed text-zinc-900 dark:text-[#ececec] placeholder-zinc-400 dark:placeholder-zinc-500 font-sans min-h-[56px]"></textarea>
+                        class="w-full bg-transparent px-4 py-3 pl-5 pr-4 outline-none resize-none text-base max-h-[200px] no-scrollbar leading-relaxed text-zinc-900 dark:text-[#ececec] placeholder-zinc-400 dark:placeholder-zinc-500 font-sans min-h-[56px]"></textarea>
                 </div>
 
 
@@ -1809,10 +1809,10 @@
 
 
                         <button id="send-btn" onclick="window.handleAction()" disabled
-                            class="w-10 h-10 flex items-center justify-center rounded-xl opacity-50 cursor-not-allowed hover:opacity-100 transition-all ml-2 active:scale-95"
-                            style="color: var(--accent-color); background: transparent; transition: background 0.2s;">
+                            class="w-10 h-10 flex items-center justify-center rounded-full opacity-50 cursor-not-allowed transition-all ml-2 active:scale-95"
+                            style="background-color: var(--accent-color); color: var(--accent-contrast); transition: background 0.2s, opacity 0.2s;">
                             <span id="send-icon-wrapper" class="flex items-center justify-center h-full w-full">
-                                <i data-feather="arrow-up" class="w-5 h-5 text-current"></i>
+                                <i class="fa-solid fa-paper-plane text-sm"></i>
                             </span>
                         </button>
                     </div>
@@ -3344,9 +3344,9 @@
                 btn.onclick = window.handleAction;
 
                 if (state === 'stop') {
-                    iconWrapper.innerHTML = feather.icons.square.toSvg({ class: 'w-4 h-4 text-[var(--accent-contrast)] fill-current' });
+                    iconWrapper.innerHTML = '<i class="fa-solid fa-square text-sm"></i>';
                 } else {
-                    iconWrapper.innerHTML = feather.icons['arrow-up'].toSvg({ class: 'w-5 h-5 text-[var(--accent-contrast)]' });
+                    iconWrapper.innerHTML = '<i class="fa-solid fa-paper-plane text-sm"></i>';
                 }
             };
 
@@ -3978,14 +3978,16 @@
                 if (els.send) {
                     els.send.disabled = !hasTextVal && !isGenerating;
                     if (!els.send.disabled) {
+                        els.send.style.opacity = '1';
                         els.send.style.backgroundColor = 'var(--accent-color)';
                         els.send.style.color = 'var(--accent-contrast)';
-                        els.send.classList.remove('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400', 'cursor-not-allowed');
+                        els.send.classList.remove('cursor-not-allowed');
                         els.send.classList.add('cursor-pointer');
                     } else {
-                        els.send.style.backgroundColor = '';
-                        els.send.style.color = '';
-                        els.send.classList.add('bg-zinc-200', 'dark:bg-zinc-700', 'text-zinc-400', 'cursor-not-allowed');
+                        els.send.style.opacity = '0.5';
+                        els.send.style.backgroundColor = 'var(--accent-color)';
+                        els.send.style.color = 'var(--accent-contrast)';
+                        els.send.classList.add('cursor-not-allowed');
                         els.send.classList.remove('cursor-pointer');
                     }
                 }

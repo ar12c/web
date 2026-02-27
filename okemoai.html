@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OkemoAI</title>
+    <title>Aperture</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -100,76 +100,75 @@
 
         const App = () => {
             return (
-                <div className="mesh-gradient min-h-screen w-full flex text-moss dark:text-sage font-sans">
+                <div className="mesh-gradient min-h-screen w-full flex flex-col text-moss dark:text-sage font-sans relative">
 
-                    {/* Sidebar - hidden on mobile */}
-                    <aside className="hidden lg:flex w-[200px] flex-shrink-0 p-8 flex-col fixed h-full z-10 border-r border-moss/10 dark:border-sage/10 bg-paper/20 dark:bg-obsidian/20 backdrop-blur-sm">
-                        <div className="mb-12">
-                            <div className="flex items-center gap-3 font-medium text-2xl serif-text tracking-tight text-moss dark:text-sage">
-                                <img src="src/OLM.svg" alt="OLM Logo" className="w-7 h-7 dark:invert opacity-80" />
-                                okemovail.
-                            </div>
+                    {/* Top Navigation */}
+                    <header className="flex justify-between items-center p-6 md:p-8 w-full max-w-[1400px] mx-auto z-20">
+                        <div className="flex items-center gap-3 font-medium text-2xl serif-text tracking-tight text-moss dark:text-sage">
+                            <img src="src/OLM.svg" alt="Aperture Logo" className="w-7 h-7 dark:invert opacity-80" />
+                            aperture.
                         </div>
-                        <nav className="flex flex-col gap-6 text-moss/50 dark:text-sage/40 font-medium text-sm">
+                        <nav className="hidden md:flex gap-8 text-moss/60 dark:text-sage/40 font-medium text-sm">
                             <a href="AI/research.html" className="hover:text-moss dark:hover:text-sage transition-colors text-moss dark:text-sage font-semibold">Research</a>
                             <a href="AI/tos.html" className="hover:text-moss dark:hover:text-sage transition-colors">Terms</a>
                             <a href="AI/privacy.html" className="hover:text-moss dark:hover:text-sage transition-colors">Privacy</a>
                         </nav>
-                        <div className="mt-auto">
-                            <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400">© 2026 OKEMOVAIL</p>
-                        </div>
-                    </aside>
+                    </header>
 
                     {/* Main Content Area */}
-                    <main className="flex-1 lg:ml-[200px] flex flex-col min-h-screen relative p-4 md:p-8 pb-32">
+                    <main className="flex-1 flex flex-col relative p-4 md:p-8 pb-32 z-10 justify-center">
 
-                        { }
-                        <header className="flex justify-center items-center lg:justify-end mb-10 bg-transparent relative z-20">
-                            <div className="flex flex-col items-center lg:items-end gap-1">
-                                <a href="AI/chat.html">
-                                    <button className="px-6 py-2 rounded-full border border-moss/20 dark:border-sage/30 font-medium text-sm text-moss dark:text-sage hover:bg-moss hover:text-paper dark:hover:bg-sage dark:hover:text-obsidian transition-all shadow-sm">
-                                        Log in <i className="fa-solid fa-arrow-right ml-1 opacity-70 text-xs"></i>
-                                    </button>
-                                </a>
-                                <div className="flex lg:hidden gap-4 text-moss/50 dark:text-sage/40 font-medium text-[10px] uppercase tracking-wider mt-4">
-                                    <a href="AI/research.html" className="hover:text-moss dark:hover:text-sage transition-colors">Research</a>
-                                    <a href="AI/tos.html" className="hover:text-moss dark:hover:text-sage transition-colors">Terms</a>
-                                    <a href="AI/privacy.html" className="hover:text-moss dark:hover:text-sage transition-colors">Privacy</a>
-                                </div>
-                            </div>
-                        </header>
-
-                        { }
-                        <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-[1200px] w-full mx-auto">
-
+                        <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-[1200px] w-full mx-auto my-auto items-stretch">
                             {/* Main Hero Card */}
-                            <div className="lg:col-span-2 bg-paper/60 dark:bg-obsidian/40 backdrop-blur-xl rounded-[32px] p-8 md:p-14 flex flex-col justify-between border border-moss/10 dark:border-sage/10 shadow-sm hover:shadow-md transition-all relative overflow-hidden group items-center lg:items-start text-center lg:text-left">
+                            <div className="lg:col-span-2 bg-paper/60 dark:bg-obsidian/40 backdrop-blur-xl rounded-[32px] p-8 md:p-14 flex flex-col justify-center border border-moss/10 dark:border-sage/10 shadow-sm hover:shadow-md transition-all relative overflow-hidden group items-center lg:items-start text-center lg:text-left min-h-[400px]">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-sage/20 dark:bg-sage/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-sage/30 dark:group-hover:bg-sage/10 transition-colors"></div>
 
-                                <div className="self-start relative z-10">
+                                <div className="relative z-10 mb-auto self-center lg:self-start">
                                     <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-paper/80 dark:bg-obsidian/60 backdrop-blur-md border border-moss/10 dark:border-sage/20 shadow-sm text-[10px] uppercase tracking-widest font-bold text-moss dark:text-sage">
                                         <div className="w-2 h-2 rounded-full bg-sage shadow-[0_0_8px_rgba(191,215,181,0.8)] animate-pulse"></div>
                                         Thinking
                                     </div>
                                 </div>
 
-                                <div className="mt-8 lg:mt-auto relative z-10 w-full flex flex-col items-center lg:items-start">
+                                <div className="relative z-10 w-full flex flex-col items-center lg:items-start mt-8">
                                     <h1 className="serif-text text-5xl md:text-7xl lg:text-[7rem] font-medium tracking-tighter mb-6 text-moss dark:text-sage leading-[0.9]">
                                         Polaris 1.5
                                     </h1>
-                                    <p className="text-xl md:text-2xl text-stone-500 dark:text-stone-400 max-w-lg font-normal leading-relaxed">
+                                    <p className="text-xl md:text-2xl text-stone-500 dark:text-stone-400 max-w-lg font-normal leading-relaxed mb-6">
                                         A new stepping stone in reasoning and discovery. Designed to think before it answers.
                                     </p>
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-moss/5 dark:bg-sage/5 border border-moss/10 dark:border-sage/10 shadow-sm text-moss dark:text-sage font-medium">
+                                        <i className="fa-solid fa-bolt text-moss/70 dark:text-sage/70"></i> Aperture is unfiltered
+                                    </div>
                                 </div>
                             </div>
 
-                            { }
-                            <div className="lg:col-span-1 border border-moss/10 dark:border-sage/10 bg-paper/40 dark:bg-obsidian/20 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-sm hover:shadow-md transition-all relative group">
-                                <img src="src/OLM.png" alt="OLM Poster" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+                            {/* Image Card */}
+                            <div className="lg:col-span-1 border border-moss/10 dark:border-sage/10 bg-paper/40 dark:bg-obsidian/20 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-sm hover:shadow-md transition-all relative group h-full min-h-[300px]">
+                                <img src="src/OLM.png" alt="Aperture Poster" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-moss/20 dark:from-obsidian/60 to-transparent pointer-events-none"></div>
                             </div>
                         </div>
+
+                        {/* Mobile Navigation */}
+                        <div className="flex md:hidden justify-center gap-4 text-moss/50 dark:text-sage/40 font-medium text-[10px] uppercase tracking-wider mt-12 mb-4">
+                            <a href="AI/research.html" className="hover:text-moss dark:hover:text-sage transition-colors">Research</a>
+                            <a href="AI/tos.html" className="hover:text-moss dark:hover:text-sage transition-colors">Terms</a>
+                            <a href="AI/privacy.html" className="hover:text-moss dark:hover:text-sage transition-colors">Privacy</a>
+                        </div>
                     </main>
+
+                    {/* Bottom Center Try Now Button */}
+                    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-3">
+                        <a href="AI/chat.html">
+                            <button className="px-10 py-4 rounded-full bg-moss text-paper dark:bg-sage dark:text-obsidian font-semibold text-lg hover:scale-105 hover:-translate-y-1 transition-all shadow-xl hover:shadow-2xl border border-transparent dark:border-sage/20 flex items-center gap-3">
+                                Try now <i className="fa-solid fa-arrow-right opacity-70"></i>
+                            </button>
+                        </a>
+                        <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-stone-400/80 dark:text-stone-500/80">
+                            © 2026 APERTURE
+                        </p>
+                    </div>
 
                 </div>
             );
