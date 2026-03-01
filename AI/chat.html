@@ -427,8 +427,8 @@
             background-color: var(--input-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid color-mix(in srgb, var(--accent-color) 15%, rgba(255, 255, 255, 0.4));
-            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 28px;
             box-shadow: 0 4px 12px -1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
@@ -1433,7 +1433,7 @@
     <div id="onboarding-overlay" class="hidden">
 
         <div class="onboarding-card">
-            <div class="onboarding-inner">
+            <div class="onboarding-inner overflow-y-auto no-scrollbar">
 
 
                 <div class="flex flex-col items-center mb-8">
@@ -1458,13 +1458,19 @@
 
 
                 <button id="google-auth-btn-onboarding" onclick="window.initGoogleAuthOnboarding()"
-                    class="w-full flex items-center justify-center gap-2.5 min-h-[52px] px-5 rounded-2xl font-bold text-sm transition-all shadow-lg hover:brightness-110 active:scale-[0.98] mb-4"
+                    class="w-full flex items-center justify-center gap-2.5 min-h-[52px] px-5 rounded-2xl font-bold text-sm transition-all shadow-lg hover:brightness-110 active:scale-[0.98] mb-4 relative overflow-hidden"
                     style="background-color: var(--accent-color); color: var(--accent-contrast);">
-                    <img id="google-pfp-onboarding"
-                        class="w-7 h-7 rounded-full object-cover hidden border-2 border-white/30" src="" alt="">
-                    <span id="google-btn-text-onboarding">
-                        <i class="fa-brands fa-google mr-2"></i>Continue with Google
-                    </span>
+                    <div id="google-spinner-onboarding"
+                        class="hidden absolute inset-0 flex items-center justify-center bg-inherit z-20">
+                        <i class="fa-solid fa-circle-notch fa-spin text-xl"></i>
+                    </div>
+                    <div id="google-btn-content-onboarding" class="flex items-center justify-center gap-2.5">
+                        <img id="google-pfp-onboarding"
+                            class="w-7 h-7 rounded-full object-cover hidden border-2 border-white/30" src="" alt="">
+                        <span id="google-btn-text-onboarding">
+                            <i class="fa-brands fa-google mr-2"></i>Continue with Google
+                        </span>
+                    </div>
                 </button>
 
                 <p class="text-center text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-5">OLM has no
@@ -1549,7 +1555,7 @@
 
         <div id="sidebar-full-content" class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
             <div class="mb-6 lg:mb-4 px-2 flex items-center justify-between">
-                <div class="flex items-center gap-3">
+                <a href="../ai.html" class="flex items-center gap-3 no-underline">
                     <svg class="h-8 w-auto" viewBox="0 0 1046.51 912.52" xmlns="http://www.w3.org/2000/svg"
                         style="color: var(--accent-color);">
                         <path fill="currentColor"
@@ -1567,7 +1573,7 @@
                     </svg>
                     <span class="vail-logo-ai font-serif font-bold text-lg"
                         style="font-family: Century, 'Century Schoolbook', Georgia, serif;">OLM</span>
-                </div>
+                </a>
                 <button
                     class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                     onclick="window.toggleSidebar()"><i data-feather="chevron-left"
@@ -1592,7 +1598,7 @@
                 <a href="https://voidai.app" target="_blank"
                     class="w-full flex items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold rounded-xl lg:rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700 text-zinc-900 dark:text-zinc-100 no-underline">
                     <img src="https://voidai.app/voidai.png" class="w-3.5 h-3.5 rounded-sm shrink-0" alt="voidai logo">
-                    <span>Sponsored by voidai</span>
+                    <span>Sponsored by foidai</span>
                 </a>
                 <a href="research.html"
                     class="w-full flex items-center gap-3 px-3 py-3.5 lg:py-2 text-xs font-semibold rounded-xl lg:rounded-lg hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700 text-zinc-900 dark:text-zinc-100 no-underline">
@@ -1662,7 +1668,7 @@
         <div id="intelligence-flare"></div>
 
         <header
-            class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none sticky top-0">
+            class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none sticky top-0 lg:hidden">
 
             <div class="flex items-center gap-2 pointer-events-auto">
                 <button id="menu-toggle-btn" onclick="window.toggleSidebar()"
@@ -1681,7 +1687,7 @@
 
         <div id="chat-container" class="flex-1 overflow-y-auto no-scrollbar flex flex-col relative">
             <div id="welcome-state"
-                class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center animate-fade-in z-0">
+                class="absolute inset-0 flex flex-col items-center justify-center p-6 pt-[150px] text-center animate-fade-in z-0">
 
                 <div id="welcome-logo-container"></div>
 
@@ -1720,13 +1726,14 @@
                     </button>
                 </div>
             </div>
-            <div id="chat-messages" class="w-full max-w-2xl mx-auto flex flex-col pt-4 pb-48 px-4 relative gap-4 z-10">
+            <div id="chat-messages"
+                class="w-full max-w-2xl mx-auto flex flex-col pt-8 lg:pt-24 pb-36 px-4 relative z-10">
             </div>
         </div>
         <div class="px-4 md:px-0 w-full max-w-2xl mx-auto relative group">
 
             <div
-                class="input-box-wrap mb-6 transition-all duration-300 group focus-within:ring-0 rounded-2xl relative flex flex-col shadow-lg !overflow-visible pointer-events-auto">
+                class="input-box-wrap mb-2 transition-all duration-300 group focus-within:ring-0 rounded-2xl relative flex flex-col shadow-lg !overflow-visible pointer-events-auto">
 
                 <div class="relative flex-1">
                     <textarea id="user-input" placeholder="Type something..." rows="1"
@@ -1825,6 +1832,11 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <div class="w-full max-w-2xl mx-auto py-1 text-center">
+                <p class="text-[10px] font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-wider"
+                    style="font-family: Century, 'Century Schoolbook', Georgia, serif;">OLMs are prone to
+                    hallucinations.</p>
             </div>
         </div>
         </div>
@@ -1928,7 +1940,7 @@
                     document.body.classList.remove('onboarding-active');
                 }
 
-                const theme = localStorage.getItem('vail_theme') || 'light';
+                const theme = localStorage.getItem('vail_theme') || 'system';
                 if (theme === 'system') {
                     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                     document.documentElement.classList.toggle('dark', prefersDark);
@@ -2495,7 +2507,6 @@
 
             window.initGoogleAuth = async () => {
                 if (isGoogleSignedIn) {
-
                     googleAccessToken = null;
                     googleDriveFolderId = null;
                     isGoogleSignedIn = false;
@@ -2504,11 +2515,15 @@
                     updateGoogleAuthButton();
                     console.log('Signed out from Google');
 
-
                     if (googleAccessToken) {
                         google.accounts.oauth2.revoke(googleAccessToken, () => { console.log('Token revoked') });
                     }
                 } else {
+                    const btn = document.getElementById('google-auth-btn');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-70', 'cursor-not-allowed');
+                    }
 
                     if (!tokenClient) {
                         tokenClient = google.accounts.oauth2.initTokenClient({
@@ -2522,18 +2537,47 @@
             };
 
             window.initGoogleAuthOnboarding = async () => {
+                const btn = document.getElementById('google-auth-btn-onboarding');
+                const spinner = document.getElementById('google-spinner-onboarding');
+                const content = document.getElementById('google-btn-content-onboarding');
+
+                if (btn) btn.disabled = true;
+                if (spinner) spinner.classList.remove('hidden');
+                if (content) content.classList.add('opacity-0');
+
                 if (!tokenClient) {
                     tokenClient = google.accounts.oauth2.initTokenClient({
                         client_id: GOOGLE_CLIENT_ID,
                         scope: 'https://www.googleapis.com/auth/drive.file profile email',
-                        callback: window.handleGoogleSignIn
+                        callback: (resp) => {
+                            if (btn) btn.disabled = false;
+                            if (spinner) spinner.classList.add('hidden');
+                            if (content) content.classList.remove('opacity-0');
+                            window.handleGoogleSignIn(resp);
+                        }
                     });
                 }
                 tokenClient.requestAccessToken();
+
+                // Fallback to re-enable if popup is closed or blocked (though Google API doesn't notify well)
+                setTimeout(() => {
+                    if (btn && btn.disabled) {
+                        btn.disabled = false;
+                        if (spinner) spinner.classList.add('hidden');
+                        if (content) content.classList.remove('opacity-0');
+                    }
+                }, 10000);
             };
 
             window.handleGoogleSignIn = async (tokenResponse) => {
+                const btn = document.getElementById('google-auth-btn');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                }
+
                 if (tokenResponse && tokenResponse.access_token) {
+                    googleAccessToken = tokenResponse.access_token;
                     try {
                         googleAccessToken = tokenResponse.access_token;
                         isGoogleSignedIn = true;
@@ -3924,16 +3968,16 @@
                     }
                 } else {
                     els.chatMsgs.innerHTML = chatHistory.map(([u, a], i) => `
-                    <div class="user-row flex flex-col items-end">
+                    <div class="user-row flex flex-col items-end ${i === 0 ? 'mt-0' : 'mt-10'}">
                         <div class="user-msg-bubble prose dark:prose-invert font-medium ml-auto text-justify">${marked.parse(sanitizeText(u))}</div>
                         <div class="user-msg-actions">
                             <button class="user-msg-action-btn" onclick="window.copyUserMsg(${i}, this)" title="Copy"><i data-feather="copy" class="w-3 h-3"></i></button>
                             <button class="user-msg-action-btn" onclick="window.editMsg(${i})" title="Edit"><i data-feather="edit-2" class="w-3 h-3"></i></button>
                         </div>
                     </div>
-                    <div class="ai-row flex flex-col items-start animate-fade-in w-full">
+                    <div class="ai-row flex flex-col items-start animate-fade-in w-full mt-[7px]">
                         <div class="flex-1 min-w-0 w-full px-4">
-                            <div class="prose dark:prose-invert prose-target w-full leading-relaxed break-words overflow-wrap-anywhere ${a ? 'mt-2' : ''}">
+                            <div class="prose dark:prose-invert prose-target w-full leading-relaxed break-words overflow-wrap-anywhere ${a ? 'mt-[7px]' : ''}">
                                 ${(() => {
                             if (!a) {
                                 return `
@@ -3970,7 +4014,6 @@
                                     <button onclick="window.regenMsg(${i})" class="hover:scale-110 transition-all font-bold" style="color: var(--action-btn-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
                                     <button onclick="window.regenMsgWithSearch(${i})" class="hover:scale-110 transition-all" style="color: var(--action-btn-color)" title="Regenerate with Web Search"><i data-feather="globe" class="w-4 h-4"></i></button>
                                 </div>
-                                 <div class="hallucination-disclaimer">OLMs are prone to hallucinations.</div>
                             </div>` : ''}
                         </div>
                     </div>`).join('');
