@@ -4,177 +4,424 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLM</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
-
+    <title>OLM | Stay Curious</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'media',
             theme: {
                 extend: {
                     colors: {
-                        moss: '#5F634F',
-                        sage: '#BFD7B5',
-                        paper: '#F9F9F7',
-                        obsidian: '#0C0D0B',
+                        primary: '#5F634F',
+                        secondary: '#BFD7B5',
+                        bglight: '#F9F8F6',
+                        bgdark: '#1C1C1A',
+                        textlight: '#1A1A18',
+                        textdark: '#E8E6E1'
                     },
                     fontFamily: {
-                        serif: ['Century', '"Century Schoolbook"', 'serif'],
+                        serif: ['Century', 'Georgia', 'serif'],
                         sans: ['Inter', 'sans-serif'],
-                    },
+                    }
                 }
             }
         }
     </script>
-
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
     <style>
+        :root {
+            --bg-dark: #1C1C1A;
+            --accent-olive: #5F634F;
+            --accent-mint: #BFD7B5;
+            --rim-light: rgba(139, 92, 246, 0.2);
+        }
+
         body {
-            background-color: #F9F9F7;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #5F634F;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .serif-text {
-            font-family: 'Century', 'Century Schoolbook', serif;
-        }
-
-        .mesh-gradient {
-            background-color: #F9F9F7;
-            background-image:
-                radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.3) 0px, transparent 50%),
-                radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.2) 0px, transparent 50%);
-            background-attachment: fixed;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #0C0D0B;
-                color: #BFD7B5;
+        /* Hand-drawn squiggly boil effect - optional, apply .hand-drawn to elements */
+        @keyframes squiggly-anim {
+            0% {
+                filter: url('#squiggly-0');
             }
 
-            .mesh-gradient {
-                background-color: #0C0D0B;
-                background-image:
-                    radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.1) 0px, transparent 50%),
-                    radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
-                    radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.05) 0px, transparent 50%);
+            25% {
+                filter: url('#squiggly-1');
             }
 
-            ::selection {
-                background-color: #5F634F;
-                color: #fff;
+            50% {
+                filter: url('#squiggly-2');
+            }
+
+            75% {
+                filter: url('#squiggly-3');
+            }
+
+            100% {
+                filter: url('#squiggly-0');
             }
         }
 
-        ::selection {
-            background-color: #BFD7B5;
-            color: #000;
+        .hand-drawn {
+            animation: squiggly-anim 3s infinite step-end;
         }
 
+        /* Essential for the drawing animation */
+        .animate-path {
+            opacity: 0;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
 
-        ::-webkit-scrollbar {
-            display: none;
+        /* Slide to Discover Styles */
+        .slider-track {
+            position: relative;
+            width: 100%;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .dark .slider-track {
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-handle {
+            position: absolute;
+            left: 5px;
+            width: 140px;
+            /* Widened for text */
+            height: 44px;
+            background: #5F634F;
+            /* primary */
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: white;
+            z-index: 10;
+            cursor: grab;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.1s ease-out, background 0.3s ease;
+        }
+
+        .slider-handle:active {
+            cursor: grabbing;
+        }
+
+        .slider-handle span {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            pointer-events: none;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #fff 25%, rgba(255, 255, 255, 0.5) 50%, #fff 75%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: animate-shimmer 4s infinite linear;
+        }
+
+        @keyframes animate-shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
     </style>
 </head>
 
-<body>
-    <div id="root"></div>
+<body
+    class="bg-bglight text-textlight dark:bg-bgdark dark:text-textdark min-h-screen flex flex-col font-sans selection:bg-secondary selection:text-textlight overflow-x-hidden">
 
-    <script type="text/babel">
-        const { useState } = React;
+    <!-- Hand-Drawn Filters -->
+    <svg style="position: absolute; width: 0; height: 0;">
+        <defs>
+            <filter id="squiggly-0">
+                <feTurbulence baseFrequency="0.1" numOctaves="3" result="noise" seed="0" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+            <filter id="squiggly-1">
+                <feTurbulence baseFrequency="0.1" numOctaves="3" result="noise" seed="2" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+            <filter id="squiggly-2">
+                <feTurbulence baseFrequency="0.1" numOctaves="3" result="noise" seed="100" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+            <filter id="squiggly-3">
+                <feTurbulence baseFrequency="0.1" numOctaves="3" result="noise" seed="8" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+        </defs>
+    </svg>
 
-        const App = () => {
-            return (
-                <div className="mesh-gradient min-h-screen w-full flex flex-col text-moss dark:text-sage font-sans relative">
+    <nav
+        class="w-full sticky top-0 flex items-center justify-between py-4 px-6 lg:py-6 lg:px-16 border-b border-gray-200 dark:border-gray-800/50 bg-white/80 dark:bg-bgdark/80 backdrop-blur-md relative z-30">
+        <div class="flex items-center gap-3">
+            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1043.15"
+                class="w-8 h-8 text-primary fill-current">
+                <g>
+                    <path
+                        d="M10.45,863.96l481.93,178.18c10.45,3.86,21.55-3.87,21.55-15.01v-42.64c0-5.9-3.25-11.32-8.45-14.11L23.55,712.33C12.89,706.62,0,714.34,0,726.43v122.52c0,6.7,4.17,12.68,10.45,15.01Z" />
+                    <path
+                        d="M7.96,651.54l481.93,280.16c10.67,6.2,24.04-1.49,24.04-13.83v-81.17c0-4.74-2.1-9.23-5.73-12.27L26.27,420.88C15.86,412.16,0,419.56,0,433.14v204.56c0,5.7,3.03,10.97,7.96,13.83Z" />
+                    <path
+                        d="M4.96,314.21l481.93,459.61c10.18,9.71,27.04,2.49,27.04-11.58v-144.17S28.54,6.09,28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
+                </g>
+                <g>
+                    <path
+                        d="M1069.55,863.96l-481.93,178.18c-10.45,3.86-21.55-3.87-21.55-15.01v-42.64c0-5.9,3.25-11.32,8.45-14.11l481.93-258.06c10.66-5.71,23.55,2.01,23.55,14.11v122.52c0,6.7-4.17,12.68-10.45,15.01Z" />
+                    <path
+                        d="M1072.04,651.54l-481.93,280.16c-10.67,6.2-24.04-1.49-24.04-13.83v-81.17c0-4.74,2.1-9.23,5.73-12.27l481.93-403.56c10.41-8.72,26.27-1.32,26.27,12.27v204.56c0,5.7-3.03,10.97-7.96,13.83Z" />
+                    <path
+                        d="M1075.04,314.21l-481.93,459.61c-10.18,9.71-27.04,2.49-27.04-11.58v-144.17S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z" />
+                </g>
+            </svg>
+            <div class='text-xl md:text-2xl font-black text-primary'>OLM</div>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a href="AI/goals.html" class="hover:text-primary transition-colors">Goals</a>
+            <a href="AI/research.html" class="hover:text-primary transition-colors">Research</a>
+            <a href="AI/privacy.html" class="hover:text-primary transition-colors">Privacy</a>
+            <a href="AI/tos.html" class="hover:text-primary transition-colors">TOS</a>
+        </div>
+        <button href="AI/chat.html"
+            class="bg-textlight text-bglight dark:bg-textdark dark:text-bgdark px-4 py-2 rounded-xl text-xs md:text-sm font-medium hover:opacity-90 transition-opacity">
+            Try OLM
+        </button>
+    </nav>
 
-                    {/* Top Navigation */}
-                    <header className="flex justify-between items-center p-6 md:p-8 w-full max-w-[1400px] mx-auto z-20">
-                        <div className="flex items-center gap-3 font-medium text-2xl serif-text tracking-tight text-moss dark:text-sage">
-                            <img src="src/OLM.svg" alt="OLM Logo" className="w-7 h-7 dark:invert opacity-80" />
-                            OLM.
-                        </div>
-                        <nav className="hidden md:flex gap-8 text-moss/60 dark:text-sage/40 font-medium text-sm">
-                            <a href="AI/goals.html" className="hover:text-moss dark:hover:text-sage transition-colors">Goals</a>
-                            <a href="AI/research.html" className="hover:text-moss dark:hover:text-sage transition-colors text-moss dark:text-sage font-semibold">Research</a>
-                            <a href="AI/tos.html" className="hover:text-moss dark:hover:text-sage transition-colors">Terms</a>
-                            <a href="AI/privacy.html" className="hover:text-moss dark:hover:text-sage transition-colors">Privacy</a>
-                        </nav>
-                    </header>
+    <main
+        class="min-h-screen w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 px-6 lg:px-16 py-10 lg:py-57 relative z-10 items-center">
 
-                    {/* Main Content Area */}
-                    <main className="flex-1 flex flex-col relative p-4 md:p-8 pb-32 z-10 justify-center">
-
-                        <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-[1200px] w-full mx-auto my-auto items-stretch">
-                            {/* Main Hero Card */}
-                            <div className="lg:col-span-2 bg-paper/60 dark:bg-obsidian/40 backdrop-blur-xl rounded-[32px] p-8 md:p-14 flex flex-col justify-center border border-moss/10 dark:border-sage/10 shadow-sm hover:shadow-md transition-all relative overflow-hidden group items-center lg:items-start text-center lg:text-left min-h-[400px]">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-sage/20 dark:bg-sage/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-sage/30 dark:group-hover:bg-sage/10 transition-colors"></div>
-
-                                <div className="relative z-10 mb-auto self-center lg:self-start">
-                                    <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-paper/80 dark:bg-obsidian/60 backdrop-blur-md border border-moss/10 dark:border-sage/20 shadow-sm text-[10px] uppercase tracking-widest font-bold text-moss dark:text-sage">
-                                        <div className="w-2 h-2 rounded-full bg-sage shadow-[0_0_8px_rgba(191,215,181,0.8)] animate-pulse"></div>
-                                        Thinking
-                                    </div>
-                                </div>
-
-                                <div className="relative z-10 w-full flex flex-col items-center lg:items-start mt-8">
-                                    <h1 className="serif-text text-5xl md:text-7xl lg:text-[7rem] font-medium tracking-tighter mb-6 text-moss dark:text-sage leading-[0.9]">
-                                        Polaris 1.5
-                                    </h1>
-                                    <p className="text-xl md:text-2xl text-stone-500 dark:text-stone-400 max-w-lg font-normal leading-relaxed mb-6">
-                                        A new stepping stone in reasoning and discovery. Designed to think before it answers.
-                                    </p>
-                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-moss/5 dark:bg-sage/5 border border-moss/10 dark:border-sage/10 shadow-sm text-moss dark:text-sage font-medium">
-                                        <i className="fa-solid fa-bolt text-moss/70 dark:text-sage/70"></i> OLMs are unfiltered
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Image Card */}
-                            <div className="lg:col-span-1 border border-moss/10 dark:border-sage/10 bg-paper/40 dark:bg-obsidian/20 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-sm hover:shadow-md transition-all relative group h-full min-h-[300px]">
-                                <img src="src/OLM.png" alt="OLM Poster" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-moss/20 dark:from-obsidian/60 to-transparent pointer-events-none"></div>
-                            </div>
-                        </div>
-
-                        {/* Mobile Navigation */}
-                        <div className="flex md:hidden justify-center gap-4 text-moss/50 dark:text-sage/40 font-medium text-[10px] uppercase tracking-wider mt-12 mb-4">
-                            <a href="AI/goals.html" className="hover:text-moss dark:hover:text-sage transition-colors">Goals</a>
-                            <a href="AI/research.html" className="hover:text-moss dark:hover:text-sage transition-colors">Research</a>
-                            <a href="AI/tos.html" className="hover:text-moss dark:hover:text-sage transition-colors">Terms</a>
-                            <a href="AI/privacy.html" className="hover:text-moss dark:hover:text-sage transition-colors">Privacy</a>
-                        </div>
-                    </main>
-
-                    {/* Bottom Center Try Now Button */}
-                    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-3">
-                        <a href="AI/chat.html">
-                            <button className="px-10 py-4 rounded-full bg-moss text-paper dark:bg-sage dark:text-obsidian font-semibold text-lg hover:scale-105 hover:-translate-y-1 transition-all shadow-xl hover:shadow-2xl border border-transparent dark:border-sage/20 flex items-center gap-3">
-                                Try now <i className="fa-solid fa-arrow-right opacity-70"></i>
-                            </button>
-                        </a>
-                    </div>
-
+        <!-- LEFT PANE -->
+        <div class="flex flex-col justify-center order-1 text-center lg:text-left items-center lg:items-start">
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif tracking-tight leading-[1.1] mb-6">
+                Stay<br>Curious.
+            </h1>
+            <div id="slide-to-discover"
+                class="slider-track w-full max-w-lg mb-4 group bg-white dark:bg-[#1f201c] border border-gray-200 dark:border-white/10 dark:shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+                <div
+                    class="w-full pl-[180px] pr-4 py-2 text-sm md:text-base text-textlight/40 dark:text-textdark/40 placeholder-gray-400 font-medium z-0">
                 </div>
-            );
-        };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+                <div id="slider-handle" class="slider-handle">
+                    <span class="shimmer">Start Thinking</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        viewBox="0 0 256 256">
+                        <path
+                            d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L200.69,136H40a8,8,0,0,1,0-16H200.69l-62.35-62.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANE: SVG CONTAINER -->
+        <div class="relative w-full h-[350px] md:h-[450px] lg:h-full flex items-center justify-center order-2">
+            <div id="svg-wrapper"
+                class="w-full h-full max-w-[500px] flex items-center justify-center bg-white/5 dark:bg-black/5 rounded-3xl backdrop-blur-sm transition-all duration-700">
+
+                <!-- 
+                     YOUR SVG START 
+                     Instructions: 
+                     1. Replace the SVG below with your own.
+                     2. Add class="animate-path" to any <path> you want to animate.
+                     3. Use stroke="currentColor" to inherit theme colors.
+                -->
+                <svg id="main-illustration" xmlns="http://www.w3.org/2000/svg" width="256" height="256" fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 256 256"
+                    class="w-full h-full max-w-[400px] hand-drawn">
+                    <path class="animate-path"
+                        d="M244,124a52.1,52.1,0,0,0-32-48V72a44,44,0,0,0-84-18.3A44,44,0,0,0,44,72v4a52,52,0,0,0,0,96v4a44,44,0,0,0,84,18.3A44,44,0,0,0,212,176v-4A52.07,52.07,0,0,0,244,124ZM88,212a36,36,0,0,1-36-36v-1.41A52.13,52.13,0,0,0,64,176h8a4,4,0,0,0,0-8H64A44,44,0,0,1,49.33,82.5,4,4,0,0,0,52,78.73V72a36,36,0,0,1,72,0v78.75A44,44,0,0,0,88,132a4,4,0,0,0,0,8,36,36,0,0,1,0,72Zm104-44h-8a4,4,0,0,0,0,8h8a52.13,52.13,0,0,0,12-1.41V176a36,36,0,1,1-36-36,4,4,0,0,0,0-8,44,44,0,0,0-36,18.75V72a36,36,0,0,1,72,0v6.73a4,4,0,0,0,2.67,3.77A44,44,0,0,1,192,168Zm12-56a4,4,0,0,1-4,4h-4a32,32,0,0,1-32-32V80a4,4,0,0,1,8,0v4a24,24,0,0,0,24,24h4A4,4,0,0,1,204,112ZM92,84a32,32,0,0,1-32,32H56a4,4,0,0,1,0-8h4A24,24,0,0,0,84,84V80a4,4,0,0,1,8,0Z">
+                    </path>
+                </svg>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Attempting to Rival Giants Section -->
+    <section
+        class="min-h-screen w-full max-w-7xl mx-auto px-6 lg:px-16 py-12 lg:py-24 border-t border-gray-200 dark:border-gray-800/50 flex flex-col justify-center">
+        <div class="mb-12 text-center lg:text-left">
+            <h2 class="text-3xl md:text-5xl font-serif mb-4">Attempting to Rival Giants</h2>
+            <p class="text-gray-500 dark:text-gray-400 max-w-2xl text-lg">
+                Low-cost training is not about cutting corners—it's about extreme efficiency. We're proving that
+                state-of-the-art intelligence can be cultivated without billion-dollar compute clusters.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Pillar 1: Unified Memory -->
+            <div
+                class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300 group">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                        viewBox="0 0 256 256">
+                        <path
+                            d="M224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Zm0-80v48a8,8,0,0,1-16,0V67.31L125.66,150.34a8,8,0,0,1-11.32-11.32L196.69,56H168a8,8,0,0,1,0-16h48A8,8,0,0,1,224,48Z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Unified Memory</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    By leveraging Apple Silicon's unified memory architecture, we bypass traditional VRAM bottlenecks,
+                    allowing models to scale beyond dedicated GPU limits.
+                </p>
+            </div>
+
+            <!-- Pillar 2: 3-Phase Strategy -->
+            <div
+                class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300 group">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                        viewBox="0 0 256 256">
+                        <path
+                            d="M216,40H144a8,8,0,0,0,0,16h72V200H144a8,8,0,0,0,0,16h72a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM112,48a8,8,0,0,0-8-8H32A16,16,0,0,0,16,56V200a16,16,0,0,0,16,16h72a8,8,0,0,0,0-16H32V56h72A8,8,0,0,0,112,48Z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">3-Phase Evolution</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Intelligence isn't built in a day. Our structured methodology evolves models through distinct
+                    phases—from basic reasoning to deep specialized knowledge.
+                </p>
+            </div>
+
+            <!-- Pillar 3: MLX Framework -->
+            <div
+                class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300 group">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                        viewBox="0 0 256 256">
+                        <path
+                            d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208Zm-48-80a8,8,0,0,1-8,8H104a8,8,0,0,1,0-16h48A8,8,0,0,1,160,128Z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">MLX Metal</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Custom-built for maximum throughput, we optimize directly on the metal, stripping away abstraction
+                    layers to achieve server-class performance on personal devices.
+                </p>
+            </div>
+
+            <!-- Pillar 4: Sustainable AI -->
+            <div
+                class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300 group">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                        viewBox="0 0 256 256">
+                        <path
+                            d="M244.24,51.76a8,8,0,0,0-11.32,0L136,148.69,82.34,95a8,8,0,0,0-11.32,0l-56,56a8,8,0,0,0,11.32,11.32L71,113.31l53.66,53.65a8,8,0,0,0,11.32,0l104-104A8,8,0,0,0,244.24,51.76Z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Scaling Sustainably</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Democratizing AI training means making it affordable. We focus on high-efficiency scaling that
+                    respects both your budget and our planet's energy.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Select all paths with the animation class
+            const paths = document.querySelectorAll('.animate-path');
+
+            // Prepare paths for animation (calculating length)
+            paths.forEach(path => {
+                const length = path.getTotalLength();
+                path.style.strokeDasharray = length;
+                path.style.strokeDashoffset = length;
+                path.style.opacity = '1';
+            });
+
+            // Run the drawing animation
+            anime({
+                targets: '.animate-path',
+                strokeDashoffset: [anime.setDashoffset, 0],
+                easing: 'linear',
+                duration: 10000,
+                delay: 500
+            });
+
+            // Slider Logic
+            const slider = document.getElementById('slide-to-discover');
+            const handle = document.getElementById('slider-handle');
+            let isDragging = false;
+            let startX = 0;
+            let currentX = 0;
+
+            const getX = (e) => (e.type.includes('mouse') ? e.clientX : e.touches[0].clientX);
+
+            const onStart = (e) => {
+                isDragging = true;
+                startX = getX(e) - currentX;
+                handle.style.transition = 'none';
+            };
+
+            const onMove = (e) => {
+                if (!isDragging) return;
+                const maxTranslation = slider.offsetWidth - handle.offsetWidth - 12;
+                currentX = Math.max(0, Math.min(getX(e) - startX, maxTranslation));
+                handle.style.transform = `translateX(${currentX}px)`;
+
+                const progress = currentX / maxTranslation;
+                handle.style.opacity = progress > 0.9 ? 1 : 1; // Keep handle visible
+            };
+
+            const onEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                const maxTranslation = slider.offsetWidth - handle.offsetWidth - 12;
+                handle.style.transition = 'transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), background 0.3s ease';
+
+                if (currentX >= maxTranslation * 0.9) {
+                    currentX = maxTranslation;
+                    handle.style.transform = `translateX(${currentX}px)`;
+                    handle.style.background = '#BFD7B5'; // secondary
+
+                    setTimeout(() => {
+                        window.location.href = './AI/chat.html';
+                    }, 500);
+                } else {
+                    currentX = 0;
+                    handle.style.transform = `translateX(0)`;
+                }
+            };
+
+            handle.addEventListener('mousedown', onStart);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+
+            handle.addEventListener('touchstart', onStart, { passive: true });
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+        });
     </script>
 </body>
 

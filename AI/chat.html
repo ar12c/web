@@ -1347,7 +1347,6 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 9999px;
             padding: 2px 4px;
             display: flex;
             align-items: center;
@@ -1371,6 +1370,28 @@
         .dark .header-island:hover {
             background: rgba(39, 39, 42, 0.6);
             border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        #top-right-actions {
+            position: fixed;
+            top: 1rem;
+            right: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+            pointer-events: auto;
+        }
+
+        @media (max-width: 1023px) {
+            #top-right-actions {
+                top: 0.75rem;
+                right: 1rem;
+            }
+
+            .action-label {
+                display: none;
+            }
         }
 
         #research-page-overlay {
@@ -1556,20 +1577,24 @@
         <div id="sidebar-full-content" class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
             <div class="mb-6 lg:mb-4 px-2 flex items-center justify-between">
                 <a href="../ai.html" class="flex items-center gap-3 no-underline">
-                    <svg class="h-8 w-auto" viewBox="0 0 1046.51 912.52" xmlns="http://www.w3.org/2000/svg"
-                        style="color: var(--accent-color);">
-                        <path fill="currentColor"
-                            d="M793.83,28.36c5-18.64-6.17-29.81-24.81-24.81l-307.09,82.28c-18.64,5-22.73,20.25-9.08,33.9l224.81,224.81c13.65,13.65,28.9,9.56,33.9-9.08L793.83,28.36Z" />
-                        <path fill="currentColor"
-                            d="M171.52,324.24c-5,18.64,6.17,29.81,24.81,24.81l307.09-82.29c18.64-5,22.73-20.25,9.08-33.9L287.7,8.07c-13.65-13.65-28.9-9.56-33.9,9.08l-82.28,307.09Z" />
-                        <path fill="currentColor"
-                            d="M232.88,694.51c13.65,13.65,28.9,9.56,33.9-9.08l82.28-307.09c5-18.64-6.17-29.81-24.81-24.81L17.15,435.81c-18.64,5-22.73,20.25-9.08,33.9l224.81,224.8Z" />
-                        <path fill="currentColor"
-                            d="M252.71,884.22c-5,18.64,6.17,29.81,24.81,24.81l307.09-82.28c18.64-5,22.73-20.25,9.08-33.9l-224.81-224.81c-13.65-13.65-28.9-9.56-33.9,9.08l-82.28,307.09Z" />
-                        <path fill="currentColor"
-                            d="M758.81,904.45c13.65,13.65,28.9,9.56,33.9-9.08l82.28-307.09c5-18.64-6.17-29.81-24.81-24.81l-307.09,82.29c-18.64,5-22.73,20.25-9.08,33.9l224.81,224.8Z" />
-                        <path fill="currentColor"
-                            d="M1029.36,477.47c18.64-5,22.73-20.25,9.08-33.9l-224.81-224.81c-13.65-13.65-28.9-9.56-33.9,9.08l-82.28,307.09c-5,18.64,6.17,29.81,24.81,24.81l307.09-82.29Z" />
+                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1043.15"
+                        class="w-8 h-8 fill-current" style="color: var(--accent-color);">
+                        <g>
+                            <path
+                                d="M10.45,863.96l481.93,178.18c10.45,3.86,21.55-3.87,21.55-15.01v-42.64c0-5.9-3.25-11.32-8.45-14.11L23.55,712.33C12.89,706.62,0,714.34,0,726.43v122.52c0,6.7,4.17,12.68,10.45,15.01Z" />
+                            <path
+                                d="M7.96,651.54l481.93,280.16c10.67,6.2,24.04-1.49,24.04-13.83v-81.17c0-4.74-2.1-9.23-5.73-12.27L26.27,420.88C15.86,412.16,0,419.56,0,433.14v204.56c0,5.7,3.03,10.97,7.96,13.83Z" />
+                            <path
+                                d="M4.96,314.21l481.93,459.61c10.18,9.71,27.04,2.49,27.04-11.58v-144.17S28.54,6.09,28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
+                        </g>
+                        <g>
+                            <path
+                                d="M1069.55,863.96l-481.93,178.18c-10.45,3.86-21.55-3.87-21.55-15.01v-42.64c0-5.9,3.25-11.32,8.45-14.11l481.93-258.06c10.66-5.71,23.55,2.01,23.55,14.11v122.52c0,6.7-4.17,12.68-10.45,15.01Z" />
+                            <path
+                                d="M1072.04,651.54l-481.93,280.16c-10.67,6.2-24.04-1.49-24.04-13.83v-81.17c0-4.74,2.1-9.23,5.73-12.27l481.93-403.56c10.41-8.72,26.27-1.32,26.27,12.27v204.56c0,5.7-3.03,10.97-7.96,13.83Z" />
+                            <path
+                                d="M1075.04,314.21l-481.93,459.61c-10.18,9.71-27.04,2.49-27.04-11.58v-144.17S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z" />
+                        </g>
                     </svg>
                     <span class="vail-logo-ai font-serif font-bold text-lg"
                         style="font-family: Century, 'Century Schoolbook', Georgia, serif;">OLM</span>
@@ -1666,6 +1691,21 @@
 
 
         <div id="intelligence-flare"></div>
+
+        <div id="top-right-actions" class="animate-fade-in">
+            <div class="rounded-lg header-island px-3 cursor-default" title="Total Tokens Used">
+                <i data-feather="database" class="w-3.5 h-3.5 text-zinc-400"></i>
+                <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider ml-1">
+                    <span class="action-label">Tokens:</span> <span id="token-count-display">0</span>
+                </span>
+            </div>
+            <button onclick="window.showChangelog()"
+                class="rounded-lg header-island px-3 hover:scale-105 active:scale-95 transition-all">
+                <i data-feather="zap" class="w-3.5 h-3.5 text-zinc-400"></i>
+                <span
+                    class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider ml-1 action-label">Updates</span>
+            </button>
+        </div>
 
         <header
             class="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6 z-50 pointer-events-none sticky top-0 lg:hidden">
@@ -2053,6 +2093,46 @@
                     }
                 };
 
+                if (window.updateTokenCount) window.updateTokenCount(0);
+
+                // Fetch initial token count from backend
+                const fetchInitialTokens = async () => {
+                    try {
+                        const baseUrl = await getOpenAIClient();
+                        const res = await fetch(baseUrl + '/api/tokens');
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (typeof data.total_tokens === 'number') {
+                                settings.totalTokensUsed = data.total_tokens;
+                                const display = document.getElementById('token-count-display');
+                                if (display) display.innerText = settings.totalTokensUsed.toLocaleString();
+                                save();
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Failed to fetch initial tokens:", e);
+                    }
+                };
+                fetchInitialTokens();
+
+                // Auto-detect tunnel URL from backend (keeps frontend in sync when tunnel changes)
+                const detectTunnelUrl = async () => {
+                    try {
+                        const baseUrl = await getOpenAIClient();
+                        const res = await fetch(baseUrl + '/tunnel_url');
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.tunnel_url && data.tunnel_url !== baseUrl) {
+                                console.log('Tunnel URL updated:', data.tunnel_url);
+                                localStorage.setItem('vail_custom_backend_url', data.tunnel_url + '/gradio');
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Failed to detect tunnel URL:', e);
+                    }
+                };
+                detectTunnelUrl();
+
                 setTimeout(checkChangelog, 1000);
             };
 
@@ -2365,6 +2445,7 @@
                 pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
                 lang: 'en',
                 sidebarMode: 'manual',
+                totalTokensUsed: 0,
                 customAccents: [],
                 systemPrompt: 'You are Polaris, a specialized research assistant. You MUST use $$ delimiters for ALL mathematical notation and equations. NO EXCEPTIONS. Do not use [ ] or ( ) for blocks or inline math; use $$ for everything.'
             }));
@@ -3372,6 +3453,12 @@
                     const overlay = document.getElementById('settings-overlay');
                     if (overlay) overlay.classList.remove('active');
                 }
+
+                if (window.innerWidth < 1024 && els.sidebar) {
+                    els.sidebar.classList.add('mobile-hidden');
+                    const overlay = document.getElementById('sidebar-overlay');
+                    if (overlay) overlay.style.display = 'none';
+                }
             };
 
 
@@ -3445,6 +3532,12 @@
                 if (history) history.innerHTML = "";
                 document.body.classList.add("chat-empty");
                 if (window.initChatUI) window.initChatUI();
+
+                if (window.innerWidth < 1024 && els.sidebar) {
+                    els.sidebar.classList.add('mobile-hidden');
+                    const overlay = document.getElementById('sidebar-overlay');
+                    if (overlay) overlay.style.display = 'none';
+                }
 
                 render(); updateUI();
             };
@@ -3593,6 +3686,8 @@
                             model: "polaris-local",
                             messages: messages,
                             temperature: settings.temp || 0.35,
+                            top_p: settings.top_p || 0.9,
+                            max_tokens: settings.max_tokens || 256,
                             stream: true,
                             web_search: currentGenerationIsSearch,
                             use_thought: isThinkingEnabled
@@ -3675,6 +3770,9 @@
                                     }
                                     els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
                                 }
+                                if (data.usage) {
+                                    window.updateTokenCount(data.usage.total_tokens || 0);
+                                }
                             } catch (e) {
                                 console.warn("SSE stream parse error:", e);
                             }
@@ -3736,6 +3834,14 @@
                     }
                     save();
                 }
+            };
+
+            window.updateTokenCount = (tokens) => {
+                if (typeof tokens !== 'number') return;
+                settings.totalTokensUsed = (settings.totalTokensUsed || 0) + tokens;
+                const display = document.getElementById('token-count-display');
+                if (display) display.innerText = settings.totalTokensUsed.toLocaleString();
+                save();
             };
 
             const applyContentFeatures = (el) => {
@@ -3855,7 +3961,7 @@
                 if (window.innerWidth < 1024 && els.sidebar) {
                     els.sidebar.classList.add('mobile-hidden');
                     const overlay = document.getElementById('sidebar-overlay');
-                    if (overlay) overlay.classList.remove('active');
+                    if (overlay) overlay.style.display = 'none';
                 }
             };
 

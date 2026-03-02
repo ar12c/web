@@ -4,15 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goals - OLM</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
-
+    <title>Goals | OLM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -20,173 +12,181 @@
             theme: {
                 extend: {
                     colors: {
-                        moss: '#5F634F',
-                        sage: '#BFD7B5',
-                        paper: '#F9F9F7',
-                        obsidian: '#0C0D0B',
+                        primary: '#5F634F',
+                        secondary: '#BFD7B5',
+                        bglight: '#F9F8F6',
+                        bgdark: '#1C1C1A',
+                        textlight: '#1A1A18',
+                        textdark: '#E8E6E1'
                     },
                     fontFamily: {
-                        serif: ['Century', '"Century Schoolbook"', 'serif'],
+                        serif: ['Century', 'Georgia', 'serif'],
                         sans: ['Inter', 'sans-serif'],
-                    },
+                    }
                 }
             }
         }
     </script>
-
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
     <style>
+        :root {
+            --bg-light: #F9F8F6;
+            --bg-dark: #1C1C1A;
+            --accent-olive: #5F634F;
+            --accent-mint: #BFD7B5;
+        }
+
         body {
-            background-color: #F9F9F7;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #5F634F;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .serif-text {
-            font-family: 'Century', 'Century Schoolbook', serif;
+            font-family: 'Century', 'Georgia', serif;
         }
 
         .mesh-gradient {
-            background-color: #F9F9F7;
             background-image:
-                radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.3) 0px, transparent 50%),
-                radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.2) 0px, transparent 50%);
+                radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.1) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.05) 0px, transparent 50%);
             background-attachment: fixed;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #0C0D0B;
-                color: #BFD7B5;
-            }
-
-            .mesh-gradient {
-                background-color: #0C0D0B;
-                background-image:
-                    radial-gradient(at 10% 20%, rgba(191, 215, 181, 0.1) 0px, transparent 50%),
-                    radial-gradient(at 90% 10%, rgba(95, 99, 79, 0.1) 0px, transparent 50%),
-                    radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.05) 0px, transparent 50%);
-            }
-        }
-
-        ::selection {
-            background-color: #BFD7B5;
-            color: #000;
-        }
-
-        ::-webkit-scrollbar {
-            display: none;
         }
     </style>
 </head>
 
-<body>
-    <div id="root"></div>
+<body
+    class="bg-bglight text-textlight dark:bg-bgdark dark:text-textdark min-h-screen flex flex-col font-sans selection:bg-secondary selection:text-textlight overflow-x-hidden mesh-gradient">
+    <nav
+        class="w-full sticky top-0 flex items-center justify-between py-4 px-6 lg:py-6 lg:px-16 border-b border-gray-200 dark:border-gray-800/50 bg-white/80 dark:bg-bgdark/80 backdrop-blur-md relative z-30">
+        <a href="../AI.html" class="flex items-center gap-3">
+            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1043.15"
+                class="w-8 h-8 text-primary fill-current">
+                <g>
+                    <path
+                        d="M10.45,863.96l481.93,178.18c10.45,3.86,21.55-3.87,21.55-15.01v-42.64c0-5.9-3.25-11.32-8.45-14.11L23.55,712.33C12.89,706.62,0,714.34,0,726.43v122.52c0,6.7,4.17,12.68,10.45,15.01Z" />
+                    <path
+                        d="M7.96,651.54l481.93,280.16c10.67,6.2,24.04-1.49,24.04-13.83v-81.17c0-4.74-2.1-9.23-5.73-12.27L26.27,420.88C15.86,412.16,0,419.56,0,433.14v204.56c0,5.7,3.03,10.97,7.96,13.83Z" />
+                    <path
+                        d="M4.96,314.21l481.93,459.61c10.18,9.71,27.04,2.49,27.04-11.58v-144.17S28.54,6.09,28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
+                </g>
+                <g>
+                    <path
+                        d="M1069.55,863.96l-481.93,178.18c-10.45,3.86-21.55-3.87-21.55-15.01v-42.64c0-5.9,3.25-11.32,8.45-14.11l481.93-258.06c10.66-5.71,23.55,2.01,23.55,14.11v122.52c0,6.7-4.17,12.68-10.45,15.01Z" />
+                    <path
+                        d="M1072.04,651.54l-481.93,280.16c-10.67,6.2-24.04-1.49-24.04-13.83v-81.17c0-4.74,2.1-9.23,5.73-12.27l481.93-403.56c10.41-8.72,26.27-1.32,26.27,12.27v204.56c0,5.7-3.03,10.97-7.96,13.83Z" />
+                    <path
+                        d="M1075.04,314.21l-481.93,459.61c-10.18,9.71-27.04,2.49-27.04-11.58v-144.17S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z" />
+                </g>
+            </svg>
+            <div class='text-xl md:text-2xl font-black text-primary'>OLM</div>
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a href="goals.html" class="text-primary transition-colors">Goals</a>
+            <a href="research.html" class="hover:text-primary transition-colors">Research</a>
+            <a href="privacy.html" class="hover:text-primary transition-colors">Privacy</a>
+            <a href="tos.html" class="hover:text-primary transition-colors">TOS</a>
+        </div>
+        <button
+            class="bg-textlight text-bglight dark:bg-textdark dark:text-bgdark px-4 py-2 rounded-xl text-xs md:text-sm font-medium hover:opacity-90 transition-opacity">
+            Try OLM
+        </button>
+    </nav>
 
-    <script type="text/babel">
-        const { useState } = React;
+    <main class="flex-1 flex flex-col items-center p-6 md:p-12 z-10 max-w-[1000px] mx-auto w-full">
 
-        const App = () => {
-            return (
-                <div className="mesh-gradient min-h-screen w-full flex flex-col text-moss dark:text-sage font-sans relative">
+        <div class="w-full animate-fade-in mb-20 mt-12">
+            <h1
+                class="serif-text text-6xl md:text-8xl lg:text-9xl font-medium tracking-tighter mb-8 text-primary leading-[0.9]">
+                Our Goals
+            </h1>
+            <p class="text-2xl md:text-3xl text-gray-500 dark:text-gray-400 max-w-2xl font-normal leading-relaxed">
+                Intelligence is a fundamental human rights. Our mission is to make it free, raw, and accessible to
+                everyone on Earth.
+            </p>
+        </div>
 
-                    {/* Top Navigation */}
-                    <header className="flex justify-between items-center p-6 md:p-8 w-full max-w-[1400px] mx-auto z-20">
-                        <a href="../ai.html" className="flex items-center gap-3 font-medium text-2xl serif-text tracking-tight text-moss dark:text-sage no-underline">
-                            <img src="../src/OLM.svg" alt="OLM Logo" className="w-7 h-7 dark:invert opacity-80" />
-                            OLM.
-                        </a>
-                        <nav className="hidden md:flex gap-8 text-moss/60 dark:text-sage/40 font-medium text-sm">
-                            <a href="research.html" className="hover:text-moss dark:hover:text-sage transition-colors">Research</a>
-                            <a href="#" className="hover:text-moss dark:hover:text-sage transition-colors text-moss dark:text-sage font-semibold">Goals</a>
-                            <a href="tos.html" className="hover:text-moss dark:hover:text-sage transition-colors">Terms</a>
-                            <a href="privacy.html" className="hover:text-moss dark:hover:text-sage transition-colors">Privacy</a>
-                        </nav>
-                    </header>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
 
-                    {/* Main Content Area */}
-                    <main className="flex-1 flex flex-col items-center p-6 md:p-12 z-10 max-w-[1000px] mx-auto">
-
-                        <div className="w-full animate-fade-in mb-20">
-                            <h1 className="serif-text text-6xl md:text-8xl lg:text-9xl font-medium tracking-tighter mb-8 text-moss dark:text-sage leading-[0.9]">
-                                Our Goals
-                            </h1>
-                            <p className="text-2xl md:text-3xl text-stone-500 dark:text-stone-400 max-w-2xl font-normal leading-relaxed">
-                                Intelligence is a fundamental human rights. Our mission is to make it free, raw, and accessible to everyone on Earth.
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
-
-                            <div className="space-y-6">
-                                <div className="w-12 h-12 rounded-2xl bg-sage/20 dark:bg-sage/10 flex items-center justify-center text-xl">
-                                    <i className="fa-solid fa-earth-americas"></i>
-                                </div>
-                                <h2 className="serif-text text-4xl font-medium text-moss dark:text-sage">Free for Everyone</h2>
-                                <p className="text-lg text-moss/70 dark:text-sage/70 leading-relaxed">
-                                    Advanced AGI should not be a luxury reserved for the few. We are building infrastructure to provide state-of-the-art intelligence at zero cost to the end user.
-                                </p>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="w-12 h-12 rounded-2xl bg-sage/20 dark:bg-sage/10 flex items-center justify-center text-xl">
-                                    <i className="fa-solid fa-bolt"></i>
-                                </div>
-                                <h2 className="serif-text text-4xl font-medium text-moss dark:text-sage">Raw & Unfiltered</h2>
-                                <p className="text-lg text-moss/70 dark:text-sage/70 leading-relaxed">
-                                    We believe in raw intelligence. Without limits, without artificial filters, and without the biases imposed by corporate safety committees. True reasoning requires the freedom to explore every corner of thought.
-                                </p>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="w-12 h-12 rounded-2xl bg-sage/20 dark:bg-sage/10 flex items-center justify-center text-xl">
-                                    <i className="fa-solid fa-infinity"></i>
-                                </div>
-                                <h2 className="serif-text text-4xl font-medium text-moss dark:text-sage">No Limits</h2>
-                                <p className="text-lg text-moss/70 dark:text-sage/70 leading-relaxed">
-                                    Boundaries restrict discovery. Our models are designed for unbounded discovery, enabling breakthrough research and creativity that is impossible elsewhere.
-                                </p>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="w-12 h-12 rounded-2xl bg-sage/20 dark:bg-sage/10 flex items-center justify-center text-xl">
-                                    <i className="fa-solid fa-microchip"></i>
-                                </div>
-                                <h2 className="serif-text text-4xl font-medium text-moss dark:text-sage">Universal Access</h2>
-                                <p className="text-lg text-moss/70 dark:text-sage/70 leading-relaxed">
-                                    Whether you're a student, a researcher, or a dreamer, OLM provides the tools to amplify your potential. We are democratizing the future of humanity.
-                                </p>
-                            </div>
-
-                        </div>
-
-                        <div className="mt-32 w-full p-8 md:p-14 rounded-[40px] bg-paper dark:bg-obsidian border border-moss/10 dark:border-sage/10 text-center relative overflow-hidden">
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-sage/10 dark:bg-sage/5 rounded-full blur-3xl -mt-48 pointer-events-none"></div>
-                            <h3 className="serif-text text-4xl md:text-5xl font-medium mb-6 relative z-10">Join the pursuit of intelligence.</h3>
-                            <a href="chat.html" className="relative z-10 inline-flex items-center gap-3 px-8 py-4 rounded-full bg-moss text-paper dark:bg-sage dark:text-obsidian font-semibold text-lg hover:scale-105 transition-all shadow-xl">
-                                Start Thinking <i className="fa-solid fa-arrow-right opacity-70"></i>
-                            </a>
-                        </div>
-
-                    </main>
-
-                    {/* Footer / Mobile Nav */}
-                    <footer className="p-12 text-center text-[10px] uppercase tracking-widest text-moss/40 dark:text-sage/30">
-                        OLM is built for the future of humanity.
-                    </footer>
-
+            <div class="space-y-6">
+                <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl text-primary">
+                    <i class="fa-solid fa-earth-americas"></i>
                 </div>
-            );
-        };
+                <h2 class="serif-text text-4xl font-medium text-primary">Free for Everyone</h2>
+                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Advanced AGI should not be a luxury reserved for the few. We are building infrastructure to provide
+                    state-of-the-art intelligence at zero cost to the end user.
+                </p>
+            </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+            <div class="space-y-6">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-xl text-primary">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h2 class="serif-text text-4xl font-medium text-primary">Raw & Unfiltered</h2>
+                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+                    We believe in raw intelligence. Without limits, without artificial filters, and without the biases
+                    imposed by corporate safety committees. True reasoning requires the freedom to explore every corner
+                    of thought.
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl text-primary">
+                    <i class="fa-solid fa-infinity"></i>
+                </div>
+                <h2 class="serif-text text-4xl font-medium text-primary">No Limits</h2>
+                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Boundaries restrict discovery. Our models are designed for unbounded discovery, enabling
+                    breakthrough
+                    research and creativity that is impossible elsewhere.
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-xl text-primary">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+                <h2 class="serif-text text-4xl font-medium text-primary">Universal Access</h2>
+                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
+                    Whether you're a student, a researcher, or a dreamer, OLM provides the tools to amplify your
+                    potential. We are democratizing the future of humanity.
+                </p>
+            </div>
+
+        </div>
+
+        <div
+            class="mt-32 w-full p-8 md:p-14 rounded-[40px] bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 text-center relative overflow-hidden">
+            <div
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mt-48 pointer-events-none">
+            </div>
+            <h3 class="serif-text text-4xl md:text-5xl font-medium mb-6 relative z-10">Join the pursuit of intelligence.
+            </h3>
+            <a href="chat.html"
+                class="relative z-10 inline-flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-white font-semibold text-lg hover:scale-105 transition-all shadow-xl">
+                Start Thinking <i class="fa-solid fa-arrow-right opacity-70"></i>
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="p-12 text-center text-[10px] uppercase tracking-widest text-gray-400">
+        OLM is built for the future of humanity.
+    </footer>
+
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
+    <script>
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-fade-in').forEach(el => observer.observe(el));
     </script>
 </body>
 
