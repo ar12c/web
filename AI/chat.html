@@ -2095,18 +2095,16 @@
 
                 if (window.updateTokenCount) window.updateTokenCount(0);
 
-                // Fetch initial token count from backend
+                // Fetch initial token count from backend for current chat
                 const fetchInitialTokens = async () => {
                     try {
                         const baseUrl = await getOpenAIClient();
-                        const res = await fetch(baseUrl + '/api/tokens');
+                        const res = await fetch(baseUrl + '/api/tokens?chat_id=' + encodeURIComponent(currentChatId));
                         if (res.ok) {
                             const data = await res.json();
                             if (typeof data.total_tokens === 'number') {
-                                settings.totalTokensUsed = data.total_tokens;
                                 const display = document.getElementById('token-count-display');
-                                if (display) display.innerText = settings.totalTokensUsed.toLocaleString();
-                                save();
+                                if (display) display.innerText = data.total_tokens.toLocaleString();
                             }
                         }
                     } catch (e) {
@@ -3526,6 +3524,9 @@
                 window.toggleSendIcon('send');
                 if (isGenerating && currentJob) currentJob.cancel();
                 currentChatId = crypto.randomUUID(); chatHistory = []; isGenerating = false;
+                // Reset token display for new chat
+                const tokenDisplay = document.getElementById('token-count-display');
+                if (tokenDisplay) tokenDisplay.innerText = '0';
 
 
                 const history = document.getElementById("chat-messages");
@@ -3690,7 +3691,8 @@
                             max_tokens: settings.max_tokens || 256,
                             stream: true,
                             web_search: currentGenerationIsSearch,
-                            use_thought: isThinkingEnabled
+                            use_thought: isThinkingEnabled,
+                            chat_id: currentChatId
                         })
                     });
 
@@ -3838,9 +3840,15 @@
 
             window.updateTokenCount = (tokens) => {
                 if (typeof tokens !== 'number') return;
-                settings.totalTokensUsed = (settings.totalTokensUsed || 0) + tokens;
+                // Track per-chat tokens
+                if (allChats[currentChatId]) {
+                    allChats[currentChatId].tokensUsed = (allChats[currentChatId].tokensUsed || 0) + tokens;
+                }
                 const display = document.getElementById('token-count-display');
-                if (display) display.innerText = settings.totalTokensUsed.toLocaleString();
+                if (display) {
+                    const chatTokens = allChats[currentChatId]?.tokensUsed || tokens;
+                    display.innerText = chatTokens.toLocaleString();
+                }
                 save();
             };
 
@@ -3867,7 +3875,8 @@
                     title: chatHistory[0][0].substring(0, 30),
                     history: chatHistory,
                     timestamp: Date.now(),
-                    pinned: allChats[currentChatId]?.pinned || false
+                    pinned: allChats[currentChatId]?.pinned || false,
+                    tokensUsed: allChats[currentChatId]?.tokensUsed || 0
                 };
                 allChats[currentChatId] = chat;
 
@@ -3954,6 +3963,9 @@
                 if (!allChats[id]) return;
                 currentChatId = id;
                 chatHistory = allChats[id].history;
+                // Update token display for this chat
+                const tokenDisplay = document.getElementById('token-count-display');
+                if (tokenDisplay) tokenDisplay.innerText = (allChats[id].tokensUsed || 0).toLocaleString();
                 render();
                 updateUI();
                 renderHistory();
