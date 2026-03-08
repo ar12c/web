@@ -166,11 +166,11 @@
 
 
         #sidebar-mini-content {
-            display: none !important;
+            display: none;
         }
 
         #sidebar-full-content {
-            display: flex !important;
+            display: flex;
         }
 
         @media (min-width: 1024px) {
@@ -1942,64 +1942,57 @@
 
 
         window.toggleSidebar = () => {
-            if (!els.sidebar) return;
-            const body = document.body;
-            const fullContent = document.getElementById('sidebar-full-content');
-            const miniContent = document.getElementById('sidebar-mini-content');
-            const minWidthVal = 60;
+    if (!els.sidebar) return;
+    const body = document.body;
+    const fullContent = document.getElementById('sidebar-full-content');
+    const miniContent = document.getElementById('sidebar-mini-content');
 
-            if (window.innerWidth < 1024) {
-                const overlay = document.getElementById('sidebar-overlay');
-                if (els.sidebar.classList.contains('-translate-x-full')) {
-                    els.sidebar.classList.remove('-translate-x-full');
-                    if (overlay) overlay.style.display = 'block';
-                } else {
-                    els.sidebar.classList.add('-translate-x-full');
-                    if (overlay) overlay.style.display = 'none';
-                }
-                return;
+    if (window.innerWidth < 1024) {
+        const overlay = document.getElementById('sidebar-overlay');
+        if (els.sidebar.classList.contains('-translate-x-full')) {
+            els.sidebar.classList.remove('-translate-x-full');
+            if (overlay) overlay.style.display = 'block';
+        } else {
+            els.sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.style.display = 'none';
+        }
+        return;
+    }
+
+    const isCollapsed = body.classList.contains('sidebar-collapsed');
+
+    if (isCollapsed) {
+        // EXPAND SIDEBAR
+        body.classList.remove('sidebar-collapsed');
+        fullContent.style.display = 'flex';
+        miniContent.style.display = 'none';
+        
+        anime({
+            targets: fullContent,
+            opacity: [0, 1],
+            translateX: [-20, 0],
+            duration: 300,
+            easing: 'easeOutQuint'
+        });
+    } else {
+        // COLLAPSE SIDEBAR
+        anime({
+            targets: fullContent,
+            opacity: [1, 0],
+            translateX: [0, -20],
+            duration: 200,
+            easing: 'easeInQuint',
+            complete: () => {
+                body.classList.add('sidebar-collapsed');
+                fullContent.style.display = 'none';
+                miniContent.style.display = 'flex';
+                miniContent.style.opacity = 1;
             }
+        });
+    }
+    if (typeof updateUI === 'function') updateUI();
+};
 
-            const isCollapsed = body.classList.contains('sidebar-collapsed');
-
-            if (isCollapsed) {
-                fullContent.style.display = 'flex';
-                miniContent.style.display = 'none';
-                body.classList.remove('sidebar-collapsed');
-
-                anime({
-                    targets: fullContent,
-                    opacity: [0, 1],
-                    translateX: [-30, 0],
-                    duration: 350,
-                    easing: 'easeOutQuint'
-                });
-            } else {
-                // Collapsing Animation
-                anime({
-                    targets: fullContent,
-                    opacity: [1, 0],
-                    translateX: [0, -30],
-                    duration: 200,
-                    easing: 'easeInQuint',
-                    complete: () => {
-                        body.classList.add('sidebar-collapsed');
-                        fullContent.style.display = 'none';
-                        miniContent.style.display = 'flex';
-                        miniContent.style.opacity = 0;
-
-                        anime({
-                            targets: miniContent,
-                            opacity: [0, 1],
-                            translateX: [-30, 0],
-                            duration: 350,
-                            easing: 'easeOutQuint'
-                        });
-                    }
-                });
-            }
-            if (typeof updateUI === 'function') updateUI();
-        };
         window.resetChat = () => console.warn("Chat not ready");
         window.sendMessage = () => console.warn("Chat not ready");
         window.handleAction = () => console.warn("Action not ready");
@@ -2157,36 +2150,38 @@
 
 
                 const trigger = document.getElementById('sidebar-hover-trigger');
-                let hideTimeout;
+let hideTimeout;
 
-                if (trigger) {
-                    trigger.addEventListener('mouseenter', () => {
-                        if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024) {
-                            clearTimeout(hideTimeout);
-                            document.body.classList.remove('sidebar-collapsed');
-                            if (typeof updateUI === 'function') updateUI();
-                        }
-                    });
-                }
-                if (els.sidebar) {
-                    els.sidebar.addEventListener('mouseenter', () => {
-                        clearTimeout(hideTimeout);
-                        if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024) {
-                            document.body.classList.remove('sidebar-collapsed');
-                            if (typeof updateUI === 'function') updateUI();
-                        }
-                    });
+if (trigger) {
+    trigger.addEventListener('mouseenter', () => {
+        if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024) {
+            if (document.body.classList.contains('sidebar-collapsed')) {
+                clearTimeout(hideTimeout);
+                window.toggleSidebar(); // Expands
+            }
+        }
+    });
+}
 
-                    els.sidebar.addEventListener('mouseleave', () => {
+if (els.sidebar) {
+    els.sidebar.addEventListener('mouseenter', () => {
+        clearTimeout(hideTimeout);
+    });
 
-                        if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024 && !els.settingsPanel.classList.contains('active')) {
-                            hideTimeout = setTimeout(() => {
-                                document.body.classList.add('sidebar-collapsed');
-                                if (typeof updateUI === 'function') updateUI();
-                            }, 300);
-                        }
-                    });
-                }
+    els.sidebar.addEventListener('mouseleave', () => {
+        if (settings.sidebarMode === 'smart' && window.innerWidth >= 1024) {
+            if (!document.body.classList.contains('sidebar-collapsed')) {
+                clearTimeout(hideTimeout);
+                hideTimeout = setTimeout(() => {
+                    // Don't auto-hide if settings are open
+                    if (!els.settingsPanel.classList.contains('active')) {
+                        window.toggleSidebar(); // Collapses
+                    }
+                }, 600); // Buffer time so it doesn't vanish instantly
+            }
+        }
+    });
+}
 
 
                 if (typeof render === 'function') render();
