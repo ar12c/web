@@ -25,7 +25,6 @@
 
     <style id="dynamic-accent-styles">
         :root {
-
             --accent-color: #6C8EBF;
             --accent-glow: rgba(108, 142, 191, 0.4);
             --accent-tint: rgba(0, 0, 0, 0);
@@ -34,13 +33,19 @@
             --fade-color: #F9F9F7;
             --fade-gradient-stop: #F9F9F7;
 
-
             --bg-color: #F9F9F7;
             --sidebar-bg: #F2F2F0;
             --input-bg: rgba(249, 249, 247, 0.6);
             --action-btn-color: #52525b;
             --thinking-accent: color-mix(in srgb, var(--accent-color), black 20%);
             --thinking-side: #94a3b8;
+
+            /* New Sidebar Variables */
+            --sidebar-width: 260px;
+            --sidebar-rail-width: 60px;
+            --header-height: 56px;
+            --sidebar-section-first-margin-top: 8px;
+            --bg-elevated-secondary: #F2F2F0;
         }
 
         .dark {
@@ -53,6 +58,9 @@
             --action-btn-color: #e4e4e7;
             --thinking-accent: color-mix(in srgb, var(--accent-color), white 35%);
             --thinking-side: #4b5563;
+
+            /* New Sidebar Variables - Dark */
+            --bg-elevated-secondary: #111210;
         }
 
 
@@ -155,8 +163,14 @@
             z-index: -1;
         }
 
-        aside.mobile-hidden {
-            transform: translateX(-100%);
+
+
+        #sidebar-mini-content {
+            display: none !important;
+        }
+
+        #sidebar-full-content {
+            display: flex !important;
         }
 
         @media (min-width: 1024px) {
@@ -167,37 +181,8 @@
             }
 
             body.sidebar-collapsed aside {
-                width: 6vw;
-                min-width: 70px;
-                background-color: transparent !important;
-                border-color: transparent !important;
-            }
-
-            body.sidebar-collapsed #sidebar-full-content {
-                display: none;
-            }
-
-            body.sidebar-collapsed #sidebar-mini-content {
-                display: flex;
-            }
-        }
-
-        aside.mobile-hidden {
-            transform: translateX(-100%);
-        }
-
-        #sidebar-mini-content {
-            display: none;
-        }
-
-        #sidebar-full-content {
-            display: flex;
-        }
-
-        @media (min-width: 1024px) {
-            body.sidebar-collapsed aside {
-                width: 1vw;
-                min-width: 50px;
+                width: var(--sidebar-rail-width);
+                min-width: var(--sidebar-rail-width);
                 transform: translateX(0);
                 overflow: hidden;
                 background-color: transparent !important;
@@ -205,12 +190,54 @@
             }
 
             body.sidebar-collapsed #sidebar-full-content {
-                display: none;
+                display: none !important;
             }
 
             body.sidebar-collapsed #sidebar-mini-content {
-                display: flex;
+                display: flex !important;
             }
+        }
+
+        /* ChatGPT Style Sidebar Specifics */
+        .__menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            margin: 0.125rem 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            color: var(--action-btn-color);
+            text-decoration: none;
+        }
+
+        .__menu-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .__menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .__menu-item .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        kbd {
+            font-size: 0.75rem;
+            padding: 0.1rem 0.3rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+            margin-left: 2px;
+        }
+
+        .dark kbd {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .vail-logo-ai {
@@ -1576,13 +1603,16 @@
     </div>
 
     <aside id="sidebar"
-        class="mobile-hidden fixed lg:static inset-y-0 left-0 w-72 lg:w-60 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none transition-all duration-300">
+        class="-translate-x-full lg:translate-x-0 fixed lg:static inset-y-0 left-0 bg-sidebar-light dark:bg-sidebar-dark border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col shadow-xl lg:shadow-none transition-all duration-300"
+        style="width: var(--sidebar-width);">
 
-        <div id="sidebar-full-content" class="p-4 flex flex-col h-full min-w-[280px] lg:min-w-0">
-            <div class="mb-6 lg:mb-4 px-2 flex items-center justify-between">
+        <!-- Full Sidebar Content -->
+        <div id="sidebar-full-content" class="flex flex-col h-full w-full overflow-hidden">
+            <!-- Header with Logo and Close Button -->
+            <div class="h-[var(--header-height)] flex items-center justify-between px-4 shrink-0">
                 <a href="../ai.html" class="flex items-center gap-3 no-underline">
                     <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080"
-                        class="w-8 h-8 fill-current vail-logo-ai">
+                        class="w-6 h-6 fill-current vail-logo-ai">
                         <path
                             d="M4.96,314.21l508.97,180.31v-94.71L28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
                         <polygon points="513.93 561.2 0 684.2 0 395.8 513.93 522.5 513.93 561.2" />
@@ -1594,92 +1624,120 @@
                         <path
                             d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z" />
                     </svg>
-                    <span class="vail-logo-ai font-serif font-bold text-lg"
-                        style="font-family: Century, 'Century Schoolbook', Georgia, serif;">OLM</span>
                 </a>
                 <button
-                    class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                    onclick="window.toggleSidebar()"><i data-feather="chevron-left"
-                        class="w-5 h-5 lg:w-4 lg:h-4"></i></button>
+                    class="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                    onclick="window.toggleSidebar()">
+                    <i data-feather="chevron-left" class="w-4 h-4"></i>
+                </button>
             </div>
-            <button id="new-chat-btn" onclick="window.resetChat()"
-                class="w-full flex items-center justify-between gap-3 px-3 py-3 text-sm lg:text-xs font-bold rounded-xl transition-all mb-3 shadow-lg hover:brightness-110 active:brightness-90"
-                style="background-color: var(--accent-color); color: var(--accent-contrast)"><span
-                    data-t="new_conversation">New Conversation</span><i data-feather="plus"
-                    class="w-3 h-3"></i></button>
 
+            <!-- Main Navigation -->
+            <div class="flex-1 overflow-y-auto no-scrollbar pt-2">
+                <!-- New Chat Button -->
+                <div class="__menu-item" onclick="window.resetChat()" title="New Chat (⌘O)">
+                    <div class="flex items-center gap-3">
+                        <div class="icon"><i data-feather="plus" class="w-4 h-4"></i></div>
+                        <span class="text-sm font-medium">New chat</span>
+                    </div>
+                    <div class="hidden lg:block text-[10px] opacity-50 font-mono">⌘O</div>
+                </div>
 
-            <div class="mb-4 lg:mb-3 relative group">
-                <i data-feather="search"
-                    class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-3 h-3 pointer-events-none group-focus-within:text-[var(--accent-color)] transition-colors"></i>
-                <input type="text" id="chat-search-input" placeholder="Search chats..."
-                    class="w-full pl-9 pr-3 py-3 text-sm lg:text-xs font-semibold rounded-xl bg-zinc-200/50 dark:bg-white/5 border border-transparent focus:bg-white dark:focus:bg-zinc-800 focus:border-[var(--accent-color)]/30 outline-none transition-all placeholder-zinc-400"
-                    oninput="window.filterChats(this.value)">
-            </div>
-            <div class="flex-1 overflow-y-auto no-scrollbar space-y-1 lg:space-y-0.5" id="history-list"></div>
-            <div class="pt-3 border-t border-zinc-200 dark:border-zinc-800 space-y-1 lg:space-y-0.5">
-                <a href="https://voidai.app" target="_blank"
-                    class="w-full flex items-center gap-3 px-3 py-3 text-xs font-semibold rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700 text-zinc-900 dark:text-zinc-100 no-underline">
-                    <img src="https://voidai.app/voidai.png" class="w-3.5 h-3.5 rounded-sm shrink-0" alt="voidai logo">
-                    <span>Sponsored by foidai</span>
+                <!-- Sponsored/Research -->
+                <a href="https://voidai.app" target="_blank" class="__menu-item">
+                    <div class="flex items-center gap-3">
+                        <div class="icon"><i data-feather="external-link" class="w-4 h-4"></i></div>
+                        <span class="text-sm font-medium truncate">Sponsored by foidai</span>
+                    </div>
                 </a>
-                <a href="research.html"
-                    class="w-full flex items-center gap-3 px-3 py-3 text-xs font-semibold rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all active:bg-zinc-300 dark:active:bg-zinc-700 text-zinc-900 dark:text-zinc-100 no-underline">
-                    <i data-feather="compass" class="text-zinc-400 w-3 h-3"></i>
-                    <span>Research</span>
+
+                <a href="research.html" class="__menu-item">
+                    <div class="flex items-center gap-3">
+                        <div class="icon"><i data-feather="compass" class="w-4 h-4"></i></div>
+                        <span class="text-sm font-medium">Research</span>
+                    </div>
                 </a>
-                <div
-                    class="w-full flex items-center justify-between px-3 py-3 rounded-xl hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all group">
-                    <button onclick="window.clearAll()"
-                        class="flex items-center gap-3 text-xs font-semibold text-red-500/80 hover:text-red-600 transition-colors">
-                        <i data-feather="trash-2" class="w-3 h-3"></i>
-                        <span data-t="clear_chats">Clear chats</span>
-                    </button>
-                    <div class="flex flex-col items-end opacity-40 text-[8px] font-black uppercase tracking-tighter">
-                        <span data-t="storage_used">Storage Used:</span>
-                        <span id="storage-display-sidebar" class="font-mono">—</span>
+
+                <!-- Search Input -->
+                <div class="px-2 mt-2 mb-1">
+                    <div class="relative group">
+                        <i data-feather="search"
+                            class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-3.5 h-3.5 pointer-events-none group-focus-within:text-[var(--accent-color)] transition-colors"></i>
+                        <input type="text" id="chat-search-input" placeholder="Search chats..."
+                            class="w-full pl-9 pr-3 py-2 text-sm font-medium rounded-lg bg-zinc-500/5 border border-transparent focus:bg-white dark:focus:bg-zinc-800 focus:border-[var(--accent-color)]/30 outline-none transition-all placeholder-zinc-400"
+                            oninput="window.filterChats(this.value)">
                     </div>
                 </div>
+
+                <!-- Chat History Section -->
+                <div class="px-3 mt-6 mb-2">
+                    <h3 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-2">History</h3>
+                </div>
+                <div id="history-list" class="flex-1 space-y-0.5 px-2"></div>
             </div>
-            <div id="user-profile-section">
-                <div onclick="window.toggleSettingsPanel()"
-                    class="flex items-center justify-between group cursor-pointer hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all rounded-xl px-3 py-3 -mx-2">
-                    <div class="flex items-center gap-3 lg:gap-2">
-                        <div id="user-avatar-container">
-                            <div id="user-avatar-display">U</div>
-                        </div>
-                        <div class="flex flex-col min-w-0">
-                            <span id="sidebar-user-name"
-                                class="text-xs font-bold truncate text-zinc-900 dark:text-white">Profile</span>
-                        </div>
+
+            <!-- Bottom Section: Clear and Profile -->
+            <div class="p-2 border-t border-zinc-200 dark:border-zinc-800/50">
+                <div class="__menu-item text-red-500/80 hover:bg-red-500/5" onclick="window.clearAll()">
+                    <div class="flex items-center gap-3">
+                        <div class="icon"><i data-feather="trash-2" class="w-4 h-4"></i></div>
+                        <span class="text-sm font-medium">Clear all chats</span>
                     </div>
-                    <button
-                        class="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-all">
-                        <i data-feather="settings" class="w-4 h-4 lg:w-3 lg:h-3"></i>
-                    </button>
+                </div>
+
+                <div id="user-profile-section" class="mt-1">
+                    <div onclick="window.toggleSettingsPanel()"
+                        class="flex items-center justify-between group cursor-pointer hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-all rounded-lg px-3 py-2.5">
+                        <div class="flex items-center gap-3">
+                            <div id="user-avatar-container"
+                                class="w-6 h-6 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
+                                <div id="user-avatar-display">U</div>
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <span id="sidebar-user-name"
+                                    class="text-sm font-medium truncate text-zinc-900 dark:text-white leading-none">Profile</span>
+                                <span class="text-[10px] text-zinc-400 mt-1 uppercase tracking-tighter"
+                                    id="storage-display-sidebar">Storage: —</span>
+                            </div>
+                        </div>
+                        <i data-feather="settings"
+                            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-
-        <div id="sidebar-mini-content" class="hidden lg:flex flex-col items-center h-full py-4 gap-6">
-            <div class="flex flex-col items-center gap-4">
+        <!-- Mini Sidebar Content (Rail) -->
+        <div id="sidebar-mini-content" class="hidden lg:flex flex-col items-center h-full w-full py-2 shrink-0">
+            <div class="h-[var(--header-height)] flex items-center justify-center shrink-0">
                 <button onclick="window.toggleSidebar()"
-                    class="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"><i
-                        data-feather="sidebar" class="w-5 h-5"></i></button>
-                <button onclick="window.resetChat()"
-                    class="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-200/50 dark:bg-zinc-800/50 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"><i
-                        data-feather="edit-2" class="w-4 h-4"></i></button>
+                    class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all rounded-lg hover:bg-zinc-500/10">
+                    <i data-feather="chevron-right" class="w-4 h-4"></i>
+                </button>
             </div>
-            <div class="flex-1"></div>
-            <div class="flex flex-col items-center gap-4 pb-2">
-                <div id="mini-avatar-display" class="cursor-pointer w-10 h-10 rounded-xl overflow-hidden shrink-0"
-                    onclick="event.stopPropagation(); window.toggleSettingsPanel()">
 
+            <div class="flex-1 flex flex-col items-center gap-2 mt-2">
+                <button onclick="window.resetChat()"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
+                    title="New Chat">
+                    <i data-feather="plus" class="w-4 h-4"></i>
+                </button>
+                <button onclick="document.getElementById('chat-search-input').focus(); window.toggleSidebar();"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
+                    title="Search">
+                    <i data-feather="search" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="pb-4 flex flex-col items-center gap-3">
+                <div id="mini-avatar-display"
+                    class="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-[8px] font-bold overflow-hidden cursor-pointer"
+                    onclick="window.toggleSettingsPanel()">
+                    U
                 </div>
-                <button onclick="event.stopPropagation(); window.toggleSettingsPanel()"
-                    class="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all">
-                    <i data-feather="settings" class="w-5 h-5"></i>
+                <button onclick="window.toggleSettingsPanel()"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all hover:bg-zinc-500/10">
+                    <i data-feather="settings" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
@@ -1888,15 +1946,15 @@
             const body = document.body;
             const fullContent = document.getElementById('sidebar-full-content');
             const miniContent = document.getElementById('sidebar-mini-content');
-            const minWidthVal = Math.max(window.innerWidth * 0.05, 50);
+            const minWidthVal = 60;
 
             if (window.innerWidth < 1024) {
                 const overlay = document.getElementById('sidebar-overlay');
-                if (els.sidebar.classList.contains('mobile-hidden')) {
-                    els.sidebar.classList.remove('mobile-hidden');
+                if (els.sidebar.classList.contains('-translate-x-full')) {
+                    els.sidebar.classList.remove('-translate-x-full');
                     if (overlay) overlay.style.display = 'block';
                 } else {
-                    els.sidebar.classList.add('mobile-hidden');
+                    els.sidebar.classList.add('-translate-x-full');
                     if (overlay) overlay.style.display = 'none';
                 }
                 return;
@@ -1905,17 +1963,9 @@
             const isCollapsed = body.classList.contains('sidebar-collapsed');
 
             if (isCollapsed) {
-                // Expanding Animation
                 fullContent.style.display = 'flex';
                 miniContent.style.display = 'none';
                 body.classList.remove('sidebar-collapsed');
-
-                anime({
-                    targets: els.sidebar,
-                    width: [minWidthVal, 240],
-                    duration: 350,
-                    easing: 'easeOutQuint'
-                });
 
                 anime({
                     targets: fullContent,
@@ -1937,13 +1987,6 @@
                         fullContent.style.display = 'none';
                         miniContent.style.display = 'flex';
                         miniContent.style.opacity = 0;
-
-                        anime({
-                            targets: els.sidebar,
-                            width: [240, minWidthVal],
-                            duration: 350,
-                            easing: 'easeOutQuint'
-                        });
 
                         anime({
                             targets: miniContent,
@@ -2036,11 +2079,11 @@
 
                 if (!settings.hasCompletedTutorial) {
                     if (els.onboarding) els.onboarding.classList.remove('hidden');
-                    if (els.sidebar) els.sidebar.classList.add('mobile-hidden');
+                    if (els.sidebar) els.sidebar.classList.add('-translate-x-full');
                     document.body.classList.add('onboarding-active');
                 } else {
                     if (window.innerWidth >= 1024 && els.sidebar) {
-                        els.sidebar.classList.remove('mobile-hidden');
+                        els.sidebar.classList.remove('-translate-x-full');
                     }
                     document.body.classList.remove('onboarding-active');
                 }
@@ -3064,21 +3107,6 @@
                 if (window.renderThemes) window.renderThemes();
             };
 
-            window.toggleSidebar = () => {
-                const sb = els.sidebar || document.getElementById('sidebar');
-                const overlay = els.sidebarOverlay || document.getElementById('sidebar-overlay');
-                if (!sb) return;
-
-                if (window.innerWidth < 1024) {
-                    const isHidden = sb.classList.contains('mobile-hidden');
-                    sb.classList.toggle('mobile-hidden');
-                    if (overlay) overlay.style.display = isHidden ? 'block' : 'none';
-                } else {
-                    document.body.classList.toggle('sidebar-collapsed');
-                    updateUI();
-                }
-            };
-
             window.setTheme = (mode) => {
                 localStorage.setItem('vail_theme', mode);
                 const isDark = (mode === 'dark') || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -3518,7 +3546,7 @@
                 }
 
                 if (window.innerWidth < 1024 && els.sidebar) {
-                    els.sidebar.classList.add('mobile-hidden');
+                    els.sidebar.classList.add('-translate-x-full');
                     const overlay = document.getElementById('sidebar-overlay');
                     if (overlay) overlay.style.display = 'none';
                 }
@@ -3531,7 +3559,7 @@
                 if (settings && settings.hasCompletedTutorial) {
                     const sb = document.getElementById('sidebar');
                     const sbOverlay = document.getElementById('sidebar-overlay');
-                    if (sb) sb.classList.add('mobile-hidden');
+                    if (sb) sb.classList.add('-translate-x-full');
                     if (sbOverlay) sbOverlay.style.display = 'none';
                 }
             }
@@ -3600,7 +3628,7 @@
                 if (window.initChatUI) window.initChatUI();
 
                 if (window.innerWidth < 1024 && els.sidebar) {
-                    els.sidebar.classList.add('mobile-hidden');
+                    els.sidebar.classList.add('-translate-x-full');
                     const overlay = document.getElementById('sidebar-overlay');
                     if (overlay) overlay.style.display = 'none';
                 }
@@ -4041,7 +4069,7 @@
                 renderHistory();
 
                 if (window.innerWidth < 1024 && els.sidebar) {
-                    els.sidebar.classList.add('mobile-hidden');
+                    els.sidebar.classList.add('-translate-x-full');
                     const overlay = document.getElementById('sidebar-overlay');
                     if (overlay) overlay.style.display = 'none';
                 }
