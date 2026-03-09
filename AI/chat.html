@@ -185,8 +185,10 @@
                 min-width: var(--sidebar-rail-width);
                 transform: translateX(0);
                 overflow: hidden;
-                background-color: transparent !important;
-                border-color: transparent !important;
+                /* Keep the same background and border as the non-collapsed sidebar
+                   so the mini rail does not visually change color when collapsed. */
+                background-color: var(--sidebar-bg) !important;
+                border-color: inherit !important;
             }
 
             body.sidebar-collapsed #sidebar-full-content {
@@ -425,7 +427,6 @@
         .history-item-active {
             background: rgba(0, 0, 0, 0.06);
             font-weight: 600;
-            box-shadow: inset 3px 0 0 var(--accent-color);
         }
 
         .dark .history-item-active {
@@ -1406,7 +1407,7 @@
         #top-right-actions {
             position: fixed;
             top: 1rem;
-            right: 1.5rem;
+            right: 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -1472,8 +1473,41 @@
                 opacity: 1;
                 transform: scale(1) translateY(0);
             }
+                }
+        </style>
+
+        <style>
+        /* Sidebar collapse overrides for large screens
+             When the body has the `sidebar-collapsed` class we want the
+             aside to visually shrink to a narrow rail and show the mini
+             content while hiding the full content. Use !important to
+             override the inline `width: var(--sidebar-width)` on the
+             aside element.
+        */
+        @media (min-width: 1024px) {
+            body.sidebar-collapsed #sidebar {
+                width: 3rem !important; /* ~48px, matches a compact rail */
+                /* Remove visible border/shadow so the mini rail blends with the page */
+                border-right: none !important;
+                box-shadow: none !important;
+                background-color: var(--sidebar-bg) !important;
+            }
+
+            /* Hide the full sidebar content and show the mini rail */
+            body.sidebar-collapsed #sidebar-full-content {
+                display: none !important;
+            }
+
+            body.sidebar-collapsed #sidebar-mini-content {
+                display: flex !important;
+            }
+
+            /* Ensure transform doesn't keep the sidebar offset when collapsed */
+            body.sidebar-collapsed #sidebar {
+                transform: none !important;
+            }
         }
-    </style>
+        </style>
 </head>
 
 <body
@@ -1635,12 +1669,11 @@
             <!-- Main Navigation -->
             <div class="flex-1 overflow-y-auto no-scrollbar pt-2">
                 <!-- New Chat Button -->
-                <div class="__menu-item" onclick="window.resetChat()" title="New Chat (⌘O)">
+                <div class="__menu-item" onclick="window.resetChat()" title="New Chat">
                     <div class="flex items-center gap-3">
                         <div class="icon"><i data-feather="plus" class="w-4 h-4"></i></div>
                         <span class="text-sm font-medium">New chat</span>
                     </div>
-                    <div class="hidden lg:block text-[10px] opacity-50 font-mono">⌘O</div>
                 </div>
 
                 <!-- Sponsored/Research -->
@@ -1659,25 +1692,21 @@
                 </a>
 
                 <!-- Search Input -->
-                <div class="px-2 mt-2 mb-1">
+                <div class="px-2 mt-2">
                     <div class="relative group">
                         <i data-feather="search"
                             class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-3.5 h-3.5 pointer-events-none group-focus-within:text-[var(--accent-color)] transition-colors"></i>
-                        <input type="text" id="chat-search-input" placeholder="Search chats..."
+                        <input type="text" id="chat-search-input" placeholder="Search"
                             class="w-full pl-9 pr-3 py-2 text-sm font-medium rounded-lg bg-zinc-500/5 border border-transparent focus:bg-white dark:focus:bg-zinc-800 focus:border-[var(--accent-color)]/30 outline-none transition-all placeholder-zinc-400"
                             oninput="window.filterChats(this.value)">
                     </div>
                 </div>
 
                 <!-- Chat History Section -->
-                <div class="px-3 mt-6 mb-2">
-                    <h3 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-2">History</h3>
-                </div>
                 <div id="history-list" class="flex-1 space-y-0.5 px-2"></div>
             </div>
 
             <!-- Bottom Section: Clear and Profile -->
-            <div class="p-2 border-t border-zinc-200 dark:border-zinc-800/50">
                 <div class="__menu-item text-red-500/80 hover:bg-red-500/5" onclick="window.clearAll()">
                     <div class="flex items-center gap-3">
                         <div class="icon"><i data-feather="trash-2" class="w-4 h-4"></i></div>
@@ -1691,30 +1720,37 @@
                         <div class="flex items-center gap-3">
                             <div id="user-avatar-container"
                                 class="w-6 h-6 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-[10px] font-bold overflow-hidden shrink-0">
-                                <div id="user-avatar-display">U</div>
+                                <div id="user-avatar-display">O</div>
                             </div>
                             <div class="flex flex-col min-w-0">
-                                <span id="sidebar-user-name"
-                                    class="text-sm font-medium truncate text-zinc-900 dark:text-white leading-none">Profile</span>
+                                <span id="sidebar-user-name" class="text-sm font-semibold text-zinc-900 dark:text-white leading-tight break-words">Profile</span>
                                 <span class="text-[10px] text-zinc-400 mt-1 uppercase tracking-tighter"
                                     id="storage-display-sidebar">Storage: —</span>
                             </div>
                         </div>
-                        <i data-feather="settings"
-                            class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white"></i>
                     </div>
                 </div>
-            </div>
         </div>
 
         <!-- Mini Sidebar Content (Rail) -->
-        <div id="sidebar-mini-content" class="hidden lg:flex flex-col items-center h-full w-full py-2 shrink-0">
-            <div class="h-[var(--header-height)] flex items-center justify-center shrink-0">
-                <button onclick="window.toggleSidebar()"
-                    class="w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all rounded-lg hover:bg-zinc-500/10">
-                    <i data-feather="chevron-right" class="w-4 h-4"></i>
-                </button>
-            </div>
+        <div id="sidebar-mini-content" class="hidden lg:flex flex-col items-center h-full w-full shrink-0">
+                <div class="h-[var(--header-height)] flex items-center justify-center shrink-0">
+                    <button id="mini-logo-btn"
+                        class="mini-logo-btn w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all rounded-lg hover:bg-zinc-500/10"
+                        type="button" aria-label="Toggle sidebar">
+                        <!-- OLM logo (small) -->
+                        <svg class="mini-logo-svg w-5 h-5 fill-current vail-logo-ai" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.96,314.21l508.97,180.31v-94.71L28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
+                            <polygon points="513.93 561.2 0 684.2 0 395.8 513.93 522.5 513.93 561.2" />
+                            <path d="M4.96,765.79l508.97-180.31v94.71L28.54,1073.91C19.12,1085.79,0,1079.13,0,1063.97v-286.6c0-4.38,1.79-8.56,4.96-11.58Z" />
+                            <path d="M1075.04,314.21l-508.97,180.31v-94.71S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z" />
+                            <polygon points="566.07 561.2 1080 684.2 1080 395.8 566.07 522.5 566.07 561.2" />
+                            <path d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z" />
+                            <path d="M1029.36,477.47c18.64-5,22.73-20.25,9.08-33.9l-224.81-224.81c-13.65-13.65-28.9-9.56-33.9,9.08l-82.28,307.09c-5,18.64,6.17,29.81,24.81,24.81l307.09-82.29Z" />
+                        </svg>
+                        <i data-feather="chevron-right" class="mini-logo-icon w-4 h-4" style="display:none"></i>
+                    </button>
+                </div>
 
             <div class="flex-1 flex flex-col items-center gap-2 mt-2">
                 <button onclick="window.resetChat()"
@@ -1729,16 +1765,12 @@
                 </button>
             </div>
 
-            <div class="pb-4 flex flex-col items-center gap-3">
+            <div class="pb-6 flex flex-col items-center gap-3">
                 <div id="mini-avatar-display"
                     class="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-[8px] font-bold overflow-hidden cursor-pointer"
                     onclick="window.toggleSettingsPanel()">
                     U
                 </div>
-                <button onclick="window.toggleSettingsPanel()"
-                    class="w-9 h-9 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all hover:bg-zinc-500/10">
-                    <i data-feather="settings" class="w-4 h-4"></i>
-                </button>
             </div>
         </div>
     </aside>
@@ -4585,6 +4617,37 @@ if (els.sidebar) {
         feather.replace();
     </script>
 
+    <script>
+    // Mini logo hover/click behavior: swap logo to chevron on hover and toggle sidebar on click
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('mini-logo-btn');
+        if (!btn) return;
+        const svgEl = btn.querySelector('.mini-logo-svg');
+        const iconEl = btn.querySelector('.mini-logo-icon');
+
+        const showChevron = () => {
+            if (svgEl) svgEl.style.display = 'none';
+            if (iconEl) iconEl.style.display = '';
+        };
+        const showLogo = () => {
+            if (svgEl) svgEl.style.display = '';
+            if (iconEl) iconEl.style.display = 'none';
+        };
+
+        // Hover feedback
+        btn.addEventListener('mouseenter', showChevron);
+        btn.addEventListener('mouseleave', showLogo);
+
+        // Click expands the sidebar (toggleSidebar handles expand/collapse)
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // show chevron briefly for feedback
+            showChevron();
+            if (typeof window.toggleSidebar === 'function') window.toggleSidebar();
+        });
+    });
+    </script>
+
     <div id="settings-overlay" onclick="window.toggleSettingsPanel()"></div>
 
 
@@ -4678,26 +4741,6 @@ if (els.sidebar) {
 
                     </div>
                 </div>
-
-
-                <div class="polaris-section">
-                    <p class="polaris-section-label">Sidebar</p>
-                    <div class="polaris-card">
-                        <div class="polaris-row">
-                            <div class="flex flex-col gap-0.5">
-                                <span class="polaris-row-label">Smart Autohide</span>
-                                <span class="text-[11px] text-zinc-400">Hover left edge to reveal.</span>
-                            </div>
-                            <button id="toggle-smart-sidebar" onclick="window.toggleSmartSidebar()"
-                                class="w-12 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 relative transition-colors duration-300 cursor-pointer shrink-0">
-                                <div
-                                    class="w-5 h-5 rounded-full bg-white absolute top-1 left-1 shadow-md transition-transform duration-300 transform">
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
 
                 <div class="polaris-section">
                     <p class="polaris-section-label">Storage</p>
