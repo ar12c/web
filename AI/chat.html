@@ -4278,11 +4278,11 @@
                         body: JSON.stringify({
                             model: "polaris-local",
                             messages: [
-                                { "role": "system", "content": "You are a title generator. Generate a 3 to 5 word title for this conversation based on the first interaction. Do not use quotes, punctuation, or thought tags. Just return the short title." },
-                                { "role": "user", "content": `User: ${userMsg}\nAI: ${aiMsg}` }
+                                { "role": "system", "content": "You are a title generator. Generate a title for this conversation based on the first interaction. Do not use quotes, punctuation, or thought tags. Just return the short title." },
+                                { "role": "user", "content": `Give me a title name based on ${userMsg}` }
                             ],
                             temperature: 0.3,
-                            max_tokens: 15,
+                            max_tokens: 25,
                             stream: false,
                             use_thought: false
                         })
@@ -4293,6 +4293,12 @@
                         let newTitle = data.choices[0].message.content.trim();
                         // Strip any potential thought tags or quotes just in case the model hallucinates them
                         newTitle = newTitle.replace(/^["']|["']$/g, '').replace(/<thought>[\s\S]*?<\/thought>/gi, '').trim();
+
+                        // Truncate to first 5 words and add ellipsis if longer
+                        const words = newTitle.split(/\s+/);
+                        if (words.length > 5) {
+                            newTitle = words.slice(0, 5).join(' ') + '...';
+                        }
 
                         if (allChats[chatId]) {
                             allChats[chatId].title = newTitle;
