@@ -254,6 +254,18 @@
             background-clip: text;
         }
 
+        .mini-logo-icon {
+            display: none;
+        }
+
+        .mini-logo-btn:hover .vail-logo-ai {
+            display: none;
+        }
+
+        .mini-logo-btn:hover .mini-logo-icon {
+            display: block;
+        }
+
         .ai-icon-bubble {
             background-color: var(--accent-color);
             box-shadow: 0 0 15px var(--accent-glow);
@@ -1747,8 +1759,8 @@
                 <button id="mini-logo-btn"
                     class="mini-logo-btn w-9 h-9 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all rounded-lg hover:bg-zinc-500/10"
                     type="button" aria-label="Toggle sidebar">
-                    <svg class="mini-logo-svg w-5 h-5 fill-current vail-logo-ai" viewBox="0 0 1080 1080"
-                        xmlns="http://www.w3.org/2000/svg">
+                    <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080"
+                        class="w-6 h-6 fill-current vail-logo-ai transition-all">
                         <path
                             d="M4.96,314.21l508.97,180.31v-94.71L28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
                         <polygon points="513.93 561.2 0 684.2 0 395.8 513.93 522.5 513.93 561.2" />
@@ -1759,10 +1771,8 @@
                         <polygon points="566.07 561.2 1080 684.2 1080 395.8 566.07 522.5 566.07 561.2" />
                         <path
                             d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z" />
-                        <path
-                            d="M1029.36,477.47c18.64-5,22.73-20.25,9.08-33.9l-224.81-224.81c-13.65-13.65-28.9-9.56-33.9,9.08l-82.28,307.09c-5,18.64,6.17,29.81,24.81,24.81l307.09-82.29Z" />
                     </svg>
-                    <i data-feather="chevron-right" class="mini-logo-icon w-4 h-4" style="display:none"></i>
+                    <i data-feather="chevron-right" class="mini-logo-icon w-4 h-4 transition-all"></i>
                 </button>
             </div>
 
@@ -1802,13 +1812,19 @@
         <div id="intelligence-flare"></div>
 
         <div id="top-left-chat-title"
-            class="absolute top-4 left-16 lg:left-6 z-50 text-zinc-500 dark:text-zinc-400 font-semibold text-sm transition-opacity duration-300 opacity-0 pointer-events-auto flex items-center gap-2 group"
-            style="background: rgba(249, 249, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 4px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+            class="absolute top-4 left-16 lg:left-6 z-50 text-zinc-500 dark:text-zinc-400 font-semibold text-sm transition-opacity duration-300 opacity-0 pointer-events-auto flex items-center gap-1 group"
+            style="background: rgba(249, 249, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 4px 6px 4px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
             <span id="chat-title-text" class="truncate max-w-[150px] lg:max-w-[250px]"></span>
-            <button onclick="window.regenerateCurrentTitle()" title="Regenerate Title"
-                class="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
-                <i data-feather="rotate-cw" class="w-3 h-3"></i>
-            </button>
+            <div class="flex items-center gap-0.5 ml-1">
+                <button onclick="window.renameCurrentChat()" title="Rename Chat"
+                    class="transition-all p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
+                    <i data-feather="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="window.regenerateCurrentTitle()" title="Regenerate Title"
+                    class="transition-all p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
+                    <i data-feather="rotate-cw" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
         </div>
         <style>
             .dark #top-left-chat-title {
@@ -1987,7 +2003,7 @@
                             class="w-10 h-10 flex items-center justify-center rounded-xl opacity-50 cursor-not-allowed transition-all ml-1 active:scale-95"
                             style="background-color: var(--accent-color); color: var(--accent-contrast); transition: background 0.2s, opacity 0.2s;">
                             <span id="send-icon-wrapper" class="flex items-center justify-center h-full w-full">
-                                <i class="fa-solid fa-paper-plane text-sm"></i>
+                                <i class="fa-solid fa-arrow-up text-sm"></i>
                             </span>
                         </button>
                     </div>
@@ -4234,6 +4250,24 @@
                 setTimeout(() => { if (btn) btn.classList.remove('animate-spin'); }, 1000);
             };
 
+            window.renameChat = async (id) => {
+                if (!allChats[id]) return;
+                const oldTitle = allChats[id].title;
+                const newTitle = prompt("Enter new chat title:", oldTitle);
+                if (newTitle !== null && newTitle.trim() !== "" && newTitle !== oldTitle) {
+                    allChats[id].title = newTitle.trim();
+                    await StorageController.saveChat(allChats[id]);
+                    if (id === currentChatId) {
+                        window.updateChatTitleDisplay(newTitle.trim());
+                    }
+                    renderHistory();
+                }
+            };
+
+            window.renameCurrentChat = () => {
+                if (currentChatId) window.renameChat(currentChatId);
+            };
+
             window.generateChatTitle = async (chatId, userMsg, aiMsg, force = false) => {
                 if (!force && window[`_generatingTitle_${chatId}`]) return;
                 try {
@@ -4392,7 +4426,8 @@
                                                 <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
                                             </svg>
                                         </button>
-                                        <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500"><i data-feather="trash-2" class="w-3 h-3"></i></button>
+                                        <button onclick="event.stopPropagation(); window.renameChat('${c.id}')" class="history-action-btn hover:text-zinc-900 dark:hover:text-white" title="Rename"><i data-feather="edit-2" class="w-3 h-3"></i></button>
+                                        <button onclick="event.stopPropagation(); window.delChat('${c.id}')" class="history-action-btn hover:text-red-500" title="Delete"><i data-feather="trash-2" class="w-3 h-3"></i></button>
                                     </div>
                                 </div>`;
                             }
