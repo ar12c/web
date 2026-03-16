@@ -810,98 +810,6 @@
             }
         }
 
-        /* Feedback Box Styles */
-        #feedback-box-container {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 5000;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 0.75rem;
-            pointer-events: none;
-        }
-
-        #feedback-box-container * {
-            pointer-events: auto;
-        }
-
-        #feedback-box {
-            width: 320px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
-            padding: 1.25rem;
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            display: none;
-        }
-
-        .dark #feedback-box {
-            background: rgba(18, 18, 16, 0.8);
-            border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
-        }
-
-        #feedback-box.active {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            pointer-events: auto;
-            display: block;
-        }
-
-        #feedback-toggle-btn {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 1.5rem;
-            background: var(--accent-color);
-            color: var(--accent-contrast);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 16px -4px var(--accent-glow);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        #feedback-toggle-btn:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-        }
-
-        #feedback-toggle-btn:active {
-            transform: scale(0.95);
-        }
-
-        #feedback-textarea {
-            width: 100%;
-            height: 120px;
-            background: rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 1rem;
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            color: inherit;
-            resize: none;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .dark #feedback-textarea {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        #feedback-textarea:focus {
-            border-color: var(--accent-color);
-            background: transparent;
-        }
 
         @keyframes thinking-shimmer {
             0% {
@@ -1944,12 +1852,14 @@
                     <i data-feather="rotate-cw" class="w-3.5 h-3.5"></i>
                 </button>
                 <div class="flex items-center gap-0.5 border-l border-zinc-200 dark:border-zinc-800 ml-1 pl-1">
-                    <button onclick="window.setTitleFeedback(currentChatId, 'good', this)" id="header-feedback-good"
+                    <button onclick="window.setTitleFeedback(window.currentChatId, 'good', this)"
+                        id="header-feedback-good"
                         class="history-action-btn title-feedback-btn p-1.5 transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded"
                         title="Good title format">
                         <i data-feather="thumbs-up" class="w-3.5 h-3.5"></i>
                     </button>
-                    <button onclick="window.setTitleFeedback(currentChatId, 'bad', this)" id="header-feedback-bad"
+                    <button onclick="window.setTitleFeedback(window.currentChatId, 'bad', this)"
+                        id="header-feedback-bad"
                         class="history-action-btn title-feedback-btn p-1.5 transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded"
                         title="Bad title format">
                         <i data-feather="thumbs-down" class="w-3.5 h-3.5"></i>
@@ -2722,7 +2632,7 @@
             let client = null, chatHistory = [], isGenerating = false, currentJob = null;
             let currentModel = MODELS.OLM2;
             let allChats = {};
-            let currentChatId = crypto.randomUUID();
+            window.currentChatId = crypto.randomUUID();
 
 
             let streamQueue = "";
@@ -3831,7 +3741,7 @@
             window.resetChat = () => {
                 window.toggleSendIcon('send');
                 if (isGenerating && currentJob) currentJob.cancel();
-                currentChatId = crypto.randomUUID(); chatHistory = []; isGenerating = false;
+                window.currentChatId = crypto.randomUUID(); chatHistory = []; isGenerating = false;
                 // Reset token display for new chat
                 const tokenDisplay = document.getElementById('token-count-display');
                 if (tokenDisplay) tokenDisplay.innerText = '0';
@@ -4349,6 +4259,23 @@
                     }, 3000);
                 }
             };
+            window.updateTitleFeedbackUI = (chatId) => {
+                const goodBtn = document.getElementById('header-feedback-good');
+                const badBtn = document.getElementById('header-feedback-bad');
+                if (!goodBtn || !badBtn) return;
+
+                goodBtn.classList.remove('text-green-500', 'opacity-100');
+                badBtn.classList.remove('text-red-500', 'opacity-100');
+
+                if (allChats[chatId] && allChats[chatId].titleFeedback) {
+                    const feedback = allChats[chatId].titleFeedback;
+                    if (feedback === 'good') {
+                        goodBtn.classList.add('text-green-500', 'opacity-100');
+                    } else if (feedback === 'bad') {
+                        badBtn.classList.add('text-red-500', 'opacity-100');
+                    }
+                }
+            };
 
             window.setTitleFeedback = async (chatId, type, btnEl) => {
                 if (!allChats[chatId]) return;
@@ -4359,44 +4286,28 @@
                 allChats[chatId].titleFeedback = newFeedback;
                 await StorageController.saveChat(allChats[chatId]);
 
-                // Update UI state for all instances of these buttons (sidebar if still there, but primarily header now)
-                const updateButtonStyles = (chatId) => {
-                    const isCurrent = chatId === currentChatId;
-                    if (!isCurrent) return;
+                window.updateTitleFeedbackUI(chatId);
 
-                    const goodBtn = document.getElementById('header-feedback-good');
-                    const badBtn = document.getElementById('header-feedback-bad');
-
-                    if (goodBtn) goodBtn.classList.remove('text-green-500', 'opacity-100');
-                    if (badBtn) badBtn.classList.remove('text-red-500', 'opacity-100');
-
-                    const feedback = allChats[chatId].titleFeedback;
-                    if (feedback === 'good' && goodBtn) {
-                        goodBtn.classList.add('text-green-500', 'opacity-100');
-                    } else if (feedback === 'bad' && badBtn) {
-                        badBtn.classList.add('text-red-500', 'opacity-100');
-                    }
-                };
-
-                updateButtonStyles(chatId);
-
-                // Sidebar buttons (if any remain or for legacy)
+                // Sidebar/Legacy synchronization
                 const container = btnEl.closest('.history-btn-container');
                 if (container) {
-                    const btns = container.querySelectorAll('.title-feedback-btn');
-                    btns.forEach(b => {
-                        b.classList.remove('text-green-500', 'text-red-500', 'opacity-100');
-                    });
+                    container.querySelectorAll('.title-feedback-btn').forEach(b =>
+                        b.classList.remove('text-green-500', 'text-red-500', 'opacity-100')
+                    );
                     if (newFeedback) {
                         btnEl.classList.add('opacity-100', newFeedback === 'good' ? 'text-green-500' : 'text-red-500');
                     }
                 }
 
                 if (newFeedback) {
+                    const originalHTML = btnEl.innerHTML;
+                    btnEl.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>`;
+                    btnEl.disabled = true;
+
                     try {
                         const baseUrl = await getOpenAIClient();
                         const chat = allChats[chatId];
-                        await fetch(baseUrl + "/feedback", {
+                        const res = await fetch(baseUrl + "/feedback", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -4407,9 +4318,12 @@
                             })
                         });
 
+                        if (!res.ok) throw new Error("Feedback failed");
+
+                        // Toast
                         const toast = document.createElement('div');
                         toast.className = 'fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-2xl text-sm font-semibold z-[9999] transition-all duration-300 opacity-0 transform translate-y-4 flex items-center gap-2';
-                        toast.innerHTML = feather.icons['check-circle'].toSvg({ class: 'w-4 h-4' }) + `<span>Feedback sent for title format</span>`;
+                        toast.innerHTML = feather.icons['check-circle'].toSvg({ class: 'w-4 h-4' }) + `<span>Title feedback recorded</span>`;
                         document.body.appendChild(toast);
                         requestAnimationFrame(() => {
                             toast.classList.remove('opacity-0', 'translate-y-4');
@@ -4422,72 +4336,11 @@
                         }, 3000);
                     } catch (e) {
                         console.error("Error sending title feedback:", e);
+                    } finally {
+                        btnEl.innerHTML = originalHTML;
+                        btnEl.disabled = false;
+                        feather.replace();
                     }
-                }
-            };
-
-            window.toggleFeedbackBox = () => {
-                const box = document.getElementById('feedback-box');
-                box.classList.toggle('active');
-                if (window.feather) feather.replace();
-            };
-
-            window.submitGeneralFeedback = async (type, btnEl) => {
-                const textarea = document.getElementById('feedback-textarea');
-                const content = textarea.value.trim();
-
-                if (type === 'general' && !content) {
-                    alert("Please enter some feedback first.");
-                    return;
-                }
-
-                const originalHTML = btnEl.innerHTML;
-                btnEl.disabled = true;
-                btnEl.innerHTML = `<span>Sending...</span>`;
-
-                try {
-                    const baseUrl = await getOpenAIClient();
-                    const response = await fetch(baseUrl + "/feedback", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            chat_id: currentChatId,
-                            content: content || `User rated as ${type}`,
-                            feedback_type: type === 'general' ? 'good' : type,
-                            category: 'general_feedback'
-                        })
-                    });
-
-                    if (response.ok) {
-                        textarea.value = '';
-                        window.toggleFeedbackBox();
-
-                        // Show toast
-                        const toast = document.createElement('div');
-                        toast.className = 'fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-2xl text-sm font-semibold z-[9999] transition-all duration-300 opacity-0 transform translate-y-4 flex items-center gap-2';
-                        toast.innerHTML = feather.icons['check-circle'].toSvg({ class: 'w-4 h-4' }) + `<span>Feedback submitted for training</span>`;
-                        document.body.appendChild(toast);
-
-                        requestAnimationFrame(() => {
-                            toast.classList.remove('opacity-0', 'translate-y-4');
-                            toast.classList.add('opacity-100', 'translate-y-0');
-                        });
-
-                        setTimeout(() => {
-                            toast.classList.remove('opacity-100', 'translate-y-0');
-                            toast.classList.add('opacity-0', 'translate-y-4');
-                            setTimeout(() => toast.remove(), 300);
-                        }, 3000);
-                    } else {
-                        throw new Error("Failed to submit feedback");
-                    }
-                } catch (e) {
-                    console.error("Feedback error:", e);
-                    alert("Failed to send feedback. Please try again.");
-                } finally {
-                    btnEl.disabled = false;
-                    btnEl.innerHTML = originalHTML;
-                    if (window.feather) feather.replace();
                 }
             };
 
@@ -4521,14 +4374,17 @@
                 const titleEl = document.getElementById('top-left-chat-title');
                 if (titleEl) titleEl.classList.add('shimmer-active');
 
-                window.generateChatTitle(currentChatId, userMsg, aiMsg, true).finally(() => {
+                const btn = document.querySelector('#top-left-chat-title button[onclick*="regenerateCurrentTitle"] i');
+                window.generateChatTitle(window.currentChatId, userMsg, aiMsg, true).finally(() => {
                     if (titleEl) titleEl.classList.remove('shimmer-active');
                 });
 
                 // Visual feedback
-                const btn = document.querySelector('#top-left-chat-title button[onclick*="regenerateCurrentTitle"] i');
-                if (btn) btn.classList.add('animate-spin');
-                setTimeout(() => { if (btn) btn.classList.remove('animate-spin'); }, 1000);
+                if (window.updateTitleFeedbackUI) window.updateTitleFeedbackUI(window.currentChatId);
+                if (btn) {
+                    btn.classList.add('animate-spin');
+                    setTimeout(() => btn.classList.remove('animate-spin'), 1000);
+                }
             };
 
             window.renameChat = async (id) => {
@@ -4578,14 +4434,11 @@
                         if (allChats[chatId]) {
                             allChats[chatId].title = newTitle;
                             await StorageController.saveChat(allChats[chatId]);
-                            if (currentChatId === chatId) {
+                            if (window.currentChatId === chatId) {
                                 window.updateChatTitleDisplay(newTitle);
                                 // Reset feedback state on regeneration
                                 allChats[chatId].titleFeedback = null;
-                                const goodBtn = document.getElementById('header-feedback-good');
-                                const badBtn = document.getElementById('header-feedback-bad');
-                                if (goodBtn) goodBtn.classList.remove('text-green-500', 'opacity-100');
-                                if (badBtn) badBtn.classList.remove('text-red-500', 'opacity-100');
+                                window.updateTitleFeedbackUI(chatId);
                             }
                             renderHistory();
                         }
@@ -4633,7 +4486,7 @@
                 delete allChats[id];
                 await StorageController.deleteChat(id);
                 if (id === currentChatId) {
-                    currentChatId = crypto.randomUUID();
+                    window.currentChatId = crypto.randomUUID();
                     chatHistory = [];
                     render();
                 }
@@ -4643,27 +4496,15 @@
 
             window.loadChat = (id) => {
                 if (!allChats[id]) return;
-                currentChatId = id;
+                window.currentChatId = id;
                 chatHistory = allChats[id].history;
                 // Update token display for this chat
                 const tokenDisplay = document.getElementById('token-count-display');
                 if (tokenDisplay) tokenDisplay.innerText = (allChats[id].tokensUsed || 0).toLocaleString();
                 render();
                 updateUI();
+                if (window.updateTitleFeedbackUI) window.updateTitleFeedbackUI(id);
                 renderHistory();
-
-                // Update feedback button styles for the current chat
-                const goodBtn = document.getElementById('header-feedback-good');
-                const badBtn = document.getElementById('header-feedback-bad');
-                if (goodBtn) goodBtn.classList.remove('text-green-500', 'opacity-100');
-                if (badBtn) badBtn.classList.remove('text-red-500', 'opacity-100');
-
-                const feedback = allChats[id].titleFeedback;
-                if (feedback === 'good' && goodBtn) {
-                    goodBtn.classList.add('text-green-500', 'opacity-100');
-                } else if (feedback === 'bad' && badBtn) {
-                    badBtn.classList.add('text-red-500', 'opacity-100');
-                }
 
                 if (window.innerWidth < 1024 && els.sidebar) {
                     els.sidebar.classList.add('-translate-x-full');
@@ -5578,38 +5419,6 @@
                 </button>
             </div>
         </div>
-    </div>
-    <div id="feedback-box-container">
-        <div id="feedback-box" class="animate-slide-up">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="text-xs font-black uppercase tracking-widest text-zinc-400">Model Feedback</h3>
-                <button onclick="window.toggleFeedbackBox()"
-                    class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-                    <i data-feather="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-            <p class="text-[11px] text-zinc-500 mb-3 leading-relaxed">Your feedback helps improve the model's reasoning
-                and responses.</p>
-            <textarea id="feedback-textarea"
-                placeholder="Describe what could be better or what worked well..."></textarea>
-            <div class="flex gap-2 mt-3">
-                <button onclick="window.submitGeneralFeedback('good', this)"
-                    class="flex-1 py-2 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 text-[10px] font-black uppercase tracking-widest hover:bg-green-500/20 transition-all">
-                    Helpful
-                </button>
-                <button onclick="window.submitGeneralFeedback('bad', this)"
-                    class="flex-1 py-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all">
-                    Unhelpful
-                </button>
-            </div>
-            <button onclick="window.submitGeneralFeedback('general', this)"
-                class="w-full mt-2 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-black uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
-                Submit Feedback
-            </button>
-        </div>
-        <button id="feedback-toggle-btn" onclick="window.toggleFeedbackBox()" title="Model Feedback">
-            <i data-feather="message-square" class="w-5 h-5"></i>
-        </button>
     </div>
 </body>
 
