@@ -1840,6 +1840,18 @@
                     class="transition-all p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
                     <i data-feather="rotate-cw" class="w-3.5 h-3.5"></i>
                 </button>
+                <div class="flex items-center gap-0.5 border-l border-zinc-200 dark:border-zinc-800 ml-1 pl-1">
+                    <button onclick="window.setTitleFeedback(currentChatId, 'good', this)" id="header-feedback-good"
+                        class="history-action-btn title-feedback-btn p-1.5 transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded"
+                        title="Good title format">
+                        <i data-feather="thumbs-up" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button onclick="window.setTitleFeedback(currentChatId, 'bad', this)" id="header-feedback-bad"
+                        class="history-action-btn title-feedback-btn p-1.5 transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded"
+                        title="Bad title format">
+                        <i data-feather="thumbs-down" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
             </div>
         </div>
         <style>
@@ -4235,6 +4247,82 @@
                 }
             };
 
+            window.setTitleFeedback = async (chatId, type, btnEl) => {
+                if (!allChats[chatId]) return;
+
+                const currentFeedback = allChats[chatId].titleFeedback;
+                const newFeedback = currentFeedback === type ? null : type;
+
+                allChats[chatId].titleFeedback = newFeedback;
+                await StorageController.saveChat(allChats[chatId]);
+
+                // Update UI state for all instances of these buttons (sidebar if still there, but primarily header now)
+                const updateButtonStyles = (chatId) => {
+                    const isCurrent = chatId === currentChatId;
+                    if (!isCurrent) return;
+
+                    const goodBtn = document.getElementById('header-feedback-good');
+                    const badBtn = document.getElementById('header-feedback-bad');
+
+                    if (goodBtn) goodBtn.classList.remove('text-green-500', 'opacity-100');
+                    if (badBtn) badBtn.classList.remove('text-red-500', 'opacity-100');
+
+                    const feedback = allChats[chatId].titleFeedback;
+                    if (feedback === 'good' && goodBtn) {
+                        goodBtn.classList.add('text-green-500', 'opacity-100');
+                    } else if (feedback === 'bad' && badBtn) {
+                        badBtn.classList.add('text-red-500', 'opacity-100');
+                    }
+                };
+
+                updateButtonStyles(chatId);
+
+                // Sidebar buttons (if any remain or for legacy)
+                const container = btnEl.closest('.history-btn-container');
+                if (container) {
+                    const btns = container.querySelectorAll('.title-feedback-btn');
+                    btns.forEach(b => {
+                        b.classList.remove('text-green-500', 'text-red-500', 'opacity-100');
+                    });
+                    if (newFeedback) {
+                        btnEl.classList.add('opacity-100', newFeedback === 'good' ? 'text-green-500' : 'text-red-500');
+                    }
+                }
+
+                if (newFeedback) {
+                    try {
+                        const baseUrl = await getOpenAIClient();
+                        const chat = allChats[chatId];
+                        await fetch(baseUrl + "/feedback", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                chat_id: chatId,
+                                title: chat.title,
+                                feedback_type: type,
+                                category: 'title_format'
+                            })
+                        });
+
+                        const toast = document.createElement('div');
+                        toast.className = 'fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-2xl text-sm font-semibold z-[9999] transition-all duration-300 opacity-0 transform translate-y-4 flex items-center gap-2';
+                        toast.innerHTML = feather.icons['check-circle'].toSvg({ class: 'w-4 h-4' }) + `<span>Feedback sent for title format</span>`;
+                        document.body.appendChild(toast);
+                        requestAnimationFrame(() => {
+                            toast.classList.remove('opacity-0', 'translate-y-4');
+                            toast.classList.add('opacity-100', 'translate-y-0');
+                        });
+                        setTimeout(() => {
+                            toast.classList.remove('opacity-100', 'translate-y-0');
+                            toast.classList.add('opacity-0', 'translate-y-4');
+                            setTimeout(() => toast.remove(), 300);
+                        }, 3000);
+                    } catch (e) {
+                        console.error("Error sending title feedback:", e);
+                    }
+                }
+            };
+
             window.editMsg = (idx) => {
                 if (isGenerating) return;
                 const msg = chatHistory[idx][0];
@@ -4324,6 +4412,12 @@
                             await StorageController.saveChat(allChats[chatId]);
                             if (currentChatId === chatId) {
                                 window.updateChatTitleDisplay(newTitle);
+                                // Reset feedback state on regeneration
+                                allChats[chatId].titleFeedback = null;
+                                const goodBtn = document.getElementById('header-feedback-good');
+                                const badBtn = document.getElementById('header-feedback-bad');
+                                if (goodBtn) goodBtn.classList.remove('text-green-500', 'opacity-100');
+                                if (badBtn) badBtn.classList.remove('text-red-500', 'opacity-100');
                             }
                             renderHistory();
                         }
@@ -4389,6 +4483,19 @@
                 render();
                 updateUI();
                 renderHistory();
+
+                // Update feedback button styles for the current chat
+                const goodBtn = document.getElementById('header-feedback-good');
+                const badBtn = document.getElementById('header-feedback-bad');
+                if (goodBtn) goodBtn.classList.remove('text-green-500', 'opacity-100');
+                if (badBtn) badBtn.classList.remove('text-red-500', 'opacity-100');
+
+                const feedback = allChats[id].titleFeedback;
+                if (feedback === 'good' && goodBtn) {
+                    goodBtn.classList.add('text-green-500', 'opacity-100');
+                } else if (feedback === 'bad' && badBtn) {
+                    badBtn.classList.add('text-red-500', 'opacity-100');
+                }
 
                 if (window.innerWidth < 1024 && els.sidebar) {
                     els.sidebar.classList.add('-translate-x-full');
