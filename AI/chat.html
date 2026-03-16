@@ -810,6 +810,109 @@
             }
         }
 
+        /* Feedback Box Styles */
+        #feedback-box-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+            pointer-events: none;
+        }
+
+        #feedback-box-container * {
+            pointer-events: auto;
+        }
+
+        #feedback-box {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+            padding: 1.25rem;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: none;
+        }
+
+        .dark #feedback-box {
+            background: rgba(18, 18, 16, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        #feedback-box.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+            display: block;
+        }
+
+        #feedback-toggle-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 1.5rem;
+            background: var(--accent-color);
+            color: var(--accent-contrast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px -4px var(--accent-glow);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #feedback-toggle-btn:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        #feedback-toggle-btn:active {
+            transform: scale(0.95);
+        }
+
+        #feedback-textarea {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: inherit;
+            resize: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .dark #feedback-textarea {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        #feedback-textarea:focus {
+            border-color: var(--accent-color);
+            background: transparent;
+        }
+
+        @keyframes thinking-shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
 
         #onboarding-overlay {
             position: fixed;
@@ -4323,6 +4426,71 @@
                 }
             };
 
+            window.toggleFeedbackBox = () => {
+                const box = document.getElementById('feedback-box');
+                box.classList.toggle('active');
+                if (window.feather) feather.replace();
+            };
+
+            window.submitGeneralFeedback = async (type, btnEl) => {
+                const textarea = document.getElementById('feedback-textarea');
+                const content = textarea.value.trim();
+
+                if (type === 'general' && !content) {
+                    alert("Please enter some feedback first.");
+                    return;
+                }
+
+                const originalHTML = btnEl.innerHTML;
+                btnEl.disabled = true;
+                btnEl.innerHTML = `<span>Sending...</span>`;
+
+                try {
+                    const baseUrl = await getOpenAIClient();
+                    const response = await fetch(baseUrl + "/feedback", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chat_id: currentChatId,
+                            content: content || `User rated as ${type}`,
+                            feedback_type: type === 'general' ? 'good' : type,
+                            category: 'general_feedback'
+                        })
+                    });
+
+                    if (response.ok) {
+                        textarea.value = '';
+                        window.toggleFeedbackBox();
+
+                        // Show toast
+                        const toast = document.createElement('div');
+                        toast.className = 'fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-2xl text-sm font-semibold z-[9999] transition-all duration-300 opacity-0 transform translate-y-4 flex items-center gap-2';
+                        toast.innerHTML = feather.icons['check-circle'].toSvg({ class: 'w-4 h-4' }) + `<span>Feedback submitted for training</span>`;
+                        document.body.appendChild(toast);
+
+                        requestAnimationFrame(() => {
+                            toast.classList.remove('opacity-0', 'translate-y-4');
+                            toast.classList.add('opacity-100', 'translate-y-0');
+                        });
+
+                        setTimeout(() => {
+                            toast.classList.remove('opacity-100', 'translate-y-0');
+                            toast.classList.add('opacity-0', 'translate-y-4');
+                            setTimeout(() => toast.remove(), 300);
+                        }, 3000);
+                    } else {
+                        throw new Error("Failed to submit feedback");
+                    }
+                } catch (e) {
+                    console.error("Feedback error:", e);
+                    alert("Failed to send feedback. Please try again.");
+                } finally {
+                    btnEl.disabled = false;
+                    btnEl.innerHTML = originalHTML;
+                    if (window.feather) feather.replace();
+                }
+            };
+
             window.editMsg = (idx) => {
                 if (isGenerating) return;
                 const msg = chatHistory[idx][0];
@@ -5410,6 +5578,38 @@
                 </button>
             </div>
         </div>
+    </div>
+    <div id="feedback-box-container">
+        <div id="feedback-box" class="animate-slide-up">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-black uppercase tracking-widest text-zinc-400">Model Feedback</h3>
+                <button onclick="window.toggleFeedbackBox()"
+                    class="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                    <i data-feather="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <p class="text-[11px] text-zinc-500 mb-3 leading-relaxed">Your feedback helps improve the model's reasoning
+                and responses.</p>
+            <textarea id="feedback-textarea"
+                placeholder="Describe what could be better or what worked well..."></textarea>
+            <div class="flex gap-2 mt-3">
+                <button onclick="window.submitGeneralFeedback('good', this)"
+                    class="flex-1 py-2 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 text-[10px] font-black uppercase tracking-widest hover:bg-green-500/20 transition-all">
+                    Helpful
+                </button>
+                <button onclick="window.submitGeneralFeedback('bad', this)"
+                    class="flex-1 py-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/20 transition-all">
+                    Unhelpful
+                </button>
+            </div>
+            <button onclick="window.submitGeneralFeedback('general', this)"
+                class="w-full mt-2 py-2.5 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-black uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
+                Submit Feedback
+            </button>
+        </div>
+        <button id="feedback-toggle-btn" onclick="window.toggleFeedbackBox()" title="Model Feedback">
+            <i data-feather="message-square" class="w-5 h-5"></i>
+        </button>
     </div>
 </body>
 
