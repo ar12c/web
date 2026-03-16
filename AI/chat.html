@@ -4258,10 +4258,10 @@
                 if (!currentChatId || chatHistory.length === 0) return;
                 const userMsg = chatHistory[0][0];
                 const aiMsg = chatHistory[0][1];
-                
+
                 const titleEl = document.getElementById('top-left-chat-title');
                 if (titleEl) titleEl.classList.add('shimmer-active');
-                
+
                 window.generateChatTitle(currentChatId, userMsg, aiMsg, true).finally(() => {
                     if (titleEl) titleEl.classList.remove('shimmer-active');
                 });
@@ -4301,7 +4301,7 @@
                             model: "polaris-local",
                             messages: [
                                 { "role": "system", "content": "You are a title generator. Generate a title for this conversation based on the first interaction. Do not use quotes, punctuation, or thought tags. Just return the short title." },
-                                { "role": "user", "content": `Give me a title name based on ${userMsg}` }
+                                { "role": "user", "content": `Give me a title based on ${userMsg}, that is short and concise` }
                             ],
                             temperature: 0.3,
                             max_tokens: 25,
