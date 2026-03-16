@@ -1999,7 +1999,7 @@
                                         <circle cx="12" cy="12" r="3" class="fill-current stroke-none" />
                                     </svg>
                                 </div>
-                                <span id="current-model-name">Polaris 1.5</span>
+                                <span id="current-model-name">Polaris 1.6</span>
                                 <i data-feather="chevron-down" class="w-3 h-3"></i>
                             </button>
 
@@ -2018,7 +2018,7 @@
                                             </svg>
                                         </div>
                                         <div class="flex flex-col">
-                                            <span class="text-xs font-semibold">Polaris 1.5</span>
+                                            <span class="text-xs font-semibold">Polaris 1.6</span>
                                             <span class="text-[10px] opacity-50">Deep reasoning</span>
                                         </div>
                                     </button>
@@ -2416,7 +2416,7 @@
             const MODELS = {
                 OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", icon: UNIQUE_SVG_STAR },
 
-                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.5", icon: UNIQUE_SVG_NORTH }
+                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.6", icon: UNIQUE_SVG_NORTH }
             };
 
             const translations = {
@@ -3868,7 +3868,7 @@
 
                 let lastProse = null;
 
-                chatHistory.push([displayMsg, null]);
+                chatHistory.push([displayMsg, null, null]);
                 currentGenerationIsSearch = isWebSearch || forceSearch;
                 render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
                 currentJobId = Math.random().toString(36).substring(7);
@@ -4050,8 +4050,8 @@
                                 <button onclick="window.copyMsg(${chatHistory.length - 1}, this)" class="opacity-70 hover:opacity-100 transition-all" style="color: var(--accent-color)"><i data-feather="copy" class="w-4 h-4"></i></button>
                                 <button onclick="window.regenMsg(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
                                 <button onclick="window.regenMsgWithSearch(${chatHistory.length - 1})" class="opacity-70 hover:opacity-100" style="color: var(--accent-color)" title="Regenerate with Web Search"><i data-feather="globe" class="w-4 h-4"></i></button>
-                                <button onclick="window.sendFeedback(${chatHistory.length - 1}, 'good', this)" class="opacity-70 hover:opacity-100 transition-all feedback-btn" style="color: var(--accent-color)" title="Good response"><i data-feather="thumbs-up" class="w-4 h-4"></i></button>
-                                <button onclick="window.sendFeedback(${chatHistory.length - 1}, 'bad', this)" class="opacity-70 hover:opacity-100 transition-all feedback-btn" style="color: var(--accent-color)" title="Bad response"><i data-feather="thumbs-down" class="w-4 h-4"></i></button>
+                                <button onclick="window.sendFeedback(${chatHistory.length - 1}, 'good', this)" class="opacity-70 hover:opacity-100 transition-all feedback-btn" style="color: var(--accent-color)" title="Nice message"><i data-feather="thumbs-up" class="w-4 h-4"></i></button>
+                                <button onclick="window.sendFeedback(${chatHistory.length - 1}, 'bad', this)" class="opacity-70 hover:opacity-100 transition-all feedback-btn" style="color: var(--accent-color)" title="Bad message"><i data-feather="thumbs-down" class="w-4 h-4"></i></button>
                             </div>
                             <div class="flex items-center gap-3">
                                 <div class="hallucination-disclaimer">OLMs are prone to hallucinations.</div>
@@ -4208,14 +4208,21 @@
                     });
 
                     if (response.ok) {
-                        // Disable buttons for this message to prevent spam
+                        // Store feedback in history for persistence
+                        chatHistory[idx][2] = type;
+                        save();
+
+                        // Update buttons immediately
                         const container = btnEl.closest('.flex.items-center.gap-4');
                         if (container) {
                             const btns = container.querySelectorAll('.feedback-btn');
                             btns.forEach(b => {
-                                b.style.opacity = '0.5';
+                                b.style.opacity = '0.3';
                                 b.style.pointerEvents = 'none';
+                                b.classList.remove('hover:scale-110');
                             });
+                            btnEl.style.opacity = '1';
+                            btnEl.style.color = type === 'good' ? '#22c55e' : '#ef4444';
                         }
 
                         // Show "Feedback sent" toast notification
@@ -4664,13 +4671,19 @@
                         })()}
                             </div>
                             ${a && !isGenerating ? `
-                            <div class="flex items-center justify-between gap-4 mt-3 w-full animate-fade-in">
+                             <div class="flex items-center justify-between gap-4 mt-3 w-full animate-fade-in">
                                 <div class="flex items-center gap-4">
                                     <button onclick="window.copyMsg(${i}, this)" class="hover:scale-110 transition-all" style="color: var(--action-btn-color)" title="Copy"><i data-feather="copy" class="w-4 h-4"></i></button>
                                     <button onclick="window.regenMsg(${i})" class="hover:scale-110 transition-all font-bold" style="color: var(--action-btn-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
                                     <button onclick="window.regenMsgWithSearch(${i})" class="hover:scale-110 transition-all" style="color: var(--action-btn-color)" title="Regenerate with Web Search"><i data-feather="globe" class="w-4 h-4"></i></button>
-                                    <button onclick="window.sendFeedback(${i}, 'good', this)" class="hover:scale-110 transition-all feedback-btn" style="color: var(--action-btn-color)" title="Good response"><i data-feather="thumbs-up" class="w-4 h-4"></i></button>
-                                    <button onclick="window.sendFeedback(${i}, 'bad', this)" class="hover:scale-110 transition-all feedback-btn" style="color: var(--action-btn-color)" title="Bad response"><i data-feather="thumbs-down" class="w-4 h-4"></i></button>
+                                    <button onclick="window.sendFeedback(${i}, 'good', this)" 
+                                            class="hover:scale-110 transition-all feedback-btn ${chatHistory[i][2] ? 'pointer-events-none' : ''}" 
+                                            style="color: ${chatHistory[i][2] === 'good' ? '#22c55e' : 'var(--action-btn-color)'}; opacity: ${chatHistory[i][2] ? (chatHistory[i][2] === 'good' ? '1' : '0.3') : '0.7'}" 
+                                            title="Nice message"><i data-feather="thumbs-up" class="w-4 h-4"></i></button>
+                                    <button onclick="window.sendFeedback(${i}, 'bad', this)" 
+                                            class="hover:scale-110 transition-all feedback-btn ${chatHistory[i][2] ? 'pointer-events-none' : ''}" 
+                                            style="color: ${chatHistory[i][2] === 'bad' ? '#ef4444' : 'var(--action-btn-color)'}; opacity: ${chatHistory[i][2] ? (chatHistory[i][2] === 'bad' ? '1' : '0.3') : '0.7'}" 
+                                            title="Bad message"><i data-feather="thumbs-down" class="w-4 h-4"></i></button>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <div class="opacity-40 w-4 h-4 flex items-center justify-center pointer-events-none" style="color: var(--action-btn-color)" title="${currentModel.name}">
@@ -4956,7 +4969,7 @@
                 version: "1.0.4",
                 build: BUILD_NUMBER,
                 changes: [
-                    "Polaris has been updated to 1.5",
+                    "Polaris has been updated to 1.6 (1B Parameters)",
                     "Storage system upgraded to IndexedDB (async, non-blocking)",
                     "New Polaris settings modal — mobile-first design",
                     "Fun theme names: Sage Whisper, Midnight in Paris, Electric Lemonade, Vitamin C, Lush Green"

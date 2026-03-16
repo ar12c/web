@@ -1,9 +1,9 @@
-const BUILD_NUMBER = 1003;
+const BUILD_NUMBER = 1010;
 const CHANGELOG = {
-    version: "1.0.3",
+    version: "1.6.0",
     build: BUILD_NUMBER,
     changes: [
-        "Polaris has been updated to 1.4",
+        "Polaris has been updated to 1.6 (1B Parameters)",
         "OLM North Star has been updated to 1.1"
     ]
 };
@@ -57,7 +57,7 @@ function createChangelogModal() {
                     </div>
                     <div>
                         <h2 style="font-size:1.25rem; font-weight:700; color:#18181b;">What's New</h2>
-                        <p id="changelog-version" style="font-size:0.75rem; font-weight:700; color:#a1a1aa; text-transform:uppercase; letter-spacing:0.1em;">Build 1002</p>
+                        <p id="changelog-version" style="font-size:0.75rem; font-weight:700; color:#a1a1aa; text-transform:uppercase; letter-spacing:0.1em;">Build 1010</p>
                     </div>
                 </div>
                 

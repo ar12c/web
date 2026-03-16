@@ -15,5 +15,22 @@
         "content": "<div>Recently on OLM's training, I found out you could scale the model as the knowledge keeps increasing, with a larger brain size, increasing model from 256M to 500M.</div>",
         "date": "FEB 2026",
         "isRich": true
+    },
+    {
+        "id": "1771168324278",
+        "title": "Scaling to 1B Parameters.",
+        "tags": [
+            {
+                "name": "Architecture",
+                "color": "blue"
+            },
+            {
+                "name": "Innovation",
+                "color": "purple"
+            }
+        ],
+        "content": "<div>Polaris has officially scaled to 1 Billion parameters! This update increases its reasoning capabilities and knowledge breadth, marking a significant milestone in our training journey from 500M to 1B.</div>",
+        "date": "MAR 2026",
+        "isRich": true
     }
 ]
