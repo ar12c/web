@@ -2442,6 +2442,7 @@
                     ex_code: "Python Scraper",
                     ex_inspiration: "Stoic Wisdom",
                     input_placeholder: "Message OLM...",
+                    reply_placeholder: "Reply to OLM...",
                     thinking: "Hmmmm...",
                     terminated: "You stopped the reponse",
                     no_history: "404.",
@@ -2691,7 +2692,9 @@
                     const key = el.getAttribute('data-t');
                     if (dict[key]) el.innerText = dict[key];
                 });
-                if (els.input) els.input.placeholder = dict.input_placeholder;
+                if (els.input) {
+                    els.input.placeholder = (chatHistory && chatHistory.length > 0) ? dict.reply_placeholder : dict.input_placeholder;
+                }
                 document.querySelectorAll('.lang-text').forEach(t => t.innerText = langCode === 'en' ? '中文' : 'EN');
             };
 
@@ -4610,7 +4613,9 @@
                         els.searchBtn.style.color = 'var(--accent-contrast)';
                         const icon = els.searchBtn.querySelector('svg') || els.searchBtn.querySelector('i');
                         if (icon) icon.outerHTML = feather.icons.globe.toSvg({ class: 'w-4 h-4' });
-                        if (els.input) els.input.placeholder = currentDict.input_placeholder;
+                        if (els.input) {
+                            els.input.placeholder = (chatHistory && chatHistory.length > 0) ? currentDict.reply_placeholder : currentDict.input_placeholder;
+                        }
                     } else {
 
                         els.searchBtn.className = "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-900/10 dark:hover:bg-zinc-100/10 transition-all cursor-pointer";
@@ -4618,7 +4623,9 @@
                         els.searchBtn.style.color = '';
                         const icon = els.searchBtn.querySelector('svg') || els.searchBtn.querySelector('i');
                         if (icon) icon.outerHTML = feather.icons.globe.toSvg({ class: 'w-4 h-4' });
-                        if (els.input) els.input.placeholder = currentDict.input_placeholder;
+                        if (els.input) {
+                            els.input.placeholder = (chatHistory && chatHistory.length > 0) ? currentDict.reply_placeholder : currentDict.input_placeholder;
+                        }
                     }
                 }
 
