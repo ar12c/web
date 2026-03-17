@@ -1462,7 +1462,7 @@
 
         @media (max-width: 1023px) {
             #top-right-actions {
-                top: 9px;
+                top: 0.75rem;
                 right: 1rem;
             }
 
@@ -1839,8 +1839,8 @@
         <div id="intelligence-flare"></div>
 
         <div id="top-left-chat-title"
-            class="absolute top-[9px] left-16 lg:left-6 z-50 text-zinc-500 dark:text-zinc-400 font-semibold text-sm transition-opacity duration-300 opacity-0 pointer-events-auto flex items-center gap-1 group"
-            style="background: rgba(249, 249, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 4px 12px; height: 38px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+            class="absolute top-4 left-16 lg:left-6 z-50 text-zinc-500 dark:text-zinc-400 font-semibold text-sm transition-opacity duration-300 opacity-0 pointer-events-auto flex items-center gap-1 group"
+            style="background: rgba(249, 249, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 4px 6px 4px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
             <span id="chat-title-text" class="truncate max-w-[150px] lg:max-w-[250px]"></span>
             <div class="flex items-center gap-0.5 ml-1">
                 <button onclick="window.renameCurrentChat()" title="Rename Chat"
@@ -1889,7 +1889,7 @@
 
             <div class="flex items-center gap-2 pointer-events-auto">
                 <button id="menu-toggle-btn" onclick="window.toggleSidebar()"
-                    class="header-island rounded-lg w-[38px] flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden">
+                    class="header-island w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all lg:hidden">
                     <i data-feather="sidebar" class="w-4 h-4"></i></button>
             </div>
 
@@ -1999,7 +1999,7 @@
                                         <circle cx="12" cy="12" r="3" class="fill-current stroke-none" />
                                     </svg>
                                 </div>
-                                <span id="current-model-name">Polaris 1.6</span>
+                                <span id="current-model-name">Polaris 1.5</span>
                                 <i data-feather="chevron-down" class="w-3 h-3"></i>
                             </button>
 
@@ -2018,7 +2018,7 @@
                                             </svg>
                                         </div>
                                         <div class="flex flex-col">
-                                            <span class="text-xs font-semibold">Polaris 1.6</span>
+                                            <span class="text-xs font-semibold">Polaris 1.5</span>
                                             <span class="text-[10px] opacity-50">Deep reasoning</span>
                                         </div>
                                     </button>
@@ -2174,7 +2174,7 @@
                 els.chatMsgs = document.getElementById("chat-messages");
                 els.input = document.getElementById("user-input");
                 els.send = document.getElementById("send-btn");
-                els.icon = document.getElementById("send-icon-wrapper");
+                els.icon = document.getElementById("send-btn-icon");
                 els.welcome = document.getElementById("welcome-state");
                 els.welcomeLogo = document.getElementById("welcome-logo-container");
                 els.hist = document.getElementById("history-list");
@@ -2416,7 +2416,7 @@
             const MODELS = {
                 OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", icon: UNIQUE_SVG_STAR },
 
-                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.6", icon: UNIQUE_SVG_NORTH }
+                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.5", icon: UNIQUE_SVG_NORTH }
             };
 
             const translations = {
@@ -2669,7 +2669,7 @@
                 temp: 0.67,
                 top_p: 0.9,
                 rep_pen: 1.35,
-                max_tokens: 256,
+                max_tokens: 4096,
                 accent: 'auto', userName: '', userPic: '',
                 pfpX: 0, pfpY: 0, pfpScale: 1.0, hasCompletedTutorial: false,
                 lang: 'en',
@@ -3701,7 +3701,7 @@
                 if (state === 'stop') {
                     iconWrapper.innerHTML = '<i class="fa-solid fa-square text-sm"></i>';
                 } else {
-                    iconWrapper.innerHTML = '<i class="fa-solid fa-arrow-up text-sm"></i>';
+                    iconWrapper.innerHTML = '<i class="fa-solid fa-paper-plane text-sm"></i>';
                 }
             };
 
@@ -3904,9 +3904,7 @@
                         body: JSON.stringify({
                             model: "polaris-local",
                             messages: messages,
-                            temperature: settings.temp || 0.35,
-                            top_p: settings.top_p || 0.9,
-                            max_tokens: settings.max_tokens || 256,
+                            max_tokens: settings.max_tokens || 4096,
                             stream: true,
                             web_search: currentGenerationIsSearch,
                             use_thought: isThinkingEnabled,
@@ -4422,14 +4420,8 @@
                         body: JSON.stringify({
                             model: "polaris-local",
                             messages: [
-                                { 
-                                    "role": "system", 
-                                    "content": "You are a concise title generator. Create a professional 2-4 word title for this chat based on the exchange. Avoid generic words like 'Chat', 'Conversation', or 'Request'. Do not use quotes, punctuation, or thought tags. Just return the short title." 
-                                },
-                                { 
-                                    "role": "user", 
-                                    "content": `User: ${userMsg}\nAI: ${aiMsg}\n\nTitle:` 
-                                }
+                                { "role": "system", "content": "You are a title generator. Generate a title for this conversation based on the first interaction. Do not use quotes, punctuation, or thought tags. Just return the short title." },
+                                { "role": "user", "content": `Summarize based on ${userMsg}, make it short and concise` }
                             ],
                             temperature: 0.3,
                             max_tokens: 25,
@@ -4724,7 +4716,7 @@
                         els.send.classList.remove('cursor-pointer');
                     }
                 }
-                if (els.icon) els.icon.innerHTML = isGenerating ? '<i class="fa-solid fa-square text-sm"></i>' : '<i class="fa-solid fa-arrow-up text-sm"></i>';
+                if (els.icon) els.icon.innerHTML = isGenerating ? feather.icons.square.toSvg({ class: 'w-3 h-3 fill-current' }) : feather.icons['arrow-up'].toSvg({ class: 'w-4 h-4' });
                 if (els.actIcon) els.actIcon.innerHTML = currentModel.icon;
                 const currentDict = translations[settings.lang || 'en'];
                 const modelNameEl = document.getElementById('active-model-name');
@@ -4975,7 +4967,7 @@
                 version: "1.0.4",
                 build: BUILD_NUMBER,
                 changes: [
-                    "Polaris has been updated to 1.6 (1B Parameters)",
+                    "Polaris has been updated to 1.5",
                     "Storage system upgraded to IndexedDB (async, non-blocking)",
                     "New Polaris settings modal — mobile-first design",
                     "Fun theme names: Sage Whisper, Midnight in Paris, Electric Lemonade, Vitamin C, Lush Green"
@@ -5308,7 +5300,7 @@
                         </div>
                         <div class="polaris-row">
                             <span class="polaris-row-label w-28 shrink-0">Max Tokens</span>
-                            <input type="range" id="settings-param-max-tokens" min="64" max="2048" step="64"
+                            <input type="range" id="settings-param-max-tokens" min="64" max="16384" step="128"
                                 class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
                                 style="accent-color: var(--accent-color);"
                                 oninput="window.updateMaxTokensFromPanel(this.value)">
