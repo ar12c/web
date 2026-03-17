@@ -1875,7 +1875,14 @@
             }
         </style>
 
-        <div id="top-right-actions" class="animate-fade-in">
+        <div id="top-right-actions" class="animate-fade-in flex items-center gap-2">
+            <button id="chat-tokens-btn"
+                class="rounded-lg header-island px-3 hover:scale-105 active:scale-95 transition-all">
+                <i data-feather="cpu" class="w-3.5 h-3.5 text-zinc-400"></i>
+                <span id="token-count-display"
+                    class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider ml-1 action-label">0
+                    Tokens</span>
+            </button>
             <button onclick="window.showChangelog()"
                 class="rounded-lg header-island px-3 hover:scale-105 active:scale-95 transition-all">
                 <i data-feather="zap" class="w-3.5 h-3.5 text-zinc-400"></i>
@@ -2630,6 +2637,16 @@
             const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '').trim();
 
             let client = null, chatHistory = [], isGenerating = false, currentJob = null;
+            let tokenUpdateInterval = null;
+            const startTokenPolling = () => {
+                if (tokenUpdateInterval) clearInterval(tokenUpdateInterval);
+                tokenUpdateInterval = setInterval(window.updateChatTokens, 1500);
+            };
+            const stopTokenPolling = () => {
+                if (tokenUpdateInterval) clearInterval(tokenUpdateInterval);
+                tokenUpdateInterval = null;
+                window.updateChatTokens();
+            };
             let currentModel = MODELS.OLM2;
             let allChats = {};
             window.currentChatId = crypto.randomUUID();
@@ -3742,6 +3759,7 @@
                 window.toggleSendIcon('send');
                 if (isGenerating && currentJob) currentJob.cancel();
                 window.currentChatId = crypto.randomUUID(); chatHistory = []; isGenerating = false;
+                window.updateChatTokens();
                 // Reset token display for new chat
                 const tokenDisplay = document.getElementById('token-count-display');
                 if (tokenDisplay) tokenDisplay.innerText = '0';
@@ -3799,6 +3817,7 @@
 
 
                     isGenerating = false;
+                    stopTokenPolling();
                     window.toggleSendIcon('send');
 
 
@@ -3873,7 +3892,9 @@
                 render(); els.chatCont.scrollTo({ top: els.chatCont.scrollHeight, behavior: 'smooth' });
                 currentJobId = Math.random().toString(36).substring(7);
 
-                isGenerating = true; updateUI();
+                isGenerating = true;
+                startTokenPolling();
+                updateUI();
                 window.toggleSendIcon('stop');
                 try {
 
@@ -4000,6 +4021,8 @@
                     responseText = sanitizeText(responseText);
                     chatHistory[chatHistory.length - 1][1] = responseText;
                     isGenerating = false;
+                    stopTokenPolling();
+                    window.updateChatTokens();
                     updateUI();
                     window.toggleSendIcon('send');
 
@@ -4101,10 +4124,31 @@
                 }
                 const display = document.getElementById('token-count-display');
                 if (display) {
-                    const chatTokens = allChats[currentChatId]?.tokensUsed || tokens;
-                    display.innerText = chatTokens.toLocaleString();
+                    const chatTokens = allChats[currentChatId]?.tokensUsed || 0;
+                    display.innerText = `${chatTokens.toLocaleString()} Tokens`;
                 }
                 save();
+            };
+
+            window.updateChatTokens = async () => {
+                if (!currentChatId) return;
+                try {
+                    const baseUrl = await getOpenAIClient();
+                    const response = await fetch(`${baseUrl}/api/tokens?chat_id=${currentChatId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const tokens = data.total_tokens || 0;
+                        if (allChats[currentChatId]) {
+                            allChats[currentChatId].tokensUsed = tokens;
+                        }
+                        const display = document.getElementById('token-count-display');
+                        if (display) {
+                            display.innerText = `${tokens.toLocaleString()} Tokens`;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Failed to update chat tokens:", e);
+                }
             };
 
             const applyContentFeatures = (el) => {
@@ -4492,6 +4536,7 @@
                 await StorageController.deleteChat(id);
                 if (id === currentChatId) {
                     window.currentChatId = crypto.randomUUID();
+                    window.updateChatTokens();
                     chatHistory = [];
                     render();
                 }
@@ -4502,6 +4547,7 @@
             window.loadChat = (id) => {
                 if (!allChats[id]) return;
                 window.currentChatId = id;
+                window.updateChatTokens();
                 chatHistory = allChats[id].history;
                 // Update token display for this chat
                 const tokenDisplay = document.getElementById('token-count-display');
