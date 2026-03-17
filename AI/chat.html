@@ -4422,8 +4422,14 @@
                         body: JSON.stringify({
                             model: "polaris-local",
                             messages: [
-                                { "role": "system", "content": "You are a title generator. Generate a title for this conversation based on the first interaction. Do not use quotes, punctuation, or thought tags. Just return the short title." },
-                                { "role": "user", "content": `Summarize based on ${userMsg}, make it short and concise` }
+                                { 
+                                    "role": "system", 
+                                    "content": "You are a concise title generator. Create a professional 2-4 word title for this chat based on the exchange. Avoid generic words like 'Chat', 'Conversation', or 'Request'. Do not use quotes, punctuation, or thought tags. Just return the short title." 
+                                },
+                                { 
+                                    "role": "user", 
+                                    "content": `User: ${userMsg}\nAI: ${aiMsg}\n\nTitle:` 
+                                }
                             ],
                             temperature: 0.3,
                             max_tokens: 25,
