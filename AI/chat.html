@@ -1519,6 +1519,53 @@
                 transform: scale(1) translateY(0);
             }
         }
+
+        /* --- Targeted Skuomorphism --- */
+        .skuomorphic-btn {
+            position: relative;
+            isolation: isolate;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.05),
+                inset 0 1px 1px rgba(255, 255, 255, 1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.02) !important;
+        }
+
+        .dark .skuomorphic-btn {
+            border-color: rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .skuomorphic-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 5px 12px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1.5px rgba(255, 255, 255, 1) !important;
+        }
+
+        .skuomorphic-btn:active {
+            transform: translateY(1px) !important;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.1),
+                0 1px 1px rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .skuomorphic-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .dark .skuomorphic-btn::after {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 50%);
+        }
     </style>
 
     <style>
@@ -1803,10 +1850,9 @@
                 </button>
             </div>
 
-            <!-- Middle: New Chat + Search -->
             <div class="flex-1 flex flex-col items-center gap-1 mt-1">
                 <button onclick="window.resetChat()"
-                    class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
+                    class="skuomorphic-btn w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
                     title="New Chat">
                     <i data-feather="plus" class="w-4 h-4"></i>
                 </button>
@@ -1877,18 +1923,23 @@
 
         <div id="top-right-actions" class="animate-fade-in flex items-center gap-2">
             <button id="chat-tokens-btn"
-                class="rounded-lg header-island px-3 hover:scale-105 active:scale-95 transition-all">
+                class="skuomorphic-btn rounded-lg header-island px-3 hover:scale-105 active:scale-95 transition-all">
                 <i data-feather="cpu" class="w-3.5 h-3.5 text-zinc-400"></i>
                 <span id="token-count-display"
                     class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider ml-1 action-label">0
                     Tokens</span>
             </button>
             <button onclick="window.showChangelog()"
-                class="rounded-lg header-island px-3 hover:scale-105 active:scale-95 transition-all">
+                class="skuomorphic-btn rounded-lg header-island px-3 hover:scale-105 active:scale-95 transition-all">
                 <i data-feather="zap" class="w-3.5 h-3.5 text-zinc-400"></i>
                 <span
                     class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider ml-1 action-label">Updates</span>
             </button>
+            <a href="https://discord.gg/BxjTsjvR8Z" target="_blank" rel="noopener noreferrer"
+                class="skuomorphic-btn rounded-lg header-island px-3 !bg-[#5865F2] !border-[#4c58d1] !text-white hover:scale-105 active:scale-95 transition-all flex items-center">
+                <i class="fa-brands fa-discord w-3.5 h-3.5"></i>
+                <span class="text-[10px] font-bold uppercase tracking-wider ml-1.5 action-label">Discord</span>
+            </a>
         </div>
 
         <header
@@ -1930,22 +1981,22 @@
                 <div class="flex flex-wrap items-center justify-center gap-2 mt-1 max-w-2xl">
                     <button
                         onclick="window.sendMessage('Write a highly detailed and creative science fiction short story about a time traveler from the year 3025 who accidentally gets stranded in the middle of a bustling metropolis in the year 2024. Describe their initial confusion, the primitive technology they encounter, and their desperate attempt to blend in without altering the timeline.')"
-                        class="px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
+                        class="skuomorphic-btn px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
                         <i data-feather="pen-tool" class="w-3 h-3"></i> <span data-t="ex_writing">Sci-Fi Story</span>
                     </button>
                     <button
                         onclick="window.sendMessage('How would you design a sustainable city for 100,000 people on Mars? Think through the logistics, hazards, and social structure required.')"
-                        class="px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
+                        class="skuomorphic-btn px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
                         <i data-feather="cpu" class="w-3 h-3"></i> <span data-t="ex_summary">Mars Colony</span>
                     </button>
                     <button
                         onclick="window.sendMessage('Write a robust and well-documented Python script that uses the BeautifulSoup library to scrape all the article titles and their corresponding URLs from a news website\'s homepage. Include error handling for connection issues and ensure the code follows PEP 8 style guidelines.')"
-                        class="px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
+                        class="skuomorphic-btn px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
                         <i data-feather="code" class="w-3 h-3"></i> <span data-t="ex_code">Python Scraper</span>
                     </button>
                     <button
                         onclick="window.sendMessage('Provide a collection of five powerful and thought-provoking quotes from Stoic philosophers like Marcus Aurelius, Seneca, and Epictetus. For each quote, explain how its wisdom can be applied to maintain motivation and resilience when facing modern-day challenges.')"
-                        class="px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
+                        class="skuomorphic-btn px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all flex items-center gap-2">
                         <i data-feather="zap" class="w-3 h-3"></i> <span data-t="ex_inspiration">Stoic Wisdom</span>
                     </button>
                 </div>
@@ -2006,7 +2057,7 @@
                                         <circle cx="12" cy="12" r="3" class="fill-current stroke-none" />
                                     </svg>
                                 </div>
-                                <span id="current-model-name">Polaris 1.5</span>
+                                <span id="current-model-name">Polaris 1.6</span>
                                 <i data-feather="chevron-down" class="w-3 h-3"></i>
                             </button>
 
@@ -2025,8 +2076,8 @@
                                             </svg>
                                         </div>
                                         <div class="flex flex-col">
-                                            <span class="text-xs font-semibold">Polaris 1.5</span>
-                                            <span class="text-[10px] opacity-50">Deep reasoning</span>
+                                            <span class="text-xs font-semibold">Polaris 1.6</span>
+                                            <span class="text-[10px] opacity-50">Deep reasoning · 1B Parameters</span>
                                         </div>
                                     </button>
                                     <button id="model-btn-OLM1" onclick="window.selectModel('OLM1')"
@@ -2048,7 +2099,7 @@
 
 
                         <button id="send-btn" onclick="window.handleAction()" disabled
-                            class="w-10 h-10 flex items-center justify-center rounded-xl opacity-50 cursor-not-allowed transition-all ml-1 active:scale-95"
+                            class="skuomorphic-btn w-10 h-10 flex items-center justify-center rounded-xl opacity-50 cursor-not-allowed transition-all ml-1 active:scale-95"
                             style="background-color: var(--accent-color); color: var(--accent-contrast); transition: background 0.2s, opacity 0.2s;">
                             <span id="send-icon-wrapper" class="flex items-center justify-center h-full w-full">
                                 <i class="fa-solid fa-arrow-up text-sm"></i>
@@ -2423,7 +2474,7 @@
             const MODELS = {
                 OLM1: { id: "https://ar12c-okemo2.hf.space", name: "OLM 1", icon: UNIQUE_SVG_STAR },
 
-                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.5", icon: UNIQUE_SVG_NORTH }
+                OLM2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Polaris 1.6", icon: UNIQUE_SVG_NORTH }
             };
 
             const translations = {
@@ -5008,12 +5059,12 @@
 
 
 
-            const BUILD_NUMBER = 1004;
+            const BUILD_NUMBER = 1011;
             const CHANGELOG = {
-                version: "1.0.4",
+                version: "1.6.0",
                 build: BUILD_NUMBER,
                 changes: [
-                    "Polaris has been updated to 1.5",
+                    "Polaris has been updated to 1.6 (1B Parameters)",
                     "Storage system upgraded to IndexedDB (async, non-blocking)",
                     "New Polaris settings modal — mobile-first design",
                     "Fun theme names: Sage Whisper, Midnight in Paris, Electric Lemonade, Vitamin C, Lush Green"

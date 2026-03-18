@@ -27,6 +27,7 @@
             }
         }
     </script>
+    <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --bg-dark: #1C1C1A;
@@ -40,6 +41,78 @@
 
         .serif-text {
             font-family: 'Century', 'Georgia', serif;
+        }
+
+        /* --- Global Skuomorphs --- */
+        .skuomorphic-button {
+            position: relative;
+            background: linear-gradient(180deg, #ffffff 0%, #f4f4f2 100%);
+            border-radius: 9999px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 
+                0 2px 5px rgba(0, 0, 0, 0.05),
+                inset 0 1px 1px rgba(255, 255, 255, 1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark .skuomorphic-button {
+            background: linear-gradient(180deg, #2a2a28 0%, #1c1c1a 100%);
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .skuomorphic-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1.5px rgba(255, 255, 255, 1);
+        }
+
+        .skuomorphic-button:active {
+            transform: translateY(1px);
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.1),
+                0 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .skuomorphic-button::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 6px;
+            right: 6px;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 9999px;
+            pointer-events: none;
+        }
+
+        .skuomorphic-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1.5px rgba(255, 255, 255, 1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .dark .skuomorphic-card {
+            background: #1c1c1a;
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -65,10 +138,10 @@
             <a href="privacy.html" class="hover:text-primary transition-colors">Privacy</a>
             <a href="tos.html" class="hover:text-primary transition-colors">TOS</a>
         </div>
-        <button
-            class="bg-textlight text-bglight dark:bg-textdark dark:text-bgdark px-4 py-2 rounded-xl text-xs md:text-sm font-medium hover:opacity-90 transition-opacity">
-            Try OLM
-        </button>
+        <a href="https://discord.gg/BxjTsjvR8Z" target="_blank"
+            class="skuomorphic-button discord !px-4 !py-1.5 text-xs md:text-sm !bg-[#5865F2] !text-white !border-[#4c58d1]">
+            <i class="fa-brands fa-discord"></i> Join Discord
+        </a>
     </nav>
 
     <main class="max-w-4xl mx-auto px-6 py-12 lg:py-24">
@@ -84,7 +157,7 @@
 
         <div class="space-y-8">
             <!-- TL;DR -->
-            <div class="p-8 rounded-3xl bg-secondary/10 border border-secondary/20">
+            <div class="skuomorphic-card p-10 !bg-secondary/10 !border-secondary/20">
                 <div class="flex items-center gap-3 mb-4">
                     <span class="text-2xl">⚡</span>
                     <h2 class="text-sm font-black uppercase tracking-widest text-primary">TL;DR — The Quick Version</h2>
@@ -101,7 +174,7 @@
             <!-- Sections -->
             <div class="grid grid-cols-1 gap-6">
                 <div
-                    class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300">
+                    class="skuomorphic-card p-10">
                     <h3 class="text-xl font-bold mb-4">Storage: Your data lives at home</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                         Everything you type into OLM — your chat history, display name, profile picture, settings — is
@@ -112,7 +185,7 @@
                 </div>
 
                 <div
-                    class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300">
+                    class="skuomorphic-card p-10">
                     <h3 class="text-xl font-bold mb-4">AI Messages: Fresh requests only</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                         When you hit send, your message travels to our backend server. We do <strong>not</strong> log,
@@ -122,7 +195,7 @@
                 </div>
 
                 <div
-                    class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300">
+                    class="skuomorphic-card p-10">
                     <h3 class="text-xl font-bold mb-4">Cookies & Tracking</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                         No analytics trackers. No third-party ad network pixels. OLM doesn't use cookies at all —
@@ -131,7 +204,7 @@
                 </div>
 
                 <div
-                    class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300">
+                    class="skuomorphic-card p-10">
                     <h3 class="text-xl font-bold mb-4">Optional Google Sign-In</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                         If you sign in with Google, we use your public profile info only to display your avatar and name
@@ -140,13 +213,13 @@
                 </div>
 
                 <div
-                    class="p-8 rounded-3xl bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-300">
+                    class="skuomorphic-card p-10">
                     <h3 class="text-xl font-bold mb-4">Contact</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
                         Got questions? Hit us up on Discord. We're a small crew and we actually respond.
                     </p>
                     <a href="https://discord.gg/BxjTsjvR8Z" target="_blank"
-                        class="inline-flex items-center gap-2 px-6 py-2 rounded-xl bg-primary/10 text-primary text-xs font-bold border border-primary/20 hover:bg-primary/20 transition-all">
+                        class="skuomorphic-button !px-6 !py-2 !text-xs font-bold !bg-primary/10 !text-primary !border-primary/20">
                         Discord
                     </a>
                 </div>

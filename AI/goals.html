@@ -50,6 +50,78 @@
                 radial-gradient(at 50% 90%, rgba(191, 215, 181, 0.05) 0px, transparent 50%);
             background-attachment: fixed;
         }
+
+        /* --- Global Skuomorphs --- */
+        .skuomorphic-button {
+            position: relative;
+            background: linear-gradient(180deg, #ffffff 0%, #f4f4f2 100%);
+            border-radius: 9999px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 
+                0 2px 5px rgba(0, 0, 0, 0.05),
+                inset 0 1px 1px rgba(255, 255, 255, 1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark .skuomorphic-button {
+            background: linear-gradient(180deg, #2a2a28 0%, #1c1c1a 100%);
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: 
+                0 4px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .skuomorphic-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1.5px rgba(255, 255, 255, 1);
+        }
+
+        .skuomorphic-button:active {
+            transform: translateY(1px);
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.1),
+                0 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .skuomorphic-button::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 6px;
+            right: 6px;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 9999px;
+            pointer-events: none;
+        }
+
+        .skuomorphic-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1.5px rgba(255, 255, 255, 1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .dark .skuomorphic-card {
+            background: #1c1c1a;
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 
@@ -74,10 +146,10 @@
             <a href="privacy.html" class="hover:text-primary transition-colors">Privacy</a>
             <a href="tos.html" class="hover:text-primary transition-colors">TOS</a>
         </div>
-        <button
-            class="bg-textlight text-bglight dark:bg-textdark dark:text-bgdark px-4 py-2 rounded-xl text-xs md:text-sm font-medium hover:opacity-90 transition-opacity">
-            Try OLM
-        </button>
+        <a href="https://discord.gg/BxjTsjvR8Z" target="_blank"
+            class="skuomorphic-button discord !px-4 !py-1.5 text-xs md:text-sm !bg-[#5865F2] !text-white !border-[#4c58d1]">
+            <i class="fa-brands fa-discord"></i> Join Discord
+        </a>
     </nav>
 
     <main class="flex-1 flex flex-col items-center p-6 md:p-12 z-10 max-w-[1000px] mx-auto w-full">
@@ -95,7 +167,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
 
-            <div class="space-y-6">
+            <div class="skuomorphic-card p-10 space-y-6">
                 <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl text-primary">
                     <i class="fa-solid fa-earth-americas"></i>
                 </div>
@@ -106,7 +178,7 @@
                 </p>
             </div>
 
-            <div class="space-y-6">
+            <div class="skuomorphic-card p-10 space-y-6">
                 <div
                     class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-xl text-primary">
                     <i class="fa-solid fa-bolt"></i>
@@ -119,7 +191,7 @@
                 </p>
             </div>
 
-            <div class="space-y-6">
+            <div class="skuomorphic-card p-10 space-y-6">
                 <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl text-primary">
                     <i class="fa-solid fa-infinity"></i>
                 </div>
@@ -131,7 +203,7 @@
                 </p>
             </div>
 
-            <div class="space-y-6">
+            <div class="skuomorphic-card p-10 space-y-6">
                 <div
                     class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-xl text-primary">
                     <i class="fa-solid fa-microchip"></i>
@@ -146,14 +218,14 @@
         </div>
 
         <div
-            class="mt-32 w-full p-8 md:p-14 rounded-[40px] bg-white dark:bg-[#1f201c] border border-gray-100 dark:border-white/5 text-center relative overflow-hidden">
+            class="skuomorphic-card mt-32 w-full p-8 md:p-14 text-center relative overflow-hidden">
             <div
                 class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mt-48 pointer-events-none">
             </div>
             <h3 class="serif-text text-4xl md:text-5xl font-medium mb-6 relative z-10">Join the pursuit of intelligence.
             </h3>
-            <a href="chat.html"
-                class="relative z-10 inline-flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-white font-semibold text-lg hover:scale-105 transition-all shadow-xl">
+            <a href="https://discord.gg/BxjTsjvR8Z" target="_blank"
+                class="skuomorphic-button !px-8 !py-4 text-white font-semibold text-lg !bg-primary !border-primary/20">
                 Start Thinking <i class="fa-solid fa-arrow-right opacity-70"></i>
             </a>
         </div>
