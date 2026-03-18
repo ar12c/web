@@ -1975,7 +1975,7 @@
                 <div class="mb-1 relative flex items-center justify-center">
 
                     <h2 id="welcome-greeting"
-                        class="text-5xl font-normal tracking-wide text-zinc-900 dark:text-[#f0f0f0]"
+                        class="text-5xl font-normal tracking-wide text-zinc-900 dark:text-[#f0f0f0] hidden lg:block"
                         style="font-family: Century, 'Century Schoolbook', Georgia, serif;" data-t="welcome_header">
                         Welcome back</h2>
                 </div>
@@ -4408,14 +4408,12 @@
                     container.querySelectorAll('.title-feedback-btn').forEach(b =>
                         b.classList.remove('text-green-500', 'text-red-500', 'opacity-100')
                     );
-                    if (newFeedback) {
-                        btnEl.classList.add('opacity-100', newFeedback === 'good' ? 'text-green-500' : 'text-red-500');
-                    }
                 }
-
                 if (newFeedback) {
                     const originalHTML = btnEl.innerHTML;
-                    btnEl.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>`;
+                    const originalWidth = btnEl.offsetWidth;
+                    btnEl.style.width = originalWidth + 'px'; // Fix width to prevent jitter
+                    btnEl.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[12px]"></i>`;
                     btnEl.disabled = true;
 
                     try {
@@ -4434,6 +4432,10 @@
 
                         if (!res.ok) throw new Error("Feedback failed");
 
+                        // Show quick confirmation
+                        btnEl.innerHTML = `<i class="fa-solid fa-check text-[12px] text-white"></i>`;
+                        await new Promise(r => setTimeout(r, 600));
+
                         // Toast
                         const toast = document.createElement('div');
                         toast.className = 'fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-2xl text-sm font-semibold z-[9999] transition-all duration-300 opacity-0 transform translate-y-4 flex items-center gap-2';
@@ -4448,10 +4450,12 @@
                             toast.classList.add('opacity-0', 'translate-y-4');
                             setTimeout(() => toast.remove(), 300);
                         }, 3000);
+
                     } catch (e) {
                         console.error("Error sending title feedback:", e);
                     } finally {
                         btnEl.innerHTML = originalHTML;
+                        btnEl.style.width = '';
                         btnEl.disabled = false;
                         feather.replace();
                     }
