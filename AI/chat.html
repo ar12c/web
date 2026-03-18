@@ -491,9 +491,11 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 28px;
-            box-shadow: 0 4px 12px -1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 
+                0 6px 16px -2px rgba(0, 0, 0, 0.08), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+                inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);
             position: relative;
             z-index: 40;
             overflow: hidden;
@@ -502,8 +504,11 @@
 
         .dark .input-box-wrap {
             background-color: var(--input-bg);
-            border-color: color-mix(in srgb, var(--accent-color) 10%, rgba(255, 255, 255, 0.1));
-            box-shadow: 0 4px 12px -1px rgba(0, 0, 0, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 8px 18px -4px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+                inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
         }
 
         .input-box-wrap::before {
@@ -1525,19 +1530,19 @@
             position: relative;
             isolation: isolate;
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
             box-shadow: 
-                0 2px 4px rgba(0, 0, 0, 0.05),
-                inset 0 1px 1px rgba(255, 255, 255, 1),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.02) !important;
+                0 2px 5px rgba(0, 0, 0, 0.04),
+                inset 0 1px 1.5px rgba(255, 255, 255, 1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.03) !important;
         }
 
         .dark .skuomorphic-btn {
-            border-color: rgba(255, 255, 255, 0.05) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
             box-shadow: 
-                0 4px 10px rgba(0, 0, 0, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05),
-                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2) !important;
+                0 5px 12px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.12),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.3) !important;
         }
 
         .skuomorphic-btn:hover {
@@ -1547,11 +1552,23 @@
                 inset 0 1px 1.5px rgba(255, 255, 255, 1) !important;
         }
 
+        .dark .skuomorphic-btn:hover {
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1.5px rgba(255, 255, 255, 0.15) !important;
+        }
+
         .skuomorphic-btn:active {
             transform: translateY(1px) !important;
             box-shadow: 
                 inset 0 2px 4px rgba(0, 0, 0, 0.1),
                 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .dark .skuomorphic-btn:active {
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.4),
+                0 1px 1px rgba(255, 255, 255, 0.05) !important;
         }
 
         .skuomorphic-btn::after {
@@ -1715,11 +1732,6 @@
                         Already have an account? <button onclick="window.goToSettingsLogin()"
                             class="text-[var(--accent-color)] hover:underline">Log in via Settings</button>
                     </p>
-                    <a href="https://discord.gg/BxjTsjvR8Z" target="_blank" rel="noopener noreferrer"
-                        class="w-full flex items-center justify-center gap-2 min-h-[48px] bg-[#5865F2] text-white rounded-2xl font-bold text-xs hover:brightness-110 active:scale-[0.98] transition-all shadow-lg">
-                        <i class="fa-brands fa-discord text-base"></i>
-                        <span>Development Progress</span>
-                    </a>
                 </div>
 
             </div>
@@ -1762,11 +1774,12 @@
             <!-- Main Navigation -->
             <div class="flex-1 overflow-y-auto no-scrollbar pt-2">
                 <!-- New Chat Button -->
-                <div class="__menu-item" onclick="window.resetChat()" title="New Chat">
-                    <div class="flex items-center gap-3">
+                <div class="px-2 mb-2">
+                    <button onclick="window.resetChat()" title="New Chat"
+                        class="skuomorphic-btn w-full p-3 flex items-center gap-3 rounded-xl bg-white dark:bg-zinc-900/40 text-zinc-900 dark:text-zinc-100 font-semibold group transition-all">
                         <div class="icon"><i data-feather="plus" class="w-4 h-4"></i></div>
-                        <span class="text-sm font-medium">New chat</span>
-                    </div>
+                        <span class="text-sm">New chat</span>
+                    </button>
                 </div>
 
                 <!-- Sponsored/Research -->
@@ -1790,7 +1803,7 @@
                         <i data-feather="search"
                             class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-3.5 h-3.5 pointer-events-none group-focus-within:text-[var(--accent-color)] transition-colors"></i>
                         <input type="text" id="chat-search-input" placeholder="Search"
-                            class="w-full pl-9 pr-3 py-2 text-sm font-medium rounded-lg bg-zinc-500/5 border border-transparent focus:bg-white dark:focus:bg-zinc-800 focus:border-[var(--accent-color)]/30 outline-none transition-all placeholder-zinc-400"
+                            class="skuomorphic-btn w-full pl-9 pr-3 py-2 text-sm font-medium rounded-lg bg-zinc-500/5 dark:bg-zinc-900/40 border border-transparent focus:bg-white dark:focus:bg-zinc-900 focus:border-[var(--accent-color)]/30 outline-none transition-all placeholder-zinc-400"
                             oninput="window.filterChats(this.value)">
                     </div>
                 </div>
@@ -1850,17 +1863,20 @@
                 </button>
             </div>
 
-            <div class="flex-1 flex flex-col items-center gap-1 mt-1">
-                <button onclick="window.resetChat()"
-                    class="skuomorphic-btn w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
-                    title="New Chat">
-                    <i data-feather="plus" class="w-4 h-4"></i>
-                </button>
-                <button onclick="document.getElementById('chat-search-input').focus(); window.toggleSidebar();"
-                    class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
-                    title="Search">
-                    <i data-feather="search" class="w-4 h-4"></i>
-                </button>
+            <div class="flex-1 flex flex-col items-center mt-1">
+                <div class="skuomorphic-btn flex flex-col items-center rounded-xl p-0.5 bg-white dark:bg-zinc-900/40">
+                    <button onclick="window.resetChat()"
+                        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
+                        title="New Chat">
+                        <i data-feather="plus" class="w-4 h-4"></i>
+                    </button>
+                    <div class="w-6 h-px bg-zinc-200 dark:bg-zinc-800 my-0.5"></div>
+                    <button onclick="window.location.href='research.html'"
+                        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-zinc-500/10 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all"
+                        title="Research">
+                        <i data-feather="compass" class="w-4 h-4"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Bottom: Trash + PFP -->
@@ -1935,11 +1951,6 @@
                 <span
                     class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider ml-1 action-label">Updates</span>
             </button>
-            <a href="https://discord.gg/BxjTsjvR8Z" target="_blank" rel="noopener noreferrer"
-                class="skuomorphic-btn rounded-lg header-island px-3 !bg-[#5865F2] !border-[#4c58d1] !text-white hover:scale-105 active:scale-95 transition-all flex items-center">
-                <i class="fa-brands fa-discord w-3.5 h-3.5"></i>
-                <span class="text-[10px] font-bold uppercase tracking-wider ml-1.5 action-label">Discord</span>
-            </a>
         </div>
 
         <header
@@ -2102,7 +2113,7 @@
                             class="skuomorphic-btn w-10 h-10 flex items-center justify-center rounded-xl opacity-50 cursor-not-allowed transition-all ml-1 active:scale-95"
                             style="background-color: var(--accent-color); color: var(--accent-contrast); transition: background 0.2s, opacity 0.2s;">
                             <span id="send-icon-wrapper" class="flex items-center justify-center h-full w-full">
-                                <i class="fa-solid fa-arrow-up text-sm"></i>
+                                <i class="fa-solid fa-paper-plane text-sm"></i>
                             </span>
                         </button>
                     </div>
@@ -2537,7 +2548,6 @@
                     yesterday_header: "Yesterday",
                     last_week_header: "Previous 7 Days",
                     dust_collecting_header: "Dust Collecting",
-                    discord_btn: "Latest developments",
                     language: "Language",
                     thought_btn: "Think"
                 },
