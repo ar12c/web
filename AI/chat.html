@@ -2837,12 +2837,12 @@
 
 
             const parseThought = (text) => {
-
-                const thoughtRegex = /(?:<|&lt;)thought(?:[\s\S]*?)(?:>|&gt;)([\s\S]*?)(?:(?:<|&lt;)\/thought(?:>|&gt;)|$)/i;
+                if (!text) return { thought: null, content: "" };
+                // Support multiple tag formats: <thought>, <|begin_of_thought|>, <|thought|>
+                const thoughtRegex = /(?:<|&lt;)(?:thought|\|begin_of_thought\||\|thought\|)(?:[\s\S]*?)(?:>|&gt;)([\s\S]*?)(?:(?:<|&lt;)(?:\/thought|\|end_of_thought\||\|thought\|)(?:>|&gt;)|$)/i;
                 const match = text.match(thoughtRegex);
                 if (match) {
                     const thoughtContent = match[1].trim();
-
                     const remainingText = text.replace(match[0], '').trim();
                     return { thought: thoughtContent, content: remainingText };
                 }
