@@ -17,7 +17,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./chat-dist.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -3862,7 +3862,7 @@
             async function getOpenAIClient() {
 
                 const baseUrl = CUSTOM_BACKEND_URL.split('/gradio')[0].split('/chat')[0].split('/v1')[0];
-                console.log('Using backend URL:', baseUrl);
+                // console.log('Using backend URL:', baseUrl);
                 return baseUrl;
             }
 
