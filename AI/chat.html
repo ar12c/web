@@ -2691,6 +2691,11 @@
 
 
             const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '').trim();
+            const ensureClosedCodeBlocks = (t) => {
+                const count = (t.match(/```/g) || []).length;
+                if (count % 2 !== 0) return t + '\n```';
+                return t;
+            };
 
             let client = null, chatHistory = [], isGenerating = false, currentJob = null;
             let tokenUpdateInterval = null;
@@ -4024,6 +4029,7 @@
                             try {
                                 const data = JSON.parse(dataStr);
                                 const delta = data.choices[0].delta.content || "";
+                                const finishReason = data.choices[0].finish_reason;
                                 responseText += delta;
 
                                 responseText = responseText.replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '');
@@ -4066,7 +4072,8 @@
                                     }
 
                                     if (content.trim()) {
-                                        mainContentDiv.innerHTML = marked.parse(sanitizeText(content));
+                                        const displayContent = isGenerating ? ensureClosedCodeBlocks(sanitizeText(content)) : sanitizeText(content);
+                                        mainContentDiv.innerHTML = marked.parse(displayContent);
                                         applyContentFeatures(mainContentDiv);
                                     }
 
@@ -4075,6 +4082,9 @@
                                 }
                                 if (data.usage) {
                                     window.updateTokenCount(data.usage.total_tokens || 0);
+                                }
+                                if (finishReason === "stop" || finishReason === "length") {
+                                    break;
                                 }
                             } catch (e) {
                                 console.warn("SSE stream parse error:", e);
