@@ -8,7 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
   <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
   <script>
@@ -24,12 +23,30 @@
           },
           fontFamily: {
             serif: ['Century', '"Century Schoolbook"', 'serif'],
-            sans: ['Inter', 'sans-serif'],
+            sans: ['Satoshi', 'Inter', 'sans-serif'],
           },
         }
       }
     }
   </script>
+  <style>
+    @font-face {
+      font-family: 'Satoshi';
+      src: url('Fonts/Satoshi-Variable.ttf') format('truetype');
+      font-weight: 300 900;
+      font-display: swap;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'Satoshi';
+      src: url('Fonts/Satoshi-VariableItalic.ttf') format('truetype');
+      font-weight: 300 900;
+      font-display: swap;
+      font-style: italic;
+    }
+  </style>
+
   <style>
     body {
       background-color: #F9F9F7;

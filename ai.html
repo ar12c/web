@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media',
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -25,12 +25,37 @@
                     },
                     fontFamily: {
                         serif: ['Century', 'Georgia', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Satoshi', 'Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+    <script>
+        /* Theme Sync Script */
+        (function() {
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDark) document.documentElement.classList.add('dark');
+        })();
+    </script>
+    <style>
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('Fonts/Satoshi-Variable.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('Fonts/Satoshi-VariableItalic.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: italic;
+        }
+    </style>
+
     <style>
         :root {
             --bg-dark: #1C1C1A;
@@ -291,88 +316,74 @@
         </div>
     </main>
 
-    <!-- Attempting to Rival Giants Section -->
-    <section
-        class="min-h-screen w-full max-w-7xl mx-auto px-6 lg:px-16 py-12 lg:py-24 border-t border-gray-200 dark:border-gray-800/50 flex flex-col justify-center">
-        <div class="mb-12 text-center lg:text-left">
-            <h2 class="text-3xl md:text-5xl font-serif mb-4">Based AI</h2>
-            <p class="text-gray-500 dark:text-gray-400 max-w-2xl text-lg">
-                Okemoware. I'm constantly updating the model in hopes of competitng with giants along with zero
-                censorship.
+    <!-- Based AI: Core Pillars (Non-Bento) -->
+    <section class="py-24 px-6 max-w-7xl mx-auto border-t border-[#BFD7B5]/20">
+        <div class="mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 italic tracking-tight dark:text-textdark">Based AI</h2>
+            <p class="text-xl text-primary/80 dark:text-secondary/80 max-w-2xl leading-relaxed">
+                Okemoware. I'm constantly updating the model in hopes of competing with giants along with zero censorship.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="space-y-12">
             <!-- Pillar 1: Unified Memory -->
-            <div class="skuomorphic-card p-8 group">
-                <div
-                    class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                        viewBox="0 0 256 256">
-                        <path
-                            d="M224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Zm0-80v48a8,8,0,0,1-16,0V67.31L125.66,150.34a8,8,0,0,1-11.32-11.32L196.69,56H168a8,8,0,0,1,0-16h48A8,8,0,0,1,224,48Z">
-                        </path>
-                    </svg>
+            <div class="flex flex-col md:flex-row gap-8 items-start pb-12 border-b border-[#BFD7B5]/10">
+                <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl bg-secondary/10 dark:bg-secondary/5 text-primary dark:text-secondary">
+                    <i class="fa-solid fa-microchip text-xl"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Unified Memory</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    By leveraging Apple Silicon's unified memory architecture, we bypass traditional VRAM bottlenecks,
-                    allowing models to scale beyond dedicated GPU limits.
-                </p>
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-semibold mb-3 dark:text-textdark">Unified Memory Architecture</h3>
+                    <p class="text-lg text-primary/70 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        By leveraging Apple Silicon's unified memory architecture, we bypass traditional VRAM bottlenecks, 
+                        allowing models to scale beyond dedicated GPU limits. This structural advantage enables 
+                        high-parameter execution on consumer hardware with unprecedented efficiency.
+                    </p>
+                </div>
             </div>
 
-            <!-- Pillar 2: 3-Phase Strategy -->
-            <div class="skuomorphic-card p-8 group">
-                <div
-                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                        viewBox="0 0 256 256">
-                        <path
-                            d="M216,40H144a8,8,0,0,0,0,16h72V200H144a8,8,0,0,0,0,16h72a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM112,48a8,8,0,0,0-8-8H32A16,16,0,0,0,16,56V200a16,16,0,0,0,16,16h72a8,8,0,0,0,0-16H32V56h72A8,8,0,0,0,112,48Z">
-                        </path>
-                    </svg>
+            <!-- Pillar 2: 3-Phase Evolution -->
+            <div class="flex flex-col md:flex-row gap-8 items-start pb-12 border-b border-[#BFD7B5]/10">
+                <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl bg-secondary/10 dark:bg-secondary/5 text-primary dark:text-secondary">
+                    <i class="fa-solid fa-diagram-project text-xl"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3">3-Phase Evolution</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Intelligence isn't built in a day. Our structured methodology evolves models through distinct
-                    phases—from basic reasoning to deep specialized knowledge.
-                </p>
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-semibold mb-3 dark:text-textdark">3-Phase Strategic Evolution</h3>
+                    <p class="text-lg text-primary/70 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        Intelligence isn't built in a day. Our structured methodology evolves models through distinct 
+                        phases—from basic reasoning and logic foundations to deep, specialized domain knowledge 
+                        and recursive self-improvement cycles.
+                    </p>
+                </div>
             </div>
 
-            <!-- Pillar 3: MLX Framework -->
-            <div class="skuomorphic-card p-8 group">
-                <div
-                    class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                        viewBox="0 0 256 256">
-                        <path
-                            d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208Zm-48-80a8,8,0,0,1-8,8H104a8,8,0,0,1,0-16h48A8,8,0,0,1,160,128Z">
-                        </path>
-                    </svg>
+            <!-- Pillar 3: MLX Metal -->
+            <div class="flex flex-col md:flex-row gap-8 items-start pb-12 border-b border-[#BFD7B5]/10">
+                <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl bg-secondary/10 dark:bg-secondary/5 text-primary dark:text-secondary">
+                    <i class="fa-solid fa-code text-xl"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3">MLX Metal</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Custom-built for maximum throughput, we optimize directly on the metal, stripping away abstraction
-                    layers to achieve server-class performance on personal devices.
-                </p>
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-semibold mb-3 dark:text-textdark">MLX Metal Optimization</h3>
+                    <p class="text-lg text-primary/70 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        Custom-built for maximum throughput, we optimize directly on the metal, stripping away 
+                        abstraction layers to achieve server-class performance on personal devices. This direct 
+                        silicon integration ensures maximum utilization of every compute cycle.
+                    </p>
+                </div>
             </div>
 
             <!-- Pillar 4: Sustainable AI -->
-            <div class="skuomorphic-card p-8 group">
-                <div
-                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                        viewBox="0 0 256 256">
-                        <path
-                            d="M244.24,51.76a8,8,0,0,0-11.32,0L136,148.69,82.34,95a8,8,0,0,0-11.32,0l-56,56a8,8,0,0,0,11.32,11.32L71,113.31l53.66,53.65a8,8,0,0,0,11.32,0l104-104A8,8,0,0,0,244.24,51.76Z">
-                        </path>
-                    </svg>
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <div class="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl bg-secondary/10 dark:bg-secondary/5 text-primary dark:text-secondary">
+                    <i class="fa-solid fa-leaf text-xl"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-3">Scaling Sustainably</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Democratizing AI training means making it affordable. We focus on high-efficiency scaling that
-                    respects both your budget and our planet's energy.
-                </p>
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-semibold mb-3 dark:text-textdark">Scaling Sustainably</h3>
+                    <p class="text-lg text-primary/70 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        Democratizing AI training means making it affordable. We focus on high-efficiency scaling 
+                        that respects both your hardware budget and our planet's energy. Intelligence should 
+                        be accessible without environmental compromise.
+                    </p>
+                </div>
             </div>
         </div>
     </section>

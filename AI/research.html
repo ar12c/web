@@ -9,13 +9,11 @@
 
 
     <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media',
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -28,12 +26,36 @@
                     },
                     fontFamily: {
                         serif: ['Century', 'Georgia', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Satoshi', 'Inter', 'sans-serif'],
                     },
                 }
             }
         }
     </script>
+    <script>
+            /* Theme Sync Script */
+            (function () {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) document.documentElement.classList.add('dark');
+            })();
+    </script>
+    <style>
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('../Fonts/Satoshi-Variable.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('../Fonts/Satoshi-VariableItalic.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: italic;
+        }
+    </style>
 
     <style>
         :root {
@@ -45,7 +67,7 @@
 
         body {
             background-color: var(--bg-light);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Satoshi', 'Inter', sans-serif;
             margin: 0;
             padding: 0;
             color: var(--accent-olive);
@@ -110,8 +132,14 @@
         #reader-modal {
             display: none;
             opacity: 0;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
+            background-color: var(--bg-light);
+            z-index: 1000;
+        }
+
+        .dark #reader-modal {
+            background-color: var(--bg-dark);
         }
 
         #reader-modal.active {
@@ -120,12 +148,16 @@
         }
 
         .modal-content {
-            transform: translateY(40px) scale(0.98);
-            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         #reader-modal.active .modal-content {
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
 
         /* --- Global Skuomorphs --- */
@@ -134,7 +166,7 @@
             background: linear-gradient(180deg, #ffffff 0%, #f4f4f2 100%);
             border-radius: 9999px;
             border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 
+            box-shadow:
                 0 2px 5px rgba(0, 0, 0, 0.05),
                 inset 0 1px 1px rgba(255, 255, 255, 1),
                 inset 0 -1px 2px rgba(0, 0, 0, 0.02);
@@ -148,7 +180,7 @@
         .dark .skuomorphic-button {
             background: linear-gradient(180deg, #2a2a28 0%, #1c1c1a 100%);
             border-color: rgba(255, 255, 255, 0.05);
-            box-shadow: 
+            box-shadow:
                 0 4px 10px rgba(0, 0, 0, 0.3),
                 inset 0 1px 1px rgba(255, 255, 255, 0.05),
                 inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
@@ -156,14 +188,14 @@
 
         .skuomorphic-button:hover {
             transform: translateY(-1px);
-            box-shadow: 
+            box-shadow:
                 0 5px 15px rgba(0, 0, 0, 0.08),
                 inset 0 1px 1.5px rgba(255, 255, 255, 1);
         }
 
         .skuomorphic-button:active {
             transform: translateY(1px);
-            box-shadow: 
+            box-shadow:
                 inset 0 2px 4px rgba(0, 0, 0, 0.1),
                 0 1px 1px rgba(255, 255, 255, 0.5);
         }
@@ -184,7 +216,7 @@
             background: #ffffff;
             border-radius: 24px;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 
+            box-shadow:
                 0 10px 30px rgba(0, 0, 0, 0.08),
                 inset 0 1px 1.5px rgba(255, 255, 255, 1),
                 inset 0 -1px 2px rgba(0, 0, 0, 0.03);
@@ -194,7 +226,7 @@
         .dark .skuomorphic-card {
             background: #1c1c1a;
             border-color: rgba(255, 255, 255, 0.05);
-            box-shadow: 
+            box-shadow:
                 0 15px 40px rgba(0, 0, 0, 0.4),
                 inset 0 1px 1px rgba(255, 255, 255, 0.05),
                 inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
@@ -204,7 +236,7 @@
             background: #f4f4f2;
             border-radius: 16px;
             border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 
+            box-shadow:
                 inset 0 2px 4px rgba(0, 0, 0, 0.06),
                 inset 0 1px 2px rgba(0, 0, 0, 0.04),
                 0 1px 1px rgba(255, 255, 255, 0.8);
@@ -214,7 +246,7 @@
         .dark .skuomorphic-input {
             background: #0f0f0e;
             border-color: rgba(255, 255, 255, 0.03);
-            box-shadow: 
+            box-shadow:
                 inset 0 3px 6px rgba(0, 0, 0, 0.6),
                 inset 0 1px 2px rgba(0, 0, 0, 0.4),
                 0 1px 1px rgba(255, 255, 255, 0.02);
@@ -227,14 +259,19 @@
     <nav
         class="w-full sticky top-0 flex items-center justify-between py-4 px-6 lg:py-6 lg:px-16 border-b border-gray-200 dark:border-gray-800/50 bg-white/80 dark:bg-bgdark/80 backdrop-blur-md relative z-30">
         <a href="../AI.html" class="flex items-center gap-3">
-            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" class="w-8 h-8 text-primary fill-current">
-                    <path d="M4.96,314.21l508.97,180.31v-94.71L28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z"/>
-                    <polygon points="513.93 561.2 0 684.2 0 395.8 513.93 522.5 513.93 561.2"/>
-                    <path d="M4.96,765.79l508.97-180.31v94.71L28.54,1073.91C19.12,1085.79,0,1079.13,0,1063.97v-286.6c0-4.38,1.79-8.56,4.96-11.58Z"/>
-                    <path d="M1075.04,314.21l-508.97,180.31v-94.71S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z"/>
-                    <polygon points="566.07 561.2 1080 684.2 1080 395.8 566.07 522.5 566.07 561.2"/>
-                    <path d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z"/>
-                </svg>
+            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080"
+                class="w-8 h-8 text-primary fill-current">
+                <path
+                    d="M4.96,314.21l508.97,180.31v-94.71L28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
+                <polygon points="513.93 561.2 0 684.2 0 395.8 513.93 522.5 513.93 561.2" />
+                <path
+                    d="M4.96,765.79l508.97-180.31v94.71L28.54,1073.91C19.12,1085.79,0,1079.13,0,1063.97v-286.6c0-4.38,1.79-8.56,4.96-11.58Z" />
+                <path
+                    d="M1075.04,314.21l-508.97,180.31v-94.71S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z" />
+                <polygon points="566.07 561.2 1080 684.2 1080 395.8 566.07 522.5 566.07 561.2" />
+                <path
+                    d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z" />
+            </svg>
             <div class='text-xl md:text-2xl font-black text-primary'>OLM</div>
         </a>
         <div class="hidden md:flex items-center gap-8 text-sm font-medium">
@@ -248,7 +285,7 @@
 
     <main class="flex-1 w-full max-w-7xl mx-auto p-8 md:p-12 lg:p-20 pb-40">
         <header class="max-w-4xl mx-auto mb-16 flex justify-between items-center text-gray-900 dark:text-white">
-            <h1 class="text-4xl md:text-5xl font-black tracking-tighter">Research</h1>
+            <h1 class="text-4xl md:text-5xl font-black tracking-tighter">Research / News</h1>
             <div class="flex items-center gap-4">
             </div>
         </header>
@@ -280,16 +317,33 @@
     </main>
 
 
-    <div id="reader-modal"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-12 backdrop-blur-2xl bg-white/40">
-        <div
-            class="modal-content w-full max-w-5xl max-h-[90vh] bg-white dark:bg-bgdark rounded-[40px] shadow-[0_32px_80px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col relative border border-gray-200 dark:border-white/5">
-            <button onclick="closeReader()"
-                class="absolute top-8 right-8 z-[10] w-12 h-12 flex items-center justify-center rounded-full bg-black text-white hover:scale-110 active:scale-95 transition-all">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="overflow-y-auto p-12 md:p-20 h-full no-scrollbar">
-                <div id="modal-article-content" class="max-w-2xl mx-auto"></div>
+    <div id="reader-modal" class="fixed inset-0 overflow-hidden">
+        <div class="modal-content relative flex flex-col h-full bg-bglight dark:bg-bgdark">
+            <!-- Reader Header -->
+            <div
+                class="sticky top-0 z-20 w-full flex items-center justify-between px-6 lg:px-16 py-6 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-bgdark/80 backdrop-blur-xl">
+                <div class="flex items-center gap-4">
+                    <span
+                        class="text-xs font-black uppercase tracking-[0.2em] text-primary/40 dark:text-secondary/40">OLM
+                        Research</span>
+                </div>
+                <button onclick="closeReader()"
+                    class="skuomorphic-button !w-12 !h-12 !rounded-full group transition-all">
+                    <i class="fa-solid fa-xmark text-lg group-hover:rotate-90 transition-transform"></i>
+                </button>
+            </div>
+
+            <!-- Reader Body -->
+            <div class="flex-1 overflow-y-auto w-full no-scrollbar pb-32">
+                <div class="max-w-3xl mx-auto px-6 py-20">
+                    <div id="modal-article-content"></div>
+                </div>
+            </div>
+
+            <!-- Reader Footer Bar (Optional progress or status) -->
+            <div
+                class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 px-8 py-3 rounded-full bg-black/5 dark:bg-white/5 backdrop-blur-md border border-white/10 text-[10px] uppercase tracking-[0.3em] font-bold text-primary/40 dark:text-textdark/20">
+                End of Document
             </div>
         </div>
     </div>
@@ -436,10 +490,12 @@
             }).join('');
 
             const contentHtml = `
-                <div class="flex gap-4 mb-8">${tagsHtml}</div>
-                <div class="text-[10px] font-bold text-stone-400 mb-6 uppercase tracking-widest">${blog.date || 'RECENT'}</div>
-                <h1 class="serif-text text-5xl md:text-6xl font-medium tracking-tight text-moss dark:text-sage mb-12 leading-[1.1]">${blog.title}</h1>
-                <div class="rich-content text-xl leading-relaxed text-stone-600 dark:text-stone-300 font-normal">
+                <div class="text-center mb-16">
+                    <div class="flex justify-center gap-4 mb-8">${tagsHtml}</div>
+                    <h1 class="serif-text text-5xl md:text-7xl font-medium tracking-tight text-primary dark:text-textdark mb-6 leading-[1.05]">${blog.title}</h1>
+                    <div class="text-sm font-bold text-primary/40 dark:text-textdark/40 uppercase tracking-[0.2em]">${blog.date || 'RECENT'}</div>
+                </div>
+                <div class="rich-content text-xl md:text-2xl leading-relaxed text-primary/80 dark:text-textdark/70 font-normal">
                     ${blog.content}
                 </div>
             `;

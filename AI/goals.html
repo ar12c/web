@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media',
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -23,12 +23,37 @@
                     },
                     fontFamily: {
                         serif: ['Century', 'Georgia', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Satoshi', 'Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+    <script>
+        /* Theme Sync Script */
+        (function() {
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDark) document.documentElement.classList.add('dark');
+        })();
+    </script>
+    <style>
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('../Fonts/Satoshi-Variable.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('../Fonts/Satoshi-VariableItalic.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: italic;
+        }
+    </style>
+
     <style>
         :root {
             --bg-light: #F9F8F6;
@@ -163,56 +188,66 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 w-full">
-
-            <div class="skuomorphic-card p-10 space-y-6">
-                <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl text-primary">
-                    <i class="fa-solid fa-earth-americas"></i>
+        <div class="space-y-16 w-full mt-12 pb-24">
+            <!-- Goal 1: Free for Everyone -->
+            <div class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
+                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/5 text-primary dark:text-secondary group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-earth-americas text-2xl"></i>
                 </div>
-                <h2 class="serif-text text-4xl font-medium text-primary">Free for Everyone</h2>
-                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Advanced AGI should not be a luxury reserved for the few. We are building infrastructure to provide
-                    state-of-the-art intelligence at zero cost to the end user.
-                </p>
+                <div class="flex-grow">
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Free for Everyone</h2>
+                    <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        Advanced AGI should not be a luxury reserved for the few. We are building infrastructure to provide 
+                        state-of-the-art intelligence at zero cost to the end user. Intelligence should be a utility, 
+                        not a privilege.
+                    </p>
+                </div>
             </div>
 
-            <div class="skuomorphic-card p-10 space-y-6">
-                <div
-                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-xl text-primary">
-                    <i class="fa-solid fa-bolt"></i>
+            <!-- Goal 2: Raw & Unfiltered -->
+            <div class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
+                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-secondary/20 dark:bg-secondary/5 text-primary dark:text-secondary">
+                    <i class="fa-solid fa-bolt text-2xl"></i>
                 </div>
-                <h2 class="serif-text text-4xl font-medium text-primary">Raw & Unfiltered</h2>
-                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-                    We believe in raw intelligence. Without limits, without artificial filters, and without the biases
-                    imposed by corporate safety committees. True reasoning requires the freedom to explore every corner
-                    of thought.
-                </p>
+                <div class="flex-grow">
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Raw & Unfiltered</h2>
+                    <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        We believe in raw intelligence. Without limits, without artificial filters, and without the biases 
+                        imposed by corporate safety committees. True reasoning requires the absolute freedom to explore 
+                        every corner of thought and possibility.
+                    </p>
+                </div>
             </div>
 
-            <div class="skuomorphic-card p-10 space-y-6">
-                <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl text-primary">
-                    <i class="fa-solid fa-infinity"></i>
+            <!-- Goal 3: No Limits -->
+            <div class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
+                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/5 text-primary dark:text-secondary">
+                    <i class="fa-solid fa-infinity text-2xl"></i>
                 </div>
-                <h2 class="serif-text text-4xl font-medium text-primary">No Limits</h2>
-                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Boundaries restrict discovery. Our models are designed for unbounded discovery, enabling
-                    breakthrough
-                    research and creativity that is impossible elsewhere.
-                </p>
+                <div class="flex-grow">
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">No Limits</h2>
+                    <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        Boundaries restrict discovery. Our models are architectural foundations for unbounded exploration, 
+                        enabling breakthrough research, creative synthesis, and technological leaps that are 
+                        structurally impossible within constrained frameworks.
+                    </p>
+                </div>
             </div>
 
-            <div class="skuomorphic-card p-10 space-y-6">
-                <div
-                    class="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-xl text-primary">
-                    <i class="fa-solid fa-microchip"></i>
+            <!-- Goal 4: Universal Access -->
+            <div class="flex flex-col md:flex-row gap-10 items-start animate-fade-in">
+                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-secondary/20 dark:bg-secondary/5 text-primary dark:text-secondary">
+                    <i class="fa-solid fa-microchip text-2xl"></i>
                 </div>
-                <h2 class="serif-text text-4xl font-medium text-primary">Universal Access</h2>
-                <p class="text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Whether you're a student, a researcher, or a dreamer, OLM provides the tools to amplify your
-                    potential. We are democratizing the future of humanity.
-                </p>
+                <div class="flex-grow">
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Universal Access</h2>
+                    <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
+                        Whether you're a student, a researcher, or a dreamer, OLM provides the tools to amplify your 
+                        innate potential. We are democratizing the future of humanity by putting world-class 
+                        computational intelligence in everyone's hands.
+                    </p>
+                </div>
             </div>
-
         </div>
 
 

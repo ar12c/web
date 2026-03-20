@@ -10,14 +10,39 @@
     
     <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class'
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Satoshi', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
         }
     </script>
+
+    <style>
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('../Fonts/Satoshi-Variable.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Satoshi';
+            src: url('../Fonts/Satoshi-VariableItalic.ttf') format('truetype');
+            font-weight: 300 900;
+            font-display: swap;
+            font-style: italic;
+        }
+    </style>
 
     <style>
         :root {
@@ -43,7 +68,7 @@
         body {
             background-color: transparent;
             color: #1a1a1b;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Satoshi', 'Inter', sans-serif;
             margin: 0;
             padding: 0;
             transition: color 0.3s ease;
