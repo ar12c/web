@@ -49,8 +49,8 @@ window.closeChangelog = () => {
 function createChangelogModal() {
     const html = `
     <div id="changelog-modal" style="position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; padding:1rem;">
-        <div class="changelog-card" style="width:100%; max-width:480px; background:white; border-radius:24px; overflow:hidden; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
-            <div style="padding:2rem;">
+        <div class="changelog-card skuomorphic-card" style="width:100%; max-width:480px; overflow:hidden;">
+            <div style="padding:2rem; position:relative; z-index:10;">
                 <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
                     <div style="width:2.5rem; height:2.5rem; border-radius:9999px; background:rgba(59,130,246,0.1); display:flex; align-items:center; justify-content:center; color:#3b82f6;">
                         <i class="fa-solid fa-rocket" style="font-size:1.125rem;"></i>
@@ -65,8 +65,8 @@ function createChangelogModal() {
                     <!-- Changes injected via JS -->
                 </ul>
 
-                <button onclick="window.closeChangelog()" 
-                    style="width:100%; padding:1rem 0; border-radius:0.75rem; background:#18181b; color:white; border:none; font-weight:900; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.2em; cursor:pointer; transition:all 0.2s;">
+                <button onclick="window.closeChangelog()" class="skuomorphic-btn"
+                    style="width:100%; padding:1rem 0; border-radius:0.75rem; background:var(--bg-color, white); color:var(--action-btn-color, #18181b); border:none; font-weight:900; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.2em; cursor:pointer; transition:all 0.2s;">
                     Dismiss
                 </button>
             </div>

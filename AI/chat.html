@@ -249,11 +249,16 @@
         }
 
         .__menu-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
         }
 
         .dark .__menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.08);
         }
 
         .__menu-item .icon {
@@ -610,6 +615,7 @@
                 background-position: 0 0, 300% 0%;
             }
         }
+
 
         #intelligence-flare {
             position: absolute;
@@ -1167,9 +1173,30 @@
         }
 
         .polaris-tab-btn.active {
-            background: var(--accent-color);
             color: var(--accent-contrast);
-            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        .polaris-tab-btn.active {
+            position: relative;
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .polaris-tab-btn.active {
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .polaris-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
+            border-radius: inherit;
+            pointer-events: none;
         }
 
 
@@ -1268,6 +1295,19 @@
 
         .polaris-theme-item.active-theme {
             background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+            position: relative;
+        }
+
+        .polaris-theme-item.active-theme::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            bottom: 2px;
+            width: 4px;
+            background: var(--accent-color);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 10px var(--accent-glow);
         }
 
         .polaris-theme-icon {
@@ -1443,23 +1483,23 @@
 
 
         .header-island {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(249, 249, 247, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(0, 0, 0, 0.08);
-            padding: 2px 4px;
+            padding: 0 8px;
             display: flex;
             align-items: center;
             gap: 2px;
-            height: 38px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            height: 40px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .dark .header-island {
-            background: rgba(24, 24, 27, 0.4);
+            background: rgba(12, 13, 11, 0.85);
             border-color: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
         }
 
         .header-island:hover {
@@ -1593,6 +1633,88 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .skuomorphic-card {
+            position: relative;
+            isolation: isolate;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow:
+                0 10px 30px -5px rgba(0, 0, 0, 0.1),
+                0 4px 10px -2px rgba(0, 0, 0, 0.05),
+                inset 0 1px 1.5px rgba(255, 255, 255, 1),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.03);
+            border-radius: 24px;
+        }
+
+        .dark .skuomorphic-card {
+            background: #111210;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 20px 40px -10px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.12),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .skuomorphic-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 40%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .skuomorphic-toast {
+            position: relative;
+            background: #22c55e; /* Green-500 */
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow:
+                0 10px 25px -5px rgba(34, 197, 94, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
+            color: white;
+            border-radius: 14px;
+        }
+
+        .skuomorphic-toast::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .skuomorphic-menu-active {
+            position: relative;
+            background: rgba(0, 0, 0, 0.03) !important;
+            color: var(--accent-color) !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.05),
+                inset 0 1px 1.2px rgba(255, 255, 255, 1),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.03) !important;
+            isolation: isolate;
+        }
+
+        .dark .skuomorphic-menu-active {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05),
+                inset 0 -1.5px 3px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .skuomorphic-menu-active::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
             border-radius: inherit;
             pointer-events: none;
         }
@@ -1918,10 +2040,10 @@
         <div id="intelligence-flare"></div>
 
         <div id="top-left-chat-title"
-            class="absolute top-3 lg:top-4 left-16 right-4 lg:left-6 lg:right-auto lg:max-w-[320px] z-50 h-10 text-zinc-500 dark:text-zinc-400 font-semibold text-sm transition-opacity duration-300 opacity-0 pointer-events-auto flex items-center justify-between group rounded-lg"
-            style="background: rgba(249, 249, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.08); padding: 0 8px 0 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+            class="header-island skuomorphic-btn absolute top-3 lg:top-4 left-16 right-4 lg:left-6 lg:w-fit lg:max-w-md z-50 text-zinc-500 dark:text-zinc-400 font-semibold text-sm transition-opacity duration-300 opacity-0 pointer-events-auto flex items-center gap-3 group rounded-lg"
+            style="padding-left: 12px;">
             <span id="chat-title-text" class="truncate flex-1"></span>
-            <div class="flex items-center gap-0.5 ml-1">
+            <div class="flex items-center gap-0.5 ml-1 flex-shrink-0">
                 <button onclick="window.renameCurrentChat()" title="Rename Chat"
                     class="transition-all p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-400 hover:text-zinc-900 dark:hover:text-white">
                     <i data-feather="edit-2" class="w-3.5 h-3.5"></i>
@@ -1946,13 +2068,7 @@
                 </div>
             </div>
         </div>
-        <style>
-            .dark #top-left-chat-title {
-                background: rgba(12, 13, 11, 0.85) !important;
-                border-color: rgba(255, 255, 255, 0.08) !important;
-                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
-            }
-        </style>
+
 
         <div id="top-right-actions" class="animate-fade-in hidden lg:flex items-center gap-2">
             <div
@@ -3359,8 +3475,8 @@
                 const darkBtn = document.getElementById('btn-theme-dark');
                 const systemBtn = document.getElementById('btn-theme-system');
 
-                const resetClass = "min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700";
-                const activeClass = "min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all bg-white dark:bg-zinc-600 text-zinc-900 dark:text-white shadow-sm";
+                const resetClass = "min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800";
+                const activeClass = "min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all skuomorphic-btn bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white";
 
                 if (lightBtn) lightBtn.className = mode === 'light' ? activeClass : resetClass;
                 if (darkBtn) darkBtn.className = mode === 'dark' ? activeClass : resetClass;
@@ -4466,8 +4582,8 @@
 
                         // Toast
                         const toast = document.createElement('div');
-                        toast.className = 'fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-2xl text-sm font-semibold z-[9999] transition-all duration-300 opacity-0 transform translate-y-4 flex items-center gap-2';
-                        toast.innerHTML = feather.icons['check-circle'].toSvg({ class: 'w-4 h-4' }) + `<span>Title feedback recorded</span>`;
+                        toast.className = 'fixed bottom-6 right-6 skuomorphic-toast px-5 py-3 shadow-2xl text-sm font-semibold z-[9999] transition-all duration-300 opacity-0 transform translate-y-4 flex items-center gap-2';
+                        toast.innerHTML = feather.icons['check-circle'].toSvg({ class: 'w-4 h-4' }) + `<span class="relative z-10">Title feedback recorded</span>`;
                         document.body.appendChild(toast);
                         requestAnimationFrame(() => {
                             toast.classList.remove('opacity-0', 'translate-y-4');
@@ -4596,11 +4712,13 @@
                 }
             };
 
-            window.truncateTitle = (title, wordLimit = 5) => {
+            window.truncateTitle = (title) => {
                 if (!title) return "";
-                const words = title.split(/\s+/);
-                if (words.length > wordLimit) {
-                    return words.slice(0, wordLimit).join(' ') + '...';
+                if (window.innerWidth >= 1024) {
+                    const words = title.split(/\s+/);
+                    if (words.length > 5) {
+                        return words.slice(0, 5).join(' ') + '...';
+                    }
                 }
                 return title;
             };
@@ -4811,8 +4929,7 @@
                             return html;
                         })()}
                             </div>
-                            ${a && !isGenerating ? `
-                             <div class="flex items-center justify-between gap-4 mt-3 w-full animate-fade-in">
+                            <div class="flex items-center justify-between gap-4 mt-3 w-full animate-fade-in ${isGenerating ? 'opacity-40 pointer-events-none' : ''}">
                                 <div class="flex items-center gap-4">
                                     <button onclick="window.copyMsg(${i}, this)" class="hover:scale-110 transition-all" style="color: var(--action-btn-color)" title="Copy"><i data-feather="copy" class="w-4 h-4"></i></button>
                                     <button onclick="window.regenMsg(${i})" class="hover:scale-110 transition-all font-bold" style="color: var(--action-btn-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
@@ -4826,12 +4943,7 @@
                                             style="color: ${chatHistory[i][2] === 'bad' ? '#ef4444' : 'var(--action-btn-color)'}; opacity: ${chatHistory[i][2] ? (chatHistory[i][2] === 'bad' ? '1' : '0.3') : '0.7'}" 
                                             title="Bad message"><i data-feather="thumbs-down" class="w-4 h-4"></i></button>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="opacity-40 w-4 h-4 flex items-center justify-center pointer-events-none" style="color: var(--action-btn-color)" title="${currentModel.name}">
-                                        ${currentModel.icon}
-                                    </div>
-                                </div>
-                            </div>` : ''}
+                            </div>
                         </div>
                     </div>`).join('');
                     feather.replace({ 'stroke-width': 2, 'width': 16, 'height': 16 }, els.chatMsgs);
@@ -5328,7 +5440,7 @@
                         <div class="polaris-row">
                             <span class="polaris-row-label text-red-500">Clear All Chats</span>
                             <button onclick="window.clearAll()"
-                                class="min-h-[44px] px-4 rounded-xl text-xs font-bold text-red-500 border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                                class="min-h-[44px] px-4 rounded-xl text-xs font-bold text-red-500 skuomorphic-btn border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all">
                                 Clear
                             </button>
                         </div>
@@ -5550,8 +5662,8 @@
     </div>
 
     <div id="changelog-modal">
-        <div class="changelog-card">
-            <div class="p-8">
+        <div class="changelog-card skuomorphic-card">
+            <div class="p-8 relative z-10">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
                         <i data-feather="zap" class="w-5 h-5"></i>
@@ -5568,7 +5680,7 @@
                 </ul>
 
                 <button onclick="window.closeChangelog()"
-                    class="w-full py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all">
+                    class="w-full py-4 rounded-xl bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white font-black text-xs uppercase tracking-[0.2em] skuomorphic-btn hover:brightness-110 active:scale-[0.98] transition-all">
                     Dismiss
                 </button>
             </div>
