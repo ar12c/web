@@ -195,25 +195,51 @@
                 inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
         }
 
-        /* --- Skuomorphic Input (Inset) --- */
-        .skuomorphic-input {
-            background: #f4f4f2;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 
-                inset 0 2px 4px rgba(0, 0, 0, 0.06),
-                inset 0 1px 2px rgba(0, 0, 0, 0.04),
-                0 1px 1px rgba(255, 255, 255, 0.8);
-            transition: all 0.2s ease;
+        /* --- Glyph Grid (Nothing Phone Style) --- */
+        #glyph-container {
+            display: grid;
+            grid-template-columns: repeat(29, auto);
+            gap: 4px;
+            padding: 20px;
         }
 
-        .dark .skuomorphic-input {
-            background: #0f0f0e;
-            border-color: rgba(255, 255, 255, 0.03);
-            box-shadow: 
-                inset 0 3px 6px rgba(0, 0, 0, 0.6),
-                inset 0 1px 2px rgba(0, 0, 0, 0.4),
-                0 1px 1px rgba(255, 255, 255, 0.02);
+        .glyph-dot {
+            width: 6px;
+            height: 6px;
+            background: #d1d1d1;
+            border-radius: 1px;
+            opacity: 0.15;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, opacity;
+        }
+
+        .glyph-dot.hover-radius {
+            transition: transform 0.1s ease-out, opacity 0.1s ease-out, background-color 0.4s ease-in;
+        }
+
+        .dark .glyph-dot {
+            background: #ffffff;
+            opacity: 0.1;
+        }
+
+        .glyph-dot.active {
+            opacity: 1;
+            box-shadow: 0 0 8px currentColor;
+            background: currentColor;
+        }
+
+        .glyph-dot:hover, .glyph-dot.hover-radius {
+            opacity: 1;
+            transform: scale(1.6);
+            background: #ff4d4d !important;
+            box-shadow: 0 0 15px #ff4d4d;
+            z-index: 10;
+        }
+
+        .glyph-dot.accent {
+            background: #ff4d4d;
+            box-shadow: 0 0 12px #ff4d4d;
+            opacity: 1;
         }
     </style>
 </head>
@@ -304,13 +330,9 @@
                      2. Add class="animate-path" to any <path> you want to animate.
                      3. Use stroke="currentColor" to inherit theme colors.
                 -->
-                <svg id="main-illustration" xmlns="http://www.w3.org/2000/svg" width="256" height="256" fill="none"
-                    stroke="currentColor" stroke-width="2" viewBox="0 0 256 256"
-                    class="w-full h-full max-w-[400px] hand-drawn">
-                    <path class="animate-path"
-                        d="M244,124a52.1,52.1,0,0,0-32-48V72a44,44,0,0,0-84-18.3A44,44,0,0,0,44,72v4a52,52,0,0,0,0,96v4a44,44,0,0,0,84,18.3A44,44,0,0,0,212,176v-4A52.07,52.07,0,0,0,244,124ZM88,212a36,36,0,0,1-36-36v-1.41A52.13,52.13,0,0,0,64,176h8a4,4,0,0,0,0-8H64A44,44,0,0,1,49.33,82.5,4,4,0,0,0,52,78.73V72a36,36,0,0,1,72,0v78.75A44,44,0,0,0,88,132a4,4,0,0,0,0,8,36,36,0,0,1,0,72Zm104-44h-8a4,4,0,0,0,0,8h8a52.13,52.13,0,0,0,12-1.41V176a36,36,0,1,1-36-36,4,4,0,0,0,0-8,44,44,0,0,0-36,18.75V72a36,36,0,0,1,72,0v6.73a4,4,0,0,0,2.67,3.77A44,44,0,0,1,192,168Zm12-56a4,4,0,0,1-4,4h-4a32,32,0,0,1-32-32V80a4,4,0,0,1,8,0v4a24,24,0,0,0,24,24h4A4,4,0,0,1,204,112ZM92,84a32,32,0,0,1-32,32H56a4,4,0,0,1,0-8h4A24,24,0,0,0,84,84V80a4,4,0,0,1,8,0Z">
-                    </path>
-                </svg>
+                <div id="glyph-container" class="transition-all duration-700">
+                    <!-- Dots will be generated here -->
+                </div>
 
             </div>
         </div>
@@ -390,25 +412,316 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Select all paths with the animation class
-            const paths = document.querySelectorAll('.animate-path');
+            const container = document.getElementById('glyph-container');
+            const ROW_COUNT = 30;
+            const COL_COUNT = 29;
+            const TOTAL_DOTS = ROW_COUNT * COL_COUNT;
+            const dots = [];
 
-            // Prepare paths for animation (calculating length)
-            paths.forEach(path => {
-                const length = path.getTotalLength();
-                path.style.strokeDasharray = length;
-                path.style.strokeDashoffset = length;
-                path.style.opacity = '1';
+            // Generate dots
+            for (let i = 0; i < TOTAL_DOTS; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('glyph-dot');
+                container.appendChild(dot);
+                dots.push(dot);
+            }
+
+            // Function to light up a dot at (x, y)
+            function setDot(x, y, active = true, accent = false) {
+                if (x < 0 || x >= COL_COUNT || y < 0 || y >= ROW_COUNT) return;
+                const index = y * COL_COUNT + x;
+                if (active) {
+                    dots[index].classList.add('active');
+                    if (accent) dots[index].classList.add('accent');
+                } else {
+                    dots[index].classList.remove('active', 'accent');
+                }
+            }
+
+            // Clear all dots
+            function clearGrid() {
+                dots.forEach(dot => dot.classList.remove('active', 'accent'));
+            }
+
+            // Draw 4-pointed star (Astroid)
+            function drawStarGlyph() {
+                clearGrid();
+                const centerX = 14;
+                const centerY = 15;
+                const radius = 12;
+                
+                for (let x = -COL_COUNT; x < COL_COUNT; x++) {
+                    for (let y = -ROW_COUNT; y < ROW_COUNT; y++) {
+                        const relX = x / radius;
+                        const relY = y / radius;
+                        if (Math.pow(Math.abs(relX), 2/3) + Math.pow(Math.abs(relY), 2/3) <= 1) {
+                            setDot(centerX + x, centerY + y);
+                        }
+                    }
+                }
+            }
+
+            // --- Interactive Radius ---
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                dots.forEach((dot, index) => {
+                    const dotRect = dot.getBoundingClientRect();
+                    const dotX = dotRect.left + dotRect.width / 2 - rect.left;
+                    const dotY = dotRect.top + dotRect.height / 2 - rect.top;
+                    
+                    const dist = Math.sqrt((mouseX - dotX)**2 + (mouseY - dotY)**2);
+                    if (dist < 32) { // 5x5 circle radius (approx 3.2 dots)
+                        dot.classList.add('hover-radius');
+                    } else {
+                        dot.classList.remove('hover-radius');
+                    }
+                });
             });
 
-            // Run the drawing animation
-            anime({
-                targets: '.animate-path',
-                strokeDashoffset: [anime.setDashoffset, 0],
-                easing: 'linear',
-                duration: 10000,
-                delay: 500
+            container.addEventListener('mouseleave', () => {
+                dots.forEach(dot => dot.classList.remove('hover-radius'));
             });
+
+            // --- 3D Rotating Cube ---
+            let cubeRotation = 0;
+            const cubeVertices = [
+                [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+                [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+            ];
+            const cubeEdges = [
+                [0, 1], [1, 2], [2, 3], [3, 0],
+                [4, 5], [5, 6], [6, 7], [7, 4],
+                [0, 4], [1, 5], [2, 6], [3, 7]
+            ];
+
+            function draw3DCube() {
+                clearGrid();
+                const centerX = 14;
+                const centerY = 15;
+                const scale = 3.5;
+                const dist = 5;
+                
+                const cos = Math.cos(cubeRotation);
+                const sin = Math.sin(cubeRotation);
+                
+                cubeEdges.forEach(edge => {
+                    const v1 = cubeVertices[edge[0]];
+                    const v2 = cubeVertices[edge[1]];
+                    
+                    const rotate = (v) => {
+                        let x = v[0], y = v[1], z = v[2];
+                        let tx = x * cos - z * sin;
+                        let tz = x * sin + z * cos;
+                        let ty = y * cos - tz * sin;
+                        tz = y * sin + tz * cos;
+                        return [tx, ty, tz];
+                    };
+                    
+                    const rv1 = rotate(v1);
+                    const rv2 = rotate(v2);
+                    
+                    const p1 = [rv1[0] * scale / (rv1[2] + dist), rv1[1] * scale / (rv1[2] + dist)];
+                    const p2 = [rv2[0] * scale / (rv2[2] + dist), rv2[1] * scale / (rv2[2] + dist)];
+                    
+                    const x0 = Math.round(centerX + p1[0] * 8); 
+                    const y0 = Math.round(centerY + p1[1] * 8);
+                    const x1 = Math.round(centerX + p2[0] * 8);
+                    const y1 = Math.round(centerY + p2[1] * 8);
+                    
+                    drawLine(x0, y0, x1, y1);
+                });
+                cubeRotation += 0.03;
+            }
+
+            function drawLine(x0, y0, x1, y1) {
+                const dx = Math.abs(x1 - x0);
+                const dy = Math.abs(y1 - y0);
+                const sx = (x0 < x1) ? 1 : -1;
+                const sy = (y0 < y1) ? 1 : -1;
+                let err = dx - dy;
+                while (true) {
+                    setDot(x0, y0);
+                    if (x0 === x1 && y0 === y1) break;
+                    const e2 = 2 * err;
+                    if (e2 > -dy) { err -= dy; x0 += sx; }
+                    if (e2 < dx) { err += dx; y0 += sy; }
+                }
+            }
+
+            // --- OLM SVG Mapping ---
+            function drawSVGLOgo() {
+                clearGrid();
+                const quads = [
+                    [[0,0], [514,396], [514,495], [0,314]],
+                    [[0,396], [514,523], [514,561], [0,684]],
+                    [[0,766], [514,585], [514,680], [0,1080]]
+                ];
+
+                function pointInPoly(pt, poly) {
+                    let inside = false;
+                    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                        let xi = poly[i][0], yi = poly[i][1];
+                        let xj = poly[j][0], yj = poly[j][1];
+                        let intersect = ((yi > pt[1]) !== (yj > pt[1])) && 
+                                        (pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi);
+                        if (intersect) inside = !inside;
+                    }
+                    return inside;
+                }
+
+                for (let x = 0; x < COL_COUNT; x++) {
+                    for (let y = 0; y < ROW_COUNT; y++) {
+                        let ptX = (x / (COL_COUNT - 1)) * 1080;
+                        let ptY = (y / (ROW_COUNT - 1)) * 1080;
+                        
+                        let isInside = quads.some(q => pointInPoly([ptX, ptY], q));
+                        
+                        if (!isInside) {
+                            let mirroredPtX = 1080 - ptX;
+                            isInside = quads.some(q => pointInPoly([mirroredPtX, ptY], q));
+                        }
+                        
+                        if (isInside) {
+                            setDot(x, y);
+                        }
+                    }
+                }
+            }
+
+            // Draw "OLM" Text (Shifted 1 square right)
+            function drawTextOLM() {
+                clearGrid();
+                const startY = 10;
+                const height = 10;
+                
+                // O
+                for (let x = 2; x <= 8; x++) {
+                    for (let y = startY; y <= startY + height; y++) {
+                        if (x === 2 || x === 8 || y === startY || y === startY + height) setDot(x, y);
+                    }
+                }
+
+                // L
+                for (let x = 11; x <= 17; x++) {
+                    for (let y = startY; y <= startY + height; y++) {
+                        if (x === 11 || y === startY + height) setDot(x, y);
+                    }
+                }
+
+                // M
+                for (let x = 20; x <= 26; x++) {
+                    for (let y = startY; y <= startY + height; y++) {
+                        if (x === 20 || x === 26 || (y === startY && x >= 20 && x <= 26) || (x === 23 && y <= startY + 5)) setDot(x, y);
+                    }
+                }
+            }
+
+
+            // (Removed duplicate blocks)
+
+            // --- Matrix Rain Transition (Full Screen Wipe) ---
+            function matrixRainTransition(nextStateEvaluator, finalizeCallback) {
+                // Generate drops for every column, staggered Y starts
+                let drops = [];
+                for (let c = 0; c < COL_COUNT; c++) {
+                    drops.push({
+                        x: c,
+                        y: -Math.floor(1 + Math.random() * 25),
+                        speed: 1
+                    });
+                }
+
+                // Capture current state
+                let currentState = dots.map(d => d.classList.contains('active'));
+                
+                // Evaluate next shape without interfering with DOM immediately
+                clearGrid();
+                nextStateEvaluator();
+                let nextState = dots.map(d => d.classList.contains('active'));
+                
+                // Restore current state
+                clearGrid();
+                currentState.forEach((isActive, i) => {
+                    if (isActive) dots[i].classList.add('active');
+                });
+
+                const rainInterval = setInterval(() => {
+                    let allDone = true;
+                    
+                    drops.forEach(drop => {
+                        drop.y += drop.speed;
+                        if (drop.y < ROW_COUNT + 5) {
+                            allDone = false;
+                        }
+                        
+                        // Render full screen wipe column
+                        for (let y = 0; y < ROW_COUNT; y++) {
+                            let index = y * COL_COUNT + drop.x;
+                            if (y > drop.y) {
+                                // Keep old state (below wipe)
+                            } else if (y >= drop.y - 2 && y <= drop.y) {
+                                // Bright front of wipe
+                                dots[index].classList.add('active');
+                            } else {
+                                // Transition to next state (above wipe)
+                                dots[index].classList.remove('active');
+                                if (nextState[index]) {
+                                    dots[index].classList.add('active');
+                                }
+                            }
+                        }
+                    });
+
+                    if (allDone) {
+                        clearInterval(rainInterval);
+                        if (finalizeCallback) finalizeCallback();
+                    }
+                }, 40);
+            }
+
+            // Animation Cycle
+            let currentStep = 0;
+            let cubeInterval = null;
+
+            function startCubeMode() {
+                if (cubeInterval) clearInterval(cubeInterval);
+                cubeInterval = setInterval(draw3DCube, 50);
+            }
+
+            function stopCubeMode() {
+                if (cubeInterval) {
+                    clearInterval(cubeInterval);
+                    cubeInterval = null;
+                }
+            }
+
+            function cycleAnimation() {
+                stopCubeMode();
+                if (currentStep === 0) {
+                    matrixRainTransition(drawTextOLM, null);
+                } else if (currentStep === 1) {
+                    matrixRainTransition(draw3DCube, startCubeMode);
+                } else if (currentStep === 2) {
+                    matrixRainTransition(drawSVGLOgo, null);
+                }
+                currentStep = (currentStep + 1) % 3;
+            }
+
+            // Initial Flow
+            drawSVGLOgo();
+            setInterval(cycleAnimation, 6000);
+
+            // Subtle animation
+            setInterval(() => {
+                const randomDot = Math.floor(Math.random() * TOTAL_DOTS);
+                dots[randomDot].style.transform = 'scale(1.5)';
+                setTimeout(() => {
+                    dots[randomDot].style.transform = 'scale(1)';
+                }, 500);
+            }, 2000);
 
             // Button Logic
             const startButton = document.getElementById('start-button');
