@@ -1845,42 +1845,14 @@
             z-index: 2;
         }
 
-        /* Model Speaking State Transformations */
-        #central-blob.state-speaking {
-            /* Switch to a purple/pink vibrant gradient for model speech */
-            background: radial-gradient(circle at 30% 30%, #f472b6, #a855f7);
-            box-shadow:
-                0 0 80px rgba(168, 85, 247, 0.6),
-                0 0 160px rgba(168, 85, 247, 0.3),
-                inset 0 3px 6px rgba(255, 255, 255, 0.4);
-            animation: blob-speak 2s infinite alternate ease-in-out;
-        }
-
-        @keyframes blob-speak {
-            0% {
-                transform: scale(1) rotate(0deg);
-                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-            }
-
-            50% {
-                transform: scale(1.15) rotate(10deg);
-                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-            }
-
-            100% {
-                transform: scale(1.05) rotate(-10deg);
-                border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%;
-            }
-        }
-
-        /* --- 5 PILLARS FOR MODEL SPEECH --- */
+        /* --- 5 RESPONSIVE PILLARS FOR MODEL SPEECH --- */
         #model-visualizer {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             position: absolute;
-            /* overlay on top of central-blob */
+            z-index: 10;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
@@ -1891,51 +1863,22 @@
         }
 
         .unified-pillar {
-            width: 24px;
+            width: 14px;
             height: 24px;
-            border-radius: 12px;
-            background: linear-gradient(to top, #f472b6, #a855f7);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-            animation: pillar-bounce 1s ease-in-out infinite alternate;
+            border-radius: 7px;
+            background: linear-gradient(to bottom, 
+                color-mix(in srgb, var(--accent-color), white 25%), 
+                var(--accent-color) 45%, 
+                color-mix(in srgb, var(--accent-color), black 25%)
+            );
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.5),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3),
+                0 0 15px color-mix(in srgb, var(--accent-color), transparent 50%);
+            border: 1px solid color-mix(in srgb, var(--accent-color), black 15%);
+            transition: height 0.05s ease-out;
             will-change: height;
         }
-
-        /* Staggered animation delays for organic voice equalizer effect */
-        .unified-pillar:nth-child(1) {
-            animation-delay: 0.0s;
-            animation-duration: 0.6s;
-        }
-
-        .unified-pillar:nth-child(2) {
-            animation-delay: 0.2s;
-            animation-duration: 0.75s;
-        }
-
-        .unified-pillar:nth-child(3) {
-            animation-delay: 0.4s;
-            animation-duration: 0.5s;
-        }
-
-        .unified-pillar:nth-child(4) {
-            animation-delay: 0.1s;
-            animation-duration: 0.8s;
-        }
-
-        .unified-pillar:nth-child(5) {
-            animation-delay: 0.3s;
-            animation-duration: 0.65s;
-        }
-
-        @keyframes pillar-bounce {
-            0% {
-                height: 24px;
-            }
-
-            100% {
-                height: 120px;
-            }
-        }
-
 
         /* --- STATUS PILL (TOP CENTER) --- */
         #voice-status-pill {
@@ -2909,8 +2852,15 @@
 
                         <button id="live-voice-btn" onclick="window.toggleLiveVoice()"
                             class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer">
-                            <i data-feather="mic" class="w-4 h-4"></i>
-                            <span id="voice-btn-text" class="hidden sm:inline">Live</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="currentColor" class="w-4 h-4">
+                                <rect x="3" y="10" width="2" height="4" rx="1" />
+                                <rect x="7" y="6" width="2" height="12" rx="1" />
+                                <rect x="11" y="2" width="2" height="20" rx="1" />
+                                <rect x="15" y="8" width="2" height="8" rx="1" />
+                                <rect x="19" y="11" width="2" height="2" rx="1" />
+                            </svg>
+                            <span id="voice-btn-text" class="hidden sm:inline">Voice</span>
                         </button>
                     </div>
 
@@ -3113,6 +3063,9 @@
                 els.modMenu = document.getElementById("model-menu-input");
                 els.noteMenu = document.getElementById("notes-menu");
                 els.searchBtn = document.getElementById("web-search-btn");
+                els.thoughtBtn = document.getElementById("thought-btn");
+                els.voiceBtn = document.getElementById("live-voice-btn");
+                els.modelSelector = document.getElementById("model-selector-input");
                 els.actIcon = document.getElementById('active-model-icon');
                 els.sidebar = document.getElementById('sidebar');
                 els.sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -5180,6 +5133,10 @@
                     currentJob = null;
                     console.log("Streaming complete");
 
+                    // Ensure any final text is spoken
+                    if (window.isVoiceActive) {
+                        window.voiceManager.flush();
+                    }
                     // Generate title LAST — only after streaming is fully done
                     if (chatHistory.length > 0 && chatHistory[0][1] && !window[`_generatingTitle_${currentChatId}`]) {
                         const existingTitle = allChats[currentChatId]?.title;
@@ -5594,7 +5551,7 @@
                             model: "polaris-local",
                             messages: [
                                 { "role": "system", "content": "You are a title generator. Generate a title for this conversation based on the first interaction. Do not use quotes, punctuation, or thought tags. Just return the short title." },
-                                { "role": "user", "content": `Summarize based on ${userMsg}, make it short and concise` }
+                                { "role": "user", "content": `Give me a title based on the user request of "${userMsg}"` }
                             ],
                             temperature: 0.3,
                             max_tokens: 25,
@@ -6090,7 +6047,7 @@
                             return html;
                         })()}
                             </div>
-                            <div class="flex items-center justify-between gap-4 mt-3 w-full animate-fade-in ${isGenerating ? 'opacity-40 pointer-events-none' : ''}">
+                            <div class="flex items-center justify-between gap-4 mt-3 w-full animate-fade-in ${(!a || isGenerating) ? 'hidden' : ''}">
                                 <div class="flex items-center gap-4">
                                     <button onclick="window.copyMsg(${i}, this)" class="hover:scale-110 transition-all" style="color: var(--action-btn-color)" title="Copy"><i data-feather="copy" class="w-4 h-4"></i></button>
                                     <button onclick="window.regenMsg(${i})" class="hover:scale-110 transition-all font-bold" style="color: var(--action-btn-color)" title="Regenerate"><i data-feather="rotate-cw" class="w-4 h-4"></i></button>
@@ -6863,7 +6820,7 @@
                 <!-- Javascript will morph this element via CSS transforms -->
             </div>
 
-            <!-- 5 Moving Pillars for Model Speech -->
+            <!-- Responsive 5-Pillar Visualizer for Model Speech -->
             <div id="model-visualizer">
                 <div class="unified-pillar"></div>
                 <div class="unified-pillar"></div>
@@ -6905,23 +6862,31 @@
                 this.audioCtx = null;
                 this.analyser = null;
                 this.dataArray = null;
-                this.source = null;
+                this.micSource = null;
+                this.modelSource = null;
                 this.animationId = null;
                 this.isSpeaking = false;
             }
-            async init(stream) {
+            async init() {
                 this.audioCtx = this.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
                 if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
                 this.analyser = this.audioCtx.createAnalyser();
                 this.analyser.fftSize = 128;
                 this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-                if (stream) {
-                    this.source = this.audioCtx.createMediaStreamSource(stream);
-                    this.source.connect(this.analyser);
-                }
             }
-            enable(audioCtx) { /* No-op, managed centrally */ }
-            connectAudio(el) { /* No-op, CSS animated */ }
+            enable(stream) {
+                if (!this.audioCtx || !this.analyser) return;
+                if (this.micSource) this.micSource.disconnect(); // Disconnect previous mic source if any
+                this.micSource = this.audioCtx.createMediaStreamSource(stream);
+                this.micSource.connect(this.analyser);
+            }
+            connectAudio(audioElement) {
+                if (!this.audioCtx) return;
+                if (this.modelSource) this.modelSource.disconnect(); // Disconnect previous model source if any
+                this.modelSource = this.audioCtx.createMediaElementSource(audioElement);
+                this.modelSource.connect(this.analyser);
+                this.modelSource.connect(this.audioCtx.destination);
+            }
 
             startListening() {
                 const blob = document.getElementById('central-blob');
@@ -6931,18 +6896,36 @@
 
                 const draw = () => {
                     this.animationId = requestAnimationFrame(draw);
-                    if (!this.analyser || this.isSpeaking) return;
+                    if (!this.analyser) return;
+
+                    // If not listening (micSource) and not speaking (modelSource), skip
+                    if (!this.isSpeaking && !this.micSource) return;
+
                     this.analyser.getByteFrequencyData(this.dataArray);
                     let sum = 0;
                     for (const v of this.dataArray) sum += v;
                     const avg = sum / this.dataArray.length;
-                    const scale = 1 + (avg / 128) * 0.25;
+
+                    const scale = 1 + (avg / 128) * (this.isSpeaking ? 0.4 : 0.25);
                     const t = Date.now();
-                    const r1 = 50 + Math.sin(t / 120) * (avg / 6);
-                    const r2 = 50 + Math.cos(t / 180) * (avg / 8);
+                    const speed = this.isSpeaking ? 150 : 120;
+                    const r1 = 50 + Math.sin(t / speed) * (avg / (this.isSpeaking ? 4 : 6));
+                    const r2 = 50 + Math.cos(t / (speed * 1.5)) * (avg / (this.isSpeaking ? 5 : 8));
+
                     if (blob) {
                         blob.style.transform = `scale(${scale.toFixed(3)})`;
                         blob.style.borderRadius = `${r1.toFixed(1)}% ${(100 - r1).toFixed(1)}% ${r2.toFixed(1)}% ${(100 - r2).toFixed(1)}% / ${r2.toFixed(1)}% ${r1.toFixed(1)}% ${(100 - r2).toFixed(1)}% ${(100 - r1).toFixed(1)}%`;
+                    }
+
+                    // Animate the 5 responsive pillars if speaking
+                    const pillars = document.querySelectorAll('.unified-pillar');
+                    if (this.isSpeaking && pillars.length === 5) {
+                        const indices = [4, 8, 12, 16, 20];
+                        pillars.forEach((p, i) => {
+                            const val = this.dataArray[indices[i]];
+                            const height = 20 + (val / 255) * 100;
+                            p.style.height = `${height}px`;
+                        });
                     }
                 };
                 draw();
@@ -6993,7 +6976,8 @@
 
         // Compatibility shim for existing voice code
         window.visualizer = {
-            init: (s) => window.centralViz.init(s),
+            init: () => window.centralViz.init(), // Removed s, using enable for stream
+            enable: (s) => window.centralViz.enable(s),
             connectAudio: (el) => window.centralViz.connectAudio(el),
             stop: () => window.centralViz.stop()
         };
@@ -7105,6 +7089,15 @@
                 }
                 this.isPlaying = false;
                 window.modelViz.stopSpeaking();
+            },
+
+            flush() {
+                // If there's any buffered text that wasn't a full sentence, play it now
+                const sentence = this.sentenceBuffer.trim();
+                if (sentence.length > 0) {
+                    this.enqueue(sentence);
+                    this.sentenceBuffer = "";
+                }
             }
         };
 
@@ -7147,7 +7140,8 @@
                 window.voiceTranscript.clear();
 
                 // Init mic analyser and start animating the user bubble
-                await window.userViz.init(voiceStream);
+                await window.userViz.init();
+                window.userViz.enable(voiceStream);
                 window.userViz.startListening();
 
                 // Feather icons inside the overlay
