@@ -3558,7 +3558,7 @@
 
 
 
-            const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '');
+            const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '').trim();
             const ensureClosedCodeBlocks = (t) => {
                 const count = (t.match(/```/g) || []).length;
                 if (count % 2 !== 0) return t + '\n```';
@@ -3850,8 +3850,8 @@
                 const thoughtRegex = /(?:<|&lt;)(?:thought|think|\|begin_of_thought\||\|thought\|)(?:[\s\S]*?)(?:>|&gt;)([\s\S]*?)(?:(?:<|&lt;)(?:\/(?:thought|think)|\|end_of_thought\||\|thought\|)(?:>|&gt;)|$)/i;
                 const match = text.match(thoughtRegex);
                 if (match) {
-                    const thoughtContent = match[1];
-                    const remainingText = text.replace(match[0], '');
+                    const thoughtContent = match[1].trim();
+                    const remainingText = text.replace(match[0], '').trim();
                     return { thought: thoughtContent, content: remainingText };
                 }
                 return { thought: null, content: text };
