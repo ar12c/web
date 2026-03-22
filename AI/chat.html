@@ -1866,12 +1866,11 @@
             width: 14px;
             height: 24px;
             border-radius: 7px;
-            background: linear-gradient(to bottom, 
-                color-mix(in srgb, var(--accent-color), white 25%), 
-                var(--accent-color) 45%, 
-                color-mix(in srgb, var(--accent-color), black 25%)
-            );
-            box-shadow: 
+            background: linear-gradient(to bottom,
+                    color-mix(in srgb, var(--accent-color), white 25%),
+                    var(--accent-color) 45%,
+                    color-mix(in srgb, var(--accent-color), black 25%));
+            box-shadow:
                 inset 0 1px 2px rgba(255, 255, 255, 0.5),
                 inset 0 -1px 2px rgba(0, 0, 0, 0.3),
                 0 0 15px color-mix(in srgb, var(--accent-color), transparent 50%);
@@ -7002,8 +7001,10 @@
 
         // ================= VOICE MANAGER (TTS + Queue) =================
         window.voiceManager = {
-            queue: [],
+            fetchQueue: [],      // Sentences waiting to be fetched
+            playbackQueue: [],   // { url, text } pairs ready to play
             isPlaying: false,
+            isFetching: false,
             currentAudio: null,
             sentenceBuffer: "",
 
@@ -7025,23 +7026,17 @@
                 }
             },
 
-            async enqueue(text) {
-                this.queue.push(text);
-                if (!this.isPlaying) this.processQueue();
+            enqueue(text) {
+                this.fetchQueue.push(text);
+                this.processFetchQueue();
             },
 
-            async processQueue() {
-                if (this.queue.length === 0) {
-                    this.isPlaying = false;
-                    return;
-                }
-                this.isPlaying = true;
-                const text = this.queue.shift();
-                await this.play(text);
-                this.processQueue();
-            },
+            async processFetchQueue() {
+                if (this.isFetching || this.fetchQueue.length === 0) return;
 
-            async play(text) {
+                this.isFetching = true;
+                const text = this.fetchQueue.shift();
+
                 try {
                     const baseUrl = await getOpenAIClient();
                     const res = await fetch(baseUrl + '/v1/audio/speech', {
@@ -7049,11 +7044,42 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ input: text })
                     });
-                    if (!res.ok) return;
 
-                    const blob = await res.blob();
-                    const url = URL.createObjectURL(blob);
-                    this.currentAudio = new Audio(url);
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        const url = URL.createObjectURL(blob);
+                        this.playbackQueue.push({ url, text });
+
+                        // Start playing if not already
+                        if (!this.isPlaying) this.processPlaybackQueue();
+                    }
+                } catch (err) {
+                    console.error("TTS Fetch error:", err);
+                } finally {
+                    this.isFetching = false;
+                    // Check if more items to fetch
+                    this.processFetchQueue();
+                }
+            },
+
+            async processPlaybackQueue() {
+                if (this.isPlaying || this.playbackQueue.length === 0) {
+                    return;
+                }
+
+                this.isPlaying = true;
+                const item = this.playbackQueue.shift();
+
+                await this.playAudio(item);
+
+                this.isPlaying = false;
+                // Move to next item immediately
+                this.processPlaybackQueue();
+            },
+
+            async playAudio(item) {
+                return new Promise(resolve => {
+                    this.currentAudio = new Audio(item.url);
 
                     // Boot the model pillar analyser the first time
                     if (!window.modelViz.analyser && window.userViz.audioCtx) {
@@ -7062,32 +7088,43 @@
                     window.modelViz.connectAudio(this.currentAudio);
                     window.modelViz.startSpeaking();
 
-                    return new Promise(resolve => {
-                        this.currentAudio.onended = () => {
-                            URL.revokeObjectURL(url);
-                            window.modelViz.stopSpeaking();
-                            window.userViz.startListening(); // return to listening
-                            resolve();
-                        };
-                        this.currentAudio.onerror = () => {
-                            window.modelViz.stopSpeaking();
-                            resolve();
-                        };
-                        this.currentAudio.play();
+                    this.currentAudio.onended = () => {
+                        URL.revokeObjectURL(item.url);
+                        window.modelViz.stopSpeaking();
+                        // Only start listening if nothing else is queued
+                        if (this.playbackQueue.length === 0 && this.fetchQueue.length === 0) {
+                            window.userViz.startListening();
+                        }
+                        resolve();
+                    };
+
+                    this.currentAudio.onerror = () => {
+                        URL.revokeObjectURL(item.url);
+                        window.modelViz.stopSpeaking();
+                        resolve();
+                    };
+
+                    this.currentAudio.play().catch(err => {
+                        console.error("Audio play failed:", err);
+                        resolve();
                     });
-                } catch (err) {
-                    console.error("TTS Playback error:", err);
-                }
+                });
             },
 
             stop() {
-                this.queue = [];
+                // Clear queues
+                this.fetchQueue = [];
+                // Revoke all pending URLs
+                this.playbackQueue.forEach(item => URL.revokeObjectURL(item.url));
+                this.playbackQueue = [];
+
                 this.sentenceBuffer = "";
                 if (this.currentAudio) {
                     this.currentAudio.pause();
                     this.currentAudio = null;
                 }
                 this.isPlaying = false;
+                this.isFetching = false;
                 window.modelViz.stopSpeaking();
             },
 
