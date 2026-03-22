@@ -1796,6 +1796,272 @@
                 inset 0 -1.5px 3px rgba(0, 0, 0, 0.5) !important;
         }
 
+        /* --- PREMIUM VOICE OVERLAY --- */
+        #voice-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            background: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 0;
+        }
+
+        #voice-overlay.active {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* --- UNIFIED CENTRAL CONTAINER --- */
+        #central-voice-container {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* --- UNIFIED CENTRAL BLOB --- */
+        #central-blob {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--accent-color) 80%, white), var(--accent-color));
+            box-shadow:
+                0 0 60px color-mix(in srgb, var(--accent-color) 60%, transparent),
+                0 0 120px color-mix(in srgb, var(--accent-color) 30%, transparent),
+                inset 0 2px 4px rgba(255, 255, 255, 0.35);
+            transition: transform 0.1s ease-out, border-radius 0.15s ease-out, background 0.5s ease, box-shadow 0.5s ease;
+            will-change: transform, border-radius, background, box-shadow;
+            z-index: 2;
+        }
+
+        /* Model Speaking State Transformations */
+        #central-blob.state-speaking {
+            /* Switch to a purple/pink vibrant gradient for model speech */
+            background: radial-gradient(circle at 30% 30%, #f472b6, #a855f7);
+            box-shadow:
+                0 0 80px rgba(168, 85, 247, 0.6),
+                0 0 160px rgba(168, 85, 247, 0.3),
+                inset 0 3px 6px rgba(255, 255, 255, 0.4);
+            animation: blob-speak 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes blob-speak {
+            0% {
+                transform: scale(1) rotate(0deg);
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            }
+
+            50% {
+                transform: scale(1.15) rotate(10deg);
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            }
+
+            100% {
+                transform: scale(1.05) rotate(-10deg);
+                border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%;
+            }
+        }
+
+        /* --- 5 PILLARS FOR MODEL SPEECH --- */
+        #model-visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: absolute;
+            /* overlay on top of central-blob */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #model-visualizer.active {
+            opacity: 1;
+        }
+
+        .unified-pillar {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: linear-gradient(to top, #f472b6, #a855f7);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+            animation: pillar-bounce 1s ease-in-out infinite alternate;
+            will-change: height;
+        }
+
+        /* Staggered animation delays for organic voice equalizer effect */
+        .unified-pillar:nth-child(1) {
+            animation-delay: 0.0s;
+            animation-duration: 0.6s;
+        }
+
+        .unified-pillar:nth-child(2) {
+            animation-delay: 0.2s;
+            animation-duration: 0.75s;
+        }
+
+        .unified-pillar:nth-child(3) {
+            animation-delay: 0.4s;
+            animation-duration: 0.5s;
+        }
+
+        .unified-pillar:nth-child(4) {
+            animation-delay: 0.1s;
+            animation-duration: 0.8s;
+        }
+
+        .unified-pillar:nth-child(5) {
+            animation-delay: 0.3s;
+            animation-duration: 0.65s;
+        }
+
+        @keyframes pillar-bounce {
+            0% {
+                height: 24px;
+            }
+
+            100% {
+                height: 120px;
+            }
+        }
+
+
+        /* --- STATUS PILL (TOP CENTER) --- */
+        #voice-status-pill {
+            position: absolute;
+            top: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.35rem 0.85rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+            flex-shrink: 0;
+        }
+
+        .status-dot.pulse {
+            animation: status-pulse 1.5s infinite;
+        }
+
+        @keyframes status-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.3);
+            }
+        }
+
+        /* --- TRANSCRIPT LABELS --- */
+        .voice-label {
+            position: absolute;
+            bottom: 3.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .voice-transcript {
+            position: absolute;
+            bottom: 1.5rem;
+            width: 85%;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.5;
+            min-height: 1.25em;
+            transition: color 0.3s ease;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .voice-transcript.speaking {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* --- CLOSE BUTTON (BOTTOM RIGHT) --- */
+        #voice-overlay-close {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        #voice-overlay-close:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: white;
+            transform: scale(1.08);
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         .skuomorphic-menu-active::after {
             content: '';
             position: absolute;
@@ -2640,6 +2906,12 @@
                             </svg>
                             <span id="thought-btn-text" class="hidden sm:inline">Think</span>
                         </button>
+
+                        <button id="live-voice-btn" onclick="window.toggleLiveVoice()"
+                            class="flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-semibold text-zinc-500 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer">
+                            <i data-feather="mic" class="w-4 h-4"></i>
+                            <span id="voice-btn-text" class="hidden sm:inline">Live</span>
+                        </button>
                     </div>
 
 
@@ -3286,7 +3558,7 @@
 
 
 
-            const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '').trim();
+            const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '');
             const ensureClosedCodeBlocks = (t) => {
                 const count = (t.match(/```/g) || []).length;
                 if (count % 2 !== 0) return t + '\n```';
@@ -3578,8 +3850,8 @@
                 const thoughtRegex = /(?:<|&lt;)(?:thought|think|\|begin_of_thought\||\|thought\|)(?:[\s\S]*?)(?:>|&gt;)([\s\S]*?)(?:(?:<|&lt;)(?:\/(?:thought|think)|\|end_of_thought\||\|thought\|)(?:>|&gt;)|$)/i;
                 const match = text.match(thoughtRegex);
                 if (match) {
-                    const thoughtContent = match[1].trim();
-                    const remainingText = text.replace(match[0], '').trim();
+                    const thoughtContent = match[1];
+                    const remainingText = text.replace(match[0], '');
                     return { thought: thoughtContent, content: remainingText };
                 }
                 return { thought: null, content: text };
@@ -4771,6 +5043,12 @@
                                 const delta = data.choices[0].delta.content || "";
                                 const finishReason = data.choices[0].finish_reason;
                                 responseText += delta;
+
+                                // --- LIVE VOICE TTS STREAMING ---
+                                if (window.isVoiceActive && delta) {
+                                    window.voiceManager.addDelta(delta);
+                                }
+                                // --------------------------------
 
                                 responseText = responseText.replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '');
 
@@ -6569,6 +6847,508 @@
             </div>
         </div>
     </div>
+
+    <!-- PREMIUM VOICE OVERLAY (UNIFIED CENTRAL BLOB) -->
+    <div id="voice-overlay">
+
+        <!-- Top status pill (absolute, centered) -->
+        <div id="voice-status-pill">
+            <div class="status-dot pulse"></div>
+            <span id="voice-status-text">Polaris Live</span>
+        </div>
+
+        <div id="central-voice-container">
+            <!-- The Unified Transforming Blob -->
+            <div id="central-blob" class="state-listening">
+                <!-- Javascript will morph this element via CSS transforms -->
+            </div>
+
+            <!-- 5 Moving Pillars for Model Speech -->
+            <div id="model-visualizer">
+                <div class="unified-pillar"></div>
+                <div class="unified-pillar"></div>
+                <div class="unified-pillar"></div>
+                <div class="unified-pillar"></div>
+                <div class="unified-pillar"></div>
+            </div>
+
+            <!-- Transcript (Shows both user and model text interchangeably) -->
+            <div class="voice-transcript-wrapper">
+                <span class="voice-label" id="central-voice-label">Listening...</span>
+                <div class="voice-transcript" id="central-transcript"></div>
+            </div>
+        </div>
+
+        <!-- Close button: bottom right -->
+        <button id="voice-overlay-close" onclick="window.toggleLiveVoice()">
+            <i data-feather="x" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+
+    <!-- SVG FILTER FOR GOOEY EFFECT -->
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none">
+        <defs>
+            <filter id="gooey">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -12"
+                    result="gooey" />
+                <feComposite in="SourceGraphic" in2="gooey" operator="atop" />
+            </filter>
+        </defs>
+    </svg>
+
+    <script>
+        // ================= CENTRAL BLOB VISUALIZER (Unified) =================
+        class CentralBlobVisualizer {
+            constructor() {
+                this.audioCtx = null;
+                this.analyser = null;
+                this.dataArray = null;
+                this.source = null;
+                this.animationId = null;
+                this.isSpeaking = false;
+            }
+            async init(stream) {
+                this.audioCtx = this.audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
+                this.analyser = this.audioCtx.createAnalyser();
+                this.analyser.fftSize = 128;
+                this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+                if (stream) {
+                    this.source = this.audioCtx.createMediaStreamSource(stream);
+                    this.source.connect(this.analyser);
+                }
+            }
+            enable(audioCtx) { /* No-op, managed centrally */ }
+            connectAudio(el) { /* No-op, CSS animated */ }
+
+            startListening() {
+                const blob = document.getElementById('central-blob');
+                if (blob) { blob.classList.remove('state-speaking'); blob.classList.add('state-listening'); }
+                const lbl = document.getElementById('central-voice-label');
+                if (lbl) lbl.textContent = "Listening...";
+
+                const draw = () => {
+                    this.animationId = requestAnimationFrame(draw);
+                    if (!this.analyser || this.isSpeaking) return;
+                    this.analyser.getByteFrequencyData(this.dataArray);
+                    let sum = 0;
+                    for (const v of this.dataArray) sum += v;
+                    const avg = sum / this.dataArray.length;
+                    const scale = 1 + (avg / 128) * 0.25;
+                    const t = Date.now();
+                    const r1 = 50 + Math.sin(t / 120) * (avg / 6);
+                    const r2 = 50 + Math.cos(t / 180) * (avg / 8);
+                    if (blob) {
+                        blob.style.transform = `scale(${scale.toFixed(3)})`;
+                        blob.style.borderRadius = `${r1.toFixed(1)}% ${(100 - r1).toFixed(1)}% ${r2.toFixed(1)}% ${(100 - r2).toFixed(1)}% / ${r2.toFixed(1)}% ${r1.toFixed(1)}% ${(100 - r2).toFixed(1)}% ${(100 - r1).toFixed(1)}%`;
+                    }
+                };
+                draw();
+            }
+            stopListening() {
+                cancelAnimationFrame(this.animationId);
+                const blob = document.getElementById('central-blob');
+                if (blob && !this.isSpeaking) {
+                    blob.style.transform = 'scale(1)';
+                    blob.style.borderRadius = '50%';
+                }
+            }
+            startSpeaking() {
+                this.isSpeaking = true;
+                const blob = document.getElementById('central-blob');
+                if (blob) {
+                    blob.style.opacity = '0';
+                    blob.style.transform = 'scale(0.8)';
+                    blob.classList.remove('state-listening');
+                }
+                const pillars = document.getElementById('model-visualizer');
+                if (pillars) pillars.classList.add('active');
+
+                const lbl = document.getElementById('central-voice-label');
+                if (lbl) lbl.textContent = "Polaris is speaking";
+            }
+            stopSpeaking() {
+                this.isSpeaking = false;
+                const pillars = document.getElementById('model-visualizer');
+                if (pillars) pillars.classList.remove('active');
+
+                const blob = document.getElementById('central-blob');
+                if (blob) {
+                    blob.style.opacity = '1';
+                    blob.style.transform = 'scale(1)';
+                    blob.classList.add('state-listening');
+                }
+
+                const lbl = document.getElementById('central-voice-label');
+                if (lbl) lbl.textContent = "Listening...";
+            }
+            stop() { this.stopListening(); this.stopSpeaking(); if (this.source) try { this.source.disconnect(); } catch (e) { } }
+        }
+
+        window.centralViz = new CentralBlobVisualizer();
+        window.userViz = window.centralViz;
+        window.modelViz = window.centralViz;
+
+        // Compatibility shim for existing voice code
+        window.visualizer = {
+            init: (s) => window.centralViz.init(s),
+            connectAudio: (el) => window.centralViz.connectAudio(el),
+            stop: () => window.centralViz.stop()
+        };
+
+        // ================= TRANSCRIPT HELPERS =================
+        window.voiceTranscript = {
+            setUser(text) {
+                const el = document.getElementById('central-transcript');
+                if (el && text) { el.textContent = text; el.style.opacity = 0.5; }
+            },
+            setModel(text) {
+                const el = document.getElementById('central-transcript');
+                if (el && text) { el.textContent = text; el.style.opacity = 1.0; }
+            },
+            clear() {
+                const el = document.getElementById('central-transcript');
+                if (el) el.textContent = '';
+            },
+            addLine() { },
+            updateActiveLine(t) { this.setModel(t); }
+        };
+
+        // ================= VOICE MANAGER (TTS + Queue) =================
+        window.voiceManager = {
+            queue: [],
+            isPlaying: false,
+            currentAudio: null,
+            sentenceBuffer: "",
+
+            addDelta(delta) {
+                this.sentenceBuffer += delta;
+
+                // Update transcript in real-time
+                window.voiceTranscript.updateActiveLine(this.sentenceBuffer);
+
+                // Simple sentence boundary detection
+                if (/[.!?\n]/.test(delta)) {
+                    const sentence = this.sentenceBuffer.trim();
+                    if (sentence.length > 5) {
+                        this.enqueue(sentence);
+                        // Once sent to TTS, we can start a "new" active line for the next sentence
+                        window.voiceTranscript.addLine("", true);
+                        this.sentenceBuffer = "";
+                    }
+                }
+            },
+
+            async enqueue(text) {
+                this.queue.push(text);
+                if (!this.isPlaying) this.processQueue();
+            },
+
+            async processQueue() {
+                if (this.queue.length === 0) {
+                    this.isPlaying = false;
+                    return;
+                }
+                this.isPlaying = true;
+                const text = this.queue.shift();
+                await this.play(text);
+                this.processQueue();
+            },
+
+            async play(text) {
+                try {
+                    const baseUrl = await getOpenAIClient();
+                    const res = await fetch(baseUrl + '/v1/audio/speech', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ input: text })
+                    });
+                    if (!res.ok) return;
+
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    this.currentAudio = new Audio(url);
+
+                    // Boot the model pillar analyser the first time
+                    if (!window.modelViz.analyser && window.userViz.audioCtx) {
+                        window.modelViz.enable(window.userViz.audioCtx);
+                    }
+                    window.modelViz.connectAudio(this.currentAudio);
+                    window.modelViz.startSpeaking();
+
+                    return new Promise(resolve => {
+                        this.currentAudio.onended = () => {
+                            URL.revokeObjectURL(url);
+                            window.modelViz.stopSpeaking();
+                            window.userViz.startListening(); // return to listening
+                            resolve();
+                        };
+                        this.currentAudio.onerror = () => {
+                            window.modelViz.stopSpeaking();
+                            resolve();
+                        };
+                        this.currentAudio.play();
+                    });
+                } catch (err) {
+                    console.error("TTS Playback error:", err);
+                }
+            },
+
+            stop() {
+                this.queue = [];
+                this.sentenceBuffer = "";
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                    this.currentAudio = null;
+                }
+                this.isPlaying = false;
+                window.modelViz.stopSpeaking();
+            }
+        };
+
+        // ================= LIVE VOICE LOGIC (VAD + Continuous Listening) =================
+        let voiceStream = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        window.isVoiceActive = false;
+        let vadIntervalId = null;
+
+        // VAD Configuration
+        const VAD = {
+            SPEECH_THRESHOLD: 0.045,    // Tighter threshold; demands definitively spoken/louder voice
+            SILENCE_DURATION: 1200,     // ms of silence before stopping recording
+            POLL_INTERVAL: 50,          // ms between audio level checks
+            MIN_RECORD_DURATION: 400,   // minimum ms of recording to send
+        };
+
+        window.toggleLiveVoice = async () => {
+            if (window.isVoiceActive) {
+                stopLiveVoice();
+            } else {
+                startLiveVoice();
+            }
+        };
+
+        async function startLiveVoice() {
+            try {
+                voiceStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        sampleRate: 22050
+                    }
+                });
+
+                // Show Overlay
+                document.getElementById('voice-overlay').classList.add('active');
+                window.voiceTranscript.clear();
+
+                // Init mic analyser and start animating the user bubble
+                await window.userViz.init(voiceStream);
+                window.userViz.startListening();
+
+                // Feather icons inside the overlay
+                feather.replace();
+
+                window.isVoiceActive = true;
+                updateVoiceUI(true);
+
+                // Start the continuous VAD loop
+                startVADLoop();
+            } catch (err) {
+                console.error("Voice Access Denied:", err);
+                alert("Microphone access is required for Live Voice.");
+            }
+        }
+
+        function stopLiveVoice() {
+            window.isVoiceActive = false;
+
+            // Stop VAD loop
+            if (vadIntervalId) { clearInterval(vadIntervalId); vadIntervalId = null; }
+
+            // Stop any active recording
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                try { mediaRecorder.stop(); } catch (e) { }
+            }
+
+            window.voiceManager.stop();
+            window.userViz.stop();
+            window.modelViz.stopSpeaking();
+
+            if (window.isGenerating) {
+                window.handleAction();
+            }
+
+            // Hide Overlay
+            document.getElementById('voice-overlay').classList.remove('active');
+
+            if (voiceStream) voiceStream.getTracks().forEach(track => track.stop());
+            voiceStream = null;
+            mediaRecorder = null;
+            updateVoiceUI(false);
+        }
+
+        // ---- Core VAD Engine ----
+        function getRMS() {
+            // Use the existing analyser from userViz
+            const analyser = window.userViz.analyser;
+            if (!analyser) return 0;
+            const buf = new Float32Array(analyser.fftSize);
+            analyser.getFloatTimeDomainData(buf);
+            let sum = 0;
+            for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+            return Math.sqrt(sum / buf.length);
+        }
+
+        function startVADLoop() {
+            let isRecording = false;
+            let silenceStart = 0;
+            let recordStart = 0;
+
+            vadIntervalId = setInterval(() => {
+                if (!window.isVoiceActive) return;
+
+                // STRICT TURN-TAKING: Polaris is currently generating or talking
+                const modelHasFloor = window.isGenerating || window.voiceManager.isPlaying || window.voiceManager.queue.length > 0;
+
+                if (modelHasFloor) {
+                    // Forcefully abort any ongoing microphone recording to prevent overlap / echo
+                    if (isRecording) {
+                        isRecording = false;
+                        if (mediaRecorder && mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                        }
+                        audioChunks = []; // discard whatever we collected
+                    }
+                    return; // Yield control; mic is inactive while Model speaks
+                }
+
+                const rms = getRMS();
+                const isSpeech = rms > VAD.SPEECH_THRESHOLD;
+
+                if (!isRecording) {
+                    // --- IDLE: waiting for speech ---
+                    if (isSpeech) {
+                        // Speech detected → start recording
+                        isRecording = true;
+                        silenceStart = 0;
+                        recordStart = Date.now();
+                        audioChunks = [];
+
+                        try { mediaRecorder = new MediaRecorder(voiceStream, { mimeType: 'audio/webm;codecs=opus' }); }
+                        catch (e) { mediaRecorder = new MediaRecorder(voiceStream); }
+
+                        mediaRecorder.ondataavailable = (e) => {
+                            if (e.data.size > 0) audioChunks.push(e.data);
+                        };
+
+                        mediaRecorder.onstop = async () => {
+                            // If the recording was aborted due to the model interrupting, drop it.
+                            if (!isRecording) return;
+
+                            isRecording = false;
+                            const duration = Date.now() - recordStart;
+
+                            // Only process if we recorded enough audio
+                            if (duration >= VAD.MIN_RECORD_DURATION && audioChunks.length > 0) {
+                                const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+                                audioChunks = [];
+                                document.getElementById('voice-status-text').textContent = 'Processing...';
+                                await processVoiceInput(audioBlob);
+                            } else {
+                                audioChunks = [];
+                            }
+                        };
+
+                        mediaRecorder.start(100); // collect data in 100ms chunks
+                        window.voiceTranscript.setUser('');
+                        document.getElementById('voice-status-text').textContent = 'Listening...';
+                    }
+                } else {
+                    // --- RECORDING: waiting for speech to end ---
+                    if (!isSpeech) {
+                        // Silence detected
+                        if (silenceStart === 0) {
+                            silenceStart = Date.now();
+                        } else if (Date.now() - silenceStart >= VAD.SILENCE_DURATION) {
+                            // Enough silence → stop recording, send to STT
+                            silenceStart = 0;
+                            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                                mediaRecorder.stop();
+                            }
+                        }
+                    } else {
+                        // Speech resumed, reset silence timer
+                        silenceStart = 0;
+                    }
+                }
+            }, VAD.POLL_INTERVAL);
+        }
+
+
+        function updateVoiceUI(active) {
+            const btn = document.getElementById('live-voice-btn');
+            const text = document.getElementById('voice-btn-text');
+            const statusDot = document.querySelector('#voice-status-pill .status-dot');
+            const statusText = document.getElementById('voice-status-text');
+
+            if (active) {
+                btn.classList.add('text-rose-500', 'bg-rose-500/10', 'pulse');
+                text.textContent = 'Listening...';
+                if (statusDot) statusDot.classList.add('pulse');
+                if (statusText) statusText.textContent = 'Polaris Live';
+                feather.replace();
+            } else {
+                btn.classList.remove('text-rose-500', 'bg-rose-500/10', 'pulse');
+                text.textContent = 'Live';
+                if (statusDot) statusDot.classList.remove('pulse');
+            }
+        }
+
+        async function processVoiceInput(blob) {
+            if (!window.isVoiceActive) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', blob, 'recording.webm');
+
+                const baseUrl = await getOpenAIClient();
+                const res = await fetch(baseUrl + '/v1/audio/transcriptions', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("STT failed: " + res.status);
+                const data = await res.json();
+                const text = data.text;
+
+                if (text && text.trim().length > 1) {
+                    window.voiceTranscript.setUser(text);
+                    document.getElementById('voice-status-text').textContent = 'Polaris Live';
+                    // Switch sides for model response
+                    window.userViz.stopListening();
+                    await window.sendMessage(text);
+                    // After the response is done and TTS finishes, we return to listening
+                    // (the TTS onended handler already calls userViz.startListening)
+                    if (window.isVoiceActive) {
+                        window.userViz.startListening();
+                        document.getElementById('voice-status-text').textContent = 'Polaris Live';
+                    }
+                }
+            } catch (err) {
+                console.error("Voice processing error:", err);
+                document.getElementById('voice-status-text').textContent = 'Polaris Live';
+            }
+        }
+
+        async function getOpenAIClient() {
+            return localStorage.getItem('vail_custom_backend_url') || 'https://polarisapi.okemovail.com';
+        }
+    </script>
 </body>
 
 </html>
