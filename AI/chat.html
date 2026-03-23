@@ -1850,7 +1850,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 16px;
             position: absolute;
             z-index: 10;
             opacity: 0;
@@ -1863,9 +1863,9 @@
         }
 
         .unified-pillar {
-            width: 14px;
-            height: 24px;
-            border-radius: 7px;
+            width: 20px;
+            height: 30px;
+            border-radius: 10px;
             background: linear-gradient(to bottom,
                     color-mix(in srgb, var(--accent-color), white 25%),
                     var(--accent-color) 45%,
@@ -6922,7 +6922,7 @@
                         const indices = [4, 8, 12, 16, 20];
                         pillars.forEach((p, i) => {
                             const val = this.dataArray[indices[i]];
-                            const height = 20 + (val / 255) * 100;
+                            const height = 30 + (val / 255) * 150;
                             p.style.height = `${height}px`;
                         });
                     }
