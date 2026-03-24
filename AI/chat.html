@@ -5524,12 +5524,13 @@
             window.renameChat = async (id) => {
                 if (!allChats[id]) return;
                 const oldTitle = allChats[id].title;
-                const newTitle = prompt("Enter new chat title:", oldTitle);
-                if (newTitle !== null && newTitle.trim() !== "" && newTitle !== oldTitle) {
-                    allChats[id].title = newTitle.trim();
+                const rawNewTitle = prompt("Enter new chat title:", oldTitle);
+                if (rawNewTitle !== null && rawNewTitle.trim() !== "" && rawNewTitle !== oldTitle) {
+                    const newTitle = rawNewTitle.replace(/[\r\n]+/g, ' ').trim();
+                    allChats[id].title = newTitle;
                     await StorageController.saveChat(allChats[id]);
                     if (id === currentChatId) {
-                        window.updateChatTitleDisplay(newTitle.trim());
+                        window.updateChatTitleDisplay(newTitle);
                     }
                     renderHistory();
                 }
@@ -5562,8 +5563,8 @@
                     if (response.ok) {
                         const data = await response.json();
                         let newTitle = data.choices[0].message.content.trim();
-                        // Strip any potential thought tags or quotes just in case the model hallucinates them
-                        newTitle = newTitle.replace(/^["']|["']$/g, '').replace(/<thought>[\s\S]*?<\/thought>/gi, '').trim();
+                        // Strip any potential thought tags or quotes just in case the model hallucinates them, and remove newlines
+                        newTitle = newTitle.replace(/^["']|["']$/g, '').replace(/<thought>[\s\S]*?<\/thought>/gi, '').replace(/[\r\n]+/g, ' ').trim();
 
                         if (allChats[chatId]) {
                             allChats[chatId].title = newTitle;
@@ -5953,8 +5954,11 @@
                 };
 
                 const handleConfirm = () => {
-                    const val = input.value.trim();
-                    if (val) onConfirm(val);
+                    const rawVal = input.value.trim();
+                    if (rawVal) {
+                        const val = rawVal.replace(/[\r\n]+/g, ' ').trim();
+                        onConfirm(val);
+                    }
                     close();
                 };
 
