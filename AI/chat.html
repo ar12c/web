@@ -1928,37 +1928,48 @@
             }
         }
 
-        /* --- TRANSCRIPT LABELS --- */
-        .voice-label {
+        .voice-transcript-wrapper {
             position: absolute;
-            bottom: 3.5rem;
-            font-size: 0.7rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 30;
+            pointer-events: none;
+        }
+
+        .voice-label {
+            margin-bottom: 1.5rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .voice-transcript {
-            position: absolute;
-            bottom: 1.5rem;
-            width: 85%;
+            width: 100%;
+            max-width: 900px;
             text-align: center;
-            font-size: 0.85rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.65);
-            line-height: 1.5;
+            font-size: 1.75rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
             min-height: 1.25em;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
             -webkit-box-orient: vertical;
         }
 
         .voice-transcript.speaking {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
         }
 
         /* --- CLOSE BUTTON (BOTTOM RIGHT) --- */
@@ -7250,7 +7261,7 @@
                 if (!window.isVoiceActive) return;
 
                 // STRICT TURN-TAKING: Polaris is currently generating or talking
-                const modelHasFloor = window.isGenerating || window.voiceManager.isPlaying || window.voiceManager.queue.length > 0;
+                const modelHasFloor = window.isGenerating || window.voiceManager.isPlaying || (window.voiceManager.fetchQueue.length + window.voiceManager.playbackQueue.length) > 0;
 
                 if (modelHasFloor) {
                     // Forcefully abort any ongoing microphone recording to prevent overlap / echo
@@ -7383,7 +7394,7 @@
         }
 
         async function getOpenAIClient() {
-            return localStorage.getItem('vail_custom_backend_url') || 'https://polarisapi.okemovail.com';
+            return localStorage.getItem('vail_custom_backend_url') || window.location.origin;
         }
     </script>
 </body>
