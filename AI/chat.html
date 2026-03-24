@@ -1930,15 +1930,19 @@
 
         .voice-transcript-wrapper {
             position: absolute;
-            top: 50%;
+            bottom: 18%;
+            /* Moved to bottom */
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             width: 90%;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-end;
+            /* Bottom align contents */
             z-index: 30;
             pointer-events: none;
+            min-height: 15vh;
         }
 
         .voice-label {
@@ -1954,17 +1958,19 @@
             width: 100%;
             max-width: 900px;
             text-align: center;
-            font-size: 1.75rem;
+            font-size: 1.85rem;
+            /* Slightly larger */
             font-weight: 500;
             color: rgba(255, 255, 255, 0.7);
-            line-height: 1.4;
+            line-height: 1.3;
             min-height: 1.25em;
             transition: all 0.3s ease;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
             overflow: hidden;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
+            -webkit-line-clamp: 2;
+            /* 2 lines is cleaner for bottom alignment */
+            line-clamp: 2;
             -webkit-box-orient: vertical;
         }
 
@@ -3236,6 +3242,16 @@
                         console.warn("Failed to fetch initial tokens:", e);
                     }
                 };
+                // Migrate legacy backend URLs (remove accidental /gradio suffix)
+                (function () {
+                    const legacy = localStorage.getItem('vail_custom_backend_url');
+                    if (legacy && legacy.endsWith('/gradio')) {
+                        const fixed = legacy.replace(/\/gradio$/, '');
+                        localStorage.setItem('vail_custom_backend_url', fixed);
+                        console.log('Migrated vail_custom_backend_url:', fixed);
+                    }
+                })();
+
                 fetchInitialTokens();
 
                 // Auto-detect tunnel URL from backend (keeps frontend in sync when tunnel changes)
@@ -3247,7 +3263,9 @@
                             const data = await res.json();
                             if (data.tunnel_url && data.tunnel_url !== baseUrl) {
                                 console.log('Tunnel URL updated:', data.tunnel_url);
-                                localStorage.setItem('vail_custom_backend_url', data.tunnel_url + '/gradio');
+                                // CRITICAL: Only set the root tunnel URL; do NOT append /gradio 
+                                // as it breaks /v1/ API endpoints (STT, TTS, Chat)
+                                localStorage.setItem('vail_custom_backend_url', data.tunnel_url);
                             }
                         }
                     } catch (e) {
@@ -7002,17 +7020,31 @@
         window.voiceTranscript = {
             setUser(text) {
                 const el = document.getElementById('central-transcript');
-                if (el && text) { el.textContent = text; el.style.opacity = 0.5; }
+                if (el) {
+                    el.textContent = text || '';
+                    el.style.opacity = 0.5;
+                    el.classList.remove('speaking');
+                }
             },
             setModel(text) {
                 const el = document.getElementById('central-transcript');
-                if (el && text) { el.textContent = text; el.style.opacity = 1.0; }
+                if (el) {
+                    el.textContent = text || '';
+                    el.style.opacity = 1.0;
+                    el.classList.add('speaking');
+                }
             },
             clear() {
                 const el = document.getElementById('central-transcript');
-                if (el) el.textContent = '';
+                if (el) {
+                    el.textContent = '';
+                    el.classList.remove('speaking');
+                }
             },
-            addLine() { },
+            addLine(t, isModel) {
+                if (isModel) this.setModel(t);
+                else this.setUser(t);
+            },
             updateActiveLine(t) { this.setModel(t); }
         };
 
@@ -7364,32 +7396,64 @@
                 const formData = new FormData();
                 formData.append('file', blob, 'recording.webm');
 
+                console.log("Sending audio blob, size:", blob.size);
+                document.getElementById('voice-status-text').textContent = 'Processing (' + Math.round(blob.size / 1024) + 'KB)...';
+
                 const baseUrl = await getOpenAIClient();
-                const res = await fetch(baseUrl + '/v1/audio/transcriptions', {
+                const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+
+                // Convert blob to Base64
+                const reader = new FileReader();
+                const base64Promise = new Promise((resolve) => {
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                });
+                const base64Audio = await base64Promise;
+                console.log("Sending B64 audio, length:", base64Audio.length);
+                document.getElementById('voice-status-text').textContent = 'Processing (B64)...';
+
+                const res = await fetch(cleanBaseUrl + '/v1/audio/transcriptions_base64', {
                     method: 'POST',
-                    body: formData
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ base64_audio: base64Audio })
                 });
 
-                if (!res.ok) throw new Error("STT failed: " + res.status);
+                if (!res.ok) {
+                    const errText = await res.text();
+                    console.error("B64 STT full error response:", errText);
+                    throw new Error("B64 STT failed: " + res.status);
+                }
                 const data = await res.json();
                 const text = data.text;
+                console.log("B64 Transcription result:", text);
 
                 if (text && text.trim().length > 1) {
                     window.voiceTranscript.setUser(text);
-                    document.getElementById('voice-status-text').textContent = 'Polaris Live';
-                    // Switch sides for model response
+                    if (window.isGenerating) {
+                        console.warn("Already generating, waiting...");
+                        document.getElementById('voice-status-text').textContent = 'Waiting for model...';
+                        while (window.isGenerating) await new Promise(r => setTimeout(r, 100));
+                    }
+                    document.getElementById('voice-status-text').textContent = 'Responding...';
                     window.userViz.stopListening();
                     await window.sendMessage(text);
-                    // After the response is done and TTS finishes, we return to listening
-                    // (the TTS onended handler already calls userViz.startListening)
                     if (window.isVoiceActive) {
                         window.userViz.startListening();
                         document.getElementById('voice-status-text').textContent = 'Polaris Live';
                     }
+                } else {
+                    console.warn("Transcription too short or empty");
+                    document.getElementById('voice-status-text').textContent = 'Didn\'t catch that';
+                    setTimeout(() => {
+                        if (window.isVoiceActive) document.getElementById('voice-status-text').textContent = 'Polaris Live';
+                    }, 1500);
                 }
             } catch (err) {
                 console.error("Voice processing error:", err);
-                document.getElementById('voice-status-text').textContent = 'Polaris Live';
+                document.getElementById('voice-status-text').textContent = 'STT Error: ' + err.message;
+                setTimeout(() => {
+                    if (window.isVoiceActive) document.getElementById('voice-status-text').textContent = 'Polaris Live';
+                }, 3000);
             }
         }
 
