@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OLM | Stay Curious</title>
+    <title>Ontologic | Stay Curious</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -285,7 +285,7 @@
                 <path
                     d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z" />
             </svg>
-            <div class='text-xl md:text-2xl font-black text-primary'>OLM</div>
+            <div class='text-xl md:text-2xl font-black text-primary'>Ontologic</div>
         </div>
         <div class="hidden md:flex items-center gap-8 text-sm font-medium">
             <a href="AI/goals.html" class="hover:text-primary transition-colors">Goals</a>
@@ -343,7 +343,7 @@
         <div class="mb-16">
             <h2 class="text-4xl md:text-5xl font-bold mb-6 italic tracking-tight dark:text-textdark">Based AI</h2>
             <p class="text-xl text-primary/80 dark:text-secondary/80 max-w-2xl leading-relaxed">
-                Okemoware. I'm constantly updating the model in hopes of competing with giants along with zero censorship.
+                Ontologic Software. I'm constantly updating the model in hopes of competing with giants along with zero censorship.
             </p>
         </div>
 
@@ -551,7 +551,7 @@
                 }
             }
 
-            // --- OLM SVG Mapping ---
+            // --- Ontologic SVG Mapping ---
             function drawSVGLOgo() {
                 clearGrid();
                 const quads = [
@@ -591,8 +591,8 @@
                 }
             }
 
-            // Draw "OLM" Text (Shifted 1 square right)
-            function drawTextOLM() {
+            // Draw "Ontologic" (Simplified)
+            function drawTextOntologic() {
                 clearGrid();
                 const startY = 10;
                 const height = 10;
@@ -701,7 +701,7 @@
             function cycleAnimation() {
                 stopCubeMode();
                 if (currentStep === 0) {
-                    matrixRainTransition(drawTextOLM, null);
+                    matrixRainTransition(drawTextOntologic, null);
                 } else if (currentStep === 1) {
                     matrixRainTransition(draw3DCube, startCubeMode);
                 } else if (currentStep === 2) {
