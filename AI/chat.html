@@ -3227,13 +3227,13 @@
 
 
 
-            const CF_BACKEND_URL = 'https://polarsiapi.okemovail.com';
+            const CF_BACKEND_URL = 'https://polarisapi.okemovail.com';
             const DEFAULT_BACKEND_URL = CF_BACKEND_URL;
             const CUSTOM_BACKEND_URL = localStorage.getItem('vail_custom_backend_url') || DEFAULT_BACKEND_URL;
 
 
             const MODELS = {
-                CADENCE1: { id: "https://polarsiapi.okemovail.com", name: "Stuart", icon: UNIQUE_SVG_STAR },
+                CADENCE1: { id: "https://polarisapi.okemovail.com", name: "Stuart", icon: UNIQUE_SVG_STAR },
 
                 CADENCE2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Stuart", icon: UNIQUE_SVG_NORTH }
             };
@@ -4876,12 +4876,8 @@
                     console.log("Connecting to OpenAI Stream at:", baseUrl + "/v1/chat/completions");
 
 
+                    // System prompt is injected server-side from systemprompt.md
                     const messages = [];
-                    if (settings.systemPrompt) {
-                        messages.push({ role: "system", content: settings.systemPrompt });
-                    } else {
-                        messages.push({ role: "system", content: "You are Stuart, a chill and genuine friend who loves chatting. You speak casually and naturally like a real person — using slang, humor, empathy, and personality. You never say things like 'How can I assist you?' or 'As an AI.' You're warm, witty, and real. Think deeply inside <thought> tags when needed, then respond like a friend would." });
-                    }
 
                     for (const [u, a] of chatHistory.slice(0, -1)) {
                         messages.push({ role: "user", content: u });
