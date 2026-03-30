@@ -439,18 +439,13 @@
             margin: 1.5rem 0;
             border: 1px solid rgba(0, 0, 0, 0.08);
             background: #f4f4f5;
-            box-shadow:
-                0 10px 30px -5px rgba(0, 0, 0, 0.08),
-                0 4px 12px -2px rgba(0, 0, 0, 0.04),
-                inset 0 1px 1px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .dark .code-window {
             background: #000000;
             border-color: #27272a;
-            box-shadow:
-                0 20px 40px -10px rgba(0, 0, 0, 0.5),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
 
         .code-header {
@@ -465,15 +460,12 @@
             right: 0;
             z-index: 20;
             font-family: 'Satoshi', sans-serif;
-            /* Skeuomorphic traits */
-            background: linear-gradient(to bottom, #f8f8f9 0%, #e4e4e7 100%);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 2px rgba(0, 0, 0, 0.03);
+            /* Flat styles */
         }
 
         .dark .code-header {
-            background: linear-gradient(to bottom, #1c1c1f 0%, #0c0c0e 100%);
+            background: #1c1c1f;
             border-bottom-color: #27272a;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 4px rgba(0, 0, 0, 0.3);
         }
 
         .code-header-left {
@@ -602,9 +594,7 @@
             border: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow:
                 0 6px 16px -2px rgba(0, 0, 0, 0.08),
-                0 2px 4px -1px rgba(0, 0, 0, 0.04),
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
-                inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02);
+                0 2px 4px -1px rgba(0, 0, 0, 0.04);
             position: relative;
             z-index: 40;
             overflow: hidden;
@@ -615,9 +605,7 @@
             background-color: var(--input-bg);
             border-color: rgba(255, 255, 255, 0.08);
             box-shadow:
-                0 8px 18px -4px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-                inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
+                0 8px 18px -4px rgba(0, 0, 0, 0.5);
         }
 
         .input-box-wrap::before {
@@ -1263,23 +1251,14 @@
             position: relative;
             background: rgba(0, 0, 0, 0.05);
             color: var(--accent-color);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .dark .Stuart-tab-btn.active {
             background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .Stuart-tab-btn.active::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%);
-            border-radius: inherit;
-            pointer-events: none;
         }
 
 
@@ -1667,112 +1646,54 @@
             }
         }
 
-        /* --- Targeted Skuomorphism --- */
+        /* --- Flat Styles --- */
         .skuomorphic-btn {
             position: relative;
-            isolation: isolate;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            border: 1px solid rgba(0, 0, 0, 0.06) !important;
-            box-shadow:
-                0 2px 5px rgba(0, 0, 0, 0.04),
-                inset 0 1px 1.5px rgba(255, 255, 255, 1),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.03) !important;
+            transition: all 0.2s ease !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
         }
 
         .dark .skuomorphic-btn {
             border-color: rgba(255, 255, 255, 0.08) !important;
-            box-shadow:
-                0 5px 12px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.12),
-                inset 0 -1.5px 3px rgba(0, 0, 0, 0.3) !important;
         }
 
         .skuomorphic-btn:hover {
             transform: translateY(-1px);
-            box-shadow:
-                0 5px 12px rgba(0, 0, 0, 0.08),
-                inset 0 1px 1.5px rgba(255, 255, 255, 1) !important;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
         }
 
         .dark .skuomorphic-btn:hover {
-            box-shadow:
-                0 8px 20px rgba(0, 0, 0, 0.5),
-                inset 0 1px 1.5px rgba(255, 255, 255, 0.15) !important;
+            background: #2a2a28;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
         }
 
         .skuomorphic-btn:active {
-            transform: translateY(1px) !important;
-            box-shadow:
-                inset 0 2px 4px rgba(0, 0, 0, 0.1),
-                0 1px 1px rgba(255, 255, 255, 0.5) !important;
-        }
-
-        .dark .skuomorphic-btn:active {
-            box-shadow:
-                inset 0 2px 4px rgba(0, 0, 0, 0.4),
-                0 1px 1px rgba(255, 255, 255, 0.05) !important;
-        }
-
-        .skuomorphic-btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
-            border-radius: inherit;
-            pointer-events: none;
+            transform: translateY(0) !important;
+            box-shadow: none !important;
         }
 
         .skuomorphic-card {
             position: relative;
-            isolation: isolate;
             background: #fff;
             border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow:
-                0 10px 30px -5px rgba(0, 0, 0, 0.1),
-                0 4px 10px -2px rgba(0, 0, 0, 0.05),
-                inset 0 1px 1.5px rgba(255, 255, 255, 1),
-                inset 0 -1.5px 3px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             border-radius: 24px;
         }
 
         .dark .skuomorphic-card {
             background: #111210;
             border-color: rgba(255, 255, 255, 0.1);
-            box-shadow:
-                0 20px 40px -10px rgba(0, 0, 0, 0.6),
-                inset 0 1px 1px rgba(255, 255, 255, 0.12),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.4);
-        }
-
-        .skuomorphic-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 40%);
-            border-radius: inherit;
-            pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .skuomorphic-toast {
             position: relative;
             background: #22c55e;
-            /* Green-500 */
             border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow:
-                0 10px 25px -5px rgba(34, 197, 94, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.4),
-                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
             color: white;
             border-radius: 14px;
-        }
-
-        .skuomorphic-toast::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%);
-            border-radius: inherit;
-            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
         }
 
         .skuomorphic-menu-active {
@@ -1780,21 +1701,13 @@
             background: rgba(0, 0, 0, 0.03) !important;
             color: var(--accent-color) !important;
             border: 1px solid rgba(0, 0, 0, 0.05) !important;
-            box-shadow:
-                0 2px 4px rgba(0, 0, 0, 0.05),
-                inset 0 1px 1.2px rgba(255, 255, 255, 1),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.03) !important;
-            isolation: isolate;
         }
 
         .dark .skuomorphic-menu-active {
             background: rgba(255, 255, 255, 0.03) !important;
             border-color: rgba(255, 255, 255, 0.1) !important;
-            box-shadow:
-                0 4px 10px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05),
-                inset 0 -1.5px 3px rgba(0, 0, 0, 0.5) !important;
         }
+
 
         /* --- PREMIUM VOICE OVERLAY --- */
         #voice-overlay {
@@ -2021,17 +1934,8 @@
             }
         }
 
-        .skuomorphic-menu-active::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
-            border-radius: inherit;
-            pointer-events: none;
-        }
-
-        .dark .skuomorphic-btn::after {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 50%);
+        .skuomorphic-menu-active::after, .dark .skuomorphic-btn::after {
+            display: none;
         }
 
         /* Folder Styles */
@@ -3540,7 +3444,11 @@
 
 
 
-            const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '').trim();
+            const sanitizeText = (t) => (t || '').replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '')
+                .replace(/<\|endoftext\|?>/g, '')
+                .replace(/\ufffd/g, '') // remove replacement character junk
+                .replace(/^hi\s+/i, '')  // remove potential junk hi prefix
+                .trim();
             const ensureClosedCodeBlocks = (t) => {
                 const count = (t.match(/```/g) || []).length;
                 if (count % 2 !== 0) return t + '\n```';
@@ -5038,7 +4946,10 @@
                                 }
                                 // --------------------------------
 
-                                responseText = responseText.replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '').replace(/<\|endoftext\|?>/g, '');
+                                responseText = responseText.replace(/<\|im_(?:start|end)(?:[|>\s]*)/g, '')
+                                    .replace(/<\|endoftext\|?>/g, '')
+                                    .replace(/\ufffd/g, '')
+                                    .replace(/^hi\s+/i, '');
 
 
                                 const lastProse = els.chatMsgs.querySelector('.ai-row:last-child .prose-target');

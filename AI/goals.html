@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goals | OLM</title>
+    <title>Goals | Ontologic</title>
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/179893130?v=4">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,11 +30,11 @@
         }
     </script>
     <script>
-        /* Theme Sync Script */
-        (function() {
-            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (isDark) document.documentElement.classList.add('dark');
-        })();
+            /* Theme Sync Script */
+            (function () {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) document.documentElement.classList.add('dark');
+            })();
     </script>
     <style>
         @font-face {
@@ -78,17 +78,13 @@
             background-attachment: fixed;
         }
 
-        /* --- Global Skuomorphs --- */
+        /* --- Global Flat Styles --- */
         .skuomorphic-button {
             position: relative;
-            background: linear-gradient(180deg, #ffffff 0%, #f4f4f2 100%);
+            background: #f4f4f2;
             border-radius: 9999px;
             border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 
-                0 2px 5px rgba(0, 0, 0, 0.05),
-                inset 0 1px 1px rgba(255, 255, 255, 1),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.02);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s ease;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -96,58 +92,37 @@
         }
 
         .dark .skuomorphic-button {
-            background: linear-gradient(180deg, #2a2a28 0%, #1c1c1a 100%);
+            background: #2a2a28;
             border-color: rgba(255, 255, 255, 0.05);
-            box-shadow: 
-                0 4px 10px rgba(0, 0, 0, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05),
-                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
         }
 
         .skuomorphic-button:hover {
             transform: translateY(-1px);
-            box-shadow: 
-                0 5px 15px rgba(0, 0, 0, 0.08),
-                inset 0 1px 1.5px rgba(255, 255, 255, 1);
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .skuomorphic-button:hover {
+            background: #3a3a38;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .skuomorphic-button:active {
-            transform: translateY(1px);
-            box-shadow: 
-                inset 0 2px 4px rgba(0, 0, 0, 0.1),
-                0 1px 1px rgba(255, 255, 255, 0.5);
-        }
-
-        .skuomorphic-button::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 6px;
-            right: 6px;
-            height: 40%;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
-            border-radius: 9999px;
-            pointer-events: none;
+            transform: translateY(0);
         }
 
         .skuomorphic-card {
             background: #ffffff;
             border-radius: 24px;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.08),
-                inset 0 1px 1.5px rgba(255, 255, 255, 1),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
         .dark .skuomorphic-card {
             background: #1c1c1a;
             border-color: rgba(255, 255, 255, 0.05);
-            box-shadow: 
-                0 15px 40px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.05),
-                inset 0 -1.5px 3px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
@@ -157,15 +132,20 @@
     <nav
         class="w-full sticky top-0 flex items-center justify-between py-4 px-6 lg:py-6 lg:px-16 border-b border-gray-200 dark:border-gray-800/50 bg-white/80 dark:bg-bgdark/80 backdrop-blur-md relative z-30">
         <a href="../AI.html" class="flex items-center gap-3">
-            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" class="w-8 h-8 text-primary fill-current">
-                    <path d="M4.96,314.21l508.97,180.31v-94.71L28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z"/>
-                    <polygon points="513.93 561.2 0 684.2 0 395.8 513.93 522.5 513.93 561.2"/>
-                    <path d="M4.96,765.79l508.97-180.31v94.71L28.54,1073.91C19.12,1085.79,0,1079.13,0,1063.97v-286.6c0-4.38,1.79-8.56,4.96-11.58Z"/>
-                    <path d="M1075.04,314.21l-508.97,180.31v-94.71S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z"/>
-                    <polygon points="566.07 561.2 1080 684.2 1080 395.8 566.07 522.5 566.07 561.2"/>
-                    <path d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z"/>
-                </svg>
-            <div class='text-xl md:text-2xl font-black text-primary'>OLM</div>
+            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080"
+                class="w-8 h-8 text-primary fill-current">
+                <path
+                    d="M4.96,314.21l508.97,180.31v-94.71L28.54,6.09C19.12-5.79,0,.87,0,16.03v286.6c0,4.38,1.79,8.56,4.96,11.58Z" />
+                <polygon points="513.93 561.2 0 684.2 0 395.8 513.93 522.5 513.93 561.2" />
+                <path
+                    d="M4.96,765.79l508.97-180.31v94.71L28.54,1073.91C19.12,1085.79,0,1079.13,0,1063.97v-286.6c0-4.38,1.79-8.56,4.96-11.58Z" />
+                <path
+                    d="M1075.04,314.21l-508.97,180.31v-94.71S1051.46,6.09,1051.46,6.09c9.42-11.88,28.54-5.22,28.54,9.94v286.6c0,4.38-1.79,8.56-4.96,11.58Z" />
+                <polygon points="566.07 561.2 1080 684.2 1080 395.8 566.07 522.5 566.07 561.2" />
+                <path
+                    d="M1075.04,765.79l-508.97-180.31v94.71s485.39,393.71,485.39,393.71c9.42,11.88,28.54,5.22,28.54-9.94v-286.6c0-4.38-1.79-8.56-4.96-11.58Z" />
+            </svg>
+            <div class='text-xl md:text-2xl font-black text-primary'>Ontologic</div>
         </a>
         <div class="hidden md:flex items-center gap-8 text-sm font-medium">
             <a href="goals.html" class="text-primary transition-colors">Goals</a>
@@ -190,45 +170,57 @@
 
         <div class="space-y-16 w-full mt-12 pb-24">
             <!-- Goal 1: Free for Everyone -->
-            <div class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
-                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/5 text-primary dark:text-secondary group-hover:scale-110 transition-transform">
+            <div
+                class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
+                <div
+                    class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/5 text-primary dark:text-secondary group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-earth-americas text-2xl"></i>
                 </div>
                 <div class="flex-grow">
-                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Free for Everyone</h2>
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Free
+                        for Everyone</h2>
                     <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
-                        Advanced AGI should not be a luxury reserved for the few. We are building infrastructure to provide 
-                        state-of-the-art intelligence at zero cost to the end user. Intelligence should be a utility, 
+                        Advanced AGI should not be a luxury reserved for the few. We are building infrastructure to
+                        provide
+                        state-of-the-art intelligence at zero cost to the end user. Intelligence should be a utility,
                         not a privilege.
                     </p>
                 </div>
             </div>
 
             <!-- Goal 2: Raw & Unfiltered -->
-            <div class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
-                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-secondary/20 dark:bg-secondary/5 text-primary dark:text-secondary">
+            <div
+                class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
+                <div
+                    class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-secondary/20 dark:bg-secondary/5 text-primary dark:text-secondary">
                     <i class="fa-solid fa-bolt text-2xl"></i>
                 </div>
                 <div class="flex-grow">
-                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Raw & Unfiltered</h2>
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Raw &
+                        Unfiltered</h2>
                     <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
-                        We believe in raw intelligence. Without limits, without artificial filters, and without the biases 
-                        imposed by corporate safety committees. True reasoning requires the absolute freedom to explore 
+                        We believe in raw intelligence. Without limits, without artificial filters, and without the
+                        biases
+                        imposed by corporate safety committees. True reasoning requires the absolute freedom to explore
                         every corner of thought and possibility.
                     </p>
                 </div>
             </div>
 
             <!-- Goal 3: No Limits -->
-            <div class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
-                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/5 text-primary dark:text-secondary">
+            <div
+                class="flex flex-col md:flex-row gap-10 items-start pb-16 border-b border-[#BFD7B5]/10 animate-fade-in">
+                <div
+                    class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/5 text-primary dark:text-secondary">
                     <i class="fa-solid fa-infinity text-2xl"></i>
                 </div>
                 <div class="flex-grow">
-                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">No Limits</h2>
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">No
+                        Limits</h2>
                     <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
-                        Boundaries restrict discovery. Our models are architectural foundations for unbounded exploration, 
-                        enabling breakthrough research, creative synthesis, and technological leaps that are 
+                        Boundaries restrict discovery. Our models are architectural foundations for unbounded
+                        exploration,
+                        enabling breakthrough research, creative synthesis, and technological leaps that are
                         structurally impossible within constrained frameworks.
                     </p>
                 </div>
@@ -236,14 +228,17 @@
 
             <!-- Goal 4: Universal Access -->
             <div class="flex flex-col md:flex-row gap-10 items-start animate-fade-in">
-                <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-secondary/20 dark:bg-secondary/5 text-primary dark:text-secondary">
+                <div
+                    class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-2xl bg-secondary/20 dark:bg-secondary/5 text-primary dark:text-secondary">
                     <i class="fa-solid fa-microchip text-2xl"></i>
                 </div>
                 <div class="flex-grow">
-                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">Universal Access</h2>
+                    <h2 class="serif-text text-4xl font-medium mb-4 text-primary dark:text-textdark leading-tight">
+                        Universal Access</h2>
                     <p class="text-xl text-gray-500 dark:text-textdark/60 leading-relaxed max-w-4xl">
-                        Whether you're a student, a researcher, or a dreamer, OLM provides the tools to amplify your 
-                        innate potential. We are democratizing the future of humanity by putting world-class 
+                        Whether you're a student, a researcher, or a dreamer, Ontologic provides the tools to amplify
+                        your
+                        innate potential. We are democratizing the future of humanity by putting world-class
                         computational intelligence in everyone's hands.
                     </p>
                 </div>
@@ -254,7 +249,7 @@
     </main>
 
     <footer class="p-12 text-center text-[10px] uppercase tracking-widest text-gray-400">
-        OLM is built for the future of humanity.
+        Ontologic is built for the future of humanity.
     </footer>
 
     <script src="https://kit.fontawesome.com/40440288c0.js" crossorigin="anonymous"></script>
