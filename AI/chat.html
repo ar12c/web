@@ -1209,7 +1209,7 @@
         }
 
 
-        .Stuart-tab-bar {
+        .Cadance-tab-bar {
             display: flex;
             gap: 4px;
             padding: 4px;
@@ -1218,11 +1218,11 @@
             margin: 0 1.25rem 1.5rem;
         }
 
-        .dark .Stuart-tab-bar {
+        .dark .Cadance-tab-bar {
             background: rgba(255, 255, 255, 0.06);
         }
 
-        .Stuart-tab-btn {
+        .Cadance-tab-btn {
             flex: 1;
             min-height: 44px;
             display: flex;
@@ -1239,15 +1239,15 @@
             background: transparent;
         }
 
-        .dark .Stuart-tab-btn {
+        .dark .Cadance-tab-btn {
             color: #a1a1aa;
         }
 
-        .Stuart-tab-btn.active {
+        .Cadance-tab-btn.active {
             color: var(--accent-contrast);
         }
 
-        .Stuart-tab-btn.active {
+        .Cadance-tab-btn.active {
             position: relative;
             background: rgba(0, 0, 0, 0.05);
             color: var(--accent-color);
@@ -1255,23 +1255,23 @@
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .dark .Stuart-tab-btn.active {
+        .dark .Cadance-tab-btn.active {
             background: rgba(255, 255, 255, 0.05);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             border-color: rgba(255, 255, 255, 0.1);
         }
 
 
-        .Stuart-section {
+        .Cadance-section {
             padding: 0 1.25rem;
             margin-bottom: 1.75rem;
         }
 
-        .settings-tab-content>.Stuart-section:first-child {
+        .settings-tab-content>.Cadance-section:first-child {
             padding-top: 1.25rem;
         }
 
-        .Stuart-section-label {
+        .Cadance-section-label {
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
@@ -1281,7 +1281,7 @@
             padding-left: 4px;
         }
 
-        .Stuart-card {
+        .Cadance-card {
             background: rgba(255, 255, 255, 0.7);
             border: 1px solid rgba(0, 0, 0, 0.07);
             border-radius: 16px;
@@ -1289,12 +1289,12 @@
             backdrop-filter: blur(8px);
         }
 
-        .dark .Stuart-card {
+        .dark .Cadance-card {
             background: rgba(255, 255, 255, 0.04);
             border-color: rgba(255, 255, 255, 0.07);
         }
 
-        .Stuart-row {
+        .Cadance-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -1304,27 +1304,27 @@
             gap: 12px;
         }
 
-        .dark .Stuart-row {
+        .dark .Cadance-row {
             border-bottom-color: rgba(255, 255, 255, 0.05);
         }
 
-        .Stuart-row:last-child {
+        .Cadance-row:last-child {
             border-bottom: none;
         }
 
-        .Stuart-row-label {
+        .Cadance-row-label {
             font-size: 14px;
             font-weight: 500;
             color: #18181b;
             flex-shrink: 0;
         }
 
-        .dark .Stuart-row-label {
+        .dark .Cadance-row-label {
             color: #f4f4f5;
         }
 
 
-        .Stuart-theme-item {
+        .Cadance-theme-item {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -1341,28 +1341,28 @@
             text-align: left;
         }
 
-        .dark .Stuart-theme-item {
+        .dark .Cadance-theme-item {
             border-bottom-color: rgba(255, 255, 255, 0.05);
         }
 
-        .Stuart-theme-item:last-child {
+        .Cadance-theme-item:last-child {
             border-bottom: none;
         }
 
-        .Stuart-theme-item:hover {
+        .Cadance-theme-item:hover {
             background: rgba(0, 0, 0, 0.03);
         }
 
-        .dark .Stuart-theme-item:hover {
+        .dark .Cadance-theme-item:hover {
             background: rgba(255, 255, 255, 0.04);
         }
 
-        .Stuart-theme-item.active-theme {
+        .Cadance-theme-item.active-theme {
             background: color-mix(in srgb, var(--accent-color) 8%, transparent);
             position: relative;
         }
 
-        .Stuart-theme-item.active-theme::before {
+        .Cadance-theme-item.active-theme::before {
             content: '';
             position: absolute;
             left: 0;
@@ -1374,7 +1374,7 @@
             box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        .Stuart-theme-icon {
+        .Cadance-theme-icon {
             width: 48px;
             height: 48px;
             border-radius: 50%;
@@ -1386,11 +1386,11 @@
             transition: box-shadow 0.3s ease;
         }
 
-        .Stuart-theme-icon.glow-active {
+        .Cadance-theme-icon.glow-active {
             box-shadow: 0 0 0 3px var(--accent-color), 0 0 20px var(--accent-glow);
         }
 
-        .Stuart-theme-check {
+        .Cadance-theme-check {
             width: 20px;
             height: 20px;
             border-radius: 50%;
@@ -3227,13 +3227,13 @@
 
 
 
-            const CF_BACKEND_URL = 'http://localhost:8000';
+            const CF_BACKEND_URL = 'https://polarsiapi.okemovail.com';
             const DEFAULT_BACKEND_URL = CF_BACKEND_URL;
             const CUSTOM_BACKEND_URL = localStorage.getItem('vail_custom_backend_url') || DEFAULT_BACKEND_URL;
 
 
             const MODELS = {
-                CADENCE1: { id: "http://localhost:8000", name: "Stuart", icon: UNIQUE_SVG_STAR },
+                CADENCE1: { id: "https://polarsiapi.okemovail.com", name: "Stuart", icon: UNIQUE_SVG_STAR },
 
                 CADENCE2: { id: CUSTOM_BACKEND_URL + "/gradio", name: "Stuart", icon: UNIQUE_SVG_NORTH }
             };
@@ -4316,7 +4316,7 @@
 
             window.openSettingsTab = (tabName) => {
 
-                document.querySelectorAll('.Stuart-tab-btn').forEach(btn => {
+                document.querySelectorAll('.Cadance-tab-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 const activeBtn = document.getElementById(`ptab-btn-${tabName}`);
@@ -4897,7 +4897,7 @@
                             "bypass-tunnel-reminder": "true"
                         },
                         body: JSON.stringify({
-                            model: "Stuart-moe",
+                            model: "Cadance-moe",
                             messages: messages,
                             max_tokens: settings.max_tokens || 4096,
                             stream: true,
@@ -5496,7 +5496,7 @@
                         method: "POST",
                         headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true", "bypass-tunnel-reminder": "true" },
                         body: JSON.stringify({
-                            model: "Stuart-moe",
+                            model: "Cadance-moe",
                             messages: [
                                 { "role": "system", "content": "You are a title generator. Generate a title for this conversation based on the first interaction. Do not use quotes, punctuation, or thought tags. Just return the short title." },
                                 { "role": "user", "content": `Give me a title based on the user request of "${userMsg}"` }
@@ -6240,7 +6240,7 @@
                         ? `box-shadow: 0 0 0 3px ${glowColor}, 0 0 22px ${glowColor}55;`
                         : '';
                     const checkHtml = isActive
-                        ? `<div class="Stuart-theme-check ml-auto shrink-0">${feather.icons.check.toSvg({ class: 'w-3 h-3', style: 'color: var(--accent-contrast)' })}</div>`
+                        ? `<div class="Cadance-theme-check ml-auto shrink-0">${feather.icons.check.toSvg({ class: 'w-3 h-3', style: 'color: var(--accent-contrast)' })}</div>`
                         : '';
                     const deleteBtn = isCustom
                         ? `<div onclick="event.stopPropagation(); window.removeCustomAccent(${index})" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 ml-2 opacity-0 group-hover:opacity-100 transition-all text-zinc-400 hover:text-red-500 shrink-0"><i data-feather="trash-2" class="w-3.5 h-3.5"></i></div>`
@@ -6248,8 +6248,8 @@
 
                     return `
                         <button onclick="window.updateAccent('${color}')"
-                            class="Stuart-theme-item group ${isActive ? 'active-theme' : ''}">
-                            <div class="Stuart-theme-icon shrink-0" style="background: ${iconBg}; ${glowStyle}">
+                            class="Cadance-theme-item group ${isActive ? 'active-theme' : ''}">
+                            <div class="Cadance-theme-icon shrink-0" style="background: ${iconBg}; ${glowStyle}">
                                 ${isAuto ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>` : ''}
                             </div>
                             <div class="flex flex-col min-w-0">
@@ -6427,14 +6427,14 @@
         </div>
 
 
-        <div class="Stuart-tab-bar shrink-0">
-            <button class="Stuart-tab-btn active" id="ptab-btn-general" onclick="window.openSettingsTab('general')">
+        <div class="Cadance-tab-bar shrink-0">
+            <button class="Cadance-tab-btn active" id="ptab-btn-general" onclick="window.openSettingsTab('general')">
                 <i data-feather="sliders" class="w-3.5 h-3.5"></i> General
             </button>
-            <button class="Stuart-tab-btn" id="ptab-btn-profile" onclick="window.openSettingsTab('profile')">
+            <button class="Cadance-tab-btn" id="ptab-btn-profile" onclick="window.openSettingsTab('profile')">
                 <i data-feather="user" class="w-3.5 h-3.5"></i> Profile
             </button>
-            <button class="Stuart-tab-btn" id="ptab-btn-intelligence" onclick="window.openSettingsTab('intelligence')">
+            <button class="Cadance-tab-btn" id="ptab-btn-intelligence" onclick="window.openSettingsTab('intelligence')">
                 <i data-feather="cpu" class="w-3.5 h-3.5"></i> Model
             </button>
         </div>
@@ -6446,11 +6446,11 @@
             <div id="tab-general" class="settings-tab-content">
 
 
-                <div class="Stuart-section">
-                    <p class="Stuart-section-label">Appearance</p>
-                    <div class="Stuart-card">
-                        <div class="Stuart-row">
-                            <span class="Stuart-row-label">Mode</span>
+                <div class="Cadance-section">
+                    <p class="Cadance-section-label">Appearance</p>
+                    <div class="Cadance-card">
+                        <div class="Cadance-row">
+                            <span class="Cadance-row-label">Mode</span>
                             <div
                                 class="flex bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-700/50 gap-0.5">
                                 <button id="btn-theme-light" onclick="window.setTheme('light')"
@@ -6461,8 +6461,8 @@
                                     class="min-h-[36px] px-3 rounded-lg text-xs font-bold transition-all text-zinc-500 hover:bg-white dark:hover:bg-zinc-700">Dark</button>
                             </div>
                         </div>
-                        <div class="Stuart-row">
-                            <span class="Stuart-row-label" data-t="language">Language</span>
+                        <div class="Cadance-row">
+                            <span class="Cadance-row-label" data-t="language">Language</span>
                             <div
                                 class="flex bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-xl border border-zinc-200 dark:border-zinc-700/50">
                                 <button id="btn-lang-en" onclick="window.setLang('en')"
@@ -6473,9 +6473,9 @@
                 </div>
 
 
-                <div class="Stuart-section">
+                <div class="Cadance-section">
                     <div class="flex items-center justify-between mb-2.5">
-                        <p class="Stuart-section-label mb-0">Accent Theme</p>
+                        <p class="Cadance-section-label mb-0">Accent Theme</p>
                         <div class="flex items-center gap-2">
                             <button onclick="document.getElementById('custom-accent-picker-new').click()"
                                 class="text-[11px] font-bold px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-[var(--accent-color)] hover:text-[var(--accent-color)] transition-all min-h-[32px]">
@@ -6491,23 +6491,23 @@
                         style="border-color: var(--accent-color); color: var(--accent-color); background: color-mix(in srgb, var(--accent-color) 8%, transparent);">
                         <i data-feather="plus-circle" class="w-4 h-4"></i> Save This Color
                     </div>
-                    <div class="Stuart-card" id="theme-list-container">
+                    <div class="Cadance-card" id="theme-list-container">
 
                     </div>
                 </div>
 
-                <div class="Stuart-section">
-                    <p class="Stuart-section-label">Storage</p>
-                    <div class="Stuart-card">
-                        <div class="Stuart-row">
+                <div class="Cadance-section">
+                    <p class="Cadance-section-label">Storage</p>
+                    <div class="Cadance-card">
+                        <div class="Cadance-row">
                             <div class="flex flex-col gap-0.5">
-                                <span class="Stuart-row-label">Chat History</span>
+                                <span class="Cadance-row-label">Chat History</span>
                                 <span id="storage-mode-badge" class="text-[11px] text-zinc-400">IndexedDB</span>
                             </div>
                             <span id="storage-display" class="text-xs font-mono text-zinc-400">0.00 MB</span>
                         </div>
-                        <div class="Stuart-row">
-                            <span class="Stuart-row-label text-red-500">Clear All Chats</span>
+                        <div class="Cadance-row">
+                            <span class="Cadance-row-label text-red-500">Clear All Chats</span>
                             <button onclick="window.clearAll()"
                                 class="min-h-[44px] px-4 rounded-xl text-xs font-bold text-red-500 skuomorphic-btn border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all">
                                 Clear
@@ -6522,9 +6522,9 @@
             <div id="tab-profile" class="settings-tab-content hidden">
 
 
-                <div class="Stuart-section">
-                    <p class="Stuart-section-label">Avatar</p>
-                    <div class="Stuart-card">
+                <div class="Cadance-section">
+                    <p class="Cadance-section-label">Avatar</p>
+                    <div class="Cadance-card">
                         <div class="p-5 flex flex-col sm:flex-row gap-5 items-center">
                             <div class="relative shrink-0">
                                 <div id="pfp-workspace" class="shadow-inner ring-1 ring-zinc-900/5 dark:ring-white/10"
@@ -6553,9 +6553,9 @@
                             onchange="window.handleProfilePicUpload(event)">
 
 
-                        <div class="Stuart-row flex-col items-start gap-3">
+                        <div class="Cadance-row flex-col items-start gap-3">
                             <div class="flex items-center justify-between w-full">
-                                <span class="Stuart-row-label">Zoom <span id="scale-val"
+                                <span class="Cadance-row-label">Zoom <span id="scale-val"
                                         class="text-xs text-zinc-400 font-mono ml-1">1.0x</span></span>
                                 <button onclick="window.resetPfpPosition()"
                                     class="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all">
@@ -6575,10 +6575,10 @@
                 </div>
 
 
-                <div class="Stuart-section">
-                    <p class="Stuart-section-label">Account</p>
-                    <div class="Stuart-card">
-                        <button class="Stuart-theme-item" onclick="window.initGoogleAuth()">
+                <div class="Cadance-section">
+                    <p class="Cadance-section-label">Account</p>
+                    <div class="Cadance-card">
+                        <button class="Cadance-theme-item" onclick="window.initGoogleAuth()">
                             <div
                                 class="w-10 h-10 rounded-full bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 flex items-center justify-center shrink-0 shadow-sm">
                                 <i class="fa-brands fa-google text-zinc-600 dark:text-zinc-300 text-base"></i>
@@ -6589,7 +6589,7 @@
                             </div>
                             <i data-feather="chevron-right" class="w-4 h-4 text-zinc-300 ml-auto shrink-0"></i>
                         </button>
-                        <button id="google-auth-btn" class="hidden Stuart-theme-item">
+                        <button id="google-auth-btn" class="hidden Cadance-theme-item">
 
                         </button>
                     </div>
@@ -6601,11 +6601,11 @@
             <div id="tab-intelligence" class="settings-tab-content hidden">
 
 
-                <div class="Stuart-section">
-                    <p class="Stuart-section-label">Model Parameters</p>
-                    <div class="Stuart-card">
-                        <div class="Stuart-row">
-                            <span class="Stuart-row-label w-28 shrink-0">Temperature</span>
+                <div class="Cadance-section">
+                    <p class="Cadance-section-label">Model Parameters</p>
+                    <div class="Cadance-card">
+                        <div class="Cadance-row">
+                            <span class="Cadance-row-label w-28 shrink-0">Temperature</span>
                             <input type="range" id="settings-param-temp" min="0" max="1" step="0.01"
                                 class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
                                 style="accent-color: var(--accent-color);"
@@ -6613,8 +6613,8 @@
                             <span id="settings-temp-val"
                                 class="text-sm font-mono text-zinc-400 w-10 text-right shrink-0">0.90</span>
                         </div>
-                        <div class="Stuart-row">
-                            <span class="Stuart-row-label w-28 shrink-0">Top-P</span>
+                        <div class="Cadance-row">
+                            <span class="Cadance-row-label w-28 shrink-0">Top-P</span>
                             <input type="range" id="settings-param-top-p" min="0" max="1" step="0.01"
                                 class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
                                 style="accent-color: var(--accent-color);"
@@ -6622,8 +6622,8 @@
                             <span id="settings-top-p-val"
                                 class="text-sm font-mono text-zinc-400 w-10 text-right shrink-0">0.90</span>
                         </div>
-                        <div class="Stuart-row">
-                            <span class="Stuart-row-label w-28 shrink-0">Max Tokens</span>
+                        <div class="Cadance-row">
+                            <span class="Cadance-row-label w-28 shrink-0">Max Tokens</span>
                             <input type="range" id="settings-param-max-tokens" min="64" max="16384" step="128"
                                 class="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
                                 style="accent-color: var(--accent-color);"
@@ -6644,9 +6644,9 @@
                 </div>
 
 
-                <div class="Stuart-section">
-                    <p class="Stuart-section-label">Connection</p>
-                    <div class="Stuart-card">
+                <div class="Cadance-section">
+                    <p class="Cadance-section-label">Connection</p>
+                    <div class="Cadance-card">
                         <div class="p-4 flex flex-col gap-2">
                             <label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Backend
                                 URL</label>
@@ -6662,11 +6662,11 @@
                 </div>
 
 
-                <div class="Stuart-section pb-8">
-                    <p class="Stuart-section-label">Danger Zone</p>
-                    <div class="Stuart-card">
+                <div class="Cadance-section pb-8">
+                    <p class="Cadance-section-label">Danger Zone</p>
+                    <div class="Cadance-card">
                         <button onclick="if(confirm('Erase all chats and settings?')) window.factoryReset()"
-                            class="w-full Stuart-row justify-center text-red-500 font-semibold text-sm hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors min-h-[52px]">
+                            class="w-full Cadance-row justify-center text-red-500 font-semibold text-sm hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors min-h-[52px]">
                             <i data-feather="trash-2" class="w-4 h-4 mr-2"></i> Erase All Data
                         </button>
                     </div>
