@@ -3231,7 +3231,7 @@
                 totalTokensUsed: 0,
                 customAccents: [],
                 folders: [],
-                systemPrompt: 'You are Stuart, a specialized research assistant. You MUST use $$ delimiters for ALL mathematical notation and equations. NO EXCEPTIONS. Do not use [ ] or ( ) for blocks or inline math; use $$ for everything.'
+                systemPrompt: 'You are Octan, a helper!. You MUST use $$ delimiters for ALL mathematical notation and equations. NO EXCEPTIONS. Do not use [ ] or ( ) for blocks or inline math; use $$ for everything.'
             }));
 
             if (!Array.isArray(settings.folders)) settings.folders = [];
@@ -4848,7 +4848,7 @@
                     } else {
                         console.error("Chat Error Detail:", e);
                         if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1][1] === null) {
-                            chatHistory[chatHistory.length - 1][1] = `⚠️ Connection Error. [${e.message || 'Unknown'}] Check if your server is running at ${window.location.origin}`;
+                            chatHistory[chatHistory.length - 1][1] = `⚠️ [${e.message || 'Unknown'}]`;
                         }
                         render();
                     }
