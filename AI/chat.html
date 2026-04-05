@@ -2850,7 +2850,9 @@
                 const fetchInitialTokens = async () => {
                     try {
                         const baseUrl = await getOpenAIClient();
-                        const res = await fetch(baseUrl + '/api/tokens?chat_id=' + encodeURIComponent(currentChatId));
+                        const res = await fetch(baseUrl + '/api/tokens?chat_id=' + encodeURIComponent(currentChatId), {
+                            headers: settings.apiKey ? { "Authorization": `Bearer ${settings.apiKey.trim()}` } : {}
+                        });
                         if (res.ok) {
                             const data = await res.json();
                             if (typeof data.total_tokens === 'number') {
@@ -2878,7 +2880,9 @@
                 const detectTunnelUrl = async () => {
                     try {
                         const baseUrl = await getOpenAIClient();
-                        const res = await fetch(baseUrl + '/tunnel_url');
+                        const res = await fetch(baseUrl + '/tunnel_url', {
+                            headers: settings.apiKey ? { "Authorization": `Bearer ${settings.apiKey.trim()}` } : {}
+                        });
                         if (res.ok) {
                             const data = await res.json();
                             if (data.tunnel_url && data.tunnel_url !== baseUrl) {
@@ -3167,7 +3171,7 @@
                 return t;
             };
 
-            let client = null, chatHistory = [], isGenerating = false, currentJob = null;
+            let client = null, chatHistory = [], isGenerating = false, currentJob = null, abortController = null;
             let tokenUpdateInterval = null;
             const startTokenPolling = () => {
                 if (tokenUpdateInterval) clearInterval(tokenUpdateInterval);
@@ -4547,6 +4551,7 @@
                     stopTokenPolling();
                     window.toggleSendIcon('send');
 
+                    if (abortController) { abortController.abort(); abortController = null; }
 
                     if (currentJobId) {
                         try {
@@ -4631,8 +4636,10 @@
                     }
                     messages.push({ role: "user", content: msg });
 
+                    abortController = new AbortController();
                     const response = await fetch(baseUrl + "/v1/chat/completions", {
                         method: "POST",
+                        signal: abortController.signal,
                         headers: {
                             "Content-Type": "application/json",
                             "ngrok-skip-browser-warning": "true",
@@ -4836,11 +4843,15 @@
                     render();
                     updateUI();
                 } catch (e) {
-                    console.error("Chat Error Detail:", e);
-                    if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1][1] === null) {
-                        chatHistory[chatHistory.length - 1][1] = `⚠️ Connection Error. [${e.message || 'Unknown'}] Check if your server is running at ${window.location.origin}`;
+                    if (e.name === 'AbortError') {
+                        console.log("Stream aborted by user.");
+                    } else {
+                        console.error("Chat Error Detail:", e);
+                        if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1][1] === null) {
+                            chatHistory[chatHistory.length - 1][1] = `⚠️ Connection Error. [${e.message || 'Unknown'}] Check if your server is running at ${window.location.origin}`;
+                        }
+                        render();
                     }
-                    render();
                 } finally {
                     isGenerating = false;
                     updateUI();
