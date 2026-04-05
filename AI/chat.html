@@ -4513,12 +4513,12 @@
 
             async function getOpenAIClient() {
                 const origin = window.location.origin;
-                // If served from the API server or tunnel, use origin directly.
-                // Otherwise (e.g. VS Code Live Server on :5500), fall back to local API.
-                const isApiOrigin = origin.includes('localhost:8001') ||
-                                    origin.includes('127.0.0.1:8001') ||
-                                    origin.includes('api.okemovail.com');
-                const baseUrl = isApiOrigin ? origin : 'http://localhost:8001';
+                // Local dev: page served directly from the API server
+                const isLocal = origin.includes('localhost:8001') || origin.includes('127.0.0.1:8001');
+                // Tunnel: page served from the API subdomain
+                const isTunnel = origin.includes('api.okemovail.com');
+                // Anything else (main site, Live Server, etc.) → route to the tunnel
+                const baseUrl = (isLocal || isTunnel) ? origin : 'https://api.okemovail.com';
                 console.log('Using backend URL:', baseUrl);
                 return baseUrl;
             }
