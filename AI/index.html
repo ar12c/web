@@ -86,16 +86,20 @@
     class="bg-parchment text-text-warm dark:bg-deep-dark min-h-screen flex flex-col font-sans selection:bg-rose-light selection:text-text-warm overflow-x-hidden">
 
 
-    <main
-        class="min-h-screen w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 px-6 lg:px-16 pt-24 pb-10 lg:pt-28 lg:pb-57 relative z-10 items-center">
+    <!-- HERO: 3D Labs21 Logo Video -->
+    <section class="hero-section bg-parchment dark:bg-deep-dark">
+        <video class="hero-video"
+               src="video/labs21-hero.mp4"
+               autoplay muted playsinline preload="auto">
+        </video>
+        <div class="hero-overlay"></div>
 
-        <!-- LEFT PANE -->
-        <div class="flex flex-col justify-center order-1 text-left items-start">
-            <h1
-                class="text-8xl md:text-8xl lg:text-[7.5rem] font-serif tracking-tighter leading-[1.05] mb-6 text-zinc-900 dark:text-white mo-in mo-d1">
-                Stay<br><span class="apple-color-cycle">Curious.</span>
+        <div class="hero-content">
+            <h1 class="text-7xl md:text-8xl lg:text-[7.5rem] font-serif tracking-tighter leading-[1.05] text-white">
+                <span id="hero-stay" class="hero-text block">Stay</span>
+                <span id="hero-curious" class="hero-text block mt-2 apple-color-cycle">Curious.</span>
             </h1>
-            <button id="start-button" class="skuo skuo-accent skuo-pill !px-7 !py-3 mb-4 group flex items-center gap-2 mo-in mo-d2">
+            <button id="hero-start" onclick="window.location.href='chat.html'" class="hero-text skuo skuo-accent skuo-pill !px-7 !py-3 mt-8 group flex items-center gap-2">
                 <span class="text-base font-bold">Start here</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
                     class="transition-transform group-hover:translate-x-1">
@@ -106,46 +110,60 @@
             </button>
         </div>
 
-        <!-- RIGHT PANE: FLIPPING STORYBOOK -->
-        <div
-            class="relative w-full h-auto py-10 md:py-0 md:h-[450px] lg:h-full flex items-center justify-center order-2">
-            <div class="book-scene">
-                <div class="book-wrap">
-                    <div class="book">
-                        <div class="book-cover"></div>
-                        <div class="book-ribbon"></div>
-                        <div class="book-page book-page--left">
-                            <span class="page-caption">chapter 42</span>
-                            <span class="page-line">once upon a time,</span>
-                            <span class="page-line">a very curious human</span>
-                            <span class="page-line">clicked &ldquo;Start here&rdquo;&hellip;</span>
-                            <span class="page-doodle">&#10022; &#10023; &#10022;</span>
-                        </div>
-                        <div class="book-page book-page--right">
-                            <span class="page-caption">and found</span>
-                            <span class="page-word" id="page-word-under">ideas!</span>
-                            <span class="page-doodle">&#10023; &#10022; &#10023;</span>
-                        </div>
-                        <div class="book-leaf" id="book-leaf">
-                            <div class="leaf-face leaf-face--front">
-                                <span class="page-caption">and found</span>
-                                <span class="page-word" id="page-word-leaf">wonder</span>
-                                <span class="page-doodle">&#10023; &#10022; &#10023;</span>
-                            </div>
-                            <div class="leaf-face leaf-face--back">
-                                <span class="page-caption">chapter 42</span>
-                                <span class="page-line">once upon a time,</span>
-                                <span class="page-line">a very curious human</span>
-                                <span class="page-line">clicked &ldquo;Start here&rdquo;&hellip;</span>
-                                <span class="page-doodle">&#10022; &#10023; &#10022;</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="book-floor-shadow"></div>
-            </div>
-        </div>
-    </main>
+        <button id="hero-replay" class="hero-replay skuo skuo-icon w-11 h-11 rounded-full" aria-label="Replay">
+            <i class="fa-solid fa-rotate-right"></i>
+        </button>
+    </section>
+
+    <script>
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduceMotion) {
+                document.getElementById('hero-stay').classList.add('visible');
+                document.getElementById('hero-curious').classList.add('visible');
+                document.getElementById('hero-start').classList.add('visible');
+                return;
+            }
+
+            const video = document.querySelector('.hero-video');
+            if (!video) return;
+
+            const stayEl = document.getElementById('hero-stay');
+            const curiousEl = document.getElementById('hero-curious');
+            const startBtn = document.getElementById('hero-start');
+            const replayBtn = document.getElementById('hero-replay');
+            let complete = false;
+            let fired = { stay: false, curious: false, start: false };
+
+            video.addEventListener('canplay', function () {
+                video.classList.add('loaded');
+                video.play().catch(function () {});
+            });
+
+            video.addEventListener('timeupdate', function () {
+                var t = video.currentTime;
+                if (t >= 2 && !fired.stay)   { stayEl.classList.add('visible');    fired.stay = true; }
+                if (t >= 4.5 && !fired.curious) { curiousEl.classList.add('visible'); fired.curious = true; }
+                if (t >= 6.5 && !fired.start) { startBtn.classList.add('visible');  fired.start = true; }
+            });
+
+            video.addEventListener('ended', function () {
+                complete = true;
+                replayBtn.classList.add('visible');
+            });
+
+            replayBtn.addEventListener('click', function () {
+                complete = false;
+                fired = { stay: false, curious: false, start: false };
+                stayEl.classList.remove('visible');
+                curiousEl.classList.remove('visible');
+                startBtn.classList.remove('visible');
+                replayBtn.classList.remove('visible');
+                video.currentTime = 0;
+                video.play().catch(function () {});
+            });
+        })();
+    </script>
 
     <!-- Based AI: Core Pillars (Non-Bento) -->
     <section class="py-24 px-6 max-w-7xl mx-auto border-t border-border-warm" data-reveal>
@@ -299,60 +317,7 @@
         </div>
     </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('start-button').addEventListener('click', () => {
-                window.location.href = 'chat.html';
-            });
-
-            // Page turn driven by the Web Animations API instead of a CSS
-            // animation: JS owns the whole cycle, so the word swap and the
-            // leaf reset happen in ONE synchronous task — a single paint,
-            // no chance of a stale-word or half-reset frame.
-            const FUN_WORDS = ['wonder', 'ideas!', 'aha!', 'magic', 'plot twist!', 'eureka!', 'daydreams', 'why not?'];
-            const leaf = document.getElementById('book-leaf');
-            const leafWord = document.getElementById('page-word-leaf');
-            const underWord = document.getElementById('page-word-under');
-            const faces = leaf.querySelectorAll('.leaf-face');
-            // Matches the .book-leaf base transform: the leaf always floats a
-            // hair above the page plane so it can never z-fight with it.
-            const LIFT = 'translateZ(0.8px)';
-            const TURN_MS = 1500;
-            const REST_MS = 1500;
-            const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-            let wordIdx = 1; // leaf shows [0], the page under it shows [1]
-
-            async function pageTurnLoop() {
-                for (; ;) {
-                    await sleep(REST_MS); // rest, open on the right page
-                    // Slow lift off the page, gravity takes it after the apex
-                    const turn = leaf.animate([
-                        { transform: LIFT + ' rotateY(0deg)', easing: 'cubic-bezier(0.55, 0, 0.84, 0.5)' },
-                        { transform: LIFT + ' rotateY(-92deg)', easing: 'cubic-bezier(0.16, 0.5, 0.42, 1)' },
-                        { transform: LIFT + ' rotateY(-180deg)' }
-                    ], { duration: TURN_MS, fill: 'forwards' });
-                    // Travelling shadow lives on the faces — a filter on the
-                    // leaf itself would flatten its 3D
-                    faces.forEach((f) => f.animate([
-                        { filter: 'drop-shadow(0 0 0 rgba(0,0,0,0))' },
-                        { filter: 'drop-shadow(-14px 10px 10px rgba(0,0,0,0.25))', offset: 0.45 },
-                        { filter: 'drop-shadow(0 0 0 rgba(0,0,0,0))' }
-                    ], { duration: TURN_MS }));
-                    await turn.finished.catch(() => { });
-                    await sleep(REST_MS); // rest, landed on the left page
-                    // Atomic reset: retexture both faces to match the pages
-                    // they cover, then cancel back to 0deg in the same task.
-                    leafWord.textContent = FUN_WORDS[wordIdx % FUN_WORDS.length];
-                    wordIdx++;
-                    underWord.textContent = FUN_WORDS[wordIdx % FUN_WORDS.length];
-                    turn.cancel();
-                }
-            }
-
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (!reduceMotion && typeof leaf.animate === 'function') pageTurnLoop();
-        });
-    </script>
+    
   <script>
     window.NAV_CONFIG = {
       links: [
