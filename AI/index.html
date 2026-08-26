@@ -90,6 +90,7 @@
     <section class="hero-section bg-parchment dark:bg-deep-dark">
         <video class="hero-video"
                src="video/labs21-hero.mp4"
+               poster="video/labs21-hero-poster.jpg"
                autoplay muted playsinline preload="auto">
         </video>
         <div class="hero-overlay"></div>
@@ -132,7 +133,6 @@
             const curiousEl = document.getElementById('hero-curious');
             const startBtn = document.getElementById('hero-start');
             const replayBtn = document.getElementById('hero-replay');
-            let complete = false;
             let fired = { stay: false, curious: false, start: false };
 
             video.addEventListener('canplay', function () {
@@ -148,12 +148,10 @@
             });
 
             video.addEventListener('ended', function () {
-                complete = true;
                 replayBtn.classList.add('visible');
             });
 
             replayBtn.addEventListener('click', function () {
-                complete = false;
                 fired = { stay: false, curious: false, start: false };
                 stayEl.classList.remove('visible');
                 curiousEl.classList.remove('visible');
@@ -162,6 +160,14 @@
                 video.currentTime = 0;
                 video.play().catch(function () {});
             });
+
+            setTimeout(function () {
+                if (!fired.stay) {
+                    stayEl.classList.add('visible');
+                    curiousEl.classList.add('visible');
+                    startBtn.classList.add('visible');
+                }
+            }, 8000);
         })();
     </script>
 
