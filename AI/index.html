@@ -119,6 +119,10 @@
             <button id="hero-replay" class="hero-replay skuo skuo-icon w-10 h-10 rounded-full" aria-label="Replay">
                 <i class="fa-solid fa-rotate-right"></i>
             </button>
+
+            <button id="hero-music" class="hero-music skuo skuo-icon w-10 h-10 rounded-full" aria-label="Toggle music">
+                <i class="fa-solid fa-volume-xmark"></i>
+            </button>
         </div>
 
         <div class="hero-dots">
@@ -140,6 +144,7 @@
             const videos = document.querySelectorAll('.hero-video');
             const dots = document.querySelectorAll('.hero-dot');
             const replayBtn = document.getElementById('hero-replay');
+            const musicBtn = document.getElementById('hero-music');
             const stayEl = document.getElementById('hero-stay');
             const curiousEl = document.getElementById('hero-curious');
             const startBtn = document.getElementById('hero-start');
@@ -147,6 +152,7 @@
 
             let active = 0;
             let fired = { stay: false, curious: false, start: false };
+            let musicOn = false;
             var easeOutRaf = null;
 
             function getVideo(i) { return i === 0 ? videos[0] : videos[1]; }
@@ -169,15 +175,26 @@
 
             function switchTo(i) {
                 var prev = getVideo(active);
-                prev.pause();
-                prev.style.display = 'none';
+                prev.classList.add('swipe-out');
                 prev.classList.remove('loaded');
                 dots[active].classList.remove('active');
+
+                prev.addEventListener('animationend', function cleanup() {
+                    prev.removeEventListener('animationend', cleanup);
+                    prev.pause();
+                    prev.style.display = 'none';
+                    prev.classList.remove('swipe-out');
+                });
 
                 active = i;
                 var next = getVideo(active);
                 next.style.display = '';
                 next.currentTime = 0;
+                next.classList.remove('swipe-in');
+                void next.offsetWidth;
+                next.classList.add('swipe-in');
+                next.classList.add('loaded');
+                next.muted = !musicOn;
                 dots[active].classList.add('active');
 
                 if (active === 0) {
@@ -185,17 +202,9 @@
                     stayEl.classList.remove('visible');
                     curiousEl.classList.remove('visible');
                     startBtn.classList.remove('visible');
+                    startEaseOut(next);
                 }
 
-                next.addEventListener('loadedmetadata', function onMeta() {
-                    next.removeEventListener('loadedmetadata', onMeta);
-                    next.classList.add('loaded');
-                    if (active === 0) startEaseOut(next);
-                    next.play().catch(function () {});
-                }, { once: true });
-
-                next.classList.add('loaded');
-                if (active === 0) startEaseOut(next);
                 next.play().catch(function () {});
             }
 
@@ -233,6 +242,17 @@
                 replayBtn.classList.remove('visible');
                 switchTo(0);
             });
+
+            musicBtn.addEventListener('click', function () {
+                musicOn = !musicOn;
+                var v = getVideo(active);
+                v.muted = !musicOn;
+                musicBtn.querySelector('i').className = musicOn
+                    ? 'fa-solid fa-volume-high'
+                    : 'fa-solid fa-volume-xmark';
+            });
+
+            musicBtn.classList.add('visible');
 
             dots.forEach(function (dot) {
                 dot.addEventListener('click', function () {

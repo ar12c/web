@@ -1208,11 +1208,43 @@ html.motion-ready [data-reveal].revealed {
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.6s var(--ease-smooth);
         }
 
         [data-page="ai-home"] .hero-video.loaded {
             opacity: 1;
+        }
+
+        [data-page="ai-home"] .hero-video.swipe-out {
+            animation: hero-swipe-out 0.5s var(--ease-smooth) forwards;
+        }
+
+        [data-page="ai-home"] .hero-video.swipe-in {
+            animation: hero-swipe-in 0.5s var(--ease-smooth) forwards;
+        }
+
+        @keyframes hero-swipe-out {
+            from { transform: translateX(0); opacity: 1; }
+            to   { transform: translateX(-25%); opacity: 0; }
+        }
+
+        @keyframes hero-swipe-in {
+            from { transform: translateX(25%); opacity: 0; }
+            to   { transform: translateX(0); opacity: 1; }
+        }
+
+        [data-page="ai-home"] .hero-music {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.3s var(--ease-smooth);
+            pointer-events: none;
+        }
+
+        [data-page="ai-home"] .hero-music.visible {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         [data-page="ai-home"] .hero-overlay {
