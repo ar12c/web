@@ -85,8 +85,14 @@
 <body data-page="ai-home"
     class="bg-parchment text-text-warm dark:bg-deep-dark min-h-screen flex flex-col font-sans selection:bg-rose-light selection:text-text-warm overflow-x-hidden">
 
-    <!-- HERO: 3D Labs21 Logo Video -->
+    <!-- HERO: Apple Cinematic -->
     <section class="hero-section">
+        <p class="hero-label">Labs21</p>
+        <h1 class="hero-headline">
+            <span>Stay</span>
+            <span class="apple-color-cycle">Curious.</span>
+        </h1>
+
         <div class="hero-card">
             <video class="hero-video" data-video="0"
                    src="video/labs21-hero.mp4"
@@ -98,27 +104,6 @@
                    autoplay muted playsinline preload="auto"
                    style="display:none">
             </video>
-            <div class="hero-overlay"></div>
-
-            <div class="hero-content">
-                <h1 class="text-6xl md:text-7xl lg:text-8xl font-serif tracking-tighter leading-[1.05] text-white">
-                    <span id="hero-stay" class="hero-text block">Stay</span>
-                    <span id="hero-curious" class="hero-text block mt-2 apple-color-cycle">Curious.</span>
-                </h1>
-                <button id="hero-start" onclick="window.location.href='chat.html'" class="hero-text skuo skuo-accent skuo-pill !px-7 !py-3 mt-6 group flex items-center gap-2">
-                    <span class="text-base font-bold">Start here</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
-                        class="transition-transform group-hover:translate-x-1">
-                        <path
-                            d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L200.69,136H40a8,8,0,0,1,0-16H200.69l-62.35-62.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-
-            <button id="hero-replay" class="hero-replay skuo skuo-icon w-10 h-10 rounded-full" aria-label="Replay">
-                <i class="fa-solid fa-rotate-right"></i>
-            </button>
 
             <button id="hero-music" class="hero-music skuo skuo-icon w-10 h-10 rounded-full" aria-label="Toggle music">
                 <i class="fa-solid fa-volume-xmark"></i>
@@ -129,55 +114,32 @@
             <button class="hero-dot active" data-index="0" aria-label="Labs21 logo"></button>
             <button class="hero-dot" data-index="1" aria-label="Product video"></button>
         </div>
+
+        <button id="hero-start" onclick="window.location.href='chat.html'" class="skuo skuo-accent skuo-pill !px-7 !py-3 mt-4 group flex items-center gap-2">
+            <span class="text-base font-bold">Start here</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
+                class="transition-transform group-hover:translate-x-1">
+                <path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L200.69,136H40a8,8,0,0,1,0-16H200.69l-62.35-62.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path>
+            </svg>
+        </button>
     </section>
 
     <script>
         (function () {
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (reduceMotion) {
-                document.getElementById('hero-stay').classList.add('visible');
-                document.getElementById('hero-curious').classList.add('visible');
-                document.getElementById('hero-start').classList.add('visible');
-                return;
-            }
-
             const videos = document.querySelectorAll('.hero-video');
             const dots = document.querySelectorAll('.hero-dot');
-            const replayBtn = document.getElementById('hero-replay');
             const musicBtn = document.getElementById('hero-music');
-            const stayEl = document.getElementById('hero-stay');
-            const curiousEl = document.getElementById('hero-curious');
-            const startBtn = document.getElementById('hero-start');
             if (!videos.length) return;
 
             let active = 0;
-            let fired = { stay: false, curious: false, start: false };
             let musicOn = false;
-            var easeOutRaf = null;
 
             function getVideo(i) { return i === 0 ? videos[0] : videos[1]; }
-
-            function startEaseOut(v) {
-                if (easeOutRaf) cancelAnimationFrame(easeOutRaf);
-                function loop() {
-                    var t = v.currentTime;
-                    var dur = v.duration || 2;
-                    if (t < dur - 0.1) {
-                        var p = t / dur;
-                        v.playbackRate = 2.0 - 1.6 * p * p;
-                        easeOutRaf = requestAnimationFrame(loop);
-                    } else {
-                        v.playbackRate = 1;
-                    }
-                }
-                easeOutRaf = requestAnimationFrame(loop);
-            }
 
             function switchTo(i) {
                 var prev = getVideo(active);
                 prev.classList.add('swipe-out');
                 prev.classList.remove('loaded');
-                dots[active].classList.remove('active');
 
                 prev.addEventListener('animationend', function cleanup() {
                     prev.removeEventListener('animationend', cleanup);
@@ -187,6 +149,8 @@
                 });
 
                 active = i;
+                dots.forEach(function (d, j) { d.classList.toggle('active', j === active); });
+
                 var next = getVideo(active);
                 next.style.display = '';
                 next.currentTime = 0;
@@ -195,81 +159,38 @@
                 next.classList.add('swipe-in');
                 next.classList.add('loaded');
                 next.muted = !musicOn;
-                dots[active].classList.add('active');
-
-                if (active === 0) {
-                    fired = { stay: false, curious: false, start: false };
-                    stayEl.classList.remove('visible');
-                    curiousEl.classList.remove('visible');
-                    startBtn.classList.remove('visible');
-                    startEaseOut(next);
-                }
-
                 next.play().catch(function () {});
             }
 
-            function onVideoEnded(e) {
-                if (e.target !== getVideo(active)) return;
-                if (active === 0) replayBtn.classList.add('visible');
-                setTimeout(function () { switchTo(active === 0 ? 1 : 0); }, 1200);
-            }
+            videos[0].addEventListener('ended', function () {
+                setTimeout(function () { switchTo(1); }, 1500);
+            });
 
-            videos[0].addEventListener('ended', onVideoEnded);
-            videos[1].addEventListener('ended', onVideoEnded);
-
-            videos[0].addEventListener('timeupdate', function () {
-                if (active !== 0) return;
-                var t = videos[0].currentTime;
-                if (t >= 0.3 && !fired.stay)   { stayEl.classList.add('visible');    fired.stay = true; }
-                if (t >= 0.7 && !fired.curious) { curiousEl.classList.add('visible'); fired.curious = true; }
-                if (t >= 1.1 && !fired.start) { startBtn.classList.add('visible');  fired.start = true; }
+            videos[1].addEventListener('ended', function () {
+                setTimeout(function () { switchTo(0); }, 1500);
             });
 
             videos[0].addEventListener('canplay', function () {
                 if (active !== 0) return;
                 videos[0].classList.add('loaded');
-                startEaseOut(videos[0]);
                 videos[0].play().catch(function () {});
-            });
-
-            videos[1].addEventListener('canplay', function () {
-                if (active !== 1) return;
-                videos[1].classList.add('loaded');
-                videos[1].play().catch(function () {});
-            });
-
-            replayBtn.addEventListener('click', function () {
-                replayBtn.classList.remove('visible');
-                switchTo(0);
             });
 
             musicBtn.addEventListener('click', function () {
                 musicOn = !musicOn;
-                var v = getVideo(active);
-                v.muted = !musicOn;
+                getVideo(active).muted = !musicOn;
                 musicBtn.querySelector('i').className = musicOn
                     ? 'fa-solid fa-volume-high'
                     : 'fa-solid fa-volume-xmark';
             });
 
-            musicBtn.classList.add('visible');
-
             dots.forEach(function (dot) {
                 dot.addEventListener('click', function () {
                     var i = parseInt(dot.getAttribute('data-index'));
                     if (i === active) return;
-                    replayBtn.classList.remove('visible');
                     switchTo(i);
                 });
             });
-
-            setTimeout(function () {
-                if (!fired.stay) {
-                    stayEl.classList.add('visible');
-                    curiousEl.classList.add('visible');
-                    startBtn.classList.add('visible');
-                }
-            }, 4000);
         })();
     </script>
 
