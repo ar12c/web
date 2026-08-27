@@ -85,14 +85,8 @@
 <body data-page="ai-home"
     class="bg-parchment text-text-warm dark:bg-deep-dark min-h-screen flex flex-col font-sans selection:bg-rose-light selection:text-text-warm overflow-x-hidden">
 
-    <!-- HERO: Apple Cinematic -->
+    <!-- HERO -->
     <section class="hero-section">
-        <p class="hero-label">Labs21</p>
-        <h1 class="hero-headline">
-            <span>Stay</span>
-            <span class="apple-color-cycle">Curious.</span>
-        </h1>
-
         <div class="hero-card">
             <video class="hero-video" data-video="0"
                    src="video/labs21-hero.mp4"
@@ -104,24 +98,32 @@
                    autoplay muted playsinline preload="auto"
                    style="display:none">
             </video>
+            <div class="hero-card-overlay"></div>
+
+            <div class="hero-card-content">
+                <p class="hero-label">Labs21</p>
+                <h1 class="hero-headline">
+                    <span>Stay</span>
+                    <span class="apple-color-cycle">Curious.</span>
+                </h1>
+                <button id="hero-start" onclick="window.location.href='chat.html'" class="skuo skuo-accent skuo-pill !px-7 !py-3 mt-5 group flex items-center gap-2">
+                    <span class="text-base font-bold">Start here</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
+                        class="transition-transform group-hover:translate-x-1">
+                        <path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L200.69,136H40a8,8,0,0,1,0-16H200.69l-62.35-62.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path>
+                    </svg>
+                </button>
+            </div>
 
             <button id="hero-music" class="hero-music skuo skuo-icon w-10 h-10 rounded-full" aria-label="Toggle music">
                 <i class="fa-solid fa-volume-xmark"></i>
             </button>
-        </div>
 
-        <div class="hero-dots">
-            <button class="hero-dot active" data-index="0" aria-label="Labs21 logo"></button>
-            <button class="hero-dot" data-index="1" aria-label="Product video"></button>
+            <div class="hero-dots">
+                <button class="hero-dot active" data-index="0" aria-label="Labs21 logo"></button>
+                <button class="hero-dot" data-index="1" aria-label="Product video"></button>
+            </div>
         </div>
-
-        <button id="hero-start" onclick="window.location.href='chat.html'" class="skuo skuo-accent skuo-pill !px-7 !py-3 mt-4 group flex items-center gap-2">
-            <span class="text-base font-bold">Start here</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
-                class="transition-transform group-hover:translate-x-1">
-                <path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L200.69,136H40a8,8,0,0,1,0-16H200.69l-62.35-62.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path>
-            </svg>
-        </button>
     </section>
 
     <script>
