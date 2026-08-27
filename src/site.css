@@ -1270,6 +1270,29 @@ html.motion-ready [data-reveal].revealed {
             pointer-events: auto;
         }
 
+        [data-page="ai-home"] .hero-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+
+        [data-page="ai-home"] .hero-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid var(--border-strong);
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            transition: background-color 0.2s var(--ease-smooth);
+        }
+
+        [data-page="ai-home"] .hero-dot.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
         [data-page="ai-home"] .bdh-neural-card {
             position: relative;
             overflow: hidden;
