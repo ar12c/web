@@ -1185,7 +1185,7 @@ html.motion-ready [data-reveal].revealed {
         /* --- Hero Video --- */
         [data-page="ai-home"] .hero-section {
             padding: 5rem 1.5rem 3rem;
-            background-color: #111;
+            background-color: var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
