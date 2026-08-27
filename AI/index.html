@@ -85,6 +85,40 @@
 <body data-page="ai-home"
     class="bg-parchment text-text-warm dark:bg-deep-dark min-h-screen flex flex-col font-sans selection:bg-rose-light selection:text-text-warm overflow-x-hidden">
 
+    <div id="intro-overlay" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center">
+        <video id="intro-video"
+               src="video/labs21-sting.mp4"
+               autoplay muted playsinline
+               style="width:100%;height:100%;object-fit:cover">
+        </video>
+    </div>
+    <script>
+        (function () {
+            var overlay = document.getElementById('intro-overlay');
+            if (!overlay) return;
+
+            if (sessionStorage.getItem('labs21_intro_seen') === '1') { overlay.remove(); return; }
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { overlay.remove(); return; }
+
+            var video = document.getElementById('intro-video');
+            var done = false;
+
+            function dismiss() {
+                if (done) return;
+                done = true;
+                sessionStorage.setItem('labs21_intro_seen', '1');
+                overlay.style.transition = 'opacity 0.3s var(--ease-smooth)';
+                overlay.style.opacity = '0';
+                overlay.addEventListener('transitionend', function () { overlay.remove(); });
+            }
+
+            if (video) {
+                video.addEventListener('ended', dismiss);
+            }
+
+            setTimeout(dismiss, 800);
+        })();
+    </script>
 
     <!-- HERO: 3D Labs21 Logo Video -->
     <section class="hero-section">
