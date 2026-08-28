@@ -1523,60 +1523,67 @@ html.motion-ready [data-reveal].revealed {
             }
         }
 
-        [data-page="ai-home"] .bdh-neural-card {
-            position: relative;
-            overflow: hidden;
-            width: min(100%, 440px);
-            margin-inline: auto;
+        [data-page="ai-home"] .bdh-architecture-row {
+            display: grid;
+            grid-template-columns: 4.5rem minmax(0, 1.35fr) minmax(17.5rem, 0.65fr);
+            gap: 2rem;
+            align-items: start;
         }
 
-        [data-page="ai-home"] .bdh-neuron-map {
-            width: min(100%, 340px);
-            margin: 0 auto;
-            display: block;
+        [data-page="ai-home"] .bdh-row-number,
+        [data-page="ai-home"] .bdh-row-label,
+        [data-page="ai-home"] .bdh-specs {
+            font-family: "JetBrains Mono", monospace;
         }
 
-        [data-page="ai-home"] .bdh-map-ring,
-[data-page="ai-home"] .bdh-map-link {
-            fill: none;
-            stroke: color-mix(in srgb, var(--accent) 28%, var(--border-strong));
+        [data-page="ai-home"] .bdh-row-number {
+            padding-top: 0.25rem;
+            color: var(--accent);
+            font-size: 1.25rem;
         }
 
-        [data-page="ai-home"] .bdh-map-ring {
-            stroke-dasharray: 5 8;
-            opacity: 0.7;
+        [data-page="ai-home"] .bdh-row-label {
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
         }
 
-        [data-page="ai-home"] .bdh-map-link {
-            stroke-width: 1.5;
-            opacity: 0.72;
+        [data-page="ai-home"] .bdh-specs {
+            margin: 0;
+            border-top: 1px solid var(--border-strong);
+            font-size: 0.76rem;
         }
 
-        [data-page="ai-home"] .bdh-map-neuron {
-            fill: color-mix(in srgb, var(--bg-elevated), white 26%);
-            stroke: color-mix(in srgb, var(--accent) 34%, var(--border));
-            stroke-width: 1.5;
+        [data-page="ai-home"] .bdh-specs div {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .dark [data-page="ai-home"] .bdh-map-neuron {
-            fill: color-mix(in srgb, var(--bg-elevated), white 8%);
+        [data-page="ai-home"] .bdh-specs dt {
+            color: var(--text-tertiary);
         }
 
-        [data-page="ai-home"] .bdh-map-neuron--core {
-            fill: var(--accent);
-            stroke: color-mix(in srgb, var(--accent), white 24%);
+        [data-page="ai-home"] .bdh-specs dd {
+            margin: 0;
+            color: var(--text-primary);
+            text-align: right;
         }
 
-        [data-page="ai-home"] .bdh-map-label {
-            fill: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            text-anchor: middle;
-        }
+        @media (max-width: 768px) {
+            [data-page="ai-home"] .bdh-architecture-row {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
 
-        [data-page="ai-home"] .bdh-map-label--core {
-            fill: white;
+            [data-page="ai-home"] .bdh-row-number {
+                padding-top: 0;
+            }
         }
 
         @keyframes apple-gradient-slide {
