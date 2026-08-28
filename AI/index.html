@@ -87,111 +87,273 @@
 
     <!-- HERO -->
     <section class="hero-section">
-        <div class="hero-card">
-            <video class="hero-video" data-video="0"
-                   src="video/labs21-hero.mp4"
-                   poster="video/labs21-hero-poster.jpg"
-                   autoplay muted playsinline preload="auto">
-            </video>
-            <video class="hero-video" data-video="1"
-                   src="video/comp1.mp4"
-                   autoplay muted playsinline preload="auto"
-                   style="display:none">
-            </video>
-            <div class="hero-card-overlay"></div>
-
-            <div class="hero-card-content">
-                <p class="hero-label">Labs21</p>
-                <h1 class="hero-headline">
-                    <span>Stay</span>
-                    <span class="apple-color-cycle">Curious.</span>
-                </h1>
-                <button id="hero-start" onclick="window.location.href='chat.html'" class="skuo skuo-accent skuo-pill !px-7 !py-3 mt-5 group flex items-center gap-2">
-                    <span class="text-base font-bold">Start here</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
-                        class="transition-transform group-hover:translate-x-1">
-                        <path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L200.69,136H40a8,8,0,0,1,0-16H200.69l-62.35-62.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <button id="hero-music" class="hero-music skuo skuo-icon w-10 h-10 rounded-full" aria-label="Toggle music">
-                <i class="fa-solid fa-volume-xmark"></i>
+        <div class="hero-scroll-wrap">
+            <button class="hero-arrow hero-arrow--prev" id="hero-prev" aria-label="Previous">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor" aria-hidden="true"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
             </button>
 
-            <div class="hero-dots">
-                <button class="hero-dot active" data-index="0" aria-label="Labs21 logo"></button>
-                <button class="hero-dot" data-index="1" aria-label="Product video"></button>
+            <div class="hero-scroll" id="hero-scroll">
+                <div class="hero-card" data-card="0">
+                    <video class="hero-video"
+                           src="video/labs21-hero.mp4"
+                           poster="video/labs21-hero-poster.jpg"
+                           muted playsinline preload="auto">
+                    </video>
+                    <div class="hero-card-overlay"></div>
+
+                <div class="hero-card-content">
+                    <h1 class="hero-headline">
+                            <span>Stay</span>
+                            <span class="apple-color-cycle">Curious.</span>
+                        </h1>
+                        <button id="hero-start" onclick="window.location.href='chat.html'" class="skuo skuo-accent skuo-pill !px-7 !py-3 mt-5 group flex items-center gap-2">
+                            <span class="text-base font-bold">Start here</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"
+                                class="transition-transform group-hover:translate-x-1">
+                                <path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L200.69,136H40a8,8,0,0,1,0-16H200.69l-62.35-62.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <button class="hero-replay" aria-label="Play again">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M488 192l-144 0c-9.7 0-18.5-5.8-22.2-14.8s-1.7-19.3 5.2-26.2l46.7-46.7c-75.3-58.6-184.3-53.3-253.5 15.9-75 75-75 196.5 0 271.5s196.5 75 271.5 0c8.2-8.2 15.5-16.9 21.9-26.1 10.1-14.5 30.1-18 44.6-7.9s18 30.1 7.9 44.6c-8.5 12.2-18.2 23.8-29.1 34.7-100 100-262.1 100-362 0S-25 175 75 75c94.3-94.3 243.7-99.6 344.3-16.2L471 7c6.9-6.9 17.2-8.9 26.2-5.2S512 14.3 512 24l0 144c0 13.3-10.7 24-24 24z"/></svg>
+                    </button>
+                </div>
+
+                <div class="hero-card hero-card--player" data-card="1">
+                    <video class="hero-video"
+                           data-src-desktop="video/comp1.mp4"
+                           data-src-mobile="video/comp1-mobile.mp4"
+                           muted playsinline preload="auto">
+                    </video>
+                    <div class="hero-card-overlay"></div>
+
+                    <div class="hero-player" id="hero-player">
+                        <button class="hp-btn hp-play" id="hp-play" aria-label="Play">
+                            <svg class="ic-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" aria-hidden="true"><path d="M91.2 36.9c-12.4-6.8-27.4-6.5-39.6 .7S32 57.9 32 72l0 368c0 14.1 7.5 27.2 19.6 34.4s27.2 7.5 39.6 .7l336-184c12.8-7 20.8-20.5 20.8-35.1s-8-28.1-20.8-35.1l-336-184z"/></svg>
+                            <svg class="ic-pause hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M48 32C21.5 32 0 53.5 0 80L0 432c0 26.5 21.5 48 48 48l64 0c26.5 0 48-21.5 48-48l0-352c0-26.5-21.5-48-48-48L48 32zm224 0c-26.5 0-48 21.5-48 48l0 352c0 26.5 21.5 48 48 48l64 0c26.5 0 48-21.5 48-48l0-352c0-26.5-21.5-48-48-48l-64 0z"/></svg>
+                        </button>
+                        <div class="hp-seek" id="hp-seek" role="slider" aria-label="Seek" tabindex="0">
+                            <div class="hp-seek-fill" id="hp-seek-fill"></div>
+                        </div>
+                        <span class="hp-time" id="hp-time">0:00 / 0:00</span>
+                        <button class="hp-btn hp-mute" id="hp-mute" aria-label="Unmute">
+                            <svg class="ic-mute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor" aria-hidden="true"><path d="M48 352l48 0 134.1 119.2c6.4 5.7 14.6 8.8 23.1 8.8 19.2 0 34.8-15.6 34.8-34.8l0-378.4c0-19.2-15.6-34.8-34.8-34.8-8.5 0-16.7 3.1-23.1 8.8L96 160 48 160c-26.5 0-48 21.5-48 48l0 96c0 26.5 21.5 48 48 48zM367 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z"/></svg>
+                            <svg class="ic-on hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M48 352l48 0 134.1 119.2c6.4 5.7 14.6 8.8 23.1 8.8 19.2 0 34.8-15.6 34.8-34.8l0-378.4c0-19.2-15.6-34.8-34.8-34.8-8.5 0-16.7 3.1-23.1 8.8L96 160 48 160c-26.5 0-48 21.5-48 48l0 96c0 26.5 21.5 48 48 48zM441.1 107c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C443.3 170.7 464 210.9 464 256s-20.7 85.3-53.2 111.8c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5c43.2-35.2 70.9-88.9 70.9-149s-27.7-113.8-70.9-149zm-60.5 74.5c-10.3-8.4-25.4-6.8-33.8 3.5s-6.8 25.4 3.5 33.8C361.1 227.6 368 241 368 256s-6.9 28.4-17.7 37.3c-10.3 8.4-11.8 23.5-3.5 33.8s23.5 11.8 33.8 3.5C402.1 312.9 416 286.1 416 256s-13.9-56.9-35.5-74.5z"/></svg>
+                        </button>
+                        <button class="hp-btn hp-replay" id="hp-replay" aria-label="Replay">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M488 192l-144 0c-9.7 0-18.5-5.8-22.2-14.8s-1.7-19.3 5.2-26.2l46.7-46.7c-75.3-58.6-184.3-53.3-253.5 15.9-75 75-75 196.5 0 271.5s196.5 75 271.5 0c8.2-8.2 15.5-16.9 21.9-26.1 10.1-14.5 30.1-18 44.6-7.9s18 30.1 7.9 44.6c-8.5 12.2-18.2 23.8-29.1 34.7-100 100-262.1 100-362 0S-25 175 75 75c94.3-94.3 243.7-99.6 344.3-16.2L471 7c6.9-6.9 17.2-8.9 26.2-5.2S512 14.3 512 24l0 144c0 13.3-10.7 24-24 24z"/></svg>
+                        </button>
+                    </div>
+                </div>
             </div>
+
+            <button class="hero-arrow hero-arrow--next" id="hero-next" aria-label="Next">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" fill="currentColor" aria-hidden="true"><path d="M311.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L243.2 256 73.9 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>
+            </button>
+        </div>
+
+        <div class="hero-dots">
+            <button class="hero-dot active" data-index="0" aria-label="Labs21 logo"></button>
+            <button class="hero-dot" data-index="1" aria-label="Product video"></button>
         </div>
     </section>
 
     <script>
         (function () {
-            const videos = document.querySelectorAll('.hero-video');
+            const scroller = document.getElementById('hero-scroll');
+            const cards = document.querySelectorAll('.hero-card');
             const dots = document.querySelectorAll('.hero-dot');
-            const musicBtn = document.getElementById('hero-music');
-            if (!videos.length) return;
+            const prevBtn = document.getElementById('hero-prev');
+            const nextBtn = document.getElementById('hero-next');
+            if (!scroller || !cards.length) return;
 
             let active = 0;
-            let musicOn = false;
+            var MOBILE = 768;
 
-            function getVideo(i) { return i === 0 ? videos[0] : videos[1]; }
+            function isMobile() { return window.innerWidth <= MOBILE; }
 
-            function switchTo(i) {
-                var prev = getVideo(active);
-                prev.classList.add('swipe-out');
-                prev.classList.remove('loaded');
-
-                prev.addEventListener('animationend', function cleanup() {
-                    prev.removeEventListener('animationend', cleanup);
-                    prev.pause();
-                    prev.style.display = 'none';
-                    prev.classList.remove('swipe-out');
-                });
-
-                active = i;
-                dots.forEach(function (d, j) { d.classList.toggle('active', j === active); });
-
-                var next = getVideo(active);
-                next.style.display = '';
-                next.currentTime = 0;
-                next.classList.remove('swipe-in');
-                void next.offsetWidth;
-                next.classList.add('swipe-in');
-                next.classList.add('loaded');
-                next.muted = !musicOn;
-                next.play().catch(function () {});
+            function applySrc(v) {
+                var desk = v.getAttribute('data-src-desktop');
+                var mob = v.getAttribute('data-src-mobile');
+                if (!desk && !mob) return;
+                var want = isMobile() && mob ? mob : (desk || mob);
+                if (v.getAttribute('src') !== want) {
+                    v.setAttribute('src', want);
+                    v.load();
+                }
             }
 
-            videos[0].addEventListener('ended', function () {
-                setTimeout(function () { switchTo(1); }, 1500);
-            });
+            function fmt(s) {
+                if (!s || !isFinite(s)) s = 0;
+                var m = Math.floor(s / 60);
+                var sec = Math.floor(s % 60);
+                return m + ':' + (sec < 10 ? '0' : '') + sec;
+            }
 
-            videos[1].addEventListener('ended', function () {
-                setTimeout(function () { switchTo(0); }, 1500);
-            });
+            /* ── Card 0: simple ── */
+            (function () {
+                var card = cards[0];
+                if (!card) return;
+                var vid = card.querySelector('.hero-video');
+                var replay = card.querySelector('.hero-replay');
+                if (!vid) return;
+                applySrc(vid);
+                vid.addEventListener('canplay', function () {
+                    if (active === 0) { vid.classList.add('loaded'); vid.play().catch(function () {}); }
+                });
+                vid.addEventListener('ended', function () { if (replay) replay.classList.add('show'); });
+                if (replay) replay.addEventListener('click', function () {
+                    replay.classList.remove('show');
+                    vid.currentTime = 0;
+                    vid.play().catch(function () {});
+                });
+            })();
 
-            videos[0].addEventListener('canplay', function () {
-                if (active !== 0) return;
-                videos[0].classList.add('loaded');
-                videos[0].play().catch(function () {});
-            });
+            /* ── Card 1: full player ── */
+            var pVideo, pPlay, pPauseIc, pPlayIc, pSeek, pSeekFill, pTime, pMute, pMuteIc, pOnIc, pReplay, pPlayer;
+            (function () {
+                var card = cards[1];
+                if (!card) return;
+                pVideo = card.querySelector('.hero-video');
+                pPlay = document.getElementById('hp-play');
+                pPauseIc = pPlay ? pPlay.querySelector('.ic-pause') : null;
+                pPlayIc = pPlay ? pPlay.querySelector('.ic-play') : null;
+                pSeek = document.getElementById('hp-seek');
+                pSeekFill = document.getElementById('hp-seek-fill');
+                pTime = document.getElementById('hp-time');
+                pMute = document.getElementById('hp-mute');
+                pMuteIc = pMute ? pMute.querySelector('.ic-mute') : null;
+                pOnIc = pMute ? pMute.querySelector('.ic-on') : null;
+                pReplay = document.getElementById('hp-replay');
+                pPlayer = document.getElementById('hero-player');
+                if (!pVideo) return;
 
-            musicBtn.addEventListener('click', function () {
-                musicOn = !musicOn;
-                getVideo(active).muted = !musicOn;
-                musicBtn.querySelector('i').className = musicOn
-                    ? 'fa-solid fa-volume-high'
-                    : 'fa-solid fa-volume-xmark';
-            });
+                applySrc(pVideo);
+
+                function setPlayIcon(playing) {
+                    if (pPauseIc) pPauseIc.classList.toggle('hide', !playing);
+                    if (pPlayIc) pPlayIc.classList.toggle('hide', playing);
+                }
+
+                /* ── Auto-hide player after 500ms ── */
+                var hideTimer;
+                function showPlayer() {
+                    if (pPlayer) pPlayer.classList.add('show');
+                    clearTimeout(hideTimer);
+                    hideTimer = setTimeout(function () {
+                        if (pPlayer && !pVideo.paused) pPlayer.classList.remove('show');
+                    }, 500);
+                }
+                var card2 = cards[1];
+                if (card2) {
+                    card2.addEventListener('mousemove', showPlayer);
+                    card2.addEventListener('touchstart', showPlayer, { passive: true });
+                }
+                if (pPlayer) {
+                    pPlayer.addEventListener('mouseenter', function () { clearTimeout(hideTimer); });
+                    pPlayer.addEventListener('mouseleave', showPlayer);
+                }
+                showPlayer();
+
+                pVideo.addEventListener('canplay', function () {
+                    if (active === 1) { pVideo.classList.add('loaded'); pVideo.play().catch(function () {}); }
+                });
+                pVideo.addEventListener('play', function () { setPlayIcon(true); card2.classList.remove('is-paused'); });
+                pVideo.addEventListener('pause', function () { setPlayIcon(false); card2.classList.add('is-paused'); });
+                pVideo.addEventListener('ended', function () {
+                    setPlayIcon(false);
+                    card2.classList.add('is-paused');
+                });
+
+                pVideo.addEventListener('timeupdate', function () {
+                    var pct = pVideo.duration ? (pVideo.currentTime / pVideo.duration) * 100 : 0;
+                    if (pSeekFill) pSeekFill.style.width = pct + '%';
+                    if (pTime) pTime.textContent = fmt(pVideo.currentTime) + ' / ' + fmt(pVideo.duration);
+                });
+                pVideo.addEventListener('loadedmetadata', function () {
+                    if (pTime) pTime.textContent = '0:00 / ' + fmt(pVideo.duration);
+                });
+
+                if (pPlay) pPlay.addEventListener('click', function () {
+                    if (pVideo.paused) pVideo.play().catch(function () {});
+                    else pVideo.pause();
+                });
+
+                if (pSeek) {
+                    function seekFromX(clientX) {
+                        var rect = pSeek.getBoundingClientRect();
+                        var ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                        if (pVideo.duration) pVideo.currentTime = ratio * pVideo.duration;
+                    }
+                    pSeek.addEventListener('click', function (e) { seekFromX(e.clientX); });
+                    var dragging = false;
+                    pSeek.addEventListener('pointerdown', function (e) { dragging = true; seekFromX(e.clientX); });
+                    window.addEventListener('pointermove', function (e) { if (dragging) seekFromX(e.clientX); });
+                    window.addEventListener('pointerup', function () { dragging = false; });
+                }
+
+                if (pMute) pMute.addEventListener('click', function () {
+                    pVideo.muted = !pVideo.muted;
+                    if (pMuteIc) pMuteIc.classList.toggle('hide', !pVideo.muted);
+                    if (pOnIc) pOnIc.classList.toggle('hide', pVideo.muted);
+                    pMute.setAttribute('aria-label', pVideo.muted ? 'Unmute' : 'Mute');
+                });
+
+                if (pReplay) pReplay.addEventListener('click', function () {
+                    pVideo.currentTime = 0;
+                    pVideo.play().catch(function () {});
+                });
+            })();
+
+            /* ── Carousel ── */
+            function playCard(i) {
+                var vid = cards[i] && cards[i].querySelector('.hero-video');
+                if (vid) { vid.classList.add('loaded'); vid.play().catch(function () {}); }
+            }
+            function pauseCard(i) {
+                var vid = cards[i] && cards[i].querySelector('.hero-video');
+                if (vid) vid.pause();
+            }
+            function setActive(i) {
+                if (i === active) return;
+                pauseCard(active);
+                active = i;
+                dots.forEach(function (d, j) { d.classList.toggle('active', j === i); });
+                playCard(i);
+                updateArrows();
+            }
+            function updateArrows() {
+                if (prevBtn) prevBtn.classList.toggle('hide', active === 0);
+                if (nextBtn) nextBtn.classList.toggle('hide', active === cards.length - 1);
+            }
+            function scrollToCard(i) {
+                scroller.scrollTo({ left: i * scroller.clientWidth, behavior: 'smooth' });
+            }
+
+            scroller.addEventListener('scroll', function () {
+                var i = Math.round(scroller.scrollLeft / scroller.clientWidth);
+                if (i !== active) setActive(i);
+            }, { passive: true });
 
             dots.forEach(function (dot) {
                 dot.addEventListener('click', function () {
-                    var i = parseInt(dot.getAttribute('data-index'));
-                    if (i === active) return;
-                    switchTo(i);
+                    scrollToCard(parseInt(dot.getAttribute('data-index')));
                 });
+            });
+            if (prevBtn) prevBtn.addEventListener('click', function () { scrollToCard(active - 1); });
+            if (nextBtn) nextBtn.addEventListener('click', function () { scrollToCard(active + 1); });
+            updateArrows();
+
+            var rt;
+            window.addEventListener('resize', function () {
+                clearTimeout(rt);
+                rt = setTimeout(function () {
+                    cards.forEach(function (c) {
+                        var v = c.querySelector('.hero-video');
+                        if (v) applySrc(v);
+                    });
+                }, 200);
             });
         })();
     </script>

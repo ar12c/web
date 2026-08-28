@@ -27,7 +27,8 @@
       "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"skeuomorphism soft ui claymorphism\" --domain style)",
       "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"animation micro-interaction motion\" --domain ux)",
       "Bash(node *)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "WebSearch"
     ]
   }
 }
