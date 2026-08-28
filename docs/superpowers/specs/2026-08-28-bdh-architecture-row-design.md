@@ -1,6 +1,6 @@
 # BDH Architecture Row Design
 
-**Date:** 2026-08-28  
+**Date:** 2026-08-28
 **Scope:** Simplify the BDH presentation on `AI/index.html` without changing the rest of the page or the underlying architecture claims.
 
 ## Problem
@@ -38,7 +38,7 @@ At widths below `768px`, the columns stack in source order. The specification li
 
 The production copy is:
 
-**Label:** `Bounded Dynamic Highway`  
+**Label:** `Bounded Dynamic Highway`
 **Heading:** `BDH neural architecture`
 
 **Explanation:**
