@@ -26,6 +26,7 @@ dist-ssr
 
 # Brainstorming visual companion
 .superpowers/
+.worktrees/
 
 # Backups
 diabrowser_backup
