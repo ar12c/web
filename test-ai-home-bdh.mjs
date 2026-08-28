@@ -4,6 +4,50 @@ import { existsSync, readFileSync } from 'node:fs';
 const html = readFileSync(new URL('./AI/index.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('./src/site.css', import.meta.url), 'utf8');
 
+function extractBlock(source, startPattern, label) {
+  const match = startPattern.exec(source);
+  assert.ok(match, `missing ${label}`);
+
+  const openBrace = source.indexOf('{', match.index);
+  assert.notEqual(openBrace, -1, `missing opening brace for ${label}`);
+
+  let depth = 0;
+  for (let index = openBrace; index < source.length; index += 1) {
+    if (source[index] === '{') depth += 1;
+    if (source[index] === '}') depth -= 1;
+    if (depth === 0) return source.slice(openBrace + 1, index);
+  }
+
+  assert.fail(`missing closing brace for ${label}`);
+}
+
+function extractBlocks(source, startPattern, label) {
+  const blocks = [];
+  let offset = 0;
+
+  while (offset < source.length) {
+    const remainder = source.slice(offset);
+    const match = startPattern.exec(remainder);
+    if (!match) break;
+
+    const start = offset + match.index;
+    blocks.push(extractBlock(source.slice(start), startPattern, label));
+    offset = start + match[0].length;
+  }
+
+  assert.ok(blocks.length > 0, `missing ${label}`);
+  return blocks;
+}
+
+function extractBdhRow(section) {
+  const rowStart = section.search(/<div class="[^"]*bdh-architecture-row[^"]*">/);
+  assert.notEqual(rowStart, -1, 'missing BDH architecture row');
+
+  const specsEnd = section.indexOf('</dl>', rowStart);
+  assert.notEqual(specsEnd, -1, 'missing BDH specification list');
+  return section.slice(rowStart, specsEnd + '</dl>'.length);
+}
+
 function test(name, fn) {
   try {
     fn();
@@ -26,8 +70,12 @@ test('BDH is a semantic architecture row inside Based AI', () => {
 });
 
 test('BDH row retains all approved architecture facts', () => {
+  const basedStart = html.indexOf('<!-- Based AI: Core Pillars');
+  const basedEnd = html.indexOf('</section>', basedStart);
+  const bdhRow = extractBdhRow(html.slice(basedStart, basedEnd));
+
   for (const fact of ['4 cached', '12 temporal', '28 x 2 passes', 'RTX 5080']) {
-    assert.ok(html.includes(fact), `missing BDH fact: ${fact}`);
+    assert.ok(bdhRow.includes(fact), `missing BDH row fact: ${fact}`);
   }
 });
 
@@ -35,7 +83,10 @@ test('old BDH showcase is removed', () => {
   for (const obsolete of [
     'bdh-neural-card',
     'bdh-neuron-map',
+    'bdh-map-ring',
+    'bdh-map-link',
     'bdh-map-neuron',
+    'bdh-map-label',
     'Small memory, repeated thought',
     '4 states cached',
   ]) {
@@ -46,7 +97,15 @@ test('old BDH showcase is removed', () => {
 
 test('BDH layout is page-scoped and stacks at the approved breakpoint', () => {
   assert.match(css, /\[data-page="ai-home"\] \.bdh-architecture-row\s*\{[^}]*display:\s*grid;/s);
-  assert.match(css, /@media\s*\(max-width:\s*768px\)[\s\S]*?\[data-page="ai-home"\] \.bdh-architecture-row\s*\{[^}]*grid-template-columns:\s*1fr;/);
+  const mobileBlocks = extractBlocks(
+    css,
+    /@media\s*\(max-width:\s*768px\)\s*\{/,
+    '768px media blocks',
+  );
+  assert.ok(
+    mobileBlocks.some((block) => /\[data-page="ai-home"\] \.bdh-architecture-row\s*\{[^}]*grid-template-columns:\s*1fr;/s.test(block)),
+    'BDH architecture row does not stack inside a 768px media block',
+  );
 });
 
 test('throwaway BDH prototype has been deleted', () => {
