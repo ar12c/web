@@ -10,7 +10,7 @@ import path from 'node:path';
 
 const SCAN = [
   'index.html','whitename.html','design.html','design-lab.html','Themes/Themes.html',
-  'word/index.html','search/index.html','AI/chat.html','AI/index.html','AI/manage.html',
+  'word/index.html','search/index.html','search/astra.js','AI/chat.html','AI/index.html','AI/manage.html',
   'AI/editor.html','AI/research.html','AI/tos.html','AI/privacy.html','AI/goals.html',
   'AI/version.html','AI/updatenotes.js','src/nav.js',
   ...fs.readdirSync('AI/js').filter(f => f.endsWith('.js')).map(f => 'AI/js/' + f),

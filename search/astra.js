@@ -2,6 +2,8 @@
 (function () {
   'use strict';
 
+  if (navigator.webdriver) document.documentElement.classList.add('webdriver');
+
   // ── Copy: playful, never corporate. Edit here, changes everywhere. ──
   const COPY = {
     placeholders: [
@@ -80,6 +82,30 @@
 
   // ── tiny DOM helper ──
   const $ = (id) => document.getElementById(id);
+
+  const TOUR_COOKIE = 'astra_tour_seen';
+  const TOUR_QUERIES = [
+    'why do stars twinkle',
+    'can you cry in space',
+    'how loud is the sun',
+    'what does the ISS smell like',
+    'why does the moon follow my car',
+  ];
+  const TOUR_STEPS = [
+    { targetId: 'results-bar', title: 'A real query, picked at random', copy: 'Astra starts with a live search so the tour teaches with the actual cosmos, not a diagram.' },
+    { targetId: 'ai-panel', title: 'Answer first. Perspectives when needed.', copy: 'The AI answer stays grounded in the links beside it. Perspectives shows where search engines agree, disagree, or wander off alone.' },
+    { targetId: 'result-1', title: 'Try a site brief', copy: 'Click or tap this result to open Astra’s inline summary. Its title still opens the original website directly.', requiresPreview: true },
+  ];
+
+  function hasTourSeen() {
+    return document.cookie.split('; ').some((part) => part.startsWith(TOUR_COOKIE + '='));
+  }
+
+  function setTourSeen() {
+    document.cookie = TOUR_COOKIE + '=1; path=/; max-age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+  }
+
+  function hideTourPrompt() { $('first-tour-prompt').hidden = true; }
 
   // ── AI mode toggle (persisted; default on) ──
   function getAiMode() { try { return localStorage.getItem('astra_ai_mode') !== 'off'; } catch (_) { return true; } }
@@ -209,6 +235,12 @@
   let scrollObserver = null;
   let fullscreenTitle = '';
   const modalStack = [];
+  let summaryAbort = null;
+  let expandedSummary = null;
+  let summaryToken = 0;
+  let tourIndex = -1;
+  let tourResizeTimer = null;
+  let tourReplayAvailable = hasTourSeen();
 
   function focusableIn(root) {
     return Array.from(root.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'))
@@ -259,6 +291,7 @@
     const layer = modalStack[modalStack.length - 1];
     if (!layer) return false;
     if (layer.dialog === $('ig-preview')) return closeImagePreview();
+    if (layer.dialog === $('tour-guide')) return finishTour();
     if (layer.dialog === $('ai-panel')) { exitAiFullscreen(); return true; }
     return false;
   }
@@ -280,7 +313,7 @@
 
   function showHero() {
     closeImagePreview();
-    closeLinkPreview();
+    collapseWebsiteSummary();
     exitAiFullscreen();
     if (aiAbort) aiAbort.abort();
     cancelPerspectives();
@@ -288,6 +321,7 @@
     $('results').hidden = true;
     $('hero').hidden = false;
     document.title = 'Okemo Astra ✦';
+    updateTourReplay();
   }
 
   let lastAllQuery = '';   // guards against re-running a finished search on tab restore
@@ -319,9 +353,10 @@
     } else {
       cancelPerspectives();
       $('ai-panel').hidden = true;               // AI panel lives on All; the thread survives
-      closeLinkPreview();                        // Images tab has no result rows — never leave the dock open
+      collapseWebsiteSummary();                  // Images tab has no result rows
       if (q !== lastImgQuery) { lastImgQuery = q; runImages(q); }
     }
+    updateTourReplay();
   }
 
   function renderRouteDom() {
@@ -378,6 +413,24 @@
   wireBar('results-input', 'results-search', 'results-suggest');
   setAiMode(getAiMode());   // paint the persisted state
   setAiPanelMode(getAiPanelMode());
+  if (!hasTourSeen() && !readRoute().q) $('first-tour-prompt').hidden = false;
+  $('tour-sure').addEventListener('click', () => {
+    setTourSeen();
+    startTour();
+  });
+  $('tour-later').addEventListener('click', hideTourPrompt);
+  $('tour-no').addEventListener('click', () => {
+    setTourSeen();
+    tourReplayAvailable = true;
+    hideTourPrompt();
+    updateTourReplay();
+  });
+  $('tour-next').addEventListener('click', () => {
+    if (tourIndex >= TOUR_STEPS.length - 1) finishTour();
+    else showTourStep(tourIndex + 1);
+  });
+  $('tour-exit').addEventListener('click', finishTour);
+  $('tour-replay').addEventListener('click', startTour);
   $('ai-toggle').addEventListener('click', () => {
     const on = !getAiMode();
     setAiMode(on);
@@ -413,19 +466,6 @@
     tabs[next].focus();
     tabs[next].click();
   });
-  const linkPreviewDock = $('link-preview');
-  if (linkPreviewDock) {
-    linkPreviewDock.inert = true;
-    $('lp-close').addEventListener('click', closeLinkPreview);
-    // stays open once shown — only a click outside it (or hovering another
-    // result, which just swaps its contents) closes it, per design
-    document.addEventListener('click', (e) => {
-      if (!linkPreviewDock.classList.contains('open')) return;
-      if (linkPreviewDock.contains(e.target)) return;
-      if (e.target.closest && e.target.closest('.r-title')) return;
-      closeLinkPreview();
-    });
-  }
   $('igp-close').addEventListener('click', closeImagePreview);
   $('igp-scrim').addEventListener('click', closeImagePreview);
   $('ai-expand').addEventListener('click', () => toggleAiFullscreen());
@@ -449,6 +489,11 @@
   $('ai-follow-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') followGo(); });
   $('ai-stop').addEventListener('click', () => { aiStopRequested = true; if (aiAbort) aiAbort.abort(); });
   window.addEventListener('popstate', renderRoute);
+  window.addEventListener('resize', () => {
+    clearTimeout(tourResizeTimer);
+    tourResizeTimer = setTimeout(() => { if (tourIndex >= 0) positionTour(); }, 80);
+  });
+  $('tour-target-action').addEventListener('click', activateTourTarget);
   renderRoute();
 
   // citation jump links: smooth-scroll inline (new tab in fullscreen), no history entry
@@ -747,101 +792,178 @@
     list.appendChild(div);
   }
 
-  let hoverTimer = null;
-  let previewLoadTimer = null;
-  let previewToken = 0;
-
-  function canShowLinkPreview() {
-    return window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1180px)').matches;
-  }
-
-  function openLinkPreview(r) {
-    const dock = $('link-preview');
-    if (!dock) return;
-    const identity = AstraHelpers.domainIdentity(r.url);
-    const c = crumbFor(r.url);
-    $('lp-title').textContent = r.title || r.url;
-    $('lp-host').textContent = c.site;
-    $('lp-snippet').textContent = r.description || '';
-    $('lp-visit').href = r.url;
-    const favicon = $('lp-favicon');
-    favicon.style.visibility = '';
-    favicon.onerror = () => { favicon.style.visibility = 'hidden'; };
-    favicon.src = 'https://' + identity.hostname + '/favicon.ico';
-
-    const ogImage = $('lp-ogimage');
-    const ogImgWrap = $('lp-ogwrap');
-    ogImage.style.visibility = 'hidden';
-    ogImgWrap.hidden = true;
-
-    const frame = $('lp-frame');
-    const snippetBlock = $('lp-snippet-block');
-    clearTimeout(previewLoadTimer);
-    previewToken++;
-    const token = previewToken;
-    frame.onload = null;
-    frame.src = 'about:blank';
-    frame.hidden = true;
-    snippetBlock.hidden = false;
-
-    dock.classList.add('open');
-    dock.setAttribute('aria-hidden', 'false');
-    dock.inert = false;
-
-    fetch(backendBase() + '/api/preview?url=' + encodeURIComponent(r.url),
-      { headers: { 'ngrok-skip-browser-warning': 'true', 'bypass-tunnel-reminder': 'true' } })
-      .then(function (res) { return res.ok ? res.json() : {}; })
-      .catch(function () { return {}; })
-      .then(function (og) {
-        if (token !== previewToken) return;
-        if (og.image && /^https?:\/\//i.test(og.image)) {
-          ogImgWrap.hidden = false;
-          ogImage.src = og.image;
-          ogImage.onload = function () { ogImage.style.visibility = ''; };
-          ogImage.onerror = function () { ogImgWrap.hidden = true; };
-        }
-        if (og.title) $('lp-title').textContent = og.title;
-        if (og.description) $('lp-snippet').textContent = og.description;
-        if (og.site_name) $('lp-host').textContent = og.site_name;
+  async function loadWebsiteSummary(li, r) {
+    if (summaryAbort) summaryAbort.abort();
+    summaryAbort = new AbortController();
+    const token = ++summaryToken;
+    const summaryStatus = li.querySelector('.result-summary-status');
+    const summaryBody = li.querySelector('.result-summary-body');
+    const summaryRetry = li.querySelector('.result-summary-retry');
+    summaryStatus.textContent = 'reading the fine print…';
+    summaryStatus.hidden = false;
+    summaryBody.hidden = true;
+    summaryRetry.hidden = true;
+    try {
+      const res = await fetch(backendBase() + '/api/summary?url=' + encodeURIComponent(r.url), {
+        signal: summaryAbort.signal,
+        headers: { 'ngrok-skip-browser-warning': 'true', 'bypass-tunnel-reminder': 'true' },
       });
-
-    if (AstraHelpers.isLikelyFrameBlocked(r.url)) return;
-
-    frame.onload = function () {
-      if (token !== previewToken) return;
-      clearTimeout(previewLoadTimer);
-      var blocked = false;
-      try { void frame.contentWindow.location.href; blocked = true; } catch (_) { blocked = false; }
-      frame.hidden = blocked;
-      if (!blocked) snippetBlock.hidden = true;
-    };
-    frame.src = r.url;
-    previewLoadTimer = setTimeout(function () {
-      if (token !== previewToken) return;
-      frame.hidden = true;
-    }, 1500);
+      if (!res.ok) throw new Error('summary ' + res.status);
+      const data = await res.json();
+      if (token !== summaryToken || expandedSummary !== li) return;
+      summaryBody.textContent = data.summary || r.description || 'No useful summary escaped this page.';
+      summaryBody.hidden = false;
+    } catch (e) {
+      if (e.name !== 'AbortError' && token === summaryToken && expandedSummary === li) {
+        summaryStatus.textContent = 'the page kept its secrets.';
+        summaryRetry.hidden = false;
+      }
+    } finally {
+      if (token === summaryToken && expandedSummary === li && !summaryAbort.signal.aborted && !summaryBody.hidden) summaryStatus.hidden = true;
+    }
   }
 
-  function closeLinkPreview() {
-    const dock = $('link-preview');
-    if (!dock) return;
-    dock.classList.remove('open');
-    dock.setAttribute('aria-hidden', 'true');
-    dock.inert = true;
-    previewToken++;
-    clearTimeout(previewLoadTimer);
-    const frame = $('lp-frame');
-    if (frame) { frame.onload = null; frame.src = 'about:blank'; }
+  function toggleWebsiteSummary(li, r) {
+    if (expandedSummary === li) { collapseWebsiteSummary(); return; }
+    collapseWebsiteSummary();
+    expandedSummary = li;
+    li.classList.add('summary-open');
+    li.querySelector('.summary-hit').setAttribute('aria-expanded', 'true');
+    li.querySelector('.result-summary').inert = false;
+    loadWebsiteSummary(li, r);
+    if (tourIndex === TOUR_STEPS.length - 1 && li.id === 'result-1') {
+      li.classList.remove('tour-summary-demo');
+      void li.offsetWidth;
+      li.classList.add('tour-summary-demo');
+      li.addEventListener('animationend', () => li.classList.remove('tour-summary-demo'), { once: true });
+      $('tour-next').disabled = false;
+      $('tour-title').textContent = 'Site brief unlocked';
+      $('tour-copy').textContent = 'That is the live preview. Open another row to switch, or tap this one again to close it.';
+      $('tour-next').focus({ preventScroll: true });
+    }
+  }
+
+  function collapseWebsiteSummary() {
+    summaryToken++;
+    if (summaryAbort) summaryAbort.abort();
+    summaryAbort = null;
+    if (!expandedSummary) return false;
+    expandedSummary.classList.remove('summary-open');
+    expandedSummary.querySelector('.summary-hit').setAttribute('aria-expanded', 'false');
+    expandedSummary.querySelector('.result-summary').inert = true;
+    expandedSummary = null;
+    return true;
+  }
+
+  function startTour() {
+    hideTourPrompt();
+    finishTour(false);
+    tourReplayAvailable = false;
+    updateTourReplay();
+    setAiMode(true);
+    const currentQuery = readRoute().q;
+    const alternatives = TOUR_QUERIES.filter((candidate) => candidate !== currentQuery);
+    const pool = alternatives.length ? alternatives : TOUR_QUERIES;
+    const query = pool[Math.floor(Math.random() * pool.length)];
+    lastAllQuery = '';
+    $('hero-input').value = query;
+    go(query, 'all');
+    requestAnimationFrame(() => showTourStep(0));
+  }
+
+  function showTourStep(index) {
+    const step = TOUR_STEPS[index];
+    const target = $(step.targetId);
+    if (!target) {
+      setTimeout(() => showTourStep(index), 80);
+      return;
+    }
+    tourIndex = index;
+    $('tour-step').textContent = (index + 1) + ' of ' + TOUR_STEPS.length;
+    $('tour-title').textContent = step.title;
+    $('tour-copy').textContent = step.copy;
+    $('tour-next').textContent = index === TOUR_STEPS.length - 1 ? 'Finish' : 'Next';
+    $('tour-next').disabled = !!step.requiresPreview;
+    const spotlight = $('tour-spotlight');
+    const targetAction = $('tour-target-action');
+    targetAction.hidden = !step.requiresPreview;
+    targetAction.disabled = !step.requiresPreview;
+    const guide = $('tour-guide');
+    if (guide.hidden) {
+      guide.hidden = false;
+      openModalLayer(guide, step.requiresPreview ? targetAction : $('tour-next'), $('results-input'));
+    }
+    if (step.requiresPreview) requestAnimationFrame(() => targetAction.focus({ preventScroll: true }));
+    const mobile = window.matchMedia('(max-width: 768px)').matches;
+    if (mobile) target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+    requestAnimationFrame(positionTour);
+  }
+
+  function positionTour() {
+    if (tourIndex < 0) return;
+    const target = $(TOUR_STEPS[tourIndex].targetId);
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const spotlight = $('tour-spotlight');
+    const targetAction = $('tour-target-action');
+    const card = $('tour-guide').querySelector('.tour-card');
+    const pad = 7;
+    spotlight.style.left = Math.max(4, rect.left - pad) + 'px';
+    spotlight.style.top = Math.max(4, rect.top - pad) + 'px';
+    spotlight.style.width = Math.min(innerWidth - 8, rect.width + pad * 2) + 'px';
+    spotlight.style.height = Math.min(innerHeight - 8, rect.height + pad * 2) + 'px';
+    targetAction.style.left = spotlight.style.left;
+    targetAction.style.top = spotlight.style.top;
+    targetAction.style.width = spotlight.style.width;
+    targetAction.style.height = spotlight.style.height;
+    const mobile = window.matchMedia('(max-width: 768px)').matches;
+    if (mobile) {
+      card.style.left = card.style.top = '';
+      return;
+    }
+    const cardWidth = 330;
+    const right = rect.right + 24;
+    card.style.left = (right + cardWidth < innerWidth ? right : Math.max(18, rect.left - cardWidth - 24)) + 'px';
+    card.style.top = Math.max(18, Math.min(innerHeight - card.offsetHeight - 18, rect.top)) + 'px';
+  }
+
+  function activateTourTarget() {
+    if (tourIndex !== TOUR_STEPS.length - 1) return;
+    const target = $('result-1');
+    const trigger = target && target.querySelector('.summary-hit');
+    if (trigger) trigger.click();
+  }
+
+  function updateTourReplay() {
+    const replay = $('tour-replay');
+    const visible = tourReplayAvailable && !readRoute().q && tourIndex < 0;
+    replay.hidden = !visible;
+  }
+
+  function finishTour(exposeReplay = true) {
+    const guide = $('tour-guide');
+    if (!guide || guide.hidden) return false;
+    closeModalLayer(guide);
+    guide.hidden = true;
+    tourIndex = -1;
+    tourReplayAvailable = exposeReplay;
+    updateTourReplay();
+    return true;
   }
 
   function renderResults(results, start, append) {
     const list = $('result-list');
     const sentinel = append ? $('result-sentinel') : null;
-    if (!append) { list.innerHTML = ''; closeLinkPreview(); }
+    if (!append) { collapseWebsiteSummary(); list.innerHTML = ''; }
     results.forEach((r, i) => {
       const li = document.createElement('li');
       li.className = 'result';
       li.id = 'result-' + (start + i + 1);
+      const summaryButton = document.createElement('button');
+      summaryButton.type = 'button';
+      summaryButton.className = 'summary-hit';
+      summaryButton.setAttribute('aria-label', 'Summarize ' + (r.title || r.url));
+      summaryButton.setAttribute('aria-expanded', 'false');
       // entrance stagger, capped at 8 rows so long/infinite pages don't trail
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !navigator.webdriver) {
         li.classList.add('r-enter');
@@ -887,6 +1009,56 @@
       const snip = document.createElement('p');
       snip.className = 'r-snippet';
       snip.textContent = r.description || '';
+      const summary = document.createElement('div');
+      summary.className = 'result-summary';
+      summary.id = li.id + '-summary';
+      summary.inert = true;
+      summary.setAttribute('role', 'region');
+      summary.setAttribute('aria-label', 'Astra site brief');
+      const summaryInner = document.createElement('div');
+      summaryInner.className = 'result-summary-inner';
+      const summaryKicker = document.createElement('div');
+      summaryKicker.className = 'result-summary-kicker';
+      summaryKicker.textContent = '✦ Astra site brief';
+      const summaryBeta = document.createElement('span');
+      summaryBeta.className = 'result-summary-beta';
+      summaryBeta.textContent = 'BETA';
+      summaryKicker.appendChild(summaryBeta);
+      const summaryCaveat = document.createElement('p');
+      summaryCaveat.className = 'result-summary-caveat';
+      summaryCaveat.textContent = 'Some websites block reading or return incomplete summaries.';
+      const summaryStatus = document.createElement('p');
+      summaryStatus.className = 'result-summary-status';
+      summaryStatus.setAttribute('role', 'status');
+      summaryStatus.setAttribute('aria-live', 'polite');
+      const summaryBody = document.createElement('p');
+      summaryBody.className = 'result-summary-body';
+      summaryBody.hidden = true;
+      const summaryActions = document.createElement('div');
+      summaryActions.className = 'result-summary-actions';
+      const summaryRetry = document.createElement('button');
+      summaryRetry.type = 'button';
+      summaryRetry.className = 'skuo skuo-neutral result-summary-retry';
+      const summaryRetryIcon = document.createElement('i');
+      summaryRetryIcon.className = 'fa-solid fa-rotate-right';
+      summaryRetryIcon.setAttribute('aria-hidden', 'true');
+      summaryRetry.append(summaryRetryIcon, document.createTextNode('try again'));
+      summaryRetry.hidden = true;
+      summaryRetry.addEventListener('click', (e) => { e.stopPropagation(); loadWebsiteSummary(li, r); });
+      const summaryVisit = document.createElement('a');
+      summaryVisit.className = 'skuo skuo-accent result-summary-visit';
+      summaryVisit.href = r.url;
+      summaryVisit.target = '_blank';
+      summaryVisit.rel = 'noopener';
+      const summaryVisitIcon = document.createElement('i');
+      summaryVisitIcon.className = 'fa-solid fa-arrow-up-right-from-square';
+      summaryVisitIcon.setAttribute('aria-hidden', 'true');
+      summaryVisit.append(document.createTextNode('Visit website'), summaryVisitIcon);
+      summaryActions.append(summaryRetry, summaryVisit);
+      summaryInner.append(summaryKicker, summaryCaveat, summaryStatus, summaryBody, summaryActions);
+      summary.appendChild(summaryInner);
+      summaryButton.setAttribute('aria-controls', summary.id);
+      summaryButton.addEventListener('click', () => toggleWebsiteSummary(li, r));
       let sourceTags = null;
       if (Array.isArray(r.sources) && r.sources.length) {
         const sourceLabels = { duckduckgo: 'DDG', ddg: 'DDG', bing: 'Bing', mojeek: 'Mojeek' };
@@ -902,33 +1074,9 @@
         });
       }
 
-      const hoverBar = document.createElement('span');
-      hoverBar.className = 'r-hover-bar';
-      hoverBar.setAttribute('aria-hidden', 'true');
-      const hoverFill = document.createElement('span');
-      hoverFill.className = 'r-hover-fill';
-      hoverBar.appendChild(hoverFill);
-
-      a.addEventListener('mouseenter', () => {
-        if (!canShowLinkPreview()) return;
-        clearTimeout(hoverTimer);
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        hoverFill.style.transition = reduced ? 'none' : 'width 340ms linear';
-        hoverFill.style.width = '0%';
-        requestAnimationFrame(() => requestAnimationFrame(() => { hoverFill.style.width = '100%'; }));
-        hoverTimer = setTimeout(() => openLinkPreview(r), 340);
-      });
-      a.addEventListener('mouseleave', () => {
-        clearTimeout(hoverTimer);
-        hoverFill.style.transition = 'none';
-        hoverFill.style.width = '0%';
-        // the dock itself stays open once shown — closing it is handled by the
-        // click-outside listener and the #lp-close button (see wireup near top)
-      });
-
-      wrap.append(head, a, hoverBar, snip);
+      wrap.append(head, a, snip, summary);
       if (sourceTags) wrap.appendChild(sourceTags);
-      li.append(img, wrap);
+      li.append(summaryButton, img, wrap);
       if (sentinel) list.insertBefore(li, sentinel); else list.appendChild(li);
     });
   }
@@ -1168,6 +1316,7 @@
 
   async function runSearch(q) {
     exitAiFullscreen();                         // a new search always lands inline
+    collapseWebsiteSummary();
     if (aiAbort) aiAbort.abort();
     cancelPerspectives();
     const token = ++searchToken;

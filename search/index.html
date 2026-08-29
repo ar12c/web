@@ -17,7 +17,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>">
-<link rel="stylesheet" href="../src/site.css">
+<link rel="stylesheet" href="../src/site.css?v=20260829-astra-boat-1">
 <style>
   .r-source-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
   .r-source-tag { padding: 1px 5px; border: 1px solid var(--border-strong); border-radius: 999px; color: var(--text-secondary); font-size: .62rem; line-height: 1.35; }
@@ -35,7 +35,7 @@
     <circle cx="30" cy="20" r="1.8" fill="currentColor"/><circle cx="46" cy="6" r="2.4" fill="currentColor"/>
   </svg>
   <div>
-    <h1 class="wordmark">✦ Okemo Astra</h1>
+    <h1 class="wordmark"><svg class="astra-boat" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 14h18l-3 5H6z"/><path d="M11 4v10"/><path d="M11 5l6 7h-6z"/></svg> Okemo Astra</h1>
     <p class="tagline">your tiny telescope for the internet</p>
   </div>
   <div class="bar" id="hero-bar">
@@ -47,14 +47,23 @@
     <button class="skuo skuo-neutral" id="hero-search" aria-label="search">🔍 <span class="lbl">search the cosmos</span></button>
     <span class="ai-ring"><button class="skuo" id="hero-cosmic" aria-label="i'm feeling cosmic">✦ <span class="lbl">i'm feeling cosmic</span></button></span>
   </div>
+  <section id="first-tour-prompt" class="first-tour-prompt" aria-label="First time guide" hidden>
+    <p class="first-tour-copy"><strong>Hey, I noticed it’s your first time using Astra.</strong> Would you like a tour of our special features?</p>
+    <div class="first-tour-actions">
+      <button class="skuo skuo-accent" id="tour-sure" type="button">Sure</button>
+      <button class="skuo skuo-neutral" id="tour-later" type="button">Next time</button>
+      <button class="skuo skuo-neutral" id="tour-no" type="button">No</button>
+    </div>
+  </section>
   <p class="hint">enter = search · no wrong questions</p>
+  <button class="tour-replay" id="tour-replay" type="button" aria-label="Replay Astra tour" hidden>Replay tour</button>
   <footer class="foot">made of stardust · <a href="../index.html">okemo</a> ✦</footer>
 </main>
 
 <!-- ═══ RESULTS ═══ -->
 <main id="results" class="results" hidden>
   <header class="r-top">
-    <a class="r-logo" href="./" id="logo-home">✦ Astra</a>
+    <a class="r-logo" href="./" id="logo-home"><svg class="astra-boat" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 14h18l-3 5H6z"/><path d="M11 4v10"/><path d="M11 5l6 7h-6z"/></svg> Astra</a>
     <div class="bar" id="results-bar">
       <span class="bar-icon">🔭</span>
       <span class="ph-wrap"><input id="results-input" type="text" role="combobox" aria-autocomplete="list" aria-controls="results-suggest" aria-expanded="false" enterkeyhint="search" autocomplete="off" spellcheck="false" aria-label="Search the web" placeholder="search the web…"><span class="ph-ghost" id="results-ghost" aria-hidden="true"></span></span>
@@ -64,34 +73,38 @@
   </header>
   <nav class="r-tabs" id="r-tabs" role="tablist" aria-label="Search result views">
     <button class="r-tab on" id="tab-all" type="button" role="tab" aria-controls="result-list" aria-selected="true" tabindex="0">All</button>
-    <button class="r-tab" id="tab-images" type="button" role="tab" aria-controls="image-grid" aria-selected="false" tabindex="-1">✦ Images</button>
+    <button class="r-tab" id="tab-images" type="button" role="tab" aria-controls="image-grid" aria-selected="false" tabindex="-1"><i class="fa-solid fa-images" aria-hidden="true"></i> Images</button>
   </nav>
-  <section id="ai-panel" class="ai-panel" aria-busy="false" hidden>
-    <div class="ai-head">
-      <span id="ai-head-label">✦ Astra Answer</span>
-      <div class="ai-mode-toggle" id="ai-mode-toggle" role="radiogroup" aria-label="AI panel mode">
-        <button class="ai-mode-btn on" id="ai-mode-answer" role="radio" aria-checked="true" tabindex="0" type="button">Answer</button>
-        <button class="ai-mode-btn" id="ai-mode-perspectives" role="radio" aria-checked="false" tabindex="-1" type="button">⚖ Perspectives</button>
+  <div class="result-workspace">
+    <div class="result-primary">
+      <div class="r-meta-row">
+        <p class="r-meta" id="r-meta" role="status" aria-live="polite"></p>
+        <button class="skuo skuo-icon" id="ai-toggle" aria-pressed="true" aria-label="Hide AI answer">✦ AI</button>
       </div>
-      <button class="skuo skuo-icon" id="ai-expand" aria-label="fullscreen" aria-expanded="false" aria-controls="ai-panel" title="fullscreen">⤢</button>
+      <ol id="result-list" role="tabpanel" aria-labelledby="tab-all" aria-busy="false"></ol>
+      <div id="image-grid" role="tabpanel" aria-labelledby="tab-images" hidden></div>
     </div>
-    <p class="ai-provenance" id="ai-provenance">AI-generated, grounded in the first five results. It can still be confidently wrong.</p>
-    <div class="ai-sources" id="ai-sources" aria-label="Grounding sources"></div>
-    <div class="ai-thinking" id="ai-thinking" role="status" aria-live="polite" hidden><span class="ai-orb"></span><span class="ai-thinking-line" id="ai-thinking-line"></span></div>
-    <div class="ai-body" id="ai-body"></div>
-    <div class="ai-error" id="ai-error" role="status" aria-live="polite" hidden></div>
-    <div class="ai-follow" id="ai-follow" hidden>
-      <input id="ai-follow-input" type="text" enterkeyhint="send" autocomplete="off" spellcheck="false" aria-label="Ask a follow-up" placeholder="ask more…">
-      <button class="skuo skuo-accent" id="ai-follow-send" aria-label="ask follow-up">→</button>
-      <button class="skuo skuo-neutral" id="ai-stop" aria-label="stop generating" title="stop" hidden>⏹</button>
-    </div>
-  </section>
-  <div class="r-meta-row">
-    <p class="r-meta" id="r-meta" role="status" aria-live="polite"></p>
-    <button class="skuo skuo-icon" id="ai-toggle" aria-pressed="true" aria-label="Hide AI answer">✦ AI</button>
+    <section id="ai-panel" class="ai-panel" aria-busy="false" hidden>
+      <div class="ai-head">
+        <span id="ai-head-label">✦ Astra Answer</span>
+        <div class="ai-mode-toggle" id="ai-mode-toggle" role="radiogroup" aria-label="AI panel mode">
+          <button class="ai-mode-btn on" id="ai-mode-answer" role="radio" aria-checked="true" tabindex="0" type="button">Answer</button>
+          <button class="ai-mode-btn" id="ai-mode-perspectives" role="radio" aria-checked="false" tabindex="-1" type="button">⚖ Perspectives</button>
+        </div>
+        <button class="skuo skuo-icon" id="ai-expand" aria-label="fullscreen" aria-expanded="false" aria-controls="ai-panel" title="fullscreen">⤢</button>
+      </div>
+      <p class="ai-provenance" id="ai-provenance">AI-generated, grounded in the first five results. It can still be confidently wrong.</p>
+      <div class="ai-sources" id="ai-sources" aria-label="Grounding sources"></div>
+      <div class="ai-thinking" id="ai-thinking" role="status" aria-live="polite" hidden><span class="ai-orb"></span><span class="ai-thinking-line" id="ai-thinking-line"></span></div>
+      <div class="ai-body" id="ai-body"></div>
+      <div class="ai-error" id="ai-error" role="status" aria-live="polite" hidden></div>
+      <div class="ai-follow" id="ai-follow" hidden>
+        <input id="ai-follow-input" type="text" enterkeyhint="send" autocomplete="off" spellcheck="false" aria-label="Ask a follow-up" placeholder="ask more…">
+        <button class="skuo skuo-accent" id="ai-follow-send" aria-label="ask follow-up">→</button>
+        <button class="skuo skuo-neutral" id="ai-stop" aria-label="stop generating" title="stop" hidden>⏹</button>
+      </div>
+    </section>
   </div>
-  <ol id="result-list" role="tabpanel" aria-labelledby="tab-all" aria-busy="false"></ol>
-  <div id="image-grid" role="tabpanel" aria-labelledby="tab-images" hidden></div>
 </main>
 
 <aside id="ig-preview" role="dialog" aria-modal="true" aria-labelledby="igp-title" hidden>
@@ -108,26 +121,18 @@
   </div>
 </aside>
 
-<aside id="link-preview" class="link-preview" aria-hidden="true" aria-label="Website preview">
-  <div class="lp-panel card">
-    <button class="skuo skuo-icon lp-close" id="lp-close" aria-label="close preview">✕</button>
-    <div class="lp-head">
-      <img id="lp-favicon" class="lp-favicon" alt="" aria-hidden="true" referrerpolicy="no-referrer">
-      <div class="lp-headtext">
-        <div class="lp-title" id="lp-title"></div>
-        <div class="lp-host" id="lp-host"></div>
-      </div>
+<aside id="tour-guide" role="dialog" aria-modal="true" aria-labelledby="tour-title" hidden>
+  <div class="tour-scrim" aria-hidden="true"></div>
+  <div class="tour-spotlight" id="tour-spotlight" aria-hidden="true"></div>
+  <button class="tour-target-action" id="tour-target-action" type="button" aria-label="Open the first result site brief" hidden disabled></button>
+  <div class="tour-card card">
+    <span class="tour-step" id="tour-step"></span>
+    <h2 id="tour-title"></h2>
+    <p id="tour-copy"></p>
+    <div class="tour-actions">
+      <button class="skuo skuo-neutral" id="tour-exit" type="button">Exit tour</button>
+      <button class="skuo skuo-accent" id="tour-next" type="button">Next</button>
     </div>
-    <div class="lp-frame-wrap">
-      <div class="lp-ogwrap" id="lp-ogwrap" hidden>
-        <img id="lp-ogimage" class="lp-ogimage" alt="" aria-hidden="true" referrerpolicy="no-referrer" loading="lazy">
-      </div>
-      <div id="lp-snippet-block">
-        <p class="lp-snippet" id="lp-snippet"></p>
-      </div>
-      <iframe id="lp-frame" class="lp-frame" title="Website preview" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin" loading="lazy" hidden></iframe>
-    </div>
-    <a class="skuo skuo-accent lp-visit" id="lp-visit" target="_blank" rel="noopener">open in new tab ↗</a>
   </div>
 </aside>
 

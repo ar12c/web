@@ -3,6 +3,7 @@ import types
 
 import httpx
 import pytest
+from urllib.parse import urlparse
 
 try:
     import mlx.core  # noqa: F401
@@ -198,13 +199,196 @@ class FakeHTTPResp:
         return self._payload
 
 
+class FakeSummaryStream:
+    def __init__(self, status_code=200, chunks=(), headers=None):
+        self.status_code = status_code
+        self._chunks = chunks
+        self.headers = headers or {}
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+    def iter_bytes(self):
+        yield from self._chunks
+
+    def close(self):
+        pass
+
+
 @pytest.fixture(autouse=True)
 def clear_caches():
     server._search_cache.clear()
     server._suggest_cache.clear()
     server._images_cache.clear()
     server._perspectives_cache.clear()
+    server._summary_cache.clear()
     yield
+
+
+SUMMARY_HTML = """
+<html><head>
+<title>Deep Space Notes</title>
+<meta property="og:description" content="Short publisher description.">
+</head><body>
+<nav>Home Products Pricing</nav>
+<main><h1>Deep Space Notes</h1><p>Stars form inside cold molecular clouds.</p>
+<p>Gravity gathers gas until fusion begins in the core.</p></main>
+<script>ignoreMe()</script>
+</body></html>
+"""
+
+
+def test_extract_page_text_keeps_readable_content_and_drops_chrome():
+    text = server._extract_page_text(SUMMARY_HTML)
+    assert "Stars form inside cold molecular clouds" in text
+    assert "Gravity gathers gas" in text
+    assert "Home Products Pricing" not in text
+    assert "ignoreMe" not in text
+
+
+def test_api_summary_generates_from_page_text_and_caches(monkeypatch):
+    calls = {"fetch": 0, "generate": 0}
+
+    def fake_fetch(url):
+        calls["fetch"] += 1
+        return SUMMARY_HTML, url
+
+    def fake_generate(title, text):
+        calls["generate"] += 1
+        assert title == "Deep Space Notes"
+        assert "Stars form inside cold molecular clouds" in text
+        return "Stars emerge when gravity compresses cold gas until fusion starts."
+
+    monkeypatch.setattr(server, "_fetch_public_page", fake_fetch)
+    monkeypatch.setattr(server, "_generate_page_summary", fake_generate)
+    monkeypatch.setattr(server, "_is_public_http_url", lambda _url: True)
+    from fastapi.testclient import TestClient
+    client = TestClient(server.app)
+
+    first = client.get("/api/summary", params={"url": "https://example.com/space"})
+    second = client.get("/api/summary", params={"url": "https://example.com/space"})
+
+    assert first.status_code == 200
+    assert first.json() == {
+        "title": "Deep Space Notes",
+        "summary": "Stars emerge when gravity compresses cold gas until fusion starts.",
+        "generated": True,
+    }
+    assert second.json() == first.json()
+    assert calls == {"fetch": 1, "generate": 1}
+
+
+def test_fetch_public_page_pins_each_redirect_hop_to_validated_public_ip(monkeypatch):
+    resolutions = {
+        "start.example": ["203.0.113.10"],
+        "final.example": ["198.51.100.20"],
+    }
+    requests = []
+    streams = [
+        FakeSummaryStream(302, headers={"location": "https://final.example/page"}),
+        FakeSummaryStream(200, chunks=[b"<title>Safe</title>"]),
+    ]
+
+    monkeypatch.setattr(server, "_resolve_public_addresses", lambda url: resolutions[urlparse(url).hostname])
+
+    def fake_stream(url, host, sni_hostname):
+        requests.append((url, host, sni_hostname))
+        return streams.pop(0)
+
+    monkeypatch.setattr(server, "_summary_stream", fake_stream)
+
+    html, final_url = server._fetch_public_page("https://start.example/")
+
+    assert html == "<title>Safe</title>"
+    assert final_url == "https://final.example/page"
+    assert requests == [
+        ("https://203.0.113.10/", "start.example", "start.example"),
+        ("https://198.51.100.20/page", "final.example", "final.example"),
+    ]
+
+
+def test_summary_stream_sets_host_and_tls_name_on_streamed_request(monkeypatch):
+    captured = {}
+    response = FakeSummaryStream(200)
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            captured["client"] = kwargs
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def build_request(self, method, url, headers, extensions):
+            captured["request"] = (method, url, headers, extensions)
+            return object()
+
+        def send(self, request, stream):
+            captured["send"] = (request, stream)
+            return response
+
+    monkeypatch.setattr(server.httpx, "Client", FakeClient)
+
+    with server._summary_stream("https://203.0.113.10/page", "example.com", "example.com") as got:
+        assert got is response
+
+    method, url, headers, extensions = captured["request"]
+    assert (method, url) == ("GET", "https://203.0.113.10/page")
+    assert headers["Host"] == "example.com"
+    assert extensions == {"sni_hostname": "example.com"}
+    assert captured["client"] == {"timeout": 8, "follow_redirects": False, "trust_env": False}
+    assert captured["send"][1] is True
+
+
+def test_fetch_public_page_rejects_redirect_to_private_destination(monkeypatch):
+    monkeypatch.setattr(server, "_resolve_public_addresses", lambda url: (
+        ["203.0.113.10"] if "start.example" in url else []
+    ))
+    monkeypatch.setattr(server, "_summary_stream", lambda *_args: FakeSummaryStream(
+        302, headers={"location": "http://127.0.0.1/admin"}
+    ))
+
+    with pytest.raises(server.UnsafeSummaryURL):
+        server._fetch_public_page("https://start.example/")
+
+
+def test_fetch_public_page_stops_when_stream_exceeds_download_cap(monkeypatch):
+    monkeypatch.setattr(server, "_resolve_public_addresses", lambda _url: ["203.0.113.10"])
+    chunks = [b"a" * server.SUMMARY_DOWNLOAD_LIMIT, b"b"]
+    stream = FakeSummaryStream(200, chunks=chunks)
+    monkeypatch.setattr(server, "_summary_stream", lambda *_args: stream)
+
+    with pytest.raises(server.SummaryPageTooLarge):
+        server._fetch_public_page("https://example.com/large")
+
+
+def test_api_summary_falls_back_to_metadata_when_page_has_no_readable_text(monkeypatch):
+    html = '<html><head><title>Locked</title><meta property="og:description" content="Useful fallback."></head></html>'
+    monkeypatch.setattr(server, "_fetch_public_page", lambda url: (html, url))
+    monkeypatch.setattr(server, "_is_public_http_url", lambda _url: True)
+    monkeypatch.setattr(server, "_generate_page_summary", lambda *_: pytest.fail("generation should not run"))
+    from fastapi.testclient import TestClient
+    r = TestClient(server.app).get("/api/summary", params={"url": "https://example.com/locked"})
+    assert r.json() == {"title": "Locked", "summary": "Useful fallback.", "generated": False}
+
+
+@pytest.mark.parametrize("url", [
+    "http://127.0.0.1/admin",
+    "http://localhost/private",
+    "http://169.254.169.254/latest/meta-data",
+    "ftp://example.com/file",
+])
+def test_api_summary_rejects_non_public_targets_before_fetch(monkeypatch, url):
+    monkeypatch.setattr(server, "_http_get_backoff", lambda *_args, **_kwargs: pytest.fail("must not fetch"))
+    from fastapi.testclient import TestClient
+    r = TestClient(server.app).get("/api/summary", params={"url": url})
+    assert r.status_code == 400
+    assert r.json() == {"error": "invalid_url"}
 
 
 def _fake_http(monkeypatch, responses):

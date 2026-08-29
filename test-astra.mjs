@@ -249,15 +249,193 @@ test('results use local identities and never request Google favicons', () => {
   assert.match(js, /r-monogram/);
 });
 
-test('isLikelyFrameBlocked flags curated domains and their subdomains, not arbitrary sites', () => {
-  assert.equal(AstraHelpers.isLikelyFrameBlocked('https://www.google.com/search?q=x'), true);
-  assert.equal(AstraHelpers.isLikelyFrameBlocked('github.com'), true);
-  assert.equal(AstraHelpers.isLikelyFrameBlocked('https://example.com/some/blog/post'), false);
+test('result rows expose one inline summary disclosure while titles remain direct links', () => {
+  assert.doesNotMatch(html, /id="summary-popup"|summary-scrim|summary-panel/);
+  assert.match(js, /li\.className = 'result'/);
+  assert.match(js, /summaryButton\.className = 'summary-hit'/);
+  assert.match(js, /summaryButton\.setAttribute\('aria-expanded', 'false'\)/);
+  assert.match(js, /summaryButton\.setAttribute\('aria-controls', summary\.id\)/);
+  assert.match(js, /summary\.className = 'result-summary'/);
+  assert.match(js, /summary\.setAttribute\('role', 'region'\)/);
+  assert.match(js, /summaryStatus\.setAttribute\('role', 'status'\)/);
+  assert.match(js, /summaryVisit\.target = '_blank'/);
+  assert.match(js, /a\.target = '_blank'/);
+  assert.match(js, /summaryButton\.addEventListener\('click', \(\) => toggleWebsiteSummary\(li, r\)\)/);
+  assert.doesNotMatch(js, /openWebsiteSummary|closeWebsiteSummary|summaryResult/);
+  assert.match(css, /\.summary-hit\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/);
+  assert.match(css, /\.result \.r-title\s*\{[^}]*position:\s*relative[^}]*z-index:\s*2/);
 });
 
-test('link preview dock exists and gates iframe embedding through isLikelyFrameBlocked', () => {
-  assert.match(html, /id="link-preview"[^>]*class="link-preview"/);
-  assert.match(js, /AstraHelpers\.isLikelyFrameBlocked\(r\.url\)/);
+test('inline summaries have loading, generated, retry, and visit states', () => {
+  assert.match(js, /summaryStatus\.textContent = 'reading the fine print…'/);
+  assert.match(js, /summaryBody\.textContent = data\.summary \|\| r\.description/);
+  assert.match(js, /summaryRetry\.hidden = false/);
+  assert.match(js, /summaryRetry\.addEventListener\('click'/);
+  assert.match(js, /document\.createTextNode\('Visit website'\)/);
+  assert.match(js, /\/api\/summary\?url=/);
+});
+
+test('site briefs disclose beta reliability and animate the tour demonstration once', () => {
+  assert.match(js, /summaryBeta\.className = 'result-summary-beta'/);
+  assert.match(js, /summaryBeta\.textContent = 'BETA'/);
+  assert.match(js, /summaryCaveat\.className = 'result-summary-caveat'/);
+  assert.match(js, /Some websites block reading or return incomplete summaries\./);
+  assert.match(js, /li\.classList\.add\('tour-summary-demo'\)/);
+  assert.match(js, /animationend[\s\S]*?classList\.remove\('tour-summary-demo'\)/);
+  assert.match(css, /\.result-summary-beta\s*\{[^}]*background-color:/);
+  assert.match(css, /@keyframes site-brief-demo/);
+  assert.match(css, /\.result\.tour-summary-demo \.result-summary-inner\s*\{[^}]*animation:\s*site-brief-demo/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.result\.tour-summary-demo \.result-summary-inner[^}]*animation:\s*none/);
+  assert.match(css, /html\.webdriver \[data-page="search"\] \.result\.tour-summary-demo \.result-summary-inner[^}]*animation:\s*none/);
+});
+
+test('inline summaries allow only one open row and reject stale responses', () => {
+  assert.match(js, /let expandedSummary = null/);
+  assert.match(js, /let summaryToken = 0/);
+  assert.match(js, /function collapseWebsiteSummary\(/);
+  assert.match(js, /if \(expandedSummary === li\)[\s\S]*collapseWebsiteSummary\(\)/);
+  assert.match(js, /collapseWebsiteSummary\(\);[\s\S]*expandedSummary = li/);
+  assert.match(js, /if \(summaryAbort\) summaryAbort\.abort\(\)/);
+  assert.match(js, /signal: summaryAbort\.signal/);
+  assert.match(js, /if \(token !== summaryToken \|\| expandedSummary !== li\) return/);
+  assert.match(js, /async function runSearch\(q\)[\s\S]*?collapseWebsiteSummary\(\)/);
+  assert.match(js, /else \{[\s\S]*?collapseWebsiteSummary\(\);[\s\S]*?\$\('ai-panel'\)\.hidden = true/);
+});
+
+test('website summaries replace modal, hover, and iframe preview behavior', () => {
+  assert.doesNotMatch(html, /id="link-preview"|<iframe[^>]*Website preview|id="summary-popup"/);
+  assert.doesNotMatch(js, /mouseenter|mouseleave|hoverTimer|openLinkPreview|isLikelyFrameBlocked/);
+  assert.doesNotMatch(css, /\.r-hover-bar|\.link-preview|#summary-popup|\.summary-scrim|\.summary-panel/);
+  assert.match(js, /\/api\/summary\?url=/);
+});
+
+test('inline summary reveal uses grid rows and motion-safe opacity and transform', () => {
+  assert.match(css, /\.result-summary\s*\{[^}]*display:\s*grid[^}]*grid-template-rows:\s*0fr[^}]*transition:[^}]*grid-template-rows[^}]*opacity[^}]*transform/);
+  assert.match(css, /\.result\.summary-open \.result-summary\s*\{[^}]*grid-template-rows:\s*1fr[^}]*opacity:\s*1[^}]*transform:\s*none/);
+  assert.match(css, /\.result-summary-inner\s*\{[^}]*overflow:\s*hidden/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.result-summary[^}]*transition:\s*none/);
+  assert.match(js, /navigator\.webdriver/);
+  assert.doesNotMatch(js, /scrollHeight|getBoundingClientRect\(\)[\s\S]{0,120}summary/);
+});
+
+test('desktop result workspace puts web results first and AI in a sticky right column', () => {
+  assert.match(html, /class="result-workspace"[\s\S]*class="result-primary"[\s\S]*id="ai-panel"/);
+  assert.match(css, /@media \(min-width: 1000px\)[\s\S]*?\.result-workspace\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*640px\) minmax\(300px,\s*420px\)/);
+  assert.match(css, /@media \(min-width: 1000px\)[\s\S]*?\.ai-panel\s*\{[^}]*position:\s*sticky[^}]*top:/);
+});
+
+test('first-time hero guide offers Sure, Next time, and No beneath hero actions', () => {
+  assert.match(html, /class="hero-btns"[\s\S]*id="first-tour-prompt"[\s\S]*first time using Astra/);
+  assert.match(html, /id="tour-sure"[^>]*>Sure</);
+  assert.match(html, /id="tour-later"[^>]*>Next time</);
+  assert.match(html, /id="tour-no"[^>]*>No</);
+  assert.match(js, /const TOUR_COOKIE = 'astra_tour_seen'/);
+  assert.match(js, /document\.cookie\.split\('; '/);
+  assert.match(js, /max-age=31536000/);
+});
+
+test('first-time choices persist only Sure and No while Next time remains temporary', () => {
+  assert.match(js, /\$\('tour-sure'\)\.addEventListener\('click', \(\) => \{[\s\S]*?setTourSeen\(\)[\s\S]*?startTour\(\)/);
+  assert.match(js, /\$\('tour-no'\)\.addEventListener\('click', \(\) => \{[\s\S]*?setTourSeen\(\)[\s\S]*?hideTourPrompt\(\)/);
+  assert.match(js, /\$\('tour-later'\)\.addEventListener\('click', hideTourPrompt\)/);
+});
+
+test('tour uses a random query and teaches search, AI modes, and result summaries', () => {
+  assert.match(js, /const TOUR_QUERIES = \[/);
+  assert.match(js, /pool\[Math\.floor\(Math\.random\(\) \* pool\.length\)\]/);
+  assert.match(js, /go\(query, 'all'\)/);
+  assert.match(js, /targetId: 'results-bar'/);
+  assert.match(js, /targetId: 'ai-panel'/);
+  assert.match(js, /targetId: 'result-1'/);
+});
+
+test('replayed tours exclude the current query so a fresh search always runs', () => {
+  assert.match(js, /const currentQuery = readRoute\(\)\.q/);
+  assert.match(js, /TOUR_QUERIES\.filter\(\(candidate\) => candidate !== currentQuery\)/);
+  assert.match(js, /const pool = alternatives\.length \? alternatives : TOUR_QUERIES/);
+  assert.match(js, /lastAllQuery = ''/);
+  assert.match(js, /const query = pool\[Math\.floor\(Math\.random\(\) \* pool\.length\)\]/);
+});
+
+test('tour final step requires opening the real first-result preview', () => {
+  assert.match(html, /id="tour-target-action"[^>]*type="button"[^>]*hidden/);
+  const spotlightMarkup = html.match(/<div class="tour-spotlight"[^>]*>([\s\S]*?)<\/div>/);
+  assert(spotlightMarkup, 'tour spotlight markup should exist');
+  assert.doesNotMatch(spotlightMarkup[1], /<(?:button|a|input|select|textarea)\b|tabindex=/i);
+  assert.match(html, /<div class="tour-spotlight"[^>]*aria-hidden="true"[^>]*><\/div>\s*<button[^>]*id="tour-target-action"/);
+  assert.match(js, /requiresPreview:\s*true/);
+  assert.match(js, /tour-next'\)\.disabled = !!step\.requiresPreview/);
+  assert.match(js, /targetAction\.hidden = !step\.requiresPreview/);
+  assert.match(js, /targetAction\.disabled = !step\.requiresPreview/);
+  assert.match(js, /\$\('tour-target-action'\)\.addEventListener\('click', activateTourTarget\)/);
+  assert.match(js, /if \(tourIndex === TOUR_STEPS\.length - 1 && li\.id === 'result-1'\)/);
+  assert.match(js, /\$\('tour-next'\)\.disabled = false/);
+  assert.match(js, /\$\('tour-copy'\)\.textContent = /);
+  assert.match(js, /toggleWebsiteSummary\(li, r\)/);
+  assert.match(css, /\.tour-target-action\s*\{[^}]*position:\s*fixed[^}]*z-index:\s*1[^}]*pointer-events:\s*auto/);
+  assert.match(js, /targetAction\.style\.left = spotlight\.style\.left/);
+  assert.match(js, /targetAction\.style\.top = spotlight\.style\.top/);
+  assert.match(js, /targetAction\.style\.width = spotlight\.style\.width/);
+  assert.match(js, /targetAction\.style\.height = spotlight\.style\.height/);
+});
+
+test('hero exposes an accessible replay control directly above its footer', () => {
+  assert.match(html, /id="tour-replay"[^>]*type="button"[^>]*aria-label="Replay Astra tour"[^>]*>Replay tour<\/button>\s*<footer class="foot">made of stardust/);
+  assert.doesNotMatch(html, /id="result-list"[\s\S]{0,300}id="tour-replay"/);
+  assert.match(js, /\$\('tour-replay'\)\.addEventListener\('click', startTour\)/);
+  assert.match(js, /function updateTourReplay\(/);
+  assert.match(js, /replay\.hidden = !visible/);
+  assert.match(js, /const visible = tourReplayAvailable && !readRoute\(\)\.q && tourIndex < 0/);
+  assert.match(js, /function finishTour\([\s\S]*?updateTourReplay\(\)/);
+  assert.doesNotMatch(js, /function startTour\([\s\S]{0,180}hasTourSeen/);
+  assert.match(css, /\.tour-replay\s*\{[^}]*position:\s*absolute[^}]*bottom:\s*32px[^}]*left:\s*50%[^}]*transform:\s*translateX\(-50%\)/);
+  assert.doesNotMatch(css, /\.tour-replay\s*\{[^}]*margin:\s*auto/);
+});
+
+test('tour is accessible and gives mobile and desktop distinct positioning behavior', () => {
+  assert.match(html, /id="tour-guide"[^>]*role="dialog"[^>]*aria-modal="true"[^>]*aria-labelledby="tour-title"/);
+  assert.match(js, /const mobile = window\.matchMedia\('\(max-width: 768px\)'\)\.matches/);
+  assert.match(js, /if \(mobile\)[\s\S]*scrollIntoView/);
+  assert.match(js, /prefers-reduced-motion/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.first-tour-copy\s*\{[^}]*text-align:\s*center/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.first-tour-actions\s*\{[^}]*justify-content:\s*center/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.tour-card\s*\{[^}]*max-height:\s*100dvh[^}]*overflow-y:\s*auto/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.tour-actions\s*\{[^}]*position:\s*sticky[^}]*bottom:\s*0/);
+});
+
+test('site-brief actions are left aligned and use Font Awesome icons', () => {
+  assert.match(css, /\.result-summary-actions\s*\{[^}]*justify-content:\s*flex-start/);
+  assert.match(css, /\.result-summary-actions \.skuo\s*\{[^}]*display:\s*inline-flex[^}]*align-items:\s*center[^}]*justify-content:\s*center/);
+  assert.match(css, /\.result-summary-actions \.skuo\s*\{[^}]*gap:\s*6px/);
+  assert.match(js, /summaryRetryIcon\.className = 'fa-solid fa-rotate-right'/);
+  assert.match(js, /summaryVisitIcon\.className = 'fa-solid fa-arrow-up-right-from-square'/);
+  assert.match(css, /\.fa-arrow-up-right-from-square\s*\{/);
+  assert.match(js, /summaryRetry\.append\(summaryRetryIcon, document\.createTextNode\('try again'\)\)/);
+  assert.match(js, /summaryVisit\.append\(document\.createTextNode\('Visit website'\), summaryVisitIcon\)/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.result-summary-inner\s*\{[^}]*padding-bottom:/);
+  assert.match(css, /@media \(max-width: 768px\)[\s\S]*?\.result-summary-actions\s*\{[^}]*flex-wrap:\s*wrap/);
+  assert.match(css, /@media \(max-width: 360px\)[\s\S]*?\.result-summary-actions \.skuo\s*\{[^}]*width:\s*100%[^}]*justify-content:\s*center/);
+});
+
+test('Astra logos use the tail-free boat mark and the Images tab uses Font Awesome', () => {
+  assert.match(html, /<h1 class="wordmark"><svg class="astra-boat"[^>]*aria-hidden="true"[^>]*><path d="M3 14h18l-3 5H6z"\/><path d="M11 4v10"\/><path d="M11 5l6 7h-6z"\/><\/svg> Okemo Astra<\/h1>/);
+  assert.match(html, /<a class="r-logo"[^>]*><svg class="astra-boat"[^>]*aria-hidden="true"[^>]*><path d="M3 14h18l-3 5H6z"\/><path d="M11 4v10"\/><path d="M11 5l6 7h-6z"\/><\/svg> Astra<\/a>/);
+  assert.match(html, /id="tab-images"[^>]*><i class="fa-solid fa-images" aria-hidden="true"><\/i> Images<\/button>/);
+  assert.doesNotMatch(html, /class="wordmark">✦|class="r-logo"[^>]*>✦|id="tab-images"[^>]*>✦/);
+  assert.match(css, /\.fa-images\s*\{/);
+  assert.match(css, /\.astra-boat\s*\{[^}]*width:\s*1em[^}]*height:\s*1em[^}]*fill:\s*none[^}]*stroke:/);
+  assert.doesNotMatch(html, /fa-ship|fa-ferry/);
+});
+
+test('tour has no mascot or eye-following behavior', () => {
+  assert.doesNotMatch(html, /tour-mascot|tour-eye|tour-pupil/);
+  assert.doesNotMatch(js, /tour-mascot|tour-eye|tour-pupil|trackTourEyes|lookMascotAt|pointermove/);
+  assert.doesNotMatch(css, /tour-mascot|tour-eye|tour-pupil/);
+});
+
+test('webdriver marks the page so inline summary reveals have no CSS transition', () => {
+  assert.match(js, /document\.documentElement\.classList\.add\('webdriver'\)/);
+  assert.match(css, /html\.webdriver \[data-page="search"\] \.result-summary\s*\{[^}]*transition:\s*none/);
 });
 
 test('long result URLs cannot widen the results page', () => {
